@@ -1,0 +1,7 @@
+.block {
+	background:#ccc;
+	/*width:100px;
+	height:100px;*/
+	position: absolute;
+	list-style-type: none;
+}
