@@ -1,7 +1,18 @@
+body {
+	margin:0;
+}
 .block {
 	background:#ccc;
 	/*width:100px;
 	height:100px;*/
 	position: absolute;
 	list-style-type: none;
+}
+#main {
+	background: none repeat scroll 0 0 #eee;
+    border: 1px solid #ccc;
+    height: 500px;
+    margin: 0 0 0 25px;
+    padding: 0;
+    width: 494px;
 }
