@@ -4,7 +4,7 @@ function musicBlock(w, h, x, y) {
     this.posX = x;
     this.posY = y;
     this.id = "";
-    this.direction = 1	;
+    this.direction = 1;
     this.speed = 5;
 }
 
@@ -36,50 +36,69 @@ musicBlock.prototype.makeBlock = function() {
 
 var grid = function() {
     var section = document.getElementById("main");
-    var cnt = 0;
+    var id = 0;
     var objs = [];
     var running = true;
+    var cnt = 0;
 
+    for (var i = 0; i < 25; i++) {
+        objs[i] = [];
+    }
 
     function animateBlocks() {
         for (var i = 0; i < objs.length; i++) {
-            setStyle(objs[i].id, {
-                'top': objs[i].posY + "px"
-            });
-         
-            if (objs[i].posY >= 475 || objs[i].posY === 0 ) {
-                objs[i].direction = -objs[i].direction;
-            }
-            objs[i].posY += objs[i].direction * objs[i].speed;
-
-            for (var j = 0; j < objs.length; j++) {
-                if (i !== j) {
-                    if (objs[i].posY === objs[j].posY) {
-                        console.log("test");
-                    }
+            if (objs.length !== 0) {
+                for (var j = 0; j < objs[i].length; j++) {
+                    setStyle(objs[i][j].id, {
+                        'top': objs[i][j].posY + "px"
+                    });
+                    objs[i][j].posY += objs[i][j].direction * objs[i][j].speed;
                 }
             }
+           
+
+
+            // if (objs[i].posY >= 475 || objs[i].posY === 0) {
+            //     objs[i].direction = -objs[i].direction;
+            // }
+
+
+            // for (var j = 0; j < objs.length; j++) {
+            //     if (i !== j) {
+            //         if (objs[i].posY === objs[j].posY) {
+            //             console.log("test");
+            //         }
+            //     }
+            // }
         }
         requestAnimationFrame(animateBlocks);
     }
 
     function setBlockPos(e) {
+
         var cursorX = e.pageX;
         var cursorY = e.pageY;
-        objs[cnt] = new musicBlock(25, 25, Math.ceil((e.pageX - 25) / 25) * 25, Math.ceil((e.pageY - 25) / 25) * 25);
-        objs[cnt].initBlock("block" + cnt).makeBlock();
+        var col = Math.floor(cursorX / 25);
+
+        // objs[id] = [];
+        cnt = (objs[col].length);
+
+        //console.log(cnt);
+
+        objs[col][cnt] = new musicBlock(25, 25, Math.ceil((e.pageX - 25) / 25) * 25, Math.ceil((e.pageY - 25) / 25) * 25);
+        objs[col][cnt].initBlock("block" + id).makeBlock();
 
         if (running) {
             animateBlocks();
             running = false;
         }
-        cnt++;
+        id++;
+
     }
     section.addEventListener("click", setBlockPos);
 }();
 
 var makeGrid = (function() {
-
     for (var i = 0; i < 20; i++) {
         var section = document.getElementById("gridHorizontal");
         var section2 = document.getElementById("gridVertical");
@@ -88,7 +107,4 @@ var makeGrid = (function() {
         section.appendChild(node);
         section2.appendChild(node2);
     }
-
-
-
 })();
