@@ -56,7 +56,7 @@ body {
 	position: absolute;
 	list-style-type: none;
 }
-ul {
+#gridHorizontal, #gridVertical {
     height: 500px;
     margin-top: 0;
     position: absolute;
@@ -86,4 +86,12 @@ ul {
     height: 500px;
     margin-right: 24px;
     width: 1px;
+}
+#arrows {
+    left: 525px;
+    position: absolute;
+    top: 14px;
+}
+#arrows li {
+    padding-bottom:5px;
 }
