@@ -57,20 +57,20 @@ body {
 	list-style-type: none;
 }
 #gridHorizontal, #gridVertical {
-    height: 500px;
+    height: 520px;
     margin-top: 0;
     position: absolute;
     top: 0;
-    width: 500px;
+    width: 520px;
     z-index: 1000;
 }
 #main {
 	background: none repeat scroll 0 0 #eee;
    position:relative;
-    height: 500px;
+    height: 520px;
   /*  margin: 25px 0 0 25px;*/
     padding: 0;
-    width: 500px;
+    width: 520px;
     border-top: 1px solid #ccc;
     border-right:1px solid #ccc;
 }
@@ -78,13 +78,13 @@ body {
     background: none repeat scroll 0 0 #ccc;
     height:1px;
     line-height: 1px;
-    margin-top: 24px;
+    margin-top: 25px;
 }
 #gridVertical li {
      background: none repeat scroll 0 0 #ccc;
     display: inline-block;
-    height: 500px;
-    margin-right: 24px;
+    height: 520px;
+    margin-right: 25px;
     width: 1px;
 }
 #arrows {

@@ -1,8 +1,10 @@
-var speed = 5;
-var blockSize = 25;
+var speed = 2;
+var blockSize = 26;
 var gridSize = 20;
 var gridArray = new Array([]);
-  var objs = [];
+var objs = [];
+var pause = -1;
+var advance = -1;
 
 function musicBlock(w, h, x, y, s) {
     this.width = w;
@@ -10,7 +12,7 @@ function musicBlock(w, h, x, y, s) {
     this.posX = x;
     this.posY = y;
     this.id = "";
-    this.direction = "down";
+    this.direction = "none";
     //this.orientation = "horizontal";
     this.speed = s;
     this.isMoving = false;
@@ -19,7 +21,8 @@ function musicBlock(w, h, x, y, s) {
     this.queued = 1;
     this.selected = false;
     this.active = "#000";
-    this.notActive = "#DBA65C"; 
+    this.notActive = "#DBA65C";
+    this.halfpoint = -1;
 }
 
 // function setStyle(objId, propertyObject) {
@@ -59,94 +62,126 @@ musicBlock.prototype.addBlock = function() {
 var grid = function() {
     var section = document.getElementById("main");
     var cnt = 0;
-  
+
     var running = true;
-    var syncounter = -25;
+    var syncounter = -blockSize;
 
 
     (function startSyncCounter() {
-        if (syncounter == blockSize) {
-            if (cnt !== 0) {
-                for (var j = 0; j < objs.length; j++) {
-                    gridArray[objs[j].gridX][objs[j].gridY] = -1;
-                    if (objs[j].queued == 1 && objs[j].speed !== 0) {
-                        objs[j].queued = 0;
+       // console.log(pause);
+        if ((pause === 1 && advance === 1) || pause === -1) {
+            if (syncounter == blockSize) {
+                if (cnt !== 0) {
+                    for (var j = 0; j < objs.length; j++) {
+                        gridArray[objs[j].gridX][objs[j].gridY] = -1;
+                        if (objs[j].queued == 1 && objs[j].speed !== 0) {
+                            objs[j].queued = 0;
+
+                        }
+                    }
+
+                    for (var k = 0; k < objs.length; k++) {
+                        objs[k].gridX = objs[k].posX / blockSize;
+                        objs[k].gridY = objs[k].posY / blockSize;
+                        gridArray[objs[k].gridX][objs[k].gridY] = k;
+                    }
+
+                    for (var l = 0; l < objs.length; l++) {
+                        // console.log(l);
+                        // console.log("gridX: " + objs[l].gridX);
+                        // console.log("gridY: " + objs[l].gridY);
+                        // console.log("pixelX: " + objs[l].posX);
+                        // console.log("pixelY: " + objs[l].posY);
+                        // console.log( objs[l].direction);
+                        // console.log(gridArray[objs[l].gridX][objs[l].gridY]);
+                        // console.log(gridArray[objs[l].gridX][objs[l].gridY + 1]);
+                        //console.log(gridArray[objs[l].gridX][objs[l].gridY - 2]);
+                        //console.log(l);
+                        if (objs[l].direction == "up" && (objs[l].gridY === 0 || gridArray[objs[l].gridX][objs[l].gridY - 1] !== -1)) {
+                            objs[l].direction = "down";
+                        } else if (objs[l].direction == "up" && gridArray[objs[l].gridX][objs[l].gridY - 1] === -1 &&  
+                            objs[l].gridY != 1 && gridArray[objs[l].gridX][objs[l].gridY - 2] !== -1 &&
+                            objs[gridArray[objs[l].gridX][objs[l].gridY - 2]].direction === "down") {
+                            objs[l].halfpoint = objs[l].posY - (blockSize / 2);
+                        }
+                        if (objs[l].direction == "down" && (objs[l].gridY === gridSize - 1 || gridArray[objs[l].gridX][objs[l].gridY + 1] !== -1)) {
+                            objs[l].direction = "up";
+                        } else if (objs[l].direction == "down" && gridArray[objs[l].gridX][objs[l].gridY + 1] === -1 &&  
+                            objs[l].gridY != gridSize - 2 && gridArray[objs[l].gridX][objs[l].gridY + 2] !== -1 &&
+                            objs[gridArray[objs[l].gridX][objs[l].gridY + 2]].direction === "up") {
+                            objs[l].halfpoint = objs[l].posY + (blockSize / 2);
+                        }
+                        if (objs[l].direction == "left" && (objs[l].gridX === 0 || gridArray[objs[l].gridX - 1][objs[l].gridY] !== -1)) {
+                            objs[l].direction = "right";
+                        }
+                        if (objs[l].direction == "right" && (objs[l].gridX === gridSize - 1 || gridArray[objs[l].gridX + 1][objs[l].gridY] !== -1)) {
+                            objs[l].direction = "left";
+                        }
+
+                       // console.log(objs[l].direction);
+
 
                     }
                 }
 
-                for (var k = 0; k < objs.length; k++) {
-                    objs[k].gridX = objs[k].posX / blockSize;
-                    objs[k].gridY = objs[k].posY / blockSize;
-                    gridArray[objs[k].gridX][objs[k].gridY] = k;
-                }
-
-                for (var l = 0; l < objs.length; l++) {
-                    // console.log(l);
-                    // console.log("gridX: " + objs[l].gridX);
-                    // console.log("gridY: " + objs[l].gridY);
-                    // console.log("pixelX: " + objs[l].posX);
-                    // console.log("pixelY: " + objs[l].posY);
-                    // console.log( objs[l].direction);
-                    // console.log(gridArray[objs[l].gridX][objs[l].gridY]);
-                    // console.log(gridArray[objs[l].gridX][objs[l].gridY + 1]);
-
-                    if (objs[l].direction == "up" && (objs[l].gridY === 0 || gridArray[objs[l].gridX][objs[l].gridY - 1] !== -1)) {
-                        objs[l].direction = "down";
-                    }
-                    if (objs[l].direction == "down" && (objs[l].gridY === gridSize - 1 || gridArray[objs[l].gridX][objs[l].gridY + 1] !== -1)) {
-                        objs[l].direction = "up";
-                    }
-                    if (objs[l].direction == "left" && (objs[l].gridX === 0 || gridArray[objs[l].gridX-1][objs[l].gridY] !== -1)) {
-                        objs[l].direction = "right";
-                    }
-                     if (objs[l].direction == "right" && (objs[l].gridX === gridSize - 1 || gridArray[objs[l].gridX+1][objs[l].gridY] !== -1)) {
-                        objs[l].direction = "left";
-                    }
-                   
-                    console.log(objs[l].direction);
-
-
-                }
+                syncounter = 0;
             }
 
-            syncounter = 0;
-        }
+            /////MOVE BLOCKS
+            for (var i = 0; i < objs.length; i++) {
 
-        /////MOVE BLOCKS
-        for (var i = 0; i < objs.length; i++) {
-           
                 if (objs[i].direction == "up") {
-                    objs[i].setStyle({'top': objs[i].posY + "px"});
+                    objs[i].setStyle({
+                        'top': objs[i].posY + "px"
+                    });
                     if (objs[i].queued === 0) {
-                        objs[i].posY += -1 * objs[i].speed;
+                        if (objs[i].halfpoint !== -1 && objs[i].halfpoint > objs[i].posY - objs[i].speed) {
+                            objs[i].posY = 2 * objs[i].halfpoint + speed - objs[i].posY;
+                            objs[i].direction = "down";
+                            objs[i].halfpoint = -1;
+                        }
+                        else objs[i].posY += -1 * objs[i].speed;
                     }
                 }
-                if (objs[i].direction == "down") {
-                    objs[i].setStyle({'top': objs[i].posY + "px"});
+                else if (objs[i].direction == "down") {
+                    objs[i].setStyle({
+                        'top': objs[i].posY + "px"
+                    });
                     if (objs[i].queued === 0) {
-                        objs[i].posY += 1 * objs[i].speed;
+                        if (objs[i].halfpoint !== -1 && objs[i].halfpoint < objs[i].posY + objs[i].speed) {
+                            objs[i].posY = 2 * objs[i].halfpoint - speed - objs[i].posY;
+                            objs[i].direction = "up";
+                            objs[i].halfpoint = -1;
+                        }
+                        else objs[i].posY += 1 * objs[i].speed;
                     }
                 }
                 if (objs[i].direction == "left") {
-                    objs[i].setStyle({'left': objs[i].posX + "px"});
+                    objs[i].setStyle({
+                        'left': objs[i].posX + "px"
+                    });
                     if (objs[i].queued === 0) {
                         objs[i].posX += -1 * objs[i].speed;
                     }
                 }
                 if (objs[i].direction == "right") {
-                    objs[i].setStyle({'left': objs[i].posX + "px"});
-                     if (objs[i].queued === 0) {
+                    objs[i].setStyle({
+                        'left': objs[i].posX + "px"
+                    });
+                    if (objs[i].queued === 0) {
                         objs[i].posX += 1 * objs[i].speed;
                     }
                 }
-            
+
+            }
+
+            syncounter += speed;
+            advance = -1;
+
         }
-
-        syncounter += speed;
-
         requestAnimationFrame(startSyncCounter);
     })();
+
 
 
     function initBlock(e) {
@@ -188,24 +223,46 @@ var grid = function() {
     section.addEventListener("click", initBlock);
 }();
 
+var advance = (function() {
+    var pauseBtn = document.getElementById("pause");
+    var advanceBtn = document.getElementById("advance");
+
+    pauseBtn.addEventListener("click", function() {
+        pauseBlock();
+    });
+    advanceBtn.addEventListener("click", function() {
+        advanceBlock();
+    });
+
+    function pauseBlock() {
+        pause = pause * -1;
+        //alert(pause);
+    }
+
+    function advanceBlock() {
+        advance *= -1;
+    }
+
+})();
+
 var arrowClick = (function() {
     var leftArrow = document.getElementById("left");
     var rightArrow = document.getElementById("right");
     var downArrow = document.getElementById("down");
     var upArrow = document.getElementById("up");
-    
+
     function animateBlock(direction) {
-       for (var i = 0; i < objs.length; i++) {
-            if(objs[i].selected === true) {
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true) {
                 objs[i].direction = direction;
                 objs[i].speed = speed;
             }
-             objs[i].selected = false;
-                objs[i].setStyle({
-                     'background': objs[i].notActive
-                });
-       }
-      
+            objs[i].selected = false;
+            objs[i].setStyle({
+                'background': objs[i].notActive
+            });
+        }
+
     }
 
     leftArrow.addEventListener("click", function() {
