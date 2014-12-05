@@ -19,7 +19,7 @@ function musicBlock(w, h, x, y, s) {
     this.queued = 1;
     this.selected = false;
     this.active = "#000";
-    this.notActive = "#DBA65C";
+    this.notActive = "#DBA65C"; 
 }
 
 // function setStyle(objId, propertyObject) {
@@ -166,16 +166,23 @@ var grid = function() {
             cnt++;
         } else {
             //objs[gridArray[gridX][gridY]].speed = speed;
-            for (var i = 0; i < objs.length; i++) {
-                objs[i].selected = false;
-                objs[i].setStyle({
-                     'background': objs[i].notActive
+            // for (var i = 0; i < objs.length; i++) {
+            //     objs[i].selected = false;
+            //     objs[i].setStyle({
+            //          'background': objs[i].notActive
+            //     });
+            // }
+            if (objs[gridArray[gridX][gridY]].selected === true) {
+                objs[gridArray[gridX][gridY]].selected = false;
+                objs[gridArray[gridX][gridY]].setStyle({
+                    'background': objs[gridArray[gridX][gridY]].notActive
+                });
+            } else {
+                objs[gridArray[gridX][gridY]].selected = true;
+                objs[gridArray[gridX][gridY]].setStyle({
+                    'background': objs[gridArray[gridX][gridY]].active
                 });
             }
-            objs[gridArray[gridX][gridY]].selected = true;
-            objs[gridArray[gridX][gridY]].setStyle({
-                'background': objs[gridArray[gridX][gridY]].active
-            });
         }
     }
     section.addEventListener("click", initBlock);
@@ -193,7 +200,12 @@ var arrowClick = (function() {
                 objs[i].direction = direction;
                 objs[i].speed = speed;
             }
+             objs[i].selected = false;
+                objs[i].setStyle({
+                     'background': objs[i].notActive
+                });
        }
+      
     }
 
     leftArrow.addEventListener("click", function() {
@@ -208,6 +220,8 @@ var arrowClick = (function() {
     downArrow.addEventListener("click", function() {
         animateBlock("down");
     });
+
+
 
 
 })();
@@ -227,7 +241,6 @@ var makeGrid = (function() {
         ////create empty grid array
         gridArray.push([]);
         for (var j = 0; j < gridSize; j++) {
-
             gridArray[i][j] = -1;
         }
     }
