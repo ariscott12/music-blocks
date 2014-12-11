@@ -95,3 +95,10 @@ body {
 #arrows li {
     padding-bottom:5px;
 }
+#dragbox {
+    background: none repeat scroll 0 0 transparent;
+    border: 1px solid #000;
+    position: absolute;
+    background:rgba(229,25,128,.7);
+}
+
