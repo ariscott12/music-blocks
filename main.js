@@ -7,10 +7,8 @@ var pause = -1;
 var advance = -1;
 var shiftkey = 0;
 var numSelected = 0;
-
-
-
-
+var mode = "create";
+var cnt = 0;
 
 function musicBlock(w, h, x, y, s) {
     this.width = w;
@@ -32,6 +30,7 @@ function musicBlock(w, h, x, y, s) {
     this.active = "#000";
     this.notActive = "#DBA65C";
     this.halfpoint = -1;
+    this.snd = new Audio("tiletap.wav");
 }
 
 function processCollision(direction, gridX, gridY) {
@@ -103,6 +102,13 @@ musicBlock.prototype.createNode = function(el) {
     return this;
 };
 
+function removeNode(el) {
+    var section = document.getElementById("main");
+    var node = document.getElementById(el);
+    section.removeChild(node);
+    node.remove();
+};
+
 musicBlock.prototype.addBlock = function() {
     this.setStyle({
         'top': this.posY + "px",
@@ -118,7 +124,6 @@ var grid = function() {
     var dragbox;
     var mousedownX = -1;
     var mousedownY = -1;
-    var cnt = 0;
     var running = true;
     var syncounter = -blockSize;
 
@@ -151,6 +156,9 @@ var grid = function() {
                     //second collision check if object changed direction
                     for (var o = 0; o < objs.length; o++){
                         if(objs[o].oldDirection !== objs[o].direction){
+                            objs[o].snd.pause();
+                            objs[o].snd.currentTime = 0;
+                            objs[o].snd.play();
                             var dir = processCollision(objs[o].direction, objs[o].gridX, objs[o].gridY);
                             if(dir !== objs[o].direction)
                                 objs[o].direction = objs[o].newDirection =  "none";   
@@ -203,6 +211,9 @@ var grid = function() {
                             objs[i].direction = objs[i].newDirection = "down";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridY = objs[i].gridY;
+                            objs[i].snd.pause();
+                            objs[i].snd.currentTime = 0;
+                            objs[i].snd.play();
                         }
                         else objs[i].posY += -1 * objs[i].speed;
                     }
@@ -214,6 +225,9 @@ var grid = function() {
                             objs[i].direction = objs[i].newDirection = "up";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridY = objs[i].gridY;
+                            objs[i].snd.pause();
+                            objs[i].snd.currentTime = 0;
+                            objs[i].snd.play();
                         }
                         else objs[i].posY += 1 * objs[i].speed;
                     }
@@ -225,6 +239,9 @@ var grid = function() {
                             objs[i].direction = objs[i].newDirection = "right";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridX = objs[i].gridX;
+                            objs[i].snd.pause();
+                            objs[i].snd.currentTime = 0;
+                            objs[i].snd.play();
                         }
                         else objs[i].posX += -1 * objs[i].speed;
                     }
@@ -236,6 +253,9 @@ var grid = function() {
                             objs[i].direction = objs[i].newDirection = "left";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridX = objs[i].gridX;
+                            objs[i].snd.pause();
+                            objs[i].snd.currentTime = 0;
+                            objs[i].snd.play();
                         }
                         else objs[i].posX += 1 * objs[i].speed;
                     }
@@ -256,6 +276,11 @@ var grid = function() {
                     objs[k].gridY++;
 
                 gridArray[objs[k].gridX][objs[k].gridY] = k;
+
+                if(syncounter === blockSize - speed && (objs[k].prevgridX !== objs[k].gridX || objs[k].prevgridY !== objs[k].gridY)){
+                            //console.log("Block "+k+" : "+objs[k].prevgridX + ", "+objs[k].prevgridY+" xx " + objs[k].gridX + " sync "+syncounter);
+                            gridArray[objs[k].prevgridX][objs[k].prevgridY] = -1;                      
+                        }
             }
             
             //log checks on block 0
@@ -272,55 +297,13 @@ var grid = function() {
         requestAnimationFrame(startSyncCounter);
     })();
 
-
-
-    function initBlock(e) {
-        var cursorX = e.pageX;
-        var cursorY = e.pageY;
-        var gridX = Math.floor(cursorX / blockSize);
-        var gridY = Math.floor(cursorY / blockSize);
-
-        ////ADD A NEW BLOCK TO GRID
-        if (gridArray[gridX][gridY] == -1) {
-            objs[cnt] = new musicBlock(blockSize, blockSize, Math.ceil((e.pageX - blockSize) / blockSize) * blockSize, Math.ceil((e.pageY - blockSize) / blockSize) * blockSize, 0);
-            objs[cnt].createNode("block" + cnt).addBlock();
-            gridArray[gridX][gridY] = cnt;
-            objs[cnt].gridX = objs[cnt].prevgridX = gridX;
-            objs[cnt].gridY = objs[cnt].prevgridY = gridY;
-            cnt++;
-        } else {
-            if (shiftkey === 0){
-                if (numSelected > 1 || (numSelected === 1 && objs[gridArray[gridX][gridY]].selected === false)){
-                    for(var q = 0; q < objs.length; q++)
-                    {
-                        if(objs[q].selected === true){
-                            numSelected--;
-                            objs[q].selected = false;
-                            objs[q].setStyle({
-                                'background': objs[q].notActive
-                            });  
-                        }
-                    }
-                }
-            }
-            console.log(objs[gridArray[gridX][gridY]].selected);
-            if (objs[gridArray[gridX][gridY]].selected === true) {
-                numSelected--;   
-                objs[gridArray[gridX][gridY]].selected = false;
-                objs[gridArray[gridX][gridY]].setStyle({
-                    'background': objs[gridArray[gridX][gridY]].notActive
-                });      
-                       
-            } else {
-                numSelected++;
-                objs[gridArray[gridX][gridY]].selected = true;
-                objs[gridArray[gridX][gridY]].setStyle({
-                    'background': objs[gridArray[gridX][gridY]].active
-                });
-            }
-        }
+    function addBlock(gridX,gridY){
+        objs[cnt] = new musicBlock(blockSize, blockSize, gridX * blockSize, gridY * blockSize, 0);
+        objs[cnt].createNode("block" + cnt).addBlock();
+        gridArray[gridX][gridY] = cnt;
+        cnt++;
     }
-    
+
     //Mousedown listener tracks positions and resets selection to 0
     section.addEventListener("mousedown",function(e){
         //var mouselocation = compareMouse(e);
@@ -393,34 +376,65 @@ var grid = function() {
 
     //Compares mouseup locationw with mousedown, calls old click function if same, drag select if not
     section.addEventListener("mouseup",function(e){
-       var mouselocation = compareMouse(e);
-        
-        if(mouselocation == "same") {
-                initBlock(e);
-        } else{
-            var leftX = Math.min(mousedownX, e.pageX);
-            var rightX = Math.max(mousedownX, e.pageX);
-            var topY = Math.min(mousedownY, e.pageY);
-            var bottomY = Math.max(mousedownY, e.pageY);
-
-             //remove dragBox;
-           
-            
-            for (var p = 0; p < objs.length; p++){
-                var gridX = objs[p].gridX;
-                var gridY = objs[p].gridY;
-                if (objs[p].posX <= rightX 
-                    && objs[p].posX >= leftX
-                    && objs[p].posY <= bottomY
-                    && objs[p].posY >= topY){
-                        numSelected++;
-                        objs[gridArray[gridX][gridY]].selected = true;
-                        objs[gridArray[gridX][gridY]].setStyle({
-                            'background': objs[gridArray[gridX][gridY]].active
-                        });
+        var mouselocation = compareMouse(e);
+        var leftX = Math.min(mousedownX, e.pageX);
+        var rightX = Math.max(mousedownX, e.pageX);
+        var topY = Math.min(mousedownY, e.pageY);
+        var bottomY = Math.max(mousedownY, e.pageY);
+        leftX = Math.floor(leftX / blockSize);
+        rightX = Math.ceil(rightX / blockSize);
+        topY = Math.floor(topY / blockSize);
+        bottomY = Math.ceil(bottomY / blockSize);
+       
+        if (mode === "select"){
+            if (mouselocation === "same" 
+                && (numSelected === 1 || shiftkey === 1)
+                && gridArray[leftX][topY] !== -1 
+                && objs[gridArray[leftX][topY]].selected === true){
+                numSelected--;   
+                objs[gridArray[leftX][topY]].selected = false;
+                objs[gridArray[leftX][topY]].setStyle({
+                    'background': objs[gridArray[leftX][topY]].notActive
+                }); 
+            }
+            else{
+                if (shiftkey === 0)
+                {
+                    for(var q = 0; q < objs.length; q++)
+                    {
+                        objs[q].selected = false;
+                        objs[q].setStyle({
+                            'background': objs[q].notActive
+                        });  
+                    }
+                }
+                for (var p = 0; p < objs.length; p++){
+                    var gridX = objs[p].gridX;
+                    var gridY = objs[p].gridY;
+                    if (gridX < rightX 
+                        && gridX >= leftX
+                        && gridY < bottomY
+                        && gridY >= topY){
+                            numSelected++;
+                            objs[gridArray[gridX][gridY]].selected = true;
+                            objs[gridArray[gridX][gridY]].setStyle({
+                                'background': objs[gridArray[gridX][gridY]].active
+                            });
+                    }
                 }
             }
         }
+        if (mode === "create"){            
+            for (var q = leftX; q < rightX; q++){
+                for (var r = topY; r < bottomY; r++){
+                    if( gridArray[q][r] === -1){
+                        addBlock(q,r);
+                    }
+                }
+            }
+        }
+        
+        //remove dragBox;
         section.removeChild(dragbox);
       
         mousedownX = -1;
@@ -508,6 +522,28 @@ var arrowClick = (function() {
                 animateBlock("down");
             break;
 
+            case 46: // Del
+                for (var s = 0; s < objs.length; s++){
+                    if(objs[s].selected === true){
+                        removeNode(objs[s].id);
+                        objs.splice(s,1);
+                        for (var v = s; v < objs.length;v++){
+                            document.getElementById(objs[v].id).setAttribute("id","block"+v);                        
+                            objs[v].id = "block"+v;
+                        }
+                        for (var t = 0; t < gridSize; t++)
+                            for (var u = 0; u < gridSize; u++){
+                                if (gridArray[t][u] == s)
+                                    gridArray[t][u] = -1;
+                                if (gridArray[t][u] >= s)
+                                    gridArray[t][u]--;
+                            }
+                        cnt--;
+                        s--;  
+                    }
+                }
+            break;
+
             case 65: // a
                 advance *= -1;
             break;
@@ -524,6 +560,13 @@ var arrowClick = (function() {
                     }       
                 }
                 console.log(out);
+            break;
+
+            case 77: // m
+                if (mode === "select")
+                    mode = "create";
+                else
+                    mode = "select";
             break;
         }
     }, false);
