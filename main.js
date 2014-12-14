@@ -1,14 +1,18 @@
-var speed = 2;
-var blockSize = 26;
-var gridSize = 20;
+var config = {
+   speed:2,
+   blockSize:26,
+   gridSize:20,
+   pause: -1,
+   advance: -1,
+   shiftkey: 0,
+   numSelected: 0,
+   mode: "create",
+   cnt: 0
+};
+
 var gridArray = new Array([]);
 var objs = [];
-var pause = -1;
-var advance = -1;
-var shiftkey = 0;
-var numSelected = 0;
-var mode = "create";
-var cnt = 0;
+
 
 function musicBlock(w, h, x, y, s) {
     this.width = w;
@@ -39,16 +43,16 @@ function processCollision(direction, gridX, gridY) {
             || gridArray[gridX][gridY - 1] !== -1
             || (gridX !== 0 && gridArray[gridX - 1][gridY - 1] !== -1
                && objs[gridArray[gridX - 1][gridY - 1]].oldDirection === "right")
-            || (gridX !== gridSize - 1 && gridArray[gridX + 1][gridY - 1] !== -1
+            || (gridX !== config.gridSize - 1 && gridArray[gridX + 1][gridY - 1] !== -1
                && objs[gridArray[gridX + 1][gridY - 1]].oldDirection === "left"))
                     return "down";                
     }
     else if (direction === "down"){
-        if (gridY === gridSize - 1 
+        if (gridY === config.gridSize - 1 
             || gridArray[gridX][gridY + 1] !== -1
             || (gridX !== 0 && gridArray[gridX - 1][gridY + 1] !== -1                                    
                 && objs[gridArray[gridX - 1][gridY + 1]].oldDirection === "right")
-            || (gridX !== gridSize - 1 && gridArray[gridX + 1][gridY + 1] !== -1
+            || (gridX !== config.gridSize - 1 && gridArray[gridX + 1][gridY + 1] !== -1
                 && objs[gridArray[gridX + 1][gridY + 1]].oldDirection === "left"))
                     return "up";
     }
@@ -57,16 +61,16 @@ function processCollision(direction, gridX, gridY) {
             || gridArray[gridX - 1][gridY] !== -1
             || (gridY !== 0 && gridArray[gridX - 1][gridY - 1] !== -1
                 && objs[gridArray[gridX - 1][gridY - 1]].oldDirection === "down")
-            || (gridY !== gridSize - 1 && gridArray[gridX - 1][gridY + 1] !== -1
+            || (gridY !== config.gridSize - 1 && gridArray[gridX - 1][gridY + 1] !== -1
                 && objs[gridArray[gridX - 1][gridY + 1]].oldDirection === "up"))                            
                     return "right";
     }
     else if (direction === "right"){
-        if (gridX === gridSize - 1 
+        if (gridX === config.gridSize - 1 
             || gridArray[gridX + 1][gridY] !== -1
             || (gridY !== 0 && gridArray[gridX + 1][gridY - 1] !== -1
                 && objs[gridArray[gridX + 1][gridY - 1]].oldDirection === "down")
-            || (gridY !== gridSize - 1 && gridArray[gridX + 1][gridY + 1] !== -1
+            || (gridY !== config.gridSize - 1 && gridArray[gridX + 1][gridY + 1] !== -1
                 && objs[gridArray[gridX + 1][gridY + 1]].oldDirection === "up"))
                     return "left";
     }
@@ -107,7 +111,7 @@ function removeNode(el) {
     var node = document.getElementById(el);
     section.removeChild(node);
     node.remove();
-};
+}
 
 musicBlock.prototype.addBlock = function() {
     this.setStyle({
@@ -118,6 +122,33 @@ musicBlock.prototype.addBlock = function() {
     });
 };
 
+window.onload = function () {
+    MIDI.loadPlugin({
+       soundfontUrl: "./soundfont/",
+        //instruments: [ "tinkle_bell", "synth_drum" ],
+        instrument: "synth_drum",
+        callback: function() {
+           // MIDI.programChange(0, 0);
+            MIDI.programChange(0, 118);
+            console.log("loaded");
+        }
+    });
+};
+
+function playnote() {
+            var delay = 0; // play one note every quarter second
+            
+            //  var note = Math.floor(Math.random()*50)+50; // the MIDI note
+            var note = 35;
+
+            //console.log(note);
+            var velocity = 127; // how hard the note hits
+            // play the note
+            MIDI.setVolume(0, 127);
+            MIDI.noteOn(0, note, velocity, delay);
+            MIDI.noteOff(0, note, delay + 1);
+    }
+
 
 var grid = function() {
     var section = document.getElementById("main");
@@ -125,13 +156,13 @@ var grid = function() {
     var mousedownX = -1;
     var mousedownY = -1;
     var running = true;
-    var syncounter = -blockSize;
+    var syncounter = -config.blockSize;
 
 
     (function startSyncCounter() {
-        if ((pause === 1 && advance === 1) || pause === -1) {
-            if (syncounter == blockSize) {
-                if (cnt !== 0) {
+        if ((config.pause === 1 && config.advance === 1) || config.pause === -1) {
+            if (syncounter == config.blockSize) {
+                if (config.cnt !== 0) {
                     //update oldDirection, direction and queue flag
                     for (var n = 0; n < objs.length; n++)    {
                         objs[n].oldDirection = objs[n].direction;
@@ -156,13 +187,14 @@ var grid = function() {
                     //second collision check if object changed direction
                     for (var o = 0; o < objs.length; o++){
                         if(objs[o].oldDirection !== objs[o].direction){
-                            objs[o].snd.pause();
-                            objs[o].snd.currentTime = 0;
-                            objs[o].snd.play();
+                            // objs[o].snd.config.pause();
+                            // objs[o].snd.currentTime = 0;
+                            // objs[o].snd.play();
                             var dir = processCollision(objs[o].direction, objs[o].gridX, objs[o].gridY);
                             if(dir !== objs[o].direction)
                                 objs[o].direction = objs[o].newDirection =  "none";   
-                                document.getElementById('audiotag').play();                                                                                     
+                                //document.getElementById('audiotag').play();    
+                                playnote();                                                                                 
                         }
                     }
                     
@@ -173,28 +205,28 @@ var grid = function() {
                             && gridArray[objs[m].gridX][objs[m].gridY - 1] === -1
                             && gridArray[objs[m].gridX][objs[m].gridY - 2] !== -1
                             && objs[gridArray[objs[m].gridX][objs[m].gridY - 2]].direction === "down") {
-                                objs[m].halfpoint = objs[m].posY - (blockSize / 2);
+                                objs[m].halfpoint = objs[m].posY - (config.blockSize / 2);
 				        }
                         if (objs[m].direction == "down"
-                            && objs[m].gridY < gridSize - 2
+                            && objs[m].gridY < config.gridSize - 2
                             && gridArray[objs[m].gridX][objs[m].gridY + 1] === -1
                             && gridArray[objs[m].gridX][objs[m].gridY + 2] !== -1
                             && objs[gridArray[objs[m].gridX][objs[m].gridY + 2]].direction === "up") {
-                                objs[m].halfpoint = objs[m].posY + (blockSize / 2);
+                                objs[m].halfpoint = objs[m].posY + (config.blockSize / 2);
                         }
                         if (objs[m].direction == "left" 
                             && objs[m].gridX > 1
                             && gridArray[objs[m].gridX - 1][objs[m].gridY] === -1
                             && gridArray[objs[m].gridX - 2][objs[m].gridY] !== -1
                             && objs[gridArray[objs[m].gridX - 2][objs[m].gridY]].direction === "right") {
-                                objs[m].halfpoint = objs[m].posX - (blockSize / 2);
+                                objs[m].halfpoint = objs[m].posX - (config.blockSize / 2);
                         }
                         if (objs[m].direction == "right"
-                            && objs[m].gridX < gridSize - 2
+                            && objs[m].gridX < config.gridSize - 2
                             && gridArray[objs[m].gridX + 1][objs[m].gridY] === -1
                             && gridArray[objs[m].gridX + 2][objs[m].gridY] !== -1
                             && objs[gridArray[objs[m].gridX + 2][objs[m].gridY]].direction === "left") {
-                                objs[m].halfpoint = objs[m].posX + (blockSize / 2);
+                                objs[m].halfpoint = objs[m].posX + (config.blockSize / 2);
                         }
                     }
                 }
@@ -207,13 +239,14 @@ var grid = function() {
                 if (objs[i].direction == "up") {
                     if (objs[i].queued === 0) {
                         if (objs[i].halfpoint !== -1 && objs[i].halfpoint > objs[i].posY - objs[i].speed) {
-                            objs[i].posY = 2 * objs[i].halfpoint + speed - objs[i].posY;
+                            objs[i].posY = 2 * objs[i].halfpoint +config.speed - objs[i].posY;
                             objs[i].direction = objs[i].newDirection = "down";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridY = objs[i].gridY;
-                            objs[i].snd.pause();
-                            objs[i].snd.currentTime = 0;
-                            objs[i].snd.play();
+                             playnote();  
+                            // objs[i].snd.config.pause();
+                            // objs[i].snd.currentTime = 0;
+                            // objs[i].snd.play();
                         }
                         else objs[i].posY += -1 * objs[i].speed;
                     }
@@ -221,13 +254,14 @@ var grid = function() {
                 else if (objs[i].direction == "down") {
                     if (objs[i].queued === 0) {
                         if (objs[i].halfpoint !== -1 && objs[i].halfpoint < objs[i].posY + objs[i].speed) {
-                            objs[i].posY = 2 * objs[i].halfpoint - speed - objs[i].posY;
+                            objs[i].posY = 2 * objs[i].halfpoint -config.speed - objs[i].posY;
                             objs[i].direction = objs[i].newDirection = "up";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridY = objs[i].gridY;
-                            objs[i].snd.pause();
-                            objs[i].snd.currentTime = 0;
-                            objs[i].snd.play();
+                             playnote();  
+                            // objs[i].snd.config.pause();
+                            // objs[i].snd.currentTime = 0;
+                            // objs[i].snd.play();
                         }
                         else objs[i].posY += 1 * objs[i].speed;
                     }
@@ -235,13 +269,14 @@ var grid = function() {
                 if (objs[i].direction == "left") {
                     if (objs[i].queued === 0) {
                         if (objs[i].halfpoint !== -1 && objs[i].halfpoint > objs[i].posX - objs[i].speed) {
-                            objs[i].posX = 2 * objs[i].halfpoint + speed - objs[i].posX;
+                            objs[i].posX = 2 * objs[i].halfpoint +config.speed - objs[i].posX;
                             objs[i].direction = objs[i].newDirection = "right";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridX = objs[i].gridX;
-                            objs[i].snd.pause();
-                            objs[i].snd.currentTime = 0;
-                            objs[i].snd.play();
+                             playnote();  
+                            // objs[i].snd.config.pause();
+                            // objs[i].snd.currentTime = 0;
+                            // objs[i].snd.play();
                         }
                         else objs[i].posX += -1 * objs[i].speed;
                     }
@@ -249,13 +284,14 @@ var grid = function() {
                 else if (objs[i].direction == "right") {
                     if (objs[i].queued === 0) {
                         if (objs[i].halfpoint !== -1 && objs[i].halfpoint < objs[i].posX + objs[i].speed) {
-                            objs[i].posX = 2 * objs[i].halfpoint - speed - objs[i].posX;
+                            objs[i].posX = 2 * objs[i].halfpoint -config.speed - objs[i].posX;
                             objs[i].direction = objs[i].newDirection = "left";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridX = objs[i].gridX;
-                            objs[i].snd.pause();
-                            objs[i].snd.currentTime = 0;
-                            objs[i].snd.play();
+                             playnote();  
+                            // objs[i].snd.config.pause();
+                            // objs[i].snd.currentTime = 0;
+                            // objs[i].snd.play();
                         }
                         else objs[i].posX += 1 * objs[i].speed;
                     }
@@ -266,18 +302,18 @@ var grid = function() {
             //After moving, update all block positions
             for (var k = 0; k < objs.length; k++) {
                 //calculate new grid positions, floor handles blocks moving left and up
-                objs[k].gridX = Math.floor(objs[k].posX / blockSize);
-                objs[k].gridY = Math.floor(objs[k].posY / blockSize);
+                objs[k].gridX = Math.floor(objs[k].posX / config.blockSize);
+                objs[k].gridY = Math.floor(objs[k].posY / config.blockSize);
 
                 //if blocks are moving into a new block, move block reference 1 right or down if needed
-                if (objs[k].direction === "right" && (objs[k].posX / blockSize) % 1 !== 0)
+                if (objs[k].direction === "right" && (objs[k].posX / config.blockSize) % 1 !== 0)
                     objs[k].gridX++;            
-                if (objs[k].direction === "down" && (objs[k].posY / blockSize) % 1 !== 0)
+                if (objs[k].direction === "down" && (objs[k].posY / config.blockSize) % 1 !== 0)
                     objs[k].gridY++;
 
                 gridArray[objs[k].gridX][objs[k].gridY] = k;
 
-                if(syncounter === blockSize - speed && (objs[k].prevgridX !== objs[k].gridX || objs[k].prevgridY !== objs[k].gridY)){
+                if(syncounter === config.blockSize -config.speed && (objs[k].prevgridX !== objs[k].gridX || objs[k].prevgridY !== objs[k].gridY)){
                             //console.log("Block "+k+" : "+objs[k].prevgridX + ", "+objs[k].prevgridY+" xx " + objs[k].gridX + " sync "+syncounter);
                             gridArray[objs[k].prevgridX][objs[k].prevgridY] = -1;                      
                         }
@@ -285,23 +321,23 @@ var grid = function() {
             
             //log checks on block 0
             if(objs.length > 0){
-                //console.log(objs[0].gridX % blockSize);
+                //console.log(objs[0].gridX % config.blockSize);
                 //console.log("Block 0 direction: "+objs[0].direction+ " posY: "+objs[0].posY+" gridY: "+objs[0].gridY);
                 //console.log(objs[0].direction + " , "+objs[0].newDirection);
             }
 
-            syncounter += speed;
-            advance = -1;
+            syncounter +=config.speed;
+            config.advance = -1;
 
         }
         requestAnimationFrame(startSyncCounter);
     })();
 
     function addBlock(gridX,gridY){
-        objs[cnt] = new musicBlock(blockSize, blockSize, gridX * blockSize, gridY * blockSize, 0);
-        objs[cnt].createNode("block" + cnt).addBlock();
-        gridArray[gridX][gridY] = cnt;
-        cnt++;
+        objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0);
+        objs[config.cnt].createNode("block" + config.cnt).addBlock();
+        gridArray[gridX][gridY] = config.cnt;
+        config.cnt++;
     }
 
     //Mousedown listener tracks positions and resets selection to 0
@@ -362,7 +398,7 @@ var grid = function() {
         };
 
 
-        /*if (shiftkey === 0){
+        /*if (config.shiftkey === 0){
                 for(var q = 0; q < objs.length; q++)
                 {
                     objs[q].selected = false;
@@ -381,24 +417,24 @@ var grid = function() {
         var rightX = Math.max(mousedownX, e.pageX);
         var topY = Math.min(mousedownY, e.pageY);
         var bottomY = Math.max(mousedownY, e.pageY);
-        leftX = Math.floor(leftX / blockSize);
-        rightX = Math.ceil(rightX / blockSize);
-        topY = Math.floor(topY / blockSize);
-        bottomY = Math.ceil(bottomY / blockSize);
+        leftX = Math.floor(leftX / config.blockSize);
+        rightX = Math.ceil(rightX / config.blockSize);
+        topY = Math.floor(topY / config.blockSize);
+        bottomY = Math.ceil(bottomY / config.blockSize);
        
-        if (mode === "select"){
+        if (config.mode === "select"){
             if (mouselocation === "same" 
-                && (numSelected === 1 || shiftkey === 1)
+                && (config.numSelected === 1 || config.shiftkey === 1)
                 && gridArray[leftX][topY] !== -1 
                 && objs[gridArray[leftX][topY]].selected === true){
-                numSelected--;   
+                config.numSelected--;   
                 objs[gridArray[leftX][topY]].selected = false;
                 objs[gridArray[leftX][topY]].setStyle({
                     'background': objs[gridArray[leftX][topY]].notActive
                 }); 
             }
             else{
-                if (shiftkey === 0)
+                if (config.shiftkey === 0)
                 {
                     for(var q = 0; q < objs.length; q++)
                     {
@@ -415,7 +451,7 @@ var grid = function() {
                         && gridX >= leftX
                         && gridY < bottomY
                         && gridY >= topY){
-                            numSelected++;
+                            config.numSelected++;
                             objs[gridArray[gridX][gridY]].selected = true;
                             objs[gridArray[gridX][gridY]].setStyle({
                                 'background': objs[gridArray[gridX][gridY]].active
@@ -424,7 +460,7 @@ var grid = function() {
                 }
             }
         }
-        if (mode === "create"){            
+        if (config.mode === "create"){            
             for (var q = leftX; q < rightX; q++){
                 for (var r = topY; r < bottomY; r++){
                     if( gridArray[q][r] === -1){
@@ -442,8 +478,8 @@ var grid = function() {
     },false); 
 
     function compareMouse(e) {
-         if(Math.floor(mousedownX / blockSize) === Math.floor(e.pageX / blockSize) 
-            && Math.floor(mousedownY / blockSize) === Math.floor(e.pageY / blockSize)) {
+         if(Math.floor(mousedownX / config.blockSize) === Math.floor(e.pageX / config.blockSize) 
+            && Math.floor(mousedownY / config.blockSize) === Math.floor(e.pageY / config.blockSize)) {
             return "same";
         } else {
             return "different";
@@ -457,19 +493,19 @@ var advance = (function() {
     var pauseBtn = document.getElementById("pause");
     var advanceBtn = document.getElementById("advance");
 
-    pauseBtn.addEventListener("click", function() {
+        pauseBtn.addEventListener("click", function() {
         pauseBlock();
     });
-    advanceBtn.addEventListener("click", function() {
+        advanceBtn.addEventListener("click", function() {
         advanceBlock();
     });
 
     function pauseBlock() {
-        pause = pause * -1;
+        config.pause = config.pause * -1;
     }
 
     function advanceBlock() {
-        advance *= -1;
+        config.advance *= -1;
     }
 
 })();
@@ -485,7 +521,7 @@ var arrowClick = (function() {
         for (var i = 0; i < objs.length; i++) {
             if (objs[i].selected === true) {
                 objs[i].newDirection = direction;
-                objs[i].speed = speed;
+                objs[i].speed =config.speed;
             }
             /*objs[i].selected = false;
             objs[i].setStyle({
@@ -499,11 +535,11 @@ var arrowClick = (function() {
     window.addEventListener('keydown', function(event) {
         switch (event.keyCode) {
             case 16: // Shift
-                shiftkey = 1;
+                config.shiftkey = 1;
             break;
 
             case 32: // Space
-                pause = pause * -1;
+                config.pause = config.pause * -1;
             break;
 
             case 37: // Left
@@ -531,29 +567,29 @@ var arrowClick = (function() {
                             document.getElementById(objs[v].id).setAttribute("id","block"+v);                        
                             objs[v].id = "block"+v;
                         }
-                        for (var t = 0; t < gridSize; t++)
-                            for (var u = 0; u < gridSize; u++){
+                        for (var t = 0; t < config.gridSize; t++)
+                            for (var u = 0; u < config.gridSize; u++){
                                 if (gridArray[t][u] == s)
                                     gridArray[t][u] = -1;
                                 if (gridArray[t][u] >= s)
                                     gridArray[t][u]--;
                             }
-                        cnt--;
+                        config.cnt--;
                         s--;  
                     }
                 }
             break;
 
             case 65: // a
-                advance *= -1;
+                config.advance *= -1;
             break;
 
             case 68: // d
             console.log("D");
                 var out = "FULL GRID DUMPMONSTER";
-                for (var i = 0;i<gridSize; i++){
+                for (var i = 0;i<config.gridSize; i++){
                     out = out + "\n";
-                    for (var j = 0; j<gridSize;j++){
+                    for (var j = 0; j<config.gridSize;j++){
                         if((gridArray[j][i]+"").length === 1)
                             out = out + " ";
                         out = out + gridArray[j][i]+" ";
@@ -563,10 +599,10 @@ var arrowClick = (function() {
             break;
 
             case 77: // m
-                if (mode === "select")
-                    mode = "create";
+                if (config.mode === "select")
+                    config.mode = "create";
                 else
-                    mode = "select";
+                    config.mode = "select";
             break;
         }
     }, false);
@@ -575,7 +611,7 @@ var arrowClick = (function() {
     window.addEventListener('keyup', function(event) {
         switch (event.keyCode) {
             case 16: //Shift
-                shiftkey = 0;
+                config.shiftkey = 0;
             break;
         }
     }, false);
@@ -605,7 +641,7 @@ var arrowClick = (function() {
 
 var makeGrid = (function() {
 
-    for (var i = 0; i < gridSize; i++) {
+    for (var i = 0; i < config.gridSize; i++) {
         var section = document.getElementById("gridHorizontal");
         var section2 = document.getElementById("gridVertical");
         var node = document.createElement("LI");
@@ -615,7 +651,7 @@ var makeGrid = (function() {
 
         ////create empty grid array
         gridArray.push([]);
-        for (var j = 0; j < gridSize; j++) {
+        for (var j = 0; j < config.gridSize; j++) {
             gridArray[i][j] = -1;
         }
     }
