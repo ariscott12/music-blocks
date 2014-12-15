@@ -35,7 +35,13 @@ function musicBlock(w, h, x, y, s) {
     this.notActive = "#DBA65C";
     this.halfpoint = -1;
     this.snd = new Audio("tiletap.wav");
+    this.note = 75;
+    this.velocity = 100;
+    this.delay = 0;
+    this.volume = 100;
 }
+
+
 
 function processCollision(direction, gridX, gridY) {
     if (direction === "up"){
@@ -122,32 +128,68 @@ musicBlock.prototype.addBlock = function() {
     });
 };
 
+
+//LOAD MIDI SOUNDFONTS
 window.onload = function () {
     MIDI.loadPlugin({
        soundfontUrl: "./soundfont/",
-        //instruments: [ "tinkle_bell", "synth_drum" ],
-        instrument: "synth_drum",
+        instruments: [ "acoustic_grand_piano" ],
+       // instrument: "synth_drum",
         callback: function() {
-           // MIDI.programChange(0, 0);
-            MIDI.programChange(0, 118);
-            console.log("loaded");
+            MIDI.programChange(1, 112);
+            MIDI.programChange(0, 0);
+           // console.log("loaded");
         }
     });
 };
-
-function playnote() {
-            var delay = 0; // play one note every quarter second
-            
-            //  var note = Math.floor(Math.random()*50)+50; // the MIDI note
-            var note = 35;
-
-            //console.log(note);
-            var velocity = 127; // how hard the note hits
-            // play the note
-            MIDI.setVolume(0, 127);
-            MIDI.noteOn(0, note, velocity, delay);
-            MIDI.noteOff(0, note, delay + 1);
+var setnote = document.getElementById("setnote");
+var setvolume = document.getElementById("setvolume");
+setnote.addEventListener("click",function(e){
+    var note = document.getElementById("midinote").value;
+    selectNote(note);
+});
+setvolume.addEventListener("click",function(e){
+    var volume = document.getElementById("midivolume").value;
+    selectVolume(volume);
+});
+function selectNote(note) {
+    for (var i = 0; i < objs.length; i++) {
+        if (objs[i].selected === true) {
+            objs[i].note = note;
+        }
     }
+}
+function selectVolume(volume) {
+    for (var i = 0; i < objs.length; i++) {
+        if (objs[i].selected === true) {
+            objs[i].volume = volume;
+        }
+    }
+}
+
+function playSound(obj, type) {
+    musicBlock.prototype.playmidi = function() {
+        var delay = 0; // play one note every quarter second
+        var note = this.note;
+        var velocity = this.velocity;
+        var volume = this.volume;
+
+        MIDI.setVolume(0, volume);
+        MIDI.noteOn(0, note, velocity, delay);
+        MIDI.noteOff(0, note, delay + 1);
+    };
+    musicBlock.prototype.playwav = function() {
+        this.snd.pause();
+        this.snd.currentTime = 0;
+        this.snd.play();
+    };
+    if(type == "midi") {
+        obj.playmidi();
+    }
+    if (type == "wav") {
+        obj.playwav();
+    }
+}
 
 
 var grid = function() {
@@ -187,14 +229,11 @@ var grid = function() {
                     //second collision check if object changed direction
                     for (var o = 0; o < objs.length; o++){
                         if(objs[o].oldDirection !== objs[o].direction){
-                            // objs[o].snd.config.pause();
-                            // objs[o].snd.currentTime = 0;
-                            // objs[o].snd.play();
                             var dir = processCollision(objs[o].direction, objs[o].gridX, objs[o].gridY);
                             if(dir !== objs[o].direction)
                                 objs[o].direction = objs[o].newDirection =  "none";   
-                                //document.getElementById('audiotag').play();    
-                                playnote();                                                                                 
+                                playSound(objs[o], "midi");        
+                              // playNote();                                                                    
                         }
                     }
                     
@@ -243,10 +282,8 @@ var grid = function() {
                             objs[i].direction = objs[i].newDirection = "down";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridY = objs[i].gridY;
-                             playnote();  
-                            // objs[i].snd.config.pause();
-                            // objs[i].snd.currentTime = 0;
-                            // objs[i].snd.play();
+                            playSound(objs[i], "midi");    
+                            
                         }
                         else objs[i].posY += -1 * objs[i].speed;
                     }
@@ -258,10 +295,8 @@ var grid = function() {
                             objs[i].direction = objs[i].newDirection = "up";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridY = objs[i].gridY;
-                             playnote();  
-                            // objs[i].snd.config.pause();
-                            // objs[i].snd.currentTime = 0;
-                            // objs[i].snd.play();
+                            playSound(objs[i], "midi");    
+                            
                         }
                         else objs[i].posY += 1 * objs[i].speed;
                     }
@@ -273,10 +308,8 @@ var grid = function() {
                             objs[i].direction = objs[i].newDirection = "right";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridX = objs[i].gridX;
-                             playnote();  
-                            // objs[i].snd.config.pause();
-                            // objs[i].snd.currentTime = 0;
-                            // objs[i].snd.play();
+                            playSound(objs[i], "midi");    
+                            
                         }
                         else objs[i].posX += -1 * objs[i].speed;
                     }
@@ -288,10 +321,8 @@ var grid = function() {
                             objs[i].direction = objs[i].newDirection = "left";
                             objs[i].halfpoint = -1;
                             objs[i].prevgridX = objs[i].gridX;
-                             playnote();  
-                            // objs[i].snd.config.pause();
-                            // objs[i].snd.currentTime = 0;
-                            // objs[i].snd.play();
+                            playSound(objs[i], "midi");    
+                            
                         }
                         else objs[i].posX += 1 * objs[i].speed;
                     }
@@ -631,9 +662,6 @@ var arrowClick = (function() {
     stopArrow.addEventListener("click", function() {
         animateBlock("none");
     });
-
-
-
 
 })();
 

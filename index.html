@@ -7,8 +7,15 @@
         <link rel="stylesheet" href="main.css">
 
         <title>Untitled</title>
-       
         <link rel="author" href="humans.txt">
+         <script src="./js/MIDI/AudioDetect.js" type="text/javascript"></script>
+         <script src="./js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+         <script src="./js/MIDI/Plugin.js" type="text/javascript"></script>
+         <script src="./js/MIDI/Player.js" type="text/javascript"></script>
+         <script src="./js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+         <!-- extras -->
+         <script src="./inc/Base64.js" type="text/javascript"></script>
+         <script src="./inc/base64binary.js" type="text/javascript"></script>
     </head>
     <body>
 
@@ -30,10 +37,13 @@
                 <li id = "pause">Pause</li>
                 <li id = "advance">Advance</li>
             </ul>
+        
 
-            <audio id="audiotag" src="Acoustic Hat-01.wav" preload="auto"></audio>
-             <audio id="audiotag2" src="Acoustic Hat-02.wav" preload="auto"></audio>
-               <audio id="audiotag3" src="Acoustic Hat-04.wav" preload="auto"></audio>
+          note: <input id = "midinote" type="text" name="note">
+           <input id = "setnote" type="submit" value="Set Note">
+
+           volume: <input id = "midivolume" type="text" name="volume">
+           <input id = "setvolume" type="submit" value="Set Volume">
         <script src="main.js"></script>
     </body>
 </html>
