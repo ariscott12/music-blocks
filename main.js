@@ -10,6 +10,13 @@ var config = {
    cnt: 0
 };
 
+var elements = {
+    section: document.getElementById("main"),
+    node: document.createElement("LI"),
+    setnote: document.getElementById("setnote"),
+    setvolume: document.getElementById("setvolume"),
+    setinstrument: document.getElementById("setinstrument")
+};
 var gridArray = new Array([]);
 var objs = [];
 
@@ -39,6 +46,7 @@ function musicBlock(w, h, x, y, s) {
     this.velocity = 100;
     this.delay = 0;
     this.volume = 100;
+    this.program = 0;
 }
 
 
@@ -132,26 +140,32 @@ musicBlock.prototype.addBlock = function() {
 //LOAD MIDI SOUNDFONTS
 window.onload = function () {
     MIDI.loadPlugin({
-       soundfontUrl: "./soundfont/",
-        instruments: [ "acoustic_grand_piano" ],
-       // instrument: "synth_drum",
+        soundfontUrl: "./soundfont/",
+        instruments: [ "acoustic_grand_piano", "steel_drums", "tinkle_bell" ],
         callback: function() {
-            MIDI.programChange(1, 112);
             MIDI.programChange(0, 0);
-           // console.log("loaded");
+            MIDI.programChange(1, 114);
+            MIDI.programChange(2, 112);
+            console.log("loaded");
         }
     });
 };
-var setnote = document.getElementById("setnote");
-var setvolume = document.getElementById("setvolume");
-setnote.addEventListener("click",function(e){
+
+
+elements.setnote.addEventListener("click",function(e){
     var note = document.getElementById("midinote").value;
     selectNote(note);
 });
-setvolume.addEventListener("click",function(e){
+elements.setvolume.addEventListener("click",function(e){
     var volume = document.getElementById("midivolume").value;
     selectVolume(volume);
 });
+elements.setinstrument.addEventListener("click",function(e){
+    var volume = document.getElementById("midiinstrument").value;
+    selectInstrument(volume);
+});
+
+
 function selectNote(note) {
     for (var i = 0; i < objs.length; i++) {
         if (objs[i].selected === true) {
@@ -166,6 +180,13 @@ function selectVolume(volume) {
         }
     }
 }
+function selectInstrument(program) {
+    for (var i = 0; i < objs.length; i++) {
+        if (objs[i].selected === true) {
+            objs[i].program = program;
+        }
+    }
+}
 
 function playSound(obj, type) {
     musicBlock.prototype.playmidi = function() {
@@ -175,8 +196,8 @@ function playSound(obj, type) {
         var volume = this.volume;
 
         MIDI.setVolume(0, volume);
-        MIDI.noteOn(0, note, velocity, delay);
-        MIDI.noteOff(0, note, delay + 1);
+        MIDI.noteOn(this.program, note, velocity, delay);
+        MIDI.noteOff(this.program, note, delay + 1);
     };
     musicBlock.prototype.playwav = function() {
         this.snd.pause();
