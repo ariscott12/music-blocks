@@ -100,5 +100,6 @@ body {
     border: 1px solid #000;
     position: absolute;
     background:rgba(229,25,128,.7);
+    z-index: 999;
 }
 
