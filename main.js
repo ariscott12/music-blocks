@@ -259,7 +259,6 @@ function playSound(obj, type) {
 
 var grid = function() {
     //var section = document.getElementById("main");
-    var dragbox;
     var mousedownX = -1;
     var mousedownY = -1;
     var running = true;
@@ -439,13 +438,6 @@ var grid = function() {
                         }
             }
             
-            //log checks on block 0
-            if(objs.length > 0){
-                //console.log(objs[0].gridX % config.blockSize);
-                //console.log("Block 0 direction: "+objs[0].direction+ " posY: "+objs[0].posY+" gridY: "+objs[0].gridY);
-                //console.log(objs[0].direction + " , "+objs[0].newDirection);
-            }
-
             syncounter +=config.speed;
             config.advance = -1;
 
@@ -481,11 +473,11 @@ var grid = function() {
         selectBlock(blocknum);        
     }
 
-
     //Mousedown listener tracks positions and resets selection to 0
     elements.section.addEventListener("mousedown",function(e){
         e = e || window.event;
-        //var mouselocation = compareMouse(e);
+        var mouselocation = compareMouse(e);
+        var dragbox;
         if(config.mode === "select"){
             dragbox = document.createElement("div");
             dragbox.id = "dragbox";
@@ -509,7 +501,7 @@ var grid = function() {
      
         function mousemover(e) {
             e = e || window.event;
-            var mouselocation = compareMouse(e);
+            mouselocation = compareMouse(e);
             if(mouselocation == "different") {
                 if(config.mode == "create"){
                     var gridX = Math.floor(e.pageX/config.blockSize);
@@ -536,117 +528,105 @@ var grid = function() {
             }            
         }
 
-        window.addEventListener("mouseup",function(e){
-            //alert("test")
+        window.addEventListener("mouseup",mouseup,false);
+
+        // Compares mouseup locationw with mousedown, calls old click function if same, drag select if not
+        function mouseup(e){
+            var leftX = Math.min(mousedownX, e.pageX);
+            var rightX = Math.max(mousedownX, e.pageX);
+            var topY = Math.min(mousedownY, e.pageY);
+            var bottomY = Math.max(mousedownY, e.pageY);
+
+            leftX = Math.floor(leftX / config.blockSize);
+            rightX = Math.ceil(rightX / config.blockSize);
+            topY = Math.floor(topY / config.blockSize);
+            bottomY = Math.ceil(bottomY / config.blockSize);        
+
+            var blockref = gridArray[leftX][topY];
+
             elements.section.removeEventListener("mousemove", mousemover);
-        });
+            e = e || window.event;
+            mouselocation = compareMouse(e);
 
-
-       function setStyles(propertyObject) {
-            var elem = document.getElementById("dragbox");
-            for (var property in propertyObject)
-                elem.style[property] = propertyObject[property];
-            };
-
-
-        /*if (config.shiftkey === 0){
-                for(var q = 0; q < objs.length; q++)
-                {
-                    objs[q].selected = false;
-                    objs[q].setStyle({
-                        'background': objs[q].notActive
-                    });  
-                }
-            }*/
-
-    },false);
-
-   // Compares mouseup locationw with mousedown, calls old click function if same, drag select if not
-    window.addEventListener("mouseup",function(e){
-        e = e || window.event;
-        var mouselocation = compareMouse(e);
-        var leftX = Math.min(mousedownX, e.pageX);
-        var rightX = Math.max(mousedownX, e.pageX);
-        var topY = Math.min(mousedownY, e.pageY);
-        var bottomY = Math.max(mousedownY, e.pageY);
-        leftX = Math.floor(leftX / config.blockSize);
-        rightX = Math.ceil(rightX / config.blockSize);
-        topY = Math.floor(topY / config.blockSize);
-        bottomY = Math.ceil(bottomY / config.blockSize);        
-
-
-        //Reference of the block at the current location
-        var blockref = gridArray[leftX][topY];
-
-        
-        //Check mouse click for single click
-        if (mouselocation === "same"){
-            //Check if block exists
-            if (blockref != -1){
-                //Check if block is not selected
-                if (objs[blockref].selected === false){
-                    //Check if shift is off
-                    if(config.shiftkey === 0){
-                        selectNewSingle(blockref);
-                    }
-                    //Shift is on
-                    else{
-                        selectBlock(blockref);
-                    }
-                }
-                //Block is selected
-                else {
-                    //Check for multiple blocks selected
-                    if(config.numSelected > 1 && config.shiftkey === 0){
-                        selectNewSingle(blockref);
-                    }
-                    //Block is only one selected or shift is pressed
-                    else{
-                        deselectBlock(blockref);
-                    }
-                }
-            }
-            //Clicked square is empty
-            else if (config.mode === "create"){
-                addBlock(leftX,topY);
-            }
-        }
-
-        //Mouse button was dragged to other squares
-        else {
-            //Handle select mode
+            //Check for select mode to remove dragbox
             if (config.mode === "select"){
                 elements.section.removeChild(dragbox);
-                //Check for shift key off
-                if (config.shiftkey === 0)
-                {
-                    //If shift is off, deselect all blocks currently selected
-                    for(var q = 0; q < objs.length; q++)
-                    {
-                        deselectBlock(q); 
+            }
+
+            //Check mouse click for single click
+            if (mouselocation === "same"){
+                //Check if block exists
+                if (blockref != -1){
+                    //Check if block is not selected
+                    if (objs[blockref].selected === false){
+                        //Check if shift is off
+                        if(config.shiftkey === 0){
+                            selectNewSingle(blockref);
+                        }
+                        //Shift is on
+                        else{
+                            selectBlock(blockref);
+                        }
+                    }
+                    //Block is selected
+                    else {
+                        //Check for multiple blocks selected
+                        if(config.numSelected > 1 && config.shiftkey === 0){
+                            selectNewSingle(blockref);
+                        }
+                        //Block is only one selected or shift is pressed
+                        else{
+                            deselectBlock(blockref);
+                        }
                     }
                 }
-                //Select all blocks in the dragbox
-                for (var p = 0; p < objs.length; p++){
-                    var gridX = objs[p].gridX;
-                    var gridY = objs[p].gridY;
-                    if (gridX < rightX 
-                        && gridX >= leftX
-                        && gridY < bottomY
-                        && gridY >= topY){
-                            selectBlock(p);
-                    }
+                //Clicked square is empty
+                else if (config.mode === "create"){
+                    addBlock(leftX,topY);
                 }
             }
-        }
-        
-        //remove dragBox;
-        //section.removeChild(dragbox);
-      
-        config.newblock = -1;
-        mousedownX = -1;
-        mousedownY = -1;
-    },false); 
+
+            //Mouse button was dragged to other squares
+            else {
+              //Handle select mode
+              if (config.mode === "select"){                  
+                  //Check for shift key off
+                  if (config.shiftkey === 0)
+                  {
+                      //If shift is off, deselect all blocks currently selected
+                      for(var q = 0; q < objs.length; q++)
+                      {
+                          deselectBlock(q); 
+                      }
+                  }
+                  //Select all blocks in the dragbox
+                  for (var p = 0; p < objs.length; p++){
+                      var gridX = objs[p].gridX;
+                      var gridY = objs[p].gridY;
+                      if (gridX < rightX 
+                          && gridX >= leftX
+                          && gridY < bottomY
+                          && gridY >= topY){
+                              selectBlock(p);
+                      }
+                  }
+              }
+            }
+              
+                config.newblock = -1;
+                mousedownX = -1;
+                mousedownY = -1;
+                window.removeEventListener("mouseup", mouseup);
+            }
+
+
+           function setStyles(propertyObject) {
+                var elem = document.getElementById("dragbox");
+                for (var property in propertyObject){
+                    elem.style[property] = propertyObject[property];
+                }
+            };
+        },false);
 
     function compareMouse(e) {
          if(Math.floor(mousedownX / config.blockSize) === Math.floor(e.pageX / config.blockSize) 
@@ -656,8 +636,6 @@ var grid = function() {
             return "different";
         }
     }   
-
-    
 }();
 
 function selectAllBlocks(){
