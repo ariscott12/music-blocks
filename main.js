@@ -10,7 +10,6 @@ var config = {
    cnt: 0,
    newblock: -1
 };
-
 var elements = {
     section: document.getElementById("main"),
     node: document.createElement("LI"),
@@ -28,6 +27,7 @@ function musicBlock(w, h, x, y, s) {
     this.posX = x;
     this.posY = y;
     this.id = "";
+    this.blocknum = 0;
     this.oldDirection = "none";
     this.newDirection = "none";
     this.direction = "none";
@@ -43,7 +43,7 @@ function musicBlock(w, h, x, y, s) {
     this.notActive = "#DBA65C";
     this.halfpoint = -1;
     //this.snd = new Audio("tiletap.wav");
-    this.snd = null
+    this.snd = null;
     this.note = 75;
     this.velocity = 100;
     this.delay = 0;
@@ -53,44 +53,125 @@ function musicBlock(w, h, x, y, s) {
     this.numCollisions = 0;
 }
 
+musicBlock.prototype.setStyle = function(propertyObject) {
+    var elem = document.getElementById(this.id);
+    for (var property in propertyObject)
+        elem.style[property] = propertyObject[property];
+};
+
+musicBlock.prototype.createNode = function(el) {
+   // var section = document.getElementById("main");
+    var node = document.createElement("LI");
+    node.setAttribute("class", "block");
+    elements.section.appendChild(node);
+    this.id = "block" + el;
+    this.blocknum = el;
+    node.setAttribute("id", this.id);
+    return this;
+};
+musicBlock.prototype.addBlock = function() {
+    this.setStyle({
+        'top': this.posY + "px",
+        'left': this.posX + "px",
+        'width': this.width + "px",
+        'height': this.height + "px"
+    });
+     console.log(this.blocknum);
+};
+musicBlock.prototype.removeNode = function() {
+    var node = document.getElementById(this.id);
+    elements.section.removeChild(node);
+    node.remove();
+};
+musicBlock.prototype.selectBlock = function() {
+    //ONLY SELECT A BLOCK IF IT IS NOT SELECTED
+    if(this.selected !== true && config.newblock !== this.blocknum){
+        this.selected = true;
+        this.setStyle({
+            'background': this.active
+        });
+        config.numSelected++;
+    }
+};
+
 function removeBlock(blockref){
-    removeNode(objs[blockref].id);
+    //alert(objs[blockref].id);
+    objs[blockref].removeNode();
     objs.splice(blockref,1);
-    for (var v = blockref; v < objs.length;v++){
-        document.getElementById(objs[v].id).setAttribute("id","block"+v);                        
+    for (var v = blockref; v < objs.length; v++){
+        document.getElementById(objs[v].id).setAttribute("id","block"+v);
         objs[v].id = "block"+v;
     }
-    for (var t = 0; t < config.gridSize; t++)
+    for (var t = 0; t < config.gridSize; t++) {
         for (var u = 0; u < config.gridSize; u++){
             if (gridArray[t][u] == blockref)
                 gridArray[t][u] = -1;
             if (gridArray[t][u] >= blockref)
                 gridArray[t][u]--;
         }
+    }
     config.cnt--;
 }
 
-function selectBlock(blocknum){
-    //Only select a block if it is not selected
-    if(objs[blocknum].selected !== true && config.newblock !== blocknum){
-        objs[blocknum].selected = true;
+// function selectBlock(blocknum){
+//     //Only select a block if it is not selected
+//     console.log(blocknum);
+//     if(objs[blocknum].selected !== true && config.newblock !== blocknum){
+//         objs[blocknum].selected = true;
+//         objs[blocknum].setStyle({
+//             'background': objs[blocknum].active
+//         });
+//         config.numSelected++;
+//     }
+// }
+
+
+function addBlock(gridX,gridY){
+    if (gridArray[gridX][gridY] === -1){
+        objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0);
+        objs[config.cnt].createNode(config.cnt).addBlock();
+        gridArray[gridX][gridY] = config.cnt;
+        config.newblock = config.cnt;
+        config.cnt++;
+    }
+
+}
+
+function deselectBlock(blocknum) {
+    //Only deselect block if it is already selected
+    if(objs[blocknum].selected === true) {
+        objs[blocknum].selected = false;
         objs[blocknum].setStyle({
-            'background': objs[blocknum].active
+            'background': objs[blocknum].notActive
         });
-        config.numSelected++;
+        config.numSelected--;
     }
 }
+function selectNewSingle(blocknum){
+    for (var i = 0; i < objs.length; i++){
+        deselectBlock(i);
+    }
+    objs[blocknum].selectBlock();
+}
+// function  (){
+//     for (var i = 0; i<objs.length; i++){
+//         objs[i].selectBlock();
+//     }
+// }
+
+
+
 
 function processCollision(direction, gridX, gridY, blockref) {
     if (direction === "up"){
-        if (gridY === 0 
+        if (gridY === 0
             || gridArray[gridX][gridY - 1] !== -1
             || (gridX !== 0 && gridArray[gridX - 1][gridY - 1] !== -1
                 && objs[gridArray[gridX - 1][gridY - 1]].waiting === false
                 && objs[gridArray[gridX - 1][gridY - 1]].oldDirection === "right")
             || (gridX !== config.gridSize - 1 && gridArray[gridX + 1][gridY - 1] !== -1
                 && objs[gridArray[gridX + 1][gridY - 1]].waiting === false
-                && objs[gridArray[gridX + 1][gridY - 1]].oldDirection === "left")){
+                && objs[gridArray[gridX + 1][gridY - 1]].oldDirection === "left")) {
                     objs[blockref].numCollisions++;
                     return "down";                
             }
@@ -137,6 +218,8 @@ function processCollision(direction, gridX, gridY, blockref) {
     return direction;        
 }
 
+
+////ANIMATE MUSIC BLOCKS WHEN SET IN MOTION
 function updateStyle(blockNum, direction) {
     if(direction === "up" || direction === "down"){
         objs[blockNum].setStyle({
@@ -150,35 +233,6 @@ function updateStyle(blockNum, direction) {
     }
 }
 
-musicBlock.prototype.setStyle = function(propertyObject) {
-    var elem = document.getElementById(this.id);
-    for (var property in propertyObject)
-        elem.style[property] = propertyObject[property];
-};
-
-musicBlock.prototype.createNode = function(el) {
-   // var section = document.getElementById("main");
-    var node = document.createElement("LI");
-    node.setAttribute("class", "block");
-    elements.section.appendChild(node);
-    this.id = el;
-    node.setAttribute("id", this.id);
-    return this;
-};
-musicBlock.prototype.addBlock = function() {
-    this.setStyle({
-        'top': this.posY + "px",
-        'left': this.posX + "px",
-        'width': this.width + "px",
-        'height': this.height + "px"
-    });
-};
-function removeNode(el) {
-   // var section = document.getElementById("main");
-    var node = document.getElementById(el);
-    elements.section.removeChild(node);
-    node.remove();
-}
 
 
 //LOAD MIDI SOUNDFONTS
@@ -445,33 +499,7 @@ var grid = function() {
         requestAnimationFrame(startSyncCounter);
     })();
 
-    function addBlock(gridX,gridY){
-        if(gridArray[gridX][gridY] === -1){
-            objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0);
-            objs[config.cnt].createNode("block" + config.cnt).addBlock();
-            gridArray[gridX][gridY] = config.cnt;
-            config.newblock = config.cnt;
-            config.cnt++;
-        }
-    }
-
-    function deselectBlock(blocknum)
-    {
-        //Only deselect block if it is already selected
-        if(objs[blocknum].selected === true){
-            objs[blocknum].selected = false;
-            objs[blocknum].setStyle({
-                'background': objs[blocknum].notActive
-            }); 
-            config.numSelected--;
-        }
-    }
-    function selectNewSingle(blocknum){
-        for (var i = 0; i < objs.length; i++){
-            deselectBlock(i);
-        }
-        selectBlock(blocknum);        
-    }
+   
 
     //Mousedown listener tracks positions and resets selection to 0
     elements.section.addEventListener("mousedown",function(e){
@@ -508,7 +536,7 @@ var grid = function() {
                     var gridY = Math.floor(e.pageY/config.blockSize);
                     addBlock(gridX,gridY);
                 }
-                else{
+                else {
                     var move_x = e.pageX,
                         move_y = e.pageY,
                         width  = Math.abs(move_x - mousedownX),
@@ -543,6 +571,7 @@ var grid = function() {
             bottomY = Math.ceil(bottomY / config.blockSize);        
 
             var blockref = gridArray[leftX][topY];
+            //console.log(blockref);
 
             elements.section.removeEventListener("mousemove", mousemover);
             e = e || window.event;
@@ -565,7 +594,7 @@ var grid = function() {
                         }
                         //Shift is on
                         else{
-                            selectBlock(blockref);
+                            objs[blockref].selectBlock();
                         }
                     }
                     //Block is selected
@@ -607,7 +636,7 @@ var grid = function() {
                           && gridX >= leftX
                           && gridY < bottomY
                           && gridY >= topY){
-                              selectBlock(p);
+                              objs[p].selectBlock();
                       }
                   }
               }
@@ -638,11 +667,6 @@ var grid = function() {
     }   
 }();
 
-function selectAllBlocks(){
-    for (var i = 0; i<objs.length; i++){
-        selectBlock(i);
-    }
-}
 
 var advance = (function() {
     var pauseBtn = document.getElementById("pause");
@@ -664,7 +688,8 @@ var advance = (function() {
     });
     selectAllBtn.addEventListener("click", function() {
         for (var i = 0; i<objs.length;i++){
-            selectBlock(i);
+            console.log(i);
+            objs[i].selectBlock();
         }
     });
 
@@ -726,7 +751,7 @@ var arrowClick = (function() {
                 animateBlock("down");
             break;
 
-            case 46: // Del
+            case 49: // Del
                 for (var s = 0; s < objs.length; s++){
                     if(objs[s].selected === true){
                         removeBlock(s);
