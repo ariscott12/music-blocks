@@ -93,25 +93,45 @@ musicBlock.prototype.selectBlock = function() {
         config.numSelected++;
     }
 };
-
-function removeBlock(blockref){
+musicBlock.prototype.removeBlock = function() {
     //alert(objs[blockref].id);
-    objs[blockref].removeNode();
-    objs.splice(blockref,1);
-    for (var v = blockref; v < objs.length; v++){
+    this.removeNode();
+    objs.splice(this.blocknum,1);
+    for (var v = this.blocknum; v < objs.length; v++){
         document.getElementById(objs[v].id).setAttribute("id","block"+v);
         objs[v].id = "block"+v;
+        objs[v].blocknum = v;
     }
     for (var t = 0; t < config.gridSize; t++) {
         for (var u = 0; u < config.gridSize; u++){
-            if (gridArray[t][u] == blockref)
+            if (gridArray[t][u] == this.blocknum)
                 gridArray[t][u] = -1;
-            if (gridArray[t][u] >= blockref)
+            if (gridArray[t][u] >= this.blocknum)
                 gridArray[t][u]--;
         }
     }
     config.cnt--;
-}
+};
+
+// function removeBlock(blockref){
+//     //alert(objs[blockref].id);
+//   //  console.log(blockref)
+//     objs[blockref].removeNode();
+//     objs.splice(blockref,1);
+//     for (var v = blockref; v < objs.length; v++){
+//         document.getElementById(objs[v].id).setAttribute("id","block"+v);
+//         objs[v].id = "block"+v;
+//     }
+//     for (var t = 0; t < config.gridSize; t++) {
+//         for (var u = 0; u < config.gridSize; u++){
+//             if (gridArray[t][u] == blockref)
+//                 gridArray[t][u] = -1;
+//             if (gridArray[t][u] >= blockref)
+//                 gridArray[t][u]--;
+//         }
+//     }
+//     config.cnt--;
+// }
 
 // function selectBlock(blocknum){
 //     //Only select a block if it is not selected
@@ -682,7 +702,7 @@ var advance = (function() {
     });
     clearBtn.addEventListener("click", function() {
         for (var i = 0; i<objs.length; i++){
-            removeBlock(i);
+            objs[i].removeBlock();
             i--;
         }
     });
@@ -754,7 +774,7 @@ var arrowClick = (function() {
             case 49: // Del
                 for (var s = 0; s < objs.length; s++){
                     if(objs[s].selected === true){
-                        removeBlock(s);
+                        objs[s].removeBlock();
                         s--;  
                     }
                 }
