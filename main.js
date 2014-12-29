@@ -60,7 +60,6 @@ musicBlock.prototype.setStyle = function(propertyObject) {
 };
 
 musicBlock.prototype.createNode = function(el) {
-   // var section = document.getElementById("main");
     var node = document.createElement("LI");
     node.setAttribute("class", "block");
     elements.section.appendChild(node);
@@ -93,8 +92,17 @@ musicBlock.prototype.selectBlock = function() {
         config.numSelected++;
     }
 };
+musicBlock.prototype.deselectBlock = function() {
+   //Only deselect block if it is already selected
+    if(this.selected === true) {
+        this.selected = false;
+        this.setStyle({
+            'background': this.notActive
+        });
+        config.numSelected--;
+    }
+};
 musicBlock.prototype.removeBlock = function() {
-    //alert(objs[blockref].id);
     this.removeNode();
     objs.splice(this.blocknum,1);
     for (var v = this.blocknum; v < objs.length; v++){
@@ -112,38 +120,12 @@ musicBlock.prototype.removeBlock = function() {
     }
     config.cnt--;
 };
-
-// function removeBlock(blockref){
-//     //alert(objs[blockref].id);
-//   //  console.log(blockref)
-//     objs[blockref].removeNode();
-//     objs.splice(blockref,1);
-//     for (var v = blockref; v < objs.length; v++){
-//         document.getElementById(objs[v].id).setAttribute("id","block"+v);
-//         objs[v].id = "block"+v;
-//     }
-//     for (var t = 0; t < config.gridSize; t++) {
-//         for (var u = 0; u < config.gridSize; u++){
-//             if (gridArray[t][u] == blockref)
-//                 gridArray[t][u] = -1;
-//             if (gridArray[t][u] >= blockref)
-//                 gridArray[t][u]--;
-//         }
-//     }
-//     config.cnt--;
-// }
-
-// function selectBlock(blocknum){
-//     //Only select a block if it is not selected
-//     console.log(blocknum);
-//     if(objs[blocknum].selected !== true && config.newblock !== blocknum){
-//         objs[blocknum].selected = true;
-//         objs[blocknum].setStyle({
-//             'background': objs[blocknum].active
-//         });
-//         config.numSelected++;
-//     }
-// }
+function selectNewSingle(blocknum){
+    for (var i = 0; i < objs.length; i++){
+        objs[i].deselectBlock();
+    }
+    objs[blocknum].selectBlock();
+}
 
 
 function addBlock(gridX,gridY){
@@ -157,27 +139,18 @@ function addBlock(gridX,gridY){
 
 }
 
-function deselectBlock(blocknum) {
-    //Only deselect block if it is already selected
-    if(objs[blocknum].selected === true) {
-        objs[blocknum].selected = false;
-        objs[blocknum].setStyle({
-            'background': objs[blocknum].notActive
+function updateStyle(blockNum, direction) {
+    if(direction === "up" || direction === "down"){
+        objs[blockNum].setStyle({
+            'top': objs[blockNum].posY + "px"
         });
-        config.numSelected--;
+    }
+    else{
+        objs[blockNum].setStyle({
+            'left': objs[blockNum].posX + "px"
+        });
     }
 }
-function selectNewSingle(blocknum){
-    for (var i = 0; i < objs.length; i++){
-        deselectBlock(i);
-    }
-    objs[blocknum].selectBlock();
-}
-// function  (){
-//     for (var i = 0; i<objs.length; i++){
-//         objs[i].selectBlock();
-//     }
-// }
 
 
 
@@ -238,20 +211,6 @@ function processCollision(direction, gridX, gridY, blockref) {
     return direction;        
 }
 
-
-////ANIMATE MUSIC BLOCKS WHEN SET IN MOTION
-function updateStyle(blockNum, direction) {
-    if(direction === "up" || direction === "down"){
-        objs[blockNum].setStyle({
-            'top': objs[blockNum].posY + "px"
-        });
-    }
-    else{
-        objs[blockNum].setStyle({
-            'left': objs[blockNum].posX + "px"
-        });
-    }
-}
 
 
 
@@ -625,7 +584,7 @@ var grid = function() {
                         }
                         //Block is only one selected or shift is pressed
                         else{
-                            deselectBlock(blockref);
+                            objs[blockref].deselectBlock();
                         }
                     }
                 }
@@ -645,7 +604,7 @@ var grid = function() {
                       //If shift is off, deselect all blocks currently selected
                       for(var q = 0; q < objs.length; q++)
                       {
-                          deselectBlock(q); 
+                          objs[q].deselectBlock(); 
                       }
                   }
                   //Select all blocks in the dragbox
