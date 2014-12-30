@@ -21,6 +21,25 @@ var gridArray = new Array([]);
 var objs = [];
 
 
+///Make the grid
+var makeGrid = (function() {
+    for (var i = 0; i < config.gridSize; i++) {
+        var section = document.getElementById("gridHorizontal");
+        var section2 = document.getElementById("gridVertical");
+        var node = document.createElement("LI");
+        var node2 = document.createElement("LI");
+        section.appendChild(node);
+        section2.appendChild(node2);
+
+        ////create empty grid array
+        gridArray.push([]);
+        for (var j = 0; j < config.gridSize; j++) {
+            gridArray[i][j] = -1;
+        }
+    }
+})();
+
+//////MUSIC BLOCK OBJECT AND PROTOTYPE FUNCTIONS//////
 function musicBlock(w, h, x, y, s) {
     this.width = w;
     this.height = h;
@@ -68,6 +87,7 @@ musicBlock.prototype.createNode = function(el) {
     node.setAttribute("id", this.id);
     return this;
 };
+
 musicBlock.prototype.addBlock = function() {
     this.setStyle({
         'top': this.posY + "px",
@@ -77,11 +97,13 @@ musicBlock.prototype.addBlock = function() {
     });
      console.log(this.blocknum);
 };
+
 musicBlock.prototype.removeNode = function() {
     var node = document.getElementById(this.id);
     elements.section.removeChild(node);
     node.remove();
 };
+
 musicBlock.prototype.selectBlock = function() {
     //ONLY SELECT A BLOCK IF IT IS NOT SELECTED
     if(this.selected !== true && config.newblock !== this.blocknum){
@@ -92,6 +114,7 @@ musicBlock.prototype.selectBlock = function() {
         config.numSelected++;
     }
 };
+
 musicBlock.prototype.deselectBlock = function() {
    //Only deselect block if it is already selected
     if(this.selected === true) {
@@ -120,13 +143,35 @@ musicBlock.prototype.removeBlock = function() {
     }
     config.cnt--;
 };
-function selectNewSingle(blocknum){
+musicBlock.prototype.selectNewSingle = function() {
     for (var i = 0; i < objs.length; i++){
         objs[i].deselectBlock();
     }
-    objs[blocknum].selectBlock();
-}
+    this.selectBlock();
+};
 
+musicBlock.prototype.updatePosition = function() {
+     if(this.direction === "up" || this.direction === "down"){
+        this.setStyle({
+            'top': this.posY + "px"
+        });
+    }
+    else{
+        this.setStyle({
+            'left': this.posX + "px"
+        });
+    }
+};
+musicBlock.prototype.playmidi = function() {
+    var delay = 0; // play one note every quarter second
+    var note = this.note;
+    var velocity = this.velocity;
+    var volume = this.volume;
+
+    MIDI.setVolume(0, volume);
+    MIDI.noteOn(this.program, note, velocity, delay);
+    MIDI.noteOff(this.program, note, delay + 1);
+};
 
 function addBlock(gridX,gridY){
     if (gridArray[gridX][gridY] === -1){
@@ -138,20 +183,6 @@ function addBlock(gridX,gridY){
     }
 
 }
-
-function updateStyle(blockNum, direction) {
-    if(direction === "up" || direction === "down"){
-        objs[blockNum].setStyle({
-            'top': objs[blockNum].posY + "px"
-        });
-    }
-    else{
-        objs[blockNum].setStyle({
-            'left': objs[blockNum].posX + "px"
-        });
-    }
-}
-
 
 
 
@@ -212,93 +243,64 @@ function processCollision(direction, gridX, gridY, blockref) {
 }
 
 
-
-
-//LOAD MIDI SOUNDFONTS
-window.onload = function () {
-    MIDI.loadPlugin({
-        soundfontUrl: "./soundfont/",
-        instruments: [ "acoustic_grand_piano", "steel_drums", "tinkle_bell" ],
-        callback: function() {
-            MIDI.programChange(0, 0);
-            MIDI.programChange(1, 114);
-            MIDI.programChange(2, 112);
-            console.log("loaded");
-        }
+////////SET MIDI PARAMETERS ON MUSIC BLOCKS/////////
+var setMidiParams = (function() {
+    //LOAD MIDI SOUNDFONTS
+    window.onload = function () {
+        MIDI.loadPlugin({
+            soundfontUrl: "./soundfont/",
+            instruments: [ "acoustic_grand_piano", "steel_drums", "tinkle_bell" ],
+            callback: function() {
+                MIDI.programChange(0, 0);
+                MIDI.programChange(1, 114);
+                MIDI.programChange(2, 112);
+                console.log("loaded");
+            }
+        });
+    };
+    elements.setnote.addEventListener("click",function(e){
+        var note = document.getElementById("midinote").value;
+        selectNote(note);
     });
-};
+    elements.setvolume.addEventListener("click",function(e){
+        var volume = document.getElementById("midivolume").value;
+        selectVolume(volume);
+    });
+    elements.setinstrument.addEventListener("click",function(e){
+        var volume = document.getElementById("midiinstrument").value;
+        selectInstrument(volume);
+    });
 
-
-elements.setnote.addEventListener("click",function(e){
-    var note = document.getElementById("midinote").value;
-    selectNote(note);
-});
-elements.setvolume.addEventListener("click",function(e){
-    var volume = document.getElementById("midivolume").value;
-    selectVolume(volume);
-});
-elements.setinstrument.addEventListener("click",function(e){
-    var volume = document.getElementById("midiinstrument").value;
-    selectInstrument(volume);
-});
-
-
-function selectNote(note) {
-    for (var i = 0; i < objs.length; i++) {
-        if (objs[i].selected === true) {
-            objs[i].note = note;
+    function selectNote(note) {
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true) {
+                objs[i].note = note;
+            }
         }
     }
-}
-function selectVolume(volume) {
-    for (var i = 0; i < objs.length; i++) {
-        if (objs[i].selected === true) {
-            objs[i].volume = volume;
+    function selectVolume(volume) {
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true) {
+                objs[i].volume = volume;
+            }
         }
     }
-}
-function selectInstrument(program) {
-    for (var i = 0; i < objs.length; i++) {
-        if (objs[i].selected === true) {
-            objs[i].program = program;
+    function selectInstrument(program) {
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true) {
+                objs[i].program = program;
+            }
         }
     }
-}
-
-function playSound(obj, type) {
-    musicBlock.prototype.playmidi = function() {
-        var delay = 0; // play one note every quarter second
-        var note = this.note;
-        var velocity = this.velocity;
-        var volume = this.volume;
-
-        MIDI.setVolume(0, volume);
-        MIDI.noteOn(this.program, note, velocity, delay);
-        MIDI.noteOff(this.program, note, delay + 1);
-    };
-    musicBlock.prototype.playwav = function() {
-        this.snd.pause();
-        this.snd.currentTime = 0;
-        this.snd.play();
-    };
-    if(type == "midi") {
-        obj.playmidi();
-    }
-    if (type == "wav") {
-        obj.playwav();
-    }
-}
+})();
 
 
-var grid = function() {
-    //var section = document.getElementById("main");
-    var mousedownX = -1;
-    var mousedownY = -1;
+
+var startSyncCounter = function() {
     var running = true;
     var syncounter = -config.blockSize;
 
-
-    (function startSyncCounter() {
+    (function syncCounter() {
         if ((config.pause === 1 && config.advance === 1) || config.pause === -1) {
             if (syncounter == config.blockSize) {
                 if (config.cnt !== 0) {
@@ -334,7 +336,7 @@ var grid = function() {
                         
                         //Check if block was moving and had a collision
                         if(objs[o].numCollisions >= 1 && objs[o].waiting === false){
-                            playSound(objs[o], "midi");                                                            
+                            objs[o].playmidi();                                                         
                         }
 
                         objs[o].waiting = false;
@@ -388,11 +390,10 @@ var grid = function() {
                         }
                     }
                 }
-
                 syncounter = 0;
             }
 
-            /////MOVE BLOCKS
+            /////set block direction play note on collision
             for (var i = 0; i < objs.length; i++) {
                 if (objs[i].waiting === false){
                     if (objs[i].direction == "up") {
@@ -402,7 +403,7 @@ var grid = function() {
                                 objs[i].direction = objs[i].newDirection = "down";
                                 objs[i].halfpoint = -1;
                                 objs[i].prevgridY = objs[i].gridY;
-                                playSound(objs[i], "midi");    
+                                objs[i].playmidi();   
                                 
                             }
                             else objs[i].posY += -1 * objs[i].speed;
@@ -415,7 +416,7 @@ var grid = function() {
                                 objs[i].direction = objs[i].newDirection = "up";
                                 objs[i].halfpoint = -1;
                                 objs[i].prevgridY = objs[i].gridY;
-                                playSound(objs[i], "midi");    
+                                objs[i].playmidi();   
                                 
                             }
                             else objs[i].posY += 1 * objs[i].speed;
@@ -428,7 +429,7 @@ var grid = function() {
                                 objs[i].direction = objs[i].newDirection = "right";
                                 objs[i].halfpoint = -1;
                                 objs[i].prevgridX = objs[i].gridX;
-                                playSound(objs[i], "midi");    
+                                objs[i].playmidi();    
                                 
                             }
                             else objs[i].posX += -1 * objs[i].speed;
@@ -441,13 +442,13 @@ var grid = function() {
                                 objs[i].direction = objs[i].newDirection = "left";
                                 objs[i].halfpoint = -1;
                                 objs[i].prevgridX = objs[i].gridX;
-                                playSound(objs[i], "midi");    
+                                objs[i].playmidi();    
                                 
                             }
                             else objs[i].posX += 1 * objs[i].speed;
                         }
                     }
-                    updateStyle(i, objs[i].direction);
+                    objs[i].updatePosition();
                 }
             }
 
@@ -465,26 +466,173 @@ var grid = function() {
 
                 gridArray[objs[k].gridX][objs[k].gridY] = k;
 
-                if(syncounter === config.blockSize -config.speed && (objs[k].prevgridX !== objs[k].gridX || objs[k].prevgridY !== objs[k].gridY)){
-                            //console.log("Block "+k+" : "+objs[k].prevgridX + ", "+objs[k].prevgridY+" xx " + objs[k].gridX + " sync "+syncounter);
-                            gridArray[objs[k].prevgridX][objs[k].prevgridY] = -1;                      
-                        }
+                if(syncounter === config.blockSize -config.speed && (objs[k].prevgridX !== objs[k].gridX || objs[k].prevgridY !== objs[k].gridY)) {
+                    gridArray[objs[k].prevgridX][objs[k].prevgridY] = -1;                      
+                }
             }
             
             syncounter +=config.speed;
             config.advance = -1;
 
         }
-        requestAnimationFrame(startSyncCounter);
-    })();
+        requestAnimationFrame(syncCounter);
+    })();  
+}();
 
-   
 
-    //Mousedown listener tracks positions and resets selection to 0
-    elements.section.addEventListener("mousedown",function(e){
+
+var setMouseEvents = (function() {
+    var mousedownX = -1;
+    var mousedownY = -1;
+    var gridCheck = false;
+
+    function setStyles(propertyObject) {
+        var elem = document.getElementById("dragbox");
+        for (var property in propertyObject){
+            elem.style[property] = propertyObject[property];
+        }
+    };
+
+    function compareMouse(e) {
+         if(Math.floor(mousedownX / config.blockSize) === Math.floor(e.pageX / config.blockSize) 
+            && Math.floor(mousedownY / config.blockSize) === Math.floor(e.pageY / config.blockSize)) {
+            return "same";
+        } else {
+            return "different";
+        }
+    }; 
+
+    function mousedrag(e) {
         e = e || window.event;
+        mouselocation = compareMouse(e);
+        if(mouselocation == "different") {
+            if(config.mode == "create"){
+                var gridX = Math.floor(e.pageX/config.blockSize);
+                var gridY = Math.floor(e.pageY/config.blockSize);
+                
+                ///Add music block to the grid
+                addBlock(gridX,gridY);
+            }
+            else {
+                var move_x = e.pageX,
+                    move_y = e.pageY,
+                    width  = Math.abs(move_x - mousedownX),
+                    height = Math.abs(move_y - mousedownY),
+                    new_x, new_y;
+
+                new_x = (move_x < mousedownX) ? (mousedownX - width) : mousedownX;
+                new_y = (move_y < mousedownY) ? (mousedownY - height) : mousedownY;
+
+                setStyles({
+                  'width': width+ "px",
+                  'height': height+ "px",
+                  'top': new_y + "px",
+                  'left': new_x + "px"
+                });
+            }
+        }            
+    }
+
+    // Compares mouseup location with mousedown, calls old click function if same, drag select if not
+    function mouseUp(e) {
+        if (gridCheck == true) {
+            var leftX = Math.min(mousedownX, e.pageX);
+            var rightX = Math.max(mousedownX, e.pageX);
+            var topY = Math.min(mousedownY, e.pageY);
+            var bottomY = Math.max(mousedownY, e.pageY);
+
+            leftX = Math.floor(leftX / config.blockSize);
+            rightX = Math.ceil(rightX / config.blockSize);
+            topY = Math.floor(topY / config.blockSize);
+            bottomY = Math.ceil(bottomY / config.blockSize);        
+
+            var blockref = gridArray[leftX][topY];
+            e = e || window.event;
+
+            mouselocation = compareMouse(e);
+
+            //Check for select mode to remove dragbox
+            if (config.mode === "select"){
+                elements.section.removeChild(dragbox);
+            }
+
+            //Check mouse click for single click
+            if (mouselocation === "same"){
+                //Check if block exists
+                if (blockref != -1){
+                    //Check if block is not selected
+                    if (objs[blockref].selected === false){
+                        //Check if shift is off
+                        if(config.shiftkey === 0){
+                            objs[blockref].selectNewSingle();
+                        }
+                        //Shift is on
+                        else {
+                            objs[blockref].selectBlock();
+                        }
+                    }
+                    //Block is selected
+                    else {
+                        //Check for multiple blocks selected
+                        if(config.numSelected > 1 && config.shiftkey === 0) {
+                            objs[blockref].selectNewSingle();
+                        }
+                        //Block is only one selected or shift is pressed
+                        else {
+                            objs[blockref].deselectBlock();
+                        }
+                    }
+                }
+                //Clicked square is empty
+                else if (config.mode === "create"){
+                    addBlock(leftX,topY);
+                }
+            }
+
+            //Mouse button was dragged to other squares
+            else {
+                //Handle select mode
+                if (config.mode === "select") {                  
+                    //Check for shift key off
+                    if (config.shiftkey === 0) {
+                        //If shift is off, deselect all blocks currently selected
+                        for(var q = 0; q < objs.length; q++) {
+                            objs[q].deselectBlock(); 
+                        }
+                    }
+                    //Select all blocks in the dragbox
+                    for (var p = 0; p < objs.length; p++) {
+                        var gridX = objs[p].gridX;
+                        var gridY = objs[p].gridY;
+                        if (gridX < rightX 
+                            && gridX >= leftX
+                            && gridY < bottomY
+                            && gridY >= topY) {
+                            
+                            objs[p].selectBlock();
+                        }
+                    } 
+                }  
+            }
+            config.newblock = -1;
+            mousedownX = -1;
+            mousedownY = -1;
+
+            gridCheck = false;
+
+            //Remove drag event on mouseup
+            elements.section.removeEventListener("mousemove", mousedrag);
+        }
+    }
+
+    //Add mousedown listener, tracks positions and resets selection to 0
+    function mouseDown(e) {
         var mouselocation = compareMouse(e);
         var dragbox;
+        e = e || window.event;
+
+        gridCheck = true;
+        
         if(config.mode === "select"){
             dragbox = document.createElement("div");
             dragbox.id = "dragbox";
@@ -504,147 +652,18 @@ var grid = function() {
             addBlock(Math.floor(mousedownX/config.blockSize),Math.floor(mousedownY/config.blockSize));
         }
 
-        elements.section.addEventListener('mousemove', mousemover, false);
-     
-        function mousemover(e) {
-            e = e || window.event;
-            mouselocation = compareMouse(e);
-            if(mouselocation == "different") {
-                if(config.mode == "create"){
-                    var gridX = Math.floor(e.pageX/config.blockSize);
-                    var gridY = Math.floor(e.pageY/config.blockSize);
-                    addBlock(gridX,gridY);
-                }
-                else {
-                    var move_x = e.pageX,
-                        move_y = e.pageY,
-                        width  = Math.abs(move_x - mousedownX),
-                        height = Math.abs(move_y - mousedownY),
-                        new_x, new_y;
+        //Add drag event on mousedown
+        elements.section.addEventListener('mousemove', mousedrag, false);
+    }
+    
 
-                    new_x = (move_x < mousedownX) ? (mousedownX - width) : mousedownX;
-                    new_y = (move_y < mousedownY) ? (mousedownY - height) : mousedownY;
-
-                    setStyles({
-                      'width': width+ "px",
-                      'height': height+ "px",
-                      'top': new_y + "px",
-                      'left': new_x + "px"
-                    });
-                }
-            }            
-        }
-
-        window.addEventListener("mouseup",mouseup,false);
-
-        // Compares mouseup locationw with mousedown, calls old click function if same, drag select if not
-        function mouseup(e){
-            var leftX = Math.min(mousedownX, e.pageX);
-            var rightX = Math.max(mousedownX, e.pageX);
-            var topY = Math.min(mousedownY, e.pageY);
-            var bottomY = Math.max(mousedownY, e.pageY);
-
-            leftX = Math.floor(leftX / config.blockSize);
-            rightX = Math.ceil(rightX / config.blockSize);
-            topY = Math.floor(topY / config.blockSize);
-            bottomY = Math.ceil(bottomY / config.blockSize);        
-
-            var blockref = gridArray[leftX][topY];
-            //console.log(blockref);
-
-            elements.section.removeEventListener("mousemove", mousemover);
-            e = e || window.event;
-            mouselocation = compareMouse(e);
-
-            //Check for select mode to remove dragbox
-            if (config.mode === "select"){
-                elements.section.removeChild(dragbox);
-            }
-
-            //Check mouse click for single click
-            if (mouselocation === "same"){
-                //Check if block exists
-                if (blockref != -1){
-                    //Check if block is not selected
-                    if (objs[blockref].selected === false){
-                        //Check if shift is off
-                        if(config.shiftkey === 0){
-                            selectNewSingle(blockref);
-                        }
-                        //Shift is on
-                        else{
-                            objs[blockref].selectBlock();
-                        }
-                    }
-                    //Block is selected
-                    else {
-                        //Check for multiple blocks selected
-                        if(config.numSelected > 1 && config.shiftkey === 0){
-                            selectNewSingle(blockref);
-                        }
-                        //Block is only one selected or shift is pressed
-                        else{
-                            objs[blockref].deselectBlock();
-                        }
-                    }
-                }
-                //Clicked square is empty
-                else if (config.mode === "create"){
-                    addBlock(leftX,topY);
-                }
-            }
-
-            //Mouse button was dragged to other squares
-            else {
-              //Handle select mode
-              if (config.mode === "select"){                  
-                  //Check for shift key off
-                  if (config.shiftkey === 0)
-                  {
-                      //If shift is off, deselect all blocks currently selected
-                      for(var q = 0; q < objs.length; q++)
-                      {
-                          objs[q].deselectBlock(); 
-                      }
-                  }
-                  //Select all blocks in the dragbox
-                  for (var p = 0; p < objs.length; p++){
-                      var gridX = objs[p].gridX;
-                      var gridY = objs[p].gridY;
-                      if (gridX < rightX 
-                          && gridX >= leftX
-                          && gridY < bottomY
-                          && gridY >= topY){
-                              objs[p].selectBlock();
-                      }
-                  }
-              }
-            }
-              
-                config.newblock = -1;
-                mousedownX = -1;
-                mousedownY = -1;
-                window.removeEventListener("mouseup", mouseup);
-            }
+    ////Add event listerners to window and grid
+    window.addEventListener("mouseup",mouseUp,false);
+    elements.section.addEventListener("mousedown",mouseDown,false);
+    
+})();
 
 
-           function setStyles(propertyObject) {
-                var elem = document.getElementById("dragbox");
-                for (var property in propertyObject){
-                    elem.style[property] = propertyObject[property];
-                }
-            };
-        },false);
-
-    function compareMouse(e) {
-         if(Math.floor(mousedownX / config.blockSize) === Math.floor(e.pageX / config.blockSize) 
-            && Math.floor(mousedownY / config.blockSize) === Math.floor(e.pageY / config.blockSize)) {
-            return "same";
-        } else {
-            return "different";
-        }
-    }   
-}();
 
 
 var advance = (function() {
@@ -795,20 +814,3 @@ var arrowClick = (function() {
 
 
 
-var makeGrid = (function() {
-
-    for (var i = 0; i < config.gridSize; i++) {
-        var section = document.getElementById("gridHorizontal");
-        var section2 = document.getElementById("gridVertical");
-        var node = document.createElement("LI");
-        var node2 = document.createElement("LI");
-        section.appendChild(node);
-        section2.appendChild(node2);
-
-        ////create empty grid array
-        gridArray.push([]);
-        for (var j = 0; j < config.gridSize; j++) {
-            gridArray[i][j] = -1;
-        }
-    }
-})();
