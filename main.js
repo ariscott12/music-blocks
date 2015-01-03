@@ -969,7 +969,9 @@ var arrowClick = (function() {
             break;
 
             case 32: // Space
-                config.pause = config.pause * -1;
+                if(config.draggingBlocks === false){
+                    config.pause = config.pause * -1;
+                }
             break;
 
             case 37: // Left
