@@ -1,6 +1,7 @@
+
 var config = {
-   speed:2,
-   blockSize:26,
+   speed:4,
+   blockSize:32,
    gridSize:20,
    pause: -1,
    advance: -1,
@@ -8,14 +9,20 @@ var config = {
    numSelected: 0,
    mode: "create",
    cnt: 0,
-   newblock: -1
+   newblock: -1,
+   volume: 60,
+   note:5,
+   octave:3
 };
 var elements = {
-    section: document.getElementById("main"),
+    section: document.getElementById("stage"),
     node: document.createElement("LI"),
-    setnote: document.getElementById("setnote"),
+    setnote: document.getElementById("note-slider"),
     setvolume: document.getElementById("setvolume"),
-    setinstrument: document.getElementById("setinstrument")
+    setinstrument: document.getElementById("setinstrument"),
+    noteslider: $("#note-slider"),
+    volumeslider: $("#volume-slider"),
+    octavespinner: $( "#octave-spinner")
 };
 var gridArray = new Array([]);
 var objs = [];
@@ -63,10 +70,11 @@ function musicBlock(w, h, x, y, s) {
     this.halfpoint = -1;
     //this.snd = new Audio("tiletap.wav");
     this.snd = null;
-    this.note = 75;
+    this.note = 41;
+    this.octave = 3;
     this.velocity = 100;
     this.delay = 0;
-    this.volume = 100;
+    this.volume = 60;
     this.program = 0;
     this.waiting = false;
     this.numCollisions = 0;
@@ -148,6 +156,11 @@ musicBlock.prototype.selectNewSingle = function() {
         objs[i].deselectBlock();
     }
     this.selectBlock();
+    if(this.selected === true) {
+        //setMidiBlock(this.blocknum);
+        controlPanel.setToBlock(this.blocknum);
+    }
+   
 };
 
 musicBlock.prototype.updatePosition = function() {
@@ -173,16 +186,7 @@ musicBlock.prototype.playmidi = function() {
     MIDI.noteOff(this.program, note, delay + 1);
 };
 
-function addBlock(gridX,gridY){
-    if (gridArray[gridX][gridY] === -1){
-        objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0);
-        objs[config.cnt].createNode(config.cnt).addBlock();
-        gridArray[gridX][gridY] = config.cnt;
-        config.newblock = config.cnt;
-        config.cnt++;
-    }
 
-}
 
 
 
@@ -243,56 +247,6 @@ function processCollision(direction, gridX, gridY, blockref) {
 }
 
 
-////////SET MIDI PARAMETERS ON MUSIC BLOCKS/////////
-var setMidiParams = (function() {
-    //LOAD MIDI SOUNDFONTS
-    window.onload = function () {
-        MIDI.loadPlugin({
-            soundfontUrl: "./soundfont/",
-            instruments: [ "acoustic_grand_piano", "steel_drums", "tinkle_bell" ],
-            callback: function() {
-                MIDI.programChange(0, 0);
-                MIDI.programChange(1, 114);
-                MIDI.programChange(2, 112);
-                console.log("loaded");
-            }
-        });
-    };
-    elements.setnote.addEventListener("click",function(e){
-        var note = document.getElementById("midinote").value;
-        selectNote(note);
-    });
-    elements.setvolume.addEventListener("click",function(e){
-        var volume = document.getElementById("midivolume").value;
-        selectVolume(volume);
-    });
-    elements.setinstrument.addEventListener("click",function(e){
-        var volume = document.getElementById("midiinstrument").value;
-        selectInstrument(volume);
-    });
-
-    function selectNote(note) {
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true) {
-                objs[i].note = note;
-            }
-        }
-    }
-    function selectVolume(volume) {
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true) {
-                objs[i].volume = volume;
-            }
-        }
-    }
-    function selectInstrument(program) {
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true) {
-                objs[i].program = program;
-            }
-        }
-    }
-})();
 
 
 
@@ -481,10 +435,100 @@ var startSyncCounter = function() {
 
 
 
+
+
+////////SET MIDI PARAMETERS ON MUSIC BLOCKS
+var setMidiParams = (function() {
+  
+    //LOAD MIDI SOUNDFONTS
+    window.onload = function () {
+        MIDI.loadPlugin({
+            soundfontUrl: "./soundfont/",
+            instruments: [ "acoustic_grand_piano", "steel_drums", "tinkle_bell" ],
+            callback: function() {
+                MIDI.programChange(0, 0);
+                MIDI.programChange(1, 114);
+                MIDI.programChange(2, 112);
+                console.log("loaded");
+            }
+        });
+    };
+    return {
+        selectNote: function(note) {
+            for (var i = 0; i < objs.length; i++) {
+                if (objs[i].selected === true) {
+                    if(note == "default") {
+                        objs[i].note = (12*objs[i].octave);
+                    } else {
+                        objs[i].note = note+(12*objs[i].octave);
+                    }
+                 console.log(objs[i].note);
+                }
+            }
+            return this;
+        },
+        selectOctave: function(octave) {
+            for (var i = 0; i < objs.length; i++) {
+                if (objs[i].selected === true) {
+                    objs[i].octave = octave;
+                }
+            }
+           // selectNote("default");
+            return this;
+        },
+        selectVolume: function(volume) {
+            for (var i = 0; i < objs.length; i++) {
+                if (objs[i].selected === true) {
+                    objs[i].volume = volume;
+                }
+            }
+            return this;
+        },
+        selectInstrument: function(program) {
+             for (var i = 0; i < objs.length; i++) {
+                if (objs[i].selected === true) {
+                    objs[i].program = program;
+                }
+            }
+            return this;
+        },
+        getNote:function(val) {
+            var noteArray = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+            return noteArray[val];
+        }
+    }   
+})();
+
+var controlPanel = (function() {
+    return {
+        setDefault: function() {
+            elements.noteslider.slider( "value", config.note );
+            elements.noteslider.find("input").val(setMidiParams.getNote(config.note));
+            elements.volumeslider.slider( "value", config.volume);
+            elements.volumeslider.find("input").val(config.volume);
+            elements.octavespinner.val(config.octave);
+
+
+
+        },
+        setToBlock: function(num) {
+            elements.noteslider.slider( "value", objs[num].note % 12);
+            elements.noteslider.find("input").val(setMidiParams.getNote(objs[num].note % 12));
+            elements.volumeslider.slider( "value", objs[num].volume );
+            elements.volumeslider.find("input").val(objs[num].volume);
+            elements.octavespinner.val(objs[num].octave);
+        }
+    }
+   
+})();
+
+
+
 var setMouseEvents = (function() {
     var mousedownX = -1;
     var mousedownY = -1;
     var gridCheck = false;
+   
 
     function setStyles(propertyObject) {
         var elem = document.getElementById("dragbox");
@@ -535,6 +579,7 @@ var setMouseEvents = (function() {
 
     // Compares mouseup location with mousedown, calls old click function if same, drag select if not
     function mouseUp(e) {
+
         if (gridCheck == true) {
             var leftX = Math.min(mousedownX, e.pageX);
             var rightX = Math.max(mousedownX, e.pageX);
@@ -544,7 +589,7 @@ var setMouseEvents = (function() {
             leftX = Math.floor(leftX / config.blockSize);
             rightX = Math.ceil(rightX / config.blockSize);
             topY = Math.floor(topY / config.blockSize);
-            bottomY = Math.ceil(bottomY / config.blockSize);        
+            bottomY = Math.ceil(bottomY / config.blockSize);
 
             var blockref = gridArray[leftX][topY];
             e = e || window.event;
@@ -565,10 +610,12 @@ var setMouseEvents = (function() {
                         //Check if shift is off
                         if(config.shiftkey === 0){
                             objs[blockref].selectNewSingle();
+                             //console.log("afasdfasdf");
                         }
                         //Shift is on
                         else {
                             objs[blockref].selectBlock();
+
                         }
                     }
                     //Block is selected
@@ -580,6 +627,7 @@ var setMouseEvents = (function() {
                         //Block is only one selected or shift is pressed
                         else {
                             objs[blockref].deselectBlock();
+
                         }
                     }
                 }
@@ -601,17 +649,28 @@ var setMouseEvents = (function() {
                         }
                     }
                     //Select all blocks in the dragbox
+                    var cnt = 0;
                     for (var p = 0; p < objs.length; p++) {
                         var gridX = objs[p].gridX;
                         var gridY = objs[p].gridY;
+                      
                         if (gridX < rightX 
                             && gridX >= leftX
                             && gridY < bottomY
                             && gridY >= topY) {
                             
                             objs[p].selectBlock();
+                            var t = p;
+                            cnt++;
+                       
+                           
                         }
                     } 
+                    if(cnt === 1) {
+                        controlPanel.setToBlock(t);  
+                    } else {
+                        controlPanel.setDefault();  
+                    }
                 }  
             }
             config.newblock = -1;
@@ -627,6 +686,7 @@ var setMouseEvents = (function() {
 
     //Add mousedown listener, tracks positions and resets selection to 0
     function mouseDown(e) {
+
         var mouselocation = compareMouse(e);
         var dragbox;
         e = e || window.event;
@@ -647,6 +707,7 @@ var setMouseEvents = (function() {
         }
         mousedownX = Math.min(e.pageX, config.blockSize * config.gridSize);
         mousedownY = Math.min(e.pageY, config.blockSize * config.gridSize);
+      //  console.log(e.pageX);
 
         if(config.mode === "create"){
             addBlock(Math.floor(mousedownX/config.blockSize),Math.floor(mousedownY/config.blockSize));
@@ -656,10 +717,63 @@ var setMouseEvents = (function() {
         elements.section.addEventListener('mousemove', mousedrag, false);
     }
     
+    function addBlock(gridX,gridY){
+        if (gridArray[gridX][gridY] === -1){
+
+            objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0);
+            objs[config.cnt].createNode(config.cnt).addBlock();
+            gridArray[gridX][gridY] = config.cnt;
+            config.newblock = config.cnt;
+            config.cnt++;
+
+            //Reset Control Panel
+            controlPanel.setDefault();  
+        }
+
+    }
 
     ////Add event listerners to window and grid
     window.addEventListener("mouseup",mouseUp,false);
     elements.section.addEventListener("mousedown",mouseDown,false);
+
+
+    ///UI PANEL
+    elements.noteslider.slider({
+        value:5,
+        min: 0,
+        max: 11,
+        step: 1,
+        range: "min",
+        slide: function( event, ui ) {
+            elements.noteslider.find("input").val(setMidiParams.getNote(ui.value));
+            setMidiParams.selectNote(ui.value);
+        }
+    });
+    elements.noteslider.find("input").val(setMidiParams.getNote(elements.noteslider.slider("value")));
+
+    elements.volumeslider.slider({
+        value:60,
+        min: 0,
+        max: 120,
+        range: "min",
+        slide: function( event, ui ) {
+            elements.volumeslider.find("input").val(ui.value);
+            setMidiParams.selectVolume(ui.value);
+        }
+    });
+    elements.volumeslider.find("input").val(elements.volumeslider.slider("value"));
+
+    elements.octavespinner.spinner({
+           min: 1,
+           max: 7,
+           start: 3
+    });
+    $( ".ui-spinner-button" ).click(function() {
+        var value = elements.octavespinner.spinner( "value");  
+        setMidiParams.selectOctave(value).selectNote("default");
+    });
+    elements.octavespinner.val(3);
+
     
 })();
 
@@ -667,6 +781,7 @@ var setMouseEvents = (function() {
 
 
 var advance = (function() {
+
     var pauseBtn = document.getElementById("pause");
     var advanceBtn = document.getElementById("advance");
     var clearBtn = document.getElementById("clearall");
@@ -699,7 +814,13 @@ var advance = (function() {
         config.advance *= -1;
     }
 
+   
+
 })();
+
+
+
+
 
 var arrowClick = (function() {
     var leftArrow = document.getElementById("left");
