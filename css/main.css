@@ -1,0 +1,358 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+body {
+  margin: 0;
+}
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ui-slider {
+  position: relative;
+  text-align: left;
+}
+
+.ui-slider .ui-slider-handle {
+  position: absolute;
+  z-index: 2;
+  width: 1.2em;
+  height: 1.2em;
+  cursor: default;
+  -ms-touch-action: none;
+  touch-action: none;
+}
+
+.ui-slider .ui-slider-range {
+  position: absolute;
+  z-index: 1;
+  font-size: .7em;
+  display: block;
+  border: 0;
+  background-position: 0 0;
+  background: #efc94c;
+  border: 1px solid #aa9224;
+}
+
+/* support: IE8 - See #6727 */
+.ui-slider.ui-state-disabled .ui-slider-handle,
+.ui-slider.ui-state-disabled .ui-slider-range {
+  filter: inherit;
+}
+
+.ui-slider-horizontal {
+  height: 0.8em;
+  background: #3c9b88;
+  border-radius: 3px;
+  margin-top: 55px;
+}
+
+.ui-slider-horizontal .ui-slider-handle {
+  top: -.3em;
+  margin-left: -.6em;
+  background: #59e6cb;
+  width: 14px;
+  height: 17px;
+  border: 1px solid #30907e;
+  -webkit-box-shadow: 1px 1px 1px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.ui-slider-horizontal .ui-slider-range {
+  top: 0;
+  height: 100%;
+}
+
+.ui-slider-horizontal .ui-slider-range-min {
+  left: 0;
+}
+
+.ui-slider-horizontal .ui-slider-range-max {
+  right: 0;
+}
+
+.ui-slider-vertical {
+  width: .8em;
+  height: 100px;
+}
+
+.ui-slider-vertical .ui-slider-handle {
+  left: -.3em;
+  margin-left: 0;
+  margin-bottom: -.6em;
+}
+
+.ui-slider-vertical .ui-slider-range {
+  left: 0;
+  width: 100%;
+}
+
+.ui-slider-vertical .ui-slider-range-min {
+  bottom: 0;
+}
+
+.ui-slider-vertical .ui-slider-range-max {
+  top: 0;
+}
+
+.ui-slider-handle.ui-state-default.ui-corner-all > input {
+  border: 1px solid #297668;
+  background: #138e76;
+  color: #fff;
+  font-size: 10px;
+  height: 19px;
+  left: -8px;
+  position: relative;
+  text-align: center;
+  top: -30px;
+  width: 29px;
+}
+
+/*-----SPINNER-------*/
+.octave-wrapper {
+  margin-top: 25px;
+}
+.octave-wrapper label {
+  margin-left: 35px;
+}
+
+.ui-spinner {
+  background: none repeat scroll 0 0 #138e76;
+  border: 1px solid #267062;
+  border-radius: 4px;
+  display: inline-block;
+  height: 33px;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  vertical-align: middle;
+  width: 66px;
+}
+
+.ui-spinner-input {
+  background: none;
+  border: none;
+  color: inherit;
+  height: 31px;
+  text-align: center;
+  vertical-align: middle;
+  width: 30px;
+  font-size: 1.125em;
+}
+
+.ui-spinner-button {
+  cursor: default;
+  display: block;
+  font-size: 0.5em;
+  height: 50%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  width: 34px;
+  background: none repeat scroll 0 0 #206457;
+}
+
+/* more specificity required here to override default borders */
+.ui-spinner a.ui-spinner-button {
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+}
+
+/* vertically center icon */
+.ui-spinner .ui-icon {
+  left: 0;
+  margin-top: -8px;
+  position: absolute;
+  top: 50%;
+  width: 34px;
+}
+
+.ui-spinner-up {
+  top: -1px;
+}
+
+.ui-spinner-down {
+  bottom: 0;
+}
+
+/* TR overrides */
+.ui-spinner .ui-icon-triangle-1-s {
+  background: url("../images/ui-minus.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+  height: 2px;
+  margin-left: 13px;
+  margin-top: 0;
+  overflow: hidden;
+  text-align: center;
+  width: 9px;
+}
+
+.ui-icon.ui-icon-triangle-1-n {
+  background: url("../images/ui-plus.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+  height: 8px;
+  text-align: center;
+  width: 8px;
+  margin-left: 13px;
+  margin-top: -4px;
+}
+
+/* states and ../images */
+.ui-icon {
+  width: 16px;
+  height: 16px;
+}
+
+body {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+  font-size: 1em;
+}
+
+.clear {
+  clear: both;
+}
+
+#wrapper {
+  margin: 0 auto;
+  /* width:640px;*/
+}
+
+#stage {
+  background: none repeat scroll 0 0 #3f5765;
+  position: relative;
+  height: 640px;
+  width: 640px;
+  float: left;
+}
+
+#panel {
+  float: left;
+  height: 640px;
+  margin-left: 8px;
+  width: 206px;
+  font-size: .75em;
+  color: #fff;
+  font-weight: bold;
+}
+#panel .block-modifiers {
+  background: #45b29d;
+  padding: 0px 15px 25px 15px;
+  border: 1px solid #3ea18e;
+}
+#panel .music-block, #panel .randomizer-block {
+  float: left;
+  text-align: center;
+  background: #45b29d;
+  border: 1px solid #3ea18e;
+  height: 52px;
+  padding-top: 10px;
+  line-height: 15px;
+  width: 103px;
+  margin-bottom: 1px;
+}
+#panel .music-block {
+  border-right: 1px solid #dfdfdf;
+}
+
+.block {
+  background: #DBA65C;
+  position: absolute;
+  list-style-type: none;
+}
+
+#gridHorizontal, #gridVertical {
+  height: 640px;
+  margin-top: 0;
+  position: absolute;
+  top: 0;
+  width: 640px;
+  z-index: 1000;
+}
+
+#gridHorizontal li {
+  background: none repeat scroll 0 0 #394e5b;
+  height: 1px;
+  line-height: 1px;
+  margin-top: 31px;
+}
+
+#gridVertical li {
+  background: none repeat scroll 0 0 #394e5b;
+  display: inline-block;
+  height: 640px;
+  margin-right: 31px;
+  width: 1px;
+}
+
+#arrows {
+  left: 925px;
+  position: absolute;
+  top: 14px;
+}
+
+#arrows li {
+  padding-bottom: 5px;
+}
+
+#dragbox {
+  background: none repeat scroll 0 0 transparent;
+  border: 1px solid #000;
+  position: absolute;
+  background: rgba(229, 25, 128, 0.7);
+  z-index: 999;
+}
