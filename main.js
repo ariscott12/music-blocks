@@ -203,7 +203,6 @@ musicBlock.prototype.playmidi = function() {
 
 
 function processCollision(direction, gridX, gridY, blockref,skipcheck) {
-    console.log("BLOCK "+blockref+" waiting "+objs[blockref].waiting);
     if (direction === "up"){
         if (gridY === 0
             || gridArray[gridX][gridY - 1] !== -1
