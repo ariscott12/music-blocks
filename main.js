@@ -48,6 +48,15 @@ var makeGrid = (function() {
     }
 })();
 
+//Display block info
+function displayBlockInfo(blockref){
+    console.log("Block "+blockref+ 
+                " GridX: "+objs[blockref].gridX+
+                " GridY: "+objs[blockref].gridY+
+                " Direction: "+objs[blockref].direction+
+                " Waiting: "+objs[blockref].waiting);                
+}
+
 //Gridify translates an amount of pixels to an amount of blocks
 function gridify(pixels){
     return Math.floor(pixels / config.blockSize);
@@ -173,18 +182,10 @@ musicBlock.prototype.selectNewSingle = function() {
 };
 
 musicBlock.prototype.updatePosition = function() {
-     //if(this.direction === "up" || this.direction === "down"){
-        this.setStyle({
-            'top': this.posY + "px",
-            'left': this.posX + "px"
-        });
-    /*}
-    else{
-        this.setStyle({
-            'left': this.posX + "px"
-        });
-    }*/
-
+    this.setStyle({
+        'top': this.posY + "px",
+        'left': this.posX + "px"
+    });
 };
 musicBlock.prototype.playmidi = function() {
     var delay = 0; // play one note every quarter second
@@ -201,15 +202,18 @@ musicBlock.prototype.playmidi = function() {
 
 
 
-function processCollision(direction, gridX, gridY, blockref) {
+function processCollision(direction, gridX, gridY, blockref,skipcheck) {
+    console.log("BLOCK "+blockref+" waiting "+objs[blockref].waiting);
     if (direction === "up"){
         if (gridY === 0
             || gridArray[gridX][gridY - 1] !== -1
             || (gridX !== 0 && gridArray[gridX - 1][gridY - 1] !== -1
                 && objs[gridArray[gridX - 1][gridY - 1]].waiting === false
+                && (objs[gridArray[gridX - 1][gridY - 1]].numCollisions <= objs[blockref].numCollisions || skipcheck)
                 && objs[gridArray[gridX - 1][gridY - 1]].oldDirection === "right")
             || (gridX !== config.gridSize - 1 && gridArray[gridX + 1][gridY - 1] !== -1
                 && objs[gridArray[gridX + 1][gridY - 1]].waiting === false
+                && (objs[gridArray[gridX + 1][gridY - 1]].numCollisions <= objs[blockref].numCollisions || skipcheck)
                 && objs[gridArray[gridX + 1][gridY - 1]].oldDirection === "left")) {
                     objs[blockref].numCollisions++;
                     return "down";                
@@ -220,9 +224,11 @@ function processCollision(direction, gridX, gridY, blockref) {
             || gridArray[gridX][gridY + 1] !== -1
             || (gridX !== 0 && gridArray[gridX - 1][gridY + 1] !== -1
                 && objs[gridArray[gridX - 1][gridY + 1]].waiting === false
+                && (objs[gridArray[gridX - 1][gridY + 1]].numCollisions <= objs[blockref].numCollisions || skipcheck)
                 && objs[gridArray[gridX - 1][gridY + 1]].oldDirection === "right")
             || (gridX !== config.gridSize - 1 && gridArray[gridX + 1][gridY + 1] !== -1
                 && objs[gridArray[gridX + 1][gridY + 1]].waiting === false
+                && (objs[gridArray[gridX + 1][gridY + 1]].numCollisions <= objs[blockref].numCollisions || skipcheck)
                 && objs[gridArray[gridX + 1][gridY + 1]].oldDirection === "left")){
                     objs[blockref].numCollisions++;
                     return "up";
@@ -233,9 +239,11 @@ function processCollision(direction, gridX, gridY, blockref) {
             || gridArray[gridX - 1][gridY] !== -1
             || (gridY !== 0 && gridArray[gridX - 1][gridY - 1] !== -1
                 && objs[gridArray[gridX - 1][gridY - 1]].waiting === false
+                && (objs[gridArray[gridX - 1][gridY - 1]].numCollisions <= objs[blockref].numCollisions || skipcheck)
                 && objs[gridArray[gridX - 1][gridY - 1]].oldDirection === "down")
             || (gridY !== config.gridSize - 1 && gridArray[gridX - 1][gridY + 1] !== -1
                 && objs[gridArray[gridX - 1][gridY + 1]].waiting === false
+                && (objs[gridArray[gridX - 1][gridY + 1]].numCollisions <= objs[blockref].numCollisions || skipcheck)
                 && objs[gridArray[gridX - 1][gridY + 1]].oldDirection === "up")){    
                     objs[blockref].numCollisions++;                   
                     return "right";
@@ -246,9 +254,11 @@ function processCollision(direction, gridX, gridY, blockref) {
             || gridArray[gridX + 1][gridY] !== -1
             || (gridY !== 0 && gridArray[gridX + 1][gridY - 1] !== -1
                 && objs[gridArray[gridX + 1][gridY - 1]].waiting === false
+                && (objs[gridArray[gridX + 1][gridY - 1]].numCollisions <= objs[blockref].numCollisions || skipcheck)
                 && objs[gridArray[gridX + 1][gridY - 1]].oldDirection === "down")
             || (gridY !== config.gridSize - 1 && gridArray[gridX + 1][gridY + 1] !== -1
                 && objs[gridArray[gridX + 1][gridY + 1]].waiting === false
+                && (objs[gridArray[gridX + 1][gridY + 1]].numCollisions <= objs[blockref].numCollisions || skipcheck)
                 && objs[gridArray[gridX + 1][gridY + 1]].oldDirection === "up")){
                     objs[blockref].numCollisions++;
                     return "left";
@@ -271,21 +281,22 @@ var startSyncCounter = function() {
                 if (config.cnt !== 0) {
                     //update oldDirection, direction and queue flag
                     for (var n = 0; n < objs.length; n++)    {                        
-                        objs[n].oldDirection = objs[n].direction;
-                        objs[n].direction = objs[n].newDirection;
-                        if (objs[n].oldDirection === "none")
-                            objs[n].oldDirection = objs[n].newDirection;
+                        objs[n].oldDirection = objs[n].direction = objs[n].newDirection;
                         if (objs[n].queued == 1)
                            objs[n].queued = 0;
                         if(objs[n].prevgridX !== objs[n].gridX || objs[n].prevgridY !== objs[n].gridY)
                             gridArray[objs[n].prevgridX][objs[n].prevgridY] = -1;                      
                         objs[n].prevgridX = objs[n].gridX;
                         objs[n].prevgridY = objs[n].gridY;
+                        objs[n].waiting = false;
+
+                        //reset numcollisions
+                        objs[n].numCollisions = 0;
                     }
                     
                     //first collision check
                     for (var l = 0; l < objs.length; l++){
-                        var dir = processCollision(objs[l].direction, objs[l].gridX, objs[l].gridY, l);
+                        var dir = processCollision(objs[l].direction, objs[l].gridX, objs[l].gridY, l,true);
                         objs[l].direction = objs[l].newDirection = dir; 
                     }
 
@@ -294,27 +305,22 @@ var startSyncCounter = function() {
                         objs[l].oldDirection = objs[l].direction;
                     }
 
-                    //second collision check if object changed direction
+                    //second collision check
                     for (var o = 0; o < objs.length; o++){                    
-                        var dir = processCollision(objs[o].direction, objs[o].gridX, objs[o].gridY, o);
-                        objs[o].direction = dir;    
+                        var dir = processCollision(objs[o].direction, objs[o].gridX, objs[o].gridY, o,false);
+                        objs[o].direction = dir;
                         
-                        //Check if block was moving and had a collision
-                        if(objs[o].numCollisions >= 1 && objs[o].waiting === false){
-                            objs[o].playmidi();                                                         
-                        }
-
-                        objs[o].waiting = false;
-
                         //If block collided twice, wait
                         if(objs[o].numCollisions >= 2){
                             objs[o].waiting = true;
                         }
 
-                        //reset numcollisions
-                        objs[o].numCollisions = 0;
-                    }
-                    
+                        //Check if block was moving and had a collision
+                        if(objs[o].numCollisions >= 1 && objs[o].waiting === false){
+                            objs[o].playmidi();                                                         
+                        }                        
+                    }                    
+
                     //mid-square collision detection
                     for (var m = 0; m < objs.length; m++) {
                         if (objs[m].direction == "up" 
