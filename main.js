@@ -883,6 +883,11 @@ var setMouseEvents = (function() {
                     else if (config.mode === "create"){
                         addBlock(leftX,topY,config.newBlockType);
                     }
+                    else if (config.mode === "select"){
+                        for(var i = 0; i < objs.length; i++) {
+                                objs[i].deselectBlock(); 
+                            }
+                    }
                 }
 
                 //Mouse button was dragged to other squares
@@ -1027,7 +1032,7 @@ var setMouseEvents = (function() {
     //REMOVE THIS once there is a block type indicator
     addBlock(0,0,config.musicBlockType);
 
-    
+
 })();
 
 
