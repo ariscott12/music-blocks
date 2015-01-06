@@ -5,6 +5,12 @@ var config = {
     randomOctaveType: "rnd-octave-block",
     randomNoteType: "rnd-note-block",
     musicBlockType: "block",
+    defaultVolumeMin: 30,
+    defaultVolumeMax: 70,
+    defaultOctaveMin: 3,
+    defaultOctaveMax: 5,
+    defaultNoteMin: 0,
+    defaultNoteMax: 11,
     speed:4,
     blockSize:32,
     gridSize:20,
@@ -145,6 +151,8 @@ function musicBlock(w, h, x, y, s, t) {
     this.numCollisions = 0;
     this.dragOffsetX = 0;
     this.dragOffsetY = 0;
+    this.rngMin = 0;
+    this.rngMax = 0;
 }
 
 musicBlock.prototype.setStyle = function(propertyObject) {
@@ -257,18 +265,18 @@ musicBlock.prototype.playmidi = function() {
     }
 };
 
-function processTypeCollision(mblockref, vblockref){
-    switch (objs[vblockref].type){
+function processTypeCollision(mblockref, eblockref){
+    switch (objs[eblockref].type){
         case config.randomVolumeType:
-            objs[mblockref].volume = rangedRandom(30,70);            
+            objs[mblockref].volume = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax);            
         break;
 
         case config.randomOctaveType:
-            objs[mblockref].octave = rangedRandom(3,5);
+            objs[mblockref].octave = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax)
         break;
 
         case config.randomNoteType:
-            objs[mblockref].note = rangedRandom(0,11);
+            objs[mblockref].note = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax)
         break;
 
         default:
@@ -979,9 +987,31 @@ var setMouseEvents = (function() {
             objs[config.cnt].createNode(config.cnt,type).addBlock();
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
+            switch (type){
+                case config.randomVolumeType:
+                    objs[config.cnt].rngMin = config.defaultVolumeMin;
+                    objs[config.cnt].rngMax = config.defaultVolumeMax;
+                break;
+
+                case config.randomOctaveType:
+                    objs[config.cnt].rngMin = config.defaultOctaveMin;
+                    objs[config.cnt].rngMax = config.defaultOctaveMax;
+                break;
+
+                case config.randomNoteType:
+                    objs[config.cnt].rngMin = config.defaultNoteMin;
+                    objs[config.cnt].rngMax = config.defaultNoteMax;
+                break;
+
+                default:
+                break;
+            }
+
             config.cnt++;
 
-            //Reset Control Panel
+
+
+            //r Control Panel
             controlPanel.setDefault();  
         }
     }
