@@ -1024,6 +1024,10 @@ var setMouseEvents = (function() {
     elements.octavespinner.val(3);
 
     
+    //REMOVE THIS once there is a block type indicator
+    addBlock(0,0,config.musicBlockType);
+
+    
 })();
 
 
@@ -1157,10 +1161,6 @@ var arrowClick = (function() {
 
             case 65: // a
                 config.advance *= -1;
-            break;
-
-            case 67: //c
-                advance.changeBlockType();
             break;
 
             case 68: // d
