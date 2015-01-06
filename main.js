@@ -707,7 +707,8 @@ var setMouseEvents = (function() {
 
     function compareMouse(e) {
          if(gridify(mousedownX) === gridify(e.pageX) 
-            && gridify(mousedownY) === gridify(e.pageY)) {
+            && gridify(mousedownY) === gridify(e.pageY)
+            && config.draggingBlocks === false) {
             return "same";
         } else {
             return "different";
