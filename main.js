@@ -1144,7 +1144,7 @@ var arrowClick = (function() {
 
     function animateBlock(direction) {
         for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true) {
+            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
                 objs[i].newDirection = direction;
                 objs[i].speed =config.speed;
             }
