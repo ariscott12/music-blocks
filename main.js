@@ -746,8 +746,7 @@ var setMouseEvents = (function() {
                 for (var i = 0; i < objs.length;i++){
                     if(objs[i].selected === true){
                         objs[i].dragOffsetX = objs[i].gridX - blockDragLeftX;
-                        objs[i].dragOffsetY = objs[i].gridY - blockDragLeftY;
-                        objs[i].direction = "none";
+                        objs[i].dragOffsetY = objs[i].gridY - blockDragLeftY;                        
                     }
                 }
             }
@@ -793,6 +792,7 @@ var setMouseEvents = (function() {
 
                             //Update the new gridArray location
                             gridArray[objs[i].gridX][objs[i].gridY] = i;
+                            objs[i].direction = "none";
                             objs[i].updatePosition();
                         }
                     }
