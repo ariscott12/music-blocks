@@ -282,10 +282,10 @@ function processTypeCollision(mblockref, eblockref){
         break;
 
         case config.randomNoteType:
+            objs[mblockref].note = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax)
             if(config.numSelected === 1 && objs[mblockref].selected === true){
                 controlPanel.setNoteToBlock(mblockref);
-            }                
-            objs[mblockref].note = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax)
+            }                            
 
         break;
 
