@@ -33,8 +33,7 @@ var config = {
     note:5,
     octave:3,
     newblock: -1,
-    draggingBlocks: false,
-    colorArray: ["#d27743","#cf5a4c", "#debe4e", "#ccc"]
+    draggingBlocks: false
 };
 
 config.maxX = config.maxY = config.blockSize * config.gridSize;
@@ -47,13 +46,9 @@ var elements = {
     setnote: document.getElementById("note-slider"),
     setvolume: document.getElementById("setvolume"),
     setinstrument: document.getElementById("setinstrument"),
-    select: $(".select"),
-    multiblock: $("multiblock"),
     noteslider: $("#note-slider"),
     volumeslider: $("#volume-slider"),
-    octavespinner: $( "#octave-spinner"),
-    speedspinner:$( "#speed-spinner"),
-    instruments: $(".instruments li")
+    octavespinner: $( "#octave-spinner")
 };
 var gridArray = new Array([]);
 var objs = [];
@@ -181,10 +176,8 @@ musicBlock.prototype.addBlock = function() {
         'top': this.posY + "px",
         'left': this.posX + "px",
         'width': this.width + "px",
-        'height': this.height + "px",
-        'background' : config.colorArray[this.program]
+        'height': this.height + "px"
     });
-    this.notActive = config.colorArray[this.program];
 };
 
 musicBlock.prototype.removeNode = function() {
@@ -271,33 +264,33 @@ musicBlock.prototype.playmidi = function() {
         MIDI.noteOff(this.program, note, delay + 1);
     }
 };
-musicBlock.prototype.getPanelValues = function() {
-    this.volume = elements.volumeslider.slider("value");
-    this.note = elements.noteslider.slider("value");
-    this.octave = elements.octavespinner.spinner("value");
-    this.program = $(".instruments li.active").index();
-    console.log(this.program);
-};
 
 function processTypeCollision(mblockref, eblockref){
-    switch (objs[eblockref].type){
+    switch (objs[eblockref].type){        
         case config.randomVolumeType:
-            objs[mblockref].volume = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax);            
+            objs[mblockref].volume = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax);       
+            if(config.numSelected === 1 && objs[mblockref].selected === true){
+                controlPanel.setVolumeToBlock(mblockref);
+            }                
         break;
 
-        case config.randomOctaveType:
+        case config.randomOctaveType:            
             objs[mblockref].octave = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax)
+            if(config.numSelected === 1 && objs[mblockref].selected === true){
+                controlPanel.setOctaveToBlock(mblockref);
+            }
         break;
 
         case config.randomNoteType:
+            if(config.numSelected === 1 && objs[mblockref].selected === true){
+                controlPanel.setNoteToBlock(mblockref);
+            }                
             objs[mblockref].note = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax)
+
         break;
 
         default:
         break;
-    }
-    if(config.numSelected === 1 && objs[mblockref].selected === true && eblockref.type !== config.musicBlockType){
-        controlPanel.setToBlock(mblockref);
     }
 }
 
@@ -658,13 +651,6 @@ var setMidiParams = (function() {
             }
             return this;
         },
-        selectSpeed: function(speed) {
-            for (var i = 0; i < objs.length; i++) {
-                if (objs[i].selected === true) {
-                    objs[i].speed = speed;
-                }
-            }
-        },
         getNote:function(val) {
             var noteArray = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
             return noteArray[val];
@@ -680,16 +666,30 @@ var controlPanel = (function() {
             elements.volumeslider.slider( "value", config.volume);
             elements.volumeslider.find("input").val(config.volume);
             elements.octavespinner.val(config.octave);
-          
+
         },
+
         setToBlock: function(num) {
             elements.noteslider.slider( "value", objs[num].note);
             elements.noteslider.find("input").val(setMidiParams.getNote(objs[num].note));
             elements.volumeslider.slider( "value", objs[num].volume );
             elements.volumeslider.find("input").val(objs[num].volume);
             elements.octavespinner.val(objs[num].octave);
-           
         },
+
+        setNoteToBlock: function(num) {
+            elements.noteslider.slider( "value", objs[num].note);
+            elements.noteslider.find("input").val(setMidiParams.getNote(objs[num].note));
+        },
+
+        setVolumeToBlock: function(num) {
+            elements.volumeslider.slider( "value", objs[num].volume );
+            elements.volumeslider.find("input").val(objs[num].volume);
+        },
+
+        setOctaveToBlock: function(num) {
+            elements.octavespinner.val(objs[num].octave);
+        }
     }
    
 })();
@@ -1005,9 +1005,7 @@ var setMouseEvents = (function() {
         if (gridArray[gridX][gridY] === -1){
 
             objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
-            objs[config.cnt].getPanelValues();
             objs[config.cnt].createNode(config.cnt,type).addBlock();
-            
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
             switch (type){
@@ -1035,29 +1033,16 @@ var setMouseEvents = (function() {
 
 
             //r Control Panel
-            //controlPanel.setDefault();  
+            controlPanel.setDefault();  
         }
     }
-   
+
     ////Add event listerners to window and grid
     window.addEventListener("mouseup",mouseUp,false);
     elements.section.addEventListener("mousedown",mouseDown,false);
 
-    $(".modeSelect li").click(function () {
-        var mode = $(this).attr("class");
-        $(this).addClass("active").siblings().removeClass("active");
-        mode = mode.replace("active", "");
-        console.log(mode);
-        config.mode = mode;
-    });
 
-    elements.instruments.click(function () {
-        var program = $(this).index();
-        $(this).addClass("active").siblings().removeClass("active");
-        setMidiParams.selectInstrument(program);
-    });
-   
-      
+    ///UI PANEL
     elements.noteslider.slider({
         value:5,
         min: 0,
@@ -1081,7 +1066,6 @@ var setMouseEvents = (function() {
             setMidiParams.selectVolume(ui.value);
         }
     });
-    //alert(elements.volumeslider.slider("value"));
     elements.volumeslider.find("input").val(elements.volumeslider.slider("value"));
 
     elements.octavespinner.spinner({
@@ -1089,24 +1073,11 @@ var setMouseEvents = (function() {
            max: 7,
            start: 3
     });
-    $( ".octave-wrapper").find(".ui-spinner-button" ).click(function() {
+    $( ".ui-spinner-button" ).click(function() {
         var value = elements.octavespinner.spinner( "value");  
         setMidiParams.selectOctave(value);
     });
     elements.octavespinner.val(3);
-
-    elements.speedspinner.spinner({
-           min: 1,
-           max: 8,
-           start: 4
-    });
-    $( ".speed-wrapper").find(".ui-spinner-button" ).click(function() {
-        //console.log("poobear");
-        var value = elements.speedspinner.spinner( "value");  
-        //console.log(value);
-        setMidiParams.selectSpeed(value);
-    });
-    elements.speedspinner.val(4);
 
     
     //REMOVE THIS once there is a block type indicator
@@ -1156,7 +1127,6 @@ var advance = (function() {
     }
 
     function changeBlockType() {
-        console.log("test");
         switch(config.newBlockType){
             case config.musicBlockType:
                 config.newBlockType = config.randomVolumeType;
@@ -1197,7 +1167,7 @@ var arrowClick = (function() {
         for (var i = 0; i < objs.length; i++) {
             if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
                 objs[i].newDirection = direction;
-                objs[i].speed = config.speed;
+                objs[i].speed =config.speed;
             }
             /*objs[i].selected = false;
             objs[i].setStyle({
