@@ -13,8 +13,8 @@ var config = {
    volume: 60,
    note:5,
    octave:3,
-   newblock: -1,
-   draggingBlocks: false
+   draggingBlocks: false,
+   colorArray: ["#cf5a4c","#efc94c", "#e27a3f", "#ccc"]
 };
 var elements = {
     section: document.getElementById("stage"),
@@ -22,6 +22,8 @@ var elements = {
     setnote: document.getElementById("note-slider"),
     setvolume: document.getElementById("setvolume"),
     setinstrument: document.getElementById("setinstrument"),
+    select: $(".select"),
+    multiblock: $("multiblock"),
     noteslider: $("#note-slider"),
     volumeslider: $("#volume-slider"),
     octavespinner: $( "#octave-spinner")
@@ -110,9 +112,9 @@ musicBlock.prototype.addBlock = function() {
         'top': this.posY + "px",
         'left': this.posX + "px",
         'width': this.width + "px",
-        'height': this.height + "px"
+        'height': this.height + "px",
+        'background' : config.colorArray[this.program]
     });
-     console.log(this.blocknum);
 };
 
 musicBlock.prototype.removeNode = function() {
@@ -849,13 +851,26 @@ var setMouseEvents = (function() {
         }
 
     }
-
+   
     ////Add event listerners to window and grid
     window.addEventListener("mouseup",mouseUp,false);
     elements.section.addEventListener("mousedown",mouseDown,false);
 
+    $(".modeSelect li").click(function () {
+        var mode = $(this).attr("class");
+        $(this).addClass("active").siblings().removeClass("active");
+        mode = mode.replace("active", "");
+        console.log(mode);
+        config.mode = mode;
+    });
 
-    ///UI PANEL
+    $(".instruments li").click(function () {
+        var program = $(this).index();
+        $(this).addClass("active").siblings().removeClass("active");
+        setMidiParams.selectInstrument(program);
+    });
+   
+      
     elements.noteslider.slider({
         value:5,
         min: 0,
