@@ -351,12 +351,6 @@ body {
   background: #23695c;
 }
 
-.block {
-  background: #DBA65C;
-  position: absolute;
-  list-style-type: none;
-}
-
 .rnd-vol-block {
   background: #5C91DB;
   position: absolute;
@@ -371,6 +365,12 @@ body {
 
 .rnd-note-block {
   background: #CE6262;
+  position: absolute;
+  list-style-type: none;
+}
+
+.block {
+  background: #DBA65C;
   position: absolute;
   list-style-type: none;
 }
