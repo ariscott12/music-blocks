@@ -106,8 +106,21 @@ body {
 
 }
    
-
-
+.rnd-vol-block {
+    background: #5C91DB;
+    position: absolute;
+    list-style-type: none;
+}
+.rnd-octave-block {
+    background: #7771C1;
+    position: absolute;
+    list-style-type: none;
+}
+.rnd-note-block {
+    background: #CE6262;
+    position: absolute;
+    list-style-type: none;
+}
 
 .block {
 	background:#DBA65C;
