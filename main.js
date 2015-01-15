@@ -47,6 +47,12 @@ var elements = {
     setnote: document.getElementById("note-slider"),
     setvolume: document.getElementById("setvolume"),
     setinstrument: document.getElementById("setinstrument"),
+    leftArrow: document.getElementById("left"),
+    rightArrow: document.getElementById("right"),
+    downArrow: document.getElementById("down"),
+    upArrow: document.getElementById("up"),
+    sendBlocks:document.getElementById("sendBlocks"),
+    selectDirection: $("#selectDirection"),
     select: $(".select"),
     multiblock: $("multiblock"),
     noteslider: $("#note-slider"),
@@ -132,6 +138,7 @@ function musicBlock(w, h, x, y, s, t) {
     this.oldDirection = "none";
     this.newDirection = "none";
     this.direction = "none";
+    this.staticDirection = "none";
     this.speed = s;
     this.isMoving = false;
     this.gridX = gridify(this.posX);
@@ -168,7 +175,9 @@ musicBlock.prototype.setStyle = function(propertyObject) {
 
 musicBlock.prototype.createNode = function(el,type) {
     var node = document.createElement("LI");
-    node.setAttribute("class", type);
+    var direction = elements.selectDirection.children('.active').attr("id");
+    var blockclass = type + " " + direction;
+    node.setAttribute("class", blockclass);
     elements.section.appendChild(node);
     this.id = type + el;
     this.blocknum = el;
@@ -177,6 +186,7 @@ musicBlock.prototype.createNode = function(el,type) {
 };
 
 musicBlock.prototype.addBlock = function() {
+    var direction = elements.selectDirection.children('.active').attr("id");
     this.setStyle({
         'top': this.posY + "px",
         'left': this.posX + "px",
@@ -185,6 +195,9 @@ musicBlock.prototype.addBlock = function() {
         'background' : config.colorArray[this.program]
     });
     this.notActive = config.colorArray[this.program];
+    //alert(direction);
+    this.staticDirection = direction;
+            
 };
 
 musicBlock.prototype.removeNode = function() {
@@ -218,7 +231,7 @@ musicBlock.prototype.deselectBlock = function() {
 musicBlock.prototype.convertBlock = function(type) {
     this.type = type;
     var elem = document.getElementById(this.id);
-    elem.setAttribute("class",type);
+    elem.setAttribute("class", type);
 };
 
 musicBlock.prototype.removeBlock = function() {
@@ -266,9 +279,9 @@ musicBlock.prototype.playmidi = function() {
         var volume = this.volume;
 
 
-        MIDI.setVolume(0, volume);
-        MIDI.noteOn(this.program, note, velocity, delay);
-        MIDI.noteOff(this.program, note, delay + 1);
+        // MIDI.setVolume(0, volume);
+        // MIDI.noteOn(this.program, note, velocity, delay);
+        // MIDI.noteOff(this.program, note, delay + 1);
     }
 };
 musicBlock.prototype.getPanelValues = function() {
@@ -296,7 +309,7 @@ function processTypeCollision(mblockref, eblockref){
         default:
         break;
     }
-    if(config.numSelected === 1 && objs[mblockref].selected === true && eblockref.type !== config.musicBlockType){
+    if(config.numSelected === 1 && objs[mblockref].selected === true && eblockref.type !== config.  musicBlockType){
         controlPanel.setToBlock(mblockref);
     }
 }
@@ -613,16 +626,16 @@ var setMidiParams = (function() {
   
     //LOAD MIDI SOUNDFONTS
     window.onload = function () {
-        MIDI.loadPlugin({
-            soundfontUrl: "./soundfont/",
-            instruments: [ "acoustic_grand_piano", "steel_drums", "tinkle_bell" ],
-            callback: function() {
-                MIDI.programChange(0, 0);
-                MIDI.programChange(1, 114);
-                MIDI.programChange(2, 112);
-                console.log("loaded");
-            }
-        });
+        // MIDI.loadPlugin({
+        //     soundfontUrl: "./soundfont/",
+        //     instruments: [ "acoustic_grand_piano", "steel_drums", "tinkle_bell" ],
+        //     callback: function() {
+        //         MIDI.programChange(0, 0);
+        //         MIDI.programChange(1, 114);
+        //         MIDI.programChange(2, 112);
+        //         console.log("loaded");
+        //     }
+        // });
     };
     return {
         selectNote: function(note) {
@@ -734,6 +747,21 @@ var setMouseEvents = (function() {
             return "different";
         }
     }; 
+
+    function sendBlocks() {
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
+                //console.log( objs[i].direction);
+                objs[i].newDirection = objs[i].staticDirection;
+                objs[i].speed = config.speed;
+            }
+            /*objs[i].selected = false;
+            objs[i].setStyle({
+                'background': objs[i].notActive
+            });*/
+        }
+
+    }
 
     function mousedrag(e) {
         e = e || window.event;
@@ -1032,8 +1060,6 @@ var setMouseEvents = (function() {
 
             config.cnt++;
 
-
-
             //r Control Panel
             //controlPanel.setDefault();  
         }
@@ -1055,6 +1081,19 @@ var setMouseEvents = (function() {
         var program = $(this).index();
         $(this).addClass("active").siblings().removeClass("active");
         setMidiParams.selectInstrument(program);
+    });
+
+    elements.selectDirection.find("li").click(function () {
+        var direction = $(this).attr("id");
+        //alert(direction);
+
+        $(this).addClass("active").siblings().removeClass("active");
+
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
+                    objs[i].staticDirection = direction;
+            }
+        }
     });
    
       
@@ -1081,7 +1120,6 @@ var setMouseEvents = (function() {
             setMidiParams.selectVolume(ui.value);
         }
     });
-    //alert(elements.volumeslider.slider("value"));
     elements.volumeslider.find("input").val(elements.volumeslider.slider("value"));
 
     elements.octavespinner.spinner({
@@ -1095,18 +1133,18 @@ var setMouseEvents = (function() {
     });
     elements.octavespinner.val(3);
 
-    elements.speedspinner.spinner({
-           min: 1,
-           max: 8,
-           start: 4
-    });
-    $( ".speed-wrapper").find(".ui-spinner-button" ).click(function() {
-        //console.log("poobear");
-        var value = elements.speedspinner.spinner( "value");  
-        //console.log(value);
-        setMidiParams.selectSpeed(value);
-    });
-    elements.speedspinner.val(4);
+    elements.sendBlocks.addEventListener("mousedown",sendBlocks,false);
+
+    // elements.speedspinner.spinner({
+    //        min: 1,
+    //        max: 8,
+    //        start: 4
+    // });
+    // $( ".speed-wrapper").find(".ui-spinner-button" ).click(function() {
+    //     var value = elements.speedspinner.spinner( "value");  
+    //     setMidiParams.selectSpeed(value);
+    // });
+    // elements.speedspinner.val(4);
 
     
     //REMOVE THIS once there is a block type indicator
@@ -1156,7 +1194,6 @@ var advance = (function() {
     }
 
     function changeBlockType() {
-        console.log("test");
         switch(config.newBlockType){
             case config.musicBlockType:
                 config.newBlockType = config.randomVolumeType;
@@ -1187,10 +1224,6 @@ var advance = (function() {
 
 
 var arrowClick = (function() {
-    var leftArrow = document.getElementById("left");
-    var rightArrow = document.getElementById("right");
-    var downArrow = document.getElementById("down");
-    var upArrow = document.getElementById("up");
     var stopArrow = document.getElementById("stop");
 
     function animateBlock(direction) {
@@ -1281,18 +1314,18 @@ var arrowClick = (function() {
         }
     }, false);
 
-    leftArrow.addEventListener("click", function() {
-        animateBlock("left");
-    });
-    rightArrow.addEventListener("click", function() {
-        animateBlock("right");
-    });
-    upArrow.addEventListener("click", function() {
-        animateBlock("up");
-    });
-    downArrow.addEventListener("click", function() {
-        animateBlock("down");
-    });
+    // leftArrow.addEventListener("click", function() {
+    //     animateBlock("left");
+    // });
+    // rightArrow.addEventListener("click", function() {
+    //     animateBlock("right");
+    // });
+    // upArrow.addEventListener("click", function() {
+    //     animateBlock("up");
+    // });
+    // downArrow.addEventListener("click", function() {
+    //     animateBlock("down");
+    // });
     stopArrow.addEventListener("click", function() {
         animateBlock("none");
     });
