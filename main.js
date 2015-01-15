@@ -293,24 +293,31 @@ musicBlock.prototype.getPanelValues = function() {
 };
 
 function processTypeCollision(mblockref, eblockref){
-    switch (objs[eblockref].type){
+    switch (objs[eblockref].type){        
         case config.randomVolumeType:
-            objs[mblockref].volume = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax);            
+            objs[mblockref].volume = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax);       
+            if(config.numSelected === 1 && objs[mblockref].selected === true){
+                controlPanel.setVolumeToBlock(mblockref);
+            }                
         break;
 
-        case config.randomOctaveType:
+        case config.randomOctaveType:            
             objs[mblockref].octave = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax)
+            if(config.numSelected === 1 && objs[mblockref].selected === true){
+                controlPanel.setOctaveToBlock(mblockref);
+            }
         break;
 
         case config.randomNoteType:
             objs[mblockref].note = rangedRandom(objs[eblockref].rngMin,objs[eblockref].rngMax)
+            if(config.numSelected === 1 && objs[mblockref].selected === true){
+                controlPanel.setNoteToBlock(mblockref);
+            }                            
+
         break;
 
         default:
         break;
-    }
-    if(config.numSelected === 1 && objs[mblockref].selected === true && eblockref.type !== config.  musicBlockType){
-        controlPanel.setToBlock(mblockref);
     }
 }
 
@@ -693,16 +700,30 @@ var controlPanel = (function() {
             elements.volumeslider.slider( "value", config.volume);
             elements.volumeslider.find("input").val(config.volume);
             elements.octavespinner.val(config.octave);
-          
+
         },
+
         setToBlock: function(num) {
             elements.noteslider.slider( "value", objs[num].note);
             elements.noteslider.find("input").val(setMidiParams.getNote(objs[num].note));
             elements.volumeslider.slider( "value", objs[num].volume );
             elements.volumeslider.find("input").val(objs[num].volume);
             elements.octavespinner.val(objs[num].octave);
-           
         },
+
+        setNoteToBlock: function(num) {
+            elements.noteslider.slider( "value", objs[num].note);
+            elements.noteslider.find("input").val(setMidiParams.getNote(objs[num].note));
+        },
+
+        setVolumeToBlock: function(num) {
+            elements.volumeslider.slider( "value", objs[num].volume );
+            elements.volumeslider.find("input").val(objs[num].volume);
+        },
+
+        setOctaveToBlock: function(num) {
+            elements.octavespinner.val(objs[num].octave);
+        }
     }
    
 })();
@@ -1064,7 +1085,7 @@ var setMouseEvents = (function() {
             //controlPanel.setDefault();  
         }
     }
-   
+
     ////Add event listerners to window and grid
     window.addEventListener("mouseup",mouseUp,false);
     elements.section.addEventListener("mousedown",mouseDown,false);
@@ -1314,18 +1335,18 @@ var arrowClick = (function() {
         }
     }, false);
 
-    // leftArrow.addEventListener("click", function() {
-    //     animateBlock("left");
-    // });
-    // rightArrow.addEventListener("click", function() {
-    //     animateBlock("right");
-    // });
-    // upArrow.addEventListener("click", function() {
-    //     animateBlock("up");
-    // });
-    // downArrow.addEventListener("click", function() {
-    //     animateBlock("down");
-    // });
+    leftArrow.addEventListener("click", function() {
+        animateBlock("left");
+    });
+    rightArrow.addEventListener("click", function() {
+        animateBlock("right");
+    });
+    upArrow.addEventListener("click", function() {
+        animateBlock("up");
+    });
+    downArrow.addEventListener("click", function() {
+        animateBlock("down");
+    });
     stopArrow.addEventListener("click", function() {
         animateBlock("none");
     });
