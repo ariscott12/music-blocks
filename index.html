@@ -1,90 +1,262 @@
 <!doctype html>
 <html ondragstart="return false;" ondrop="return false;">
-    <head>
-        <meta charset="utf-8">
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/main.css">
-        <title>Untitled</title>
-        <link rel="author" href="humans.txt">
-        <script src="./js/MIDI/AudioDetect.js" type="text/javascript"></script>
-        <script src="./js/MIDI/LoadPlugin.js" type="text/javascript"></script>
-        <script src="./js/MIDI/Plugin.js" type="text/javascript"></script>
-        <script src="./js/MIDI/Player.js" type="text/javascript"></script>
-        <script src="./js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
-        <!-- extras -->
-        <script src="./inc/Base64.js" type="text/javascript"></script>
-        <script src="./inc/base64binary.js" type="text/javascript"></script>
-        <script src="./js/jquery.js" type="text/javascript"></script>
-        <script src="./js/jquery-ui.js" type="text/javascript"></script>
-    </head>
 
-    <body>
-        <div id = "wrapper">
-            <div draggable="false" id = "stage">
-                <ul id = "gridVertical"></ul>
-                <ul id = "gridHorizontal"></ul>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+
+    <link rel="stylesheet" href="css/main.css">
+    <title>JS Sequencer</title>
+    <link rel="author" href="humans.txt">
+    <link href='http://fonts.googleapis.com/css?family=Istok+Web:400,700' rel='stylesheet' type='text/css'>
+    <script src="./js/MIDI/AudioDetect.js" type="text/javascript"></script>
+    <script src="./js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+    <script src="./js/MIDI/Plugin.js" type="text/javascript"></script>
+    <script src="./js/MIDI/Player.js" type="text/javascript"></script>
+    <script src="./js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+    <!-- extras -->
+    <script src="./inc/Base64.js" type="text/javascript"></script>
+    <script src="./inc/base64binary.js" type="text/javascript"></script>
+    <script src="./js/jquery.js" type="text/javascript"></script>
+    <script src="./js/jquery-ui.js" type="text/javascript"></script>
+    <script src="js/jquery.knob.js"></script>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div draggable="false" id="stage">
+            <ul id="gridVertical"></ul>
+            <ul id="gridHorizontal"></ul>
+        </div>
+
+
+        <div id="panel">
+            <ul class="block-type-select clear">
+                <li class="active">Music Block</li>
+                <li>Effect Block</li>
+            </ul>
+            <div class="instrument-select">
+                <center>
+                    <select>
+                        <option value="volvo">Volvo</option>
+                        <option value="saab">Saab</option>
+                        <option value="mercedes">Mercedes</option>
+                        <option value="audi">Audi</option>
+                    </select>
+                </center>
             </div>
-            <div id = "panel">
-                <ul>
-                    <li class = "music-block">Music <br /> Blocks</li>
-                    <li class = "randomizer-block">Randomizer  <br /> Blocks</li>
-                </ul>
-                <div class = "clear"></div>
-                <ul class = "modeSelect">
-                    <li class = "select"><img src = "images/indexfinger.png"></li>
-                    <li class = "create active"><img src = "images/multiselect.png"></li>
-                    <li class = "trash"><img src = "images/trashcan.png"></li>
-                </ul>
-                <div class = "clear"></div>
-                <ul id = "selectDirection">
-                    <li class = "active" id = "up">up</li>
-                    <li id = "down">down</li>
-                    <li id = "left">left</li>
-                    <li id = "right">right</li>
-                </ul> 
-                <div class = "clear"></div>
-                <div class = "block-modifiers">
-                    <div id="note-slider"></div>
-                    <div id="volume-slider"></div>
-                    <p class = "octave-wrapper">
-                        <input id="octave-spinner" name="value"  disabled>
-                        <label class = "octave-label"  for="spinner">Octave</label>
-                    </p>
-                    <!--  <p class = "speed-wrapper">
-                        <input id="speed-spinner" name="value"  disabled>
-                        <label class = "speed-label"  for="spinner">Speed</label>
-                    </p> -->
+            <ul class="block-direction-select clear" id="selectDirection">
+                <li id="left">
+                    <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                        <polygon fill="#717171" points="11,14 0,7 11,0 " />
+                    </svg>
+                </li>
+                <li class="active" id="up">
+                    <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
+                        <polygon fill="#717171" points="0,11 7,0 14,11 " />
+                    </svg>
+                </li>
+
+                <li id="right">
+                    <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                        <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                    </svg>
+                </li>
+                <li id="down">
+                    <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
+                        <polygon fill="#717171" points="14,0 7,11 0,0 " />
+                    </svg>
+                </li>
+            </ul>
+            <div class="note-select clear">
+                <div class="note-wrapper clear floatleft">
+                    <p>Note Selection</p>
+                    <div class="dial_wrapper">
+                        <input class="dial-input" type="text" id="note-slider">
+                        <div class="dial-bg"></div>
+                        <div class="connector-line"></div>
+                    </div>
+                    <ul class="piano-roll clear">
+                        <li class="whitekey"></li>
+                        <li class="blackkey"></li>
+                        <li class="whitekey"></li>
+                        <li class="blackkey"></li>
+                        <li class="whitekey"></li>
+                        <li class="whitekey"></li>
+                        <li class="blackkey"></li>
+                        <li class="whitekey"></li>
+                        <li class="blackkey"></li>
+                        <li class="whitekey"></li>
+                        <li class="blackkey"></li>
+                        <li class="whitekey"></li>
+                    </ul>
                 </div>
-                <div id = "sendBlocks">Send Blocks ></div>  
-                <ul class = "instruments">
-                    <li class = "instrument1 active"></li>
-                    <li class = "instrument2"></li>
-                    <li class = "instrument3"></li>
-                    <li class = "instrument4"></li>
-                </ul>
-
+                <p>Octave</p>
+                <div id="octave-spinner" class="octave-select">
+                    <input class="slider-value" />
+                </div>
             </div>
+            <div class="level-select">
+                <div class="dial_wrapper">
+                    <input class="dial-input" type="text" value="0" id="volume-slider">
+                    <div class="dial-bg"></div>
+                    <div class="connector-line"></div>
 
-            <ul id = "arrows">
-               <!--  <li id = "up">Up</li>
+                </div>
+                <p>Volume</p>
+                <div class="dial_wrapper">
+                    <input class="dial-input" type="text" value="0" id="velocity">
+                    <div class="dial-bg"></div>
+                    <div class="connector-line"></div>
+
+                </div>
+                <p>Velocity</p>
+                <div class="dial_wrapper">
+                    <input class="dial-input" type="text" value="0" id="duration">
+                    <div class="dial-bg"></div>
+                    <div class="connector-line"></div>
+                </div>
+                <p>Duration</p>
+                <div class="clear"></div>
+            </div>
+            <div class="activate-blocks">
+                <center>
+                    <div id="sendBlocks" class="send-blocks button-basic">Send Blocks
+                        <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                            <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                        </svg>
+                    </div>
+                </center>
+            </div>
+            <ul class="modeSelect">
+                <li class="select"><img src="images/indexfinger.png">
+                </li>
+                <li class="create active"><img src="images/multiselect.png">
+                </li>
+                <li class="trash"><img src="images/trashcan.png">
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+
+
+
+    <!-- 
+        <div class="clear"></div>
+        <ul id="selectDirection">
+            <li class="active" id="up">up</li>
+            <li id="down">down</li>
+            <li id="left">left</li>
+            <li id="right">right</li>
+        </ul>
+        <div class="clear"></div>
+        <div class="block-modifiers">
+            <div id="note-slider"></div>
+            <div id="volume-slider"></div>
+            <p class="octave-wrapper">
+                <input id="octave-spinner" name="value" disabled>
+                <label class="octave-label" for="spinner">Octave</label>
+            </p>
+        </div> -->
+    <!--  <div id="sendBlocks">Send Blocks ></div> -->
+    <ul class="instruments">
+        <li class="instrument1 active"></li>
+        <li class="instrument2"></li>
+        <li class="instrument3"></li>
+        <li class="instrument4"></li>
+    </ul>
+
+    <!-- </div> -->
+
+    <ul id="arrows">
+        <!--  <li id = "up">Up</li>
                 <li id = "down">Down</li>
                 <li id = "left">Left</li>
                 <li id = "right">Right</li> -->
-                <li id = "stop">Stop</li>
-                <li id = "pause">Pause</li>
-                <li id = "advance">Advance</li>
-                <li id = "clearall">Clear All</li>
-                <li id = "selectall">Select All</li>
-                <li id = "changetype">Change New Block Type</li>
-            </ul>
-            <!-- note: <input id = "midinote" type="text" name="note">
+        <li id="stop">Stop</li>
+        <li id="pause">Pause</li>
+        <li id="advance">Advance</li>
+        <li id="clearall">Clear All</li>
+        <li id="selectall">Select All</li>
+        <li id="changetype">Change New Block Type</li>
+    </ul>
+    <!-- note: <input id = "midinote" type="text" name="note">
             <input id = "setnote" type="submit" value="Set Note">
             volume: <input id = "midivolume" type="text" name="volume">
             <input id = "setvolume" type="submit" value="Set Volume">
             instrument: <input id = "midiinstrument" type="text" name="instrument">
             <input id = "setinstrument" type="submit" value="Set Instrument"> -->
-        </div>
-        <script src="main.js"></script>
-    </body>
+    <!--  </div> -->
+    <script src="main.js"></script>
+
+    <script>
+    $(function() {
+        var noteArray = ["C", "C#", "D", "D#", "E", "F", 'G', 'G#'];
+        var valprev = "";
+        var knobparams = {
+            fgColor: '#6f6e6d',
+            bgColor: '#adacaa',
+            width: '27',
+            thickness: '.55',
+            cursor: 11,
+            height: '27 ',
+
+        }
+        // $("#note-slider")
+        //     .val(0)
+        //     .knob({
+        //         'min': 0,
+        //         'max': 11,
+        //         'fgColor': knobparams.fgColor,
+        //         'bgColor': knobparams.bgColor,
+        //         'width': knobparams.width,
+        //         'thickness': knobparams.thickness,
+        //         'cursor': knobparams.cursor,
+        //         'height': knobparams.height,
+        //         'value': 0,
+        //         'format': function(value) {
+        //             if (valprev != value) {
+        //                 console.log(value);
+        //             }
+        //             valprev = value;
+        //             return noteArray[value];
+        //         }
+        //     });
+
+        $("#volume-slider, #velocity, #duration")
+            .val(70)
+            .knob({
+                'min': 0,
+                'max': 120,
+                'fgColor': knobparams.fgColor,
+                'bgColor': knobparams.bgColor,
+                'width': knobparams.width,
+                'thickness': knobparams.thickness,
+                'cursor': knobparams.cursor,
+                'height': knobparams.height,
+            });
+
+
+        // $("#octave-spinner").slider({
+        //     orientation: "vertical",
+        //     range: "min",
+        //     value: 4,
+        //     min: 1,
+        //     max: 7,
+        //     step: 1,
+        //     slide: function(event, ui) {
+        //         $(".slider-value").val(ui.value);
+        //     }
+        // });
+        // $(".slider-value").val($("#octave-spinner").slider("value"));
+    });
+    </script>
+    <script src="//localhost:35729/livereload.js"></script>
+</body>
+
 </html>
