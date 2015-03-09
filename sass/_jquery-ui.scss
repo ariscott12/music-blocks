@@ -1,0 +1,38 @@
+.shadow {
+    box-shadow: 0 5px 0 1px rgba(0, 0, 0, 0.09) inset;
+}
+.ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl {
+    border-radius: 0;
+}
+.ui-slider-vertical .ui-slider-handle {
+    left: -0.47em;
+    margin-bottom: -0.5em;
+    margin-left: 0;
+    background: $gray;
+    cursor: default;
+    height: 8px;
+    position: absolute;
+    width: 20px;
+    z-index: 2;
+    border: 1px solid #888;
+    box-shadow: 0px 4px 3px 0px rgba(0, 0, 0, 0.33);
+}
+.ui-slider-vertical {
+    height: 84px;
+    width: 6px;
+    border: none;
+    @extend .shadow;
+}
+.ui-widget-content {
+    background: $blue-dark;
+}
+.ui-widget-header {
+    background: $aqua;
+    border: none;
+    @extend .shadow;
+}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+    font-family: 'Istok Web', sans-serif;;
+    font-size: .925em;
+    color:$gray-font;
+}

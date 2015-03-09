@@ -1,0 +1,14 @@
+.clear:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.clear {
+	clear:both;
+}
+.floatleft {
+	float:left;
+}
+.floatright {
+	float:right;
+}
