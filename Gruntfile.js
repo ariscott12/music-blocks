@@ -1,40 +1,51 @@
 module.exports = function(grunt) {
-	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-	 // Configure Grunt
-	grunt.initConfig({
-	 
-		// grunt-contrib-connect will serve the files of the project
-		// on specified port and hostname
-		connect: {
-			all: {
-				options:{
-					port: 9000,
-					hostname: "0.0.0.0",
-					// Prevents Grunt to close just after the task (starting the server) completes
-					// This will be removed later as `watch` will take care of that
-					keepalive: true
-				}
-			}
-		}
+    //  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+    grunt.initConfig({
+        sass: {
+            dist: {
 
-		// libsass: {
-		//     myTarget {
-		//         //src: 'src/sass/*.scss'
-		//         dest: 'dist/css/main.css'
-		//     }
-  // 		},
-  // 		watch: {
-		// 	css: {
-		// 		files: 'sass/*.scss',
-		// 		tasks: ['sass']
-		// 	}
-		// }
-	}); 
+                files: {
+                    'css/main.css': 'sass/main.scss',
+                },
+                options: { // Target options
+                    style: 'compact'
+                }
+            }
+        },
+        connect: {
+            server: {
+                options: {
+                    port: 8080,
+                    livereload: true
+                }
+            }
+        },
+        watch: {
+            sass: {
+                files: [
+                    'sass/*.scss'
+                ],
+                tasks: 'sass'
+            },
+            livereload: {
+                // Here we watch the files the sass task will compile to
+                // These files are sent to the live reload server after sass compiles to them
+                options: {
+                    livereload: true
+                },
+                files: ['css/main.css', 'index.html'],
+            },
+        }
+    });
 
-	grunt.loadNpmTasks('grunt-contrib-connect');
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-libsass');
-	grunt.registerTask('default',[
-		'connect'
-	]); 
+    //Where we tell Grunt we plan to use this plug-in.
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-sass');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+
+    //Where we tell Grunt what to do when we type "grunt" into the terminal.
+    grunt.registerTask('default', ['connect', 'watch']);
+
+
+
 };
