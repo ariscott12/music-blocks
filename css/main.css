@@ -188,6 +188,8 @@ body {
     position: absolute;
     width: 6px;
     z-index: 100; }
+  .piano-roll .active {
+    background: #efc94c; }
 
 .octave-select {
   float: left;
@@ -389,4 +391,5 @@ select {
   position: relative;
   height: 640px;
   width: 640px;
-  float: left; }
+  float: left;
+  margin-right: 10px; }
