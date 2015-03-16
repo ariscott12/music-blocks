@@ -4,7 +4,7 @@
         width: 206px;
         height: 300px;
         font-size: .8125em;
-        float:left;
+        float: left;
         p {
             margin-bottom: 10px;
         }
@@ -142,6 +142,9 @@
             position: absolute;
             width: 6px;
             z-index: 100;
+        }
+        .active {
+            background: $yellow;
         }
     }
     .octave-select {

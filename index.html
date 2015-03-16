@@ -40,11 +40,11 @@
             </ul>
             <div class="instrument-select">
                 <center>
-                    <select>
-                        <option value="volvo">Volvo</option>
-                        <option value="saab">Saab</option>
-                        <option value="mercedes">Mercedes</option>
-                        <option value="audi">Audi</option>
+                    <select id = "setInstrument">
+                        <option value="0" value="volvo">Volvo</option>
+                        <option value="1">Saab</option>
+                        <option value="2">Mercedes</option>
+                        <option value="3">Audi</option>
                     </select>
                 </center>
             </div>
@@ -80,7 +80,7 @@
                         <div class="connector-line"></div>
                     </div>
                     <ul class="piano-roll clear">
-                        <li class="whitekey"></li>
+                        <li class="whitekey active"></li>
                         <li class="blackkey"></li>
                         <li class="whitekey"></li>
                         <li class="blackkey"></li>
@@ -101,7 +101,7 @@
             </div>
             <div class="level-select">
                 <div class="dial_wrapper">
-                    <input class="dial-input" type="text" value="0" id="volume-slider">
+                    <input class="dial-input" type="text" value="0" id="volume">
                     <div class="dial-bg"></div>
                     <div class="connector-line"></div>
 
@@ -146,38 +146,10 @@
 
 
 
-    <!-- 
-        <div class="clear"></div>
-        <ul id="selectDirection">
-            <li class="active" id="up">up</li>
-            <li id="down">down</li>
-            <li id="left">left</li>
-            <li id="right">right</li>
-        </ul>
-        <div class="clear"></div>
-        <div class="block-modifiers">
-            <div id="note-slider"></div>
-            <div id="volume-slider"></div>
-            <p class="octave-wrapper">
-                <input id="octave-spinner" name="value" disabled>
-                <label class="octave-label" for="spinner">Octave</label>
-            </p>
-        </div> -->
-    <!--  <div id="sendBlocks">Send Blocks ></div> -->
-    <ul class="instruments">
-        <li class="instrument1 active"></li>
-        <li class="instrument2"></li>
-        <li class="instrument3"></li>
-        <li class="instrument4"></li>
-    </ul>
-
-    <!-- </div> -->
+  
 
     <ul id="arrows">
-        <!--  <li id = "up">Up</li>
-                <li id = "down">Down</li>
-                <li id = "left">Left</li>
-                <li id = "right">Right</li> -->
+     
         <li id="stop">Stop</li>
         <li id="pause">Pause</li>
         <li id="advance">Advance</li>
@@ -185,13 +157,7 @@
         <li id="selectall">Select All</li>
         <li id="changetype">Change New Block Type</li>
     </ul>
-    <!-- note: <input id = "midinote" type="text" name="note">
-            <input id = "setnote" type="submit" value="Set Note">
-            volume: <input id = "midivolume" type="text" name="volume">
-            <input id = "setvolume" type="submit" value="Set Volume">
-            instrument: <input id = "midiinstrument" type="text" name="instrument">
-            <input id = "setinstrument" type="submit" value="Set Instrument"> -->
-    <!--  </div> -->
+  
     <script src="main.js"></script>
 
     <script>
@@ -228,18 +194,18 @@
         //         }
         //     });
 
-        $("#volume-slider, #velocity, #duration")
-            .val(70)
-            .knob({
-                'min': 0,
-                'max': 120,
-                'fgColor': knobparams.fgColor,
-                'bgColor': knobparams.bgColor,
-                'width': knobparams.width,
-                'thickness': knobparams.thickness,
-                'cursor': knobparams.cursor,
-                'height': knobparams.height,
-            });
+        // $("#velocity, #duration")
+        //     .val(70)
+        //     .knob({
+        //         'min': 0,
+        //         'max': 120,
+        //         'fgColor': knobparams.fgColor,
+        //         'bgColor': knobparams.bgColor,
+        //         'width': knobparams.width,
+        //         'thickness': knobparams.thickness,
+        //         'cursor': knobparams.cursor,
+        //         'height': knobparams.height,
+        //     });
 
 
         // $("#octave-spinner").slider({
