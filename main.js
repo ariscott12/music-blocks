@@ -27,8 +27,9 @@ var config = {
     numSelected: 0,
     mode: "create",
     cnt: 0,
-    newblock: -1,
     volume: 60,
+    velocity: 60,
+    duration: 30,
     note: 5,
     octave: 3,
     newblock: -1,
@@ -45,7 +46,7 @@ var elements = {
     node: document.createElement("LI"),
     setnote: document.getElementById("note-slider"),
     setvolume: document.getElementById("setvolume"),
-    setinstrument: document.getElementById("setinstrument"),
+    setInstrument: document.getElementById("setInstrument"),
     leftArrow: document.getElementById("left"),
     rightArrow: document.getElementById("right"),
     downArrow: document.getElementById("down"),
@@ -55,7 +56,10 @@ var elements = {
     select: $(".select"),
     multiblock: $("multiblock"),
     noteslider: $("#note-slider"),
-    volumeslider: $("#volume-slider"),
+    volumeknob: $("#volume"),
+    durationknob: $("#duration"),
+    velocityknob: $("#velocity"),
+    levelselectors: $("#volume, #velocity, #duration"),
     octavespinner: $("#octave-spinner"),
     speedspinner: $("#speed-spinner"),
     instruments: $(".instruments li")
@@ -65,7 +69,7 @@ var objs = [];
 
 
 ///Make the grid
-var makeGrid = (function() {
+(function makeGrid() {
     for (var i = 0; i < config.gridSize; i++) {
         var section = document.getElementById("gridHorizontal");
         var section2 = document.getElementById("gridVertical");
@@ -81,49 +85,6 @@ var makeGrid = (function() {
         }
     }
 })();
-
-//Display block info
-function displayBlockInfo(blockref) {
-    console.log("Block " + blockref +
-        " GridX: " + objs[blockref].gridX +
-        " GridY: " + objs[blockref].gridY +
-        " prevGridX: " + objs[blockref].prevgridX +
-        " prevGridY: " + objs[blockref].prevgridY +
-        " Direction: " + objs[blockref].direction +
-        " Waiting: " + objs[blockref].waiting);
-}
-
-//Gridify translates an amount of pixels to an amount of blocks
-function gridify(pixels) {
-    return Math.floor((pixels - config.minX) / config.blockSize);
-}
-
-function rangedRandom(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-//Returns a hex color based on the block type
-function getBlockColor(type) {
-    switch (type) {
-        case config.musicBlockType:
-            return "#DBA65C";
-            break;
-
-        case config.randomVolumeType:
-            return "#5C91DB";
-            break;
-
-        case config.randomNoteType:
-            return "#CE6262";
-            break;
-
-        case config.randomOctaveType:
-            return "#7771C1";
-            break;
-
-    }
-
-}
 
 //////MUSIC BLOCK OBJECT AND PROTOTYPE FUNCTIONS//////
 function musicBlock(w, h, x, y, s, t) {
@@ -149,13 +110,13 @@ function musicBlock(w, h, x, y, s, t) {
     this.active = "#000";
     this.notActive = getBlockColor(this.type);
     this.halfpoint = -1;
-    //this.snd = new Audio("tiletap.wav");
     this.snd = null;
     this.note = 0;
     this.octave = 5;
-    this.velocity = 100;
     this.delay = 0;
-    this.volume = 60;
+    this.volume = config.volume;
+    this.duration = config.duration;
+    this.velocity = 60;
     this.program = 0;
     this.waiting = false;
     this.numCollisions = 0;
@@ -193,7 +154,6 @@ musicBlock.prototype.addBlock = function() {
         'background': config.colorArray[this.program]
     });
     this.notActive = config.colorArray[this.program];
-    //alert(direction);
     this.staticDirection = direction;
 
 };
@@ -217,6 +177,7 @@ musicBlock.prototype.selectBlock = function() {
 
 musicBlock.prototype.deselectBlock = function() {
     //Only deselect block if it is already selected
+   // console.log(this.notActive);
     if (this.selected === true) {
         this.selected = false;
         this.setStyle({
@@ -262,7 +223,6 @@ musicBlock.prototype.selectNewSingle = function() {
     }
 
 };
-
 musicBlock.prototype.updatePosition = function() {
     this.setStyle({
         'top': this.posY + "px",
@@ -271,39 +231,84 @@ musicBlock.prototype.updatePosition = function() {
 };
 musicBlock.prototype.playmidi = function() {
     if (this.type === config.musicBlockType) {
-        var delay = 0; // play one note every quarter second
+        var duration = this.duration / 120;
         var note = this.note + 12 * this.octave;
         var velocity = this.velocity;
         var volume = this.volume;
 
-
         MIDI.setVolume(0, volume);
-        MIDI.noteOn(this.program, note, velocity, delay);
-        MIDI.noteOff(this.program, note, delay + 1);
+        MIDI.noteOn(this.program, note, velocity, 0);
+        MIDI.noteOff(this.program, note, duration);
     }
 };
 musicBlock.prototype.getPanelValues = function() {
-    this.volume = elements.volumeslider.slider("value");
+    this.volume = elements.volumeknob.val();
     this.note = elements.noteslider.val();
+    this.duration = elements.durationknob.val();
+    this.velocity = elements.velocityknob.val();
     this.octave = elements.octavespinner.slider("value");
-    this.program = $(".instruments li.active").index();
+    this.program = elements.setInstrument.value;
+   // alert(this.program);
     //console.log(this.program);
 };
+
+//Display block info
+function displayBlockInfo(blockref) {
+    console.log("Block " + blockref +
+        " GridX: " + objs[blockref].gridX +
+        " GridY: " + objs[blockref].gridY +
+        " prevGridX: " + objs[blockref].prevgridX +
+        " prevGridY: " + objs[blockref].prevgridY +
+        " Direction: " + objs[blockref].direction +
+        " Waiting: " + objs[blockref].waiting);
+}
+
+//Gridify translates an amount of pixels to an amount of blocks
+function gridify(pixels) {
+    return Math.floor((pixels - config.minX) / config.blockSize);
+}
+
+function rangedRandom(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+//Returns a hex color based on the block type
+function getBlockColor(type) {
+  
+    switch (type) {
+        case config.musicBlockType:
+         // console.log(type);
+            return "#DBA65C";
+            break;
+
+        case config.randomVolumeType:
+            return "#5C91DB";
+            break;
+
+        case config.randomNoteType:
+            return "#CE6262";
+            break;
+
+        case config.randomOctaveType:
+            return "#7771C1";
+            break;
+
+    }
+}
+
+
 
 function processTypeCollision(mblockref, eblockref) {
     switch (objs[eblockref].type) {
         case config.randomVolumeType:
             objs[mblockref].volume = rangedRandom(objs[eblockref].rngMin, objs[eblockref].rngMax);
             break;
-
         case config.randomOctaveType:
-            objs[mblockref].octave = rangedRandom(objs[eblockref].rngMin, objs[eblockref].rngMax)
+            objs[mblockref].octave = rangedRandom(objs[eblockref].rngMin, objs[eblockref].rngMax);
             break;
-
         case config.randomNoteType:
-            objs[mblockref].note = rangedRandom(objs[eblockref].rngMin, objs[eblockref].rngMax)
+            objs[mblockref].note = rangedRandom(objs[eblockref].rngMin, objs[eblockref].rngMax);
             break;
-
         default:
             break;
     }
@@ -364,7 +369,6 @@ function processCollision(direction, gridX, gridY, blockref, skipcheck) {
             diag2GridY = gridY + 1;
             diag2Direction = "up";
             break;
-
         case "none":
             return direction;
             break;
@@ -423,7 +427,7 @@ function oppositeDirection(direction) {
     }
 }
 
-var startSyncCounter = function() {
+startSyncCounter = function() {
     var running = true;
     var syncounter = -config.blockSize;
 
@@ -576,8 +580,9 @@ var startSyncCounter = function() {
 
 
 ////////SET MIDI PARAMETERS ON MUSIC BLOCKS
-var setMidiParams = (function() {
-
+setMidiParams = function() {
+    var setParams,
+        getNote;
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
         MIDI.loadPlugin({
@@ -591,85 +596,196 @@ var setMidiParams = (function() {
             }
         });
     };
+    setParams = function(type, value) {
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true) {
+                switch (type) {
+                    case "volume":
+                        objs[i].volume = value;
+                        break;
+                    case "octave":
+                        objs[i].octave = value;
+                        break;
+                    case "duration":
+                        objs[i].duration = value;
+                        break;
+                    case "velocity":
+                        objs[i].velocity = value;
+                        break;
+                    case "note":
+                        objs[i].note = value;
+                        break;
+                    case "instrument":
+                        objs[i].program = value;
+                        break;
+                    case "direction":
+                        objs[i].staticDirection = value;
+                        break;
+                    default:
+                        objs[i].volume = value;
+                        break;
+                }
+            }
+        }
+        return this;
+    };
+    getNote = function(val) {
+        var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        return noteArray[val];
+    };
     return {
-        selectNote: function(note) {
-            for (var i = 0; i < objs.length; i++) {
-                if (objs[i].selected === true) {
-                    objs[i].note = note;
+        getNote: getNote,
+        setParams: setParams
+            //selectInstrument: selectInstrument
+    };
+}();
+
+controlPanel = function() {
+    var setDefault,
+        setToBlock;
+    setDefault = function() {
+        elements.noteslider.val(config.note);
+        elements.noteslider.trigger('change');
+        elements.volumeknob.val(config.volume);
+        elements.volumeknob.trigger('change');
+        elements.durationknob.val(config.duration);
+        elements.durationknob.trigger('change');
+        elements.velocityknob.val(config.velocity);
+        elements.velocityknob.trigger('change');
+        elements.octavespinner.slider("value", config.octave);
+        elements.octavespinner.find("input").val(config.octave);
+    };
+    setToBlock = function(num) {
+        elements.noteslider.val(objs[num].note);
+        elements.noteslider.trigger('change');
+        elements.volumeknob.val(objs[num].volume);
+        elements.volumeknob.trigger('change');
+        elements.durationknob.val(objs[num].duration);
+        elements.durationknob.trigger('change');
+        elements.velocityknob.val(objs[num].velocity);
+        elements.velocityknob.trigger('change');
+        elements.octavespinner.slider("value", objs[num].octave);
+        elements.octavespinner.find("input").val(objs[num].octave);
+        elements.setInstrument.value = objs[num].program;
+    };
+    syncNoteSelection = function(value, type) {
+        if (type === "piano-roll") {
+            $(".piano-roll li").eq(value - 1).addClass("active").siblings().removeClass('active');
+        } else {
+            elements.noteslider.val(value);
+            elements.noteslider.trigger('change');
+
+        }
+
+    };
+    return {
+        setToBlock: setToBlock,
+        setDefault: setDefault,
+        syncNoteSelection: syncNoteSelection
+    };
+}();
+
+blockPanel = function() {
+    var knobparams = {
+        fgColor: '#6f6e6d',
+        bgColor: '#adacaa',
+        width: '27',
+        thickness: '.55',
+        cursor: 11,
+        height: '27 ',
+    };
+    var valprev = "";
+
+    $(".modeSelect li").click(function() {
+        var mode = $(this).attr("class");
+        $(this).addClass("active").siblings().removeClass("active");
+        mode = mode.replace("active", "");
+        console.log(mode);
+        config.mode = mode;
+    });
+
+    function createDial(obj, startVal, type, min, max) {
+        obj.val(startVal)
+            .knob({
+                'min': min,
+                'max': max,
+                'fgColor': knobparams.fgColor,
+                'bgColor': knobparams.bgColor,
+                'width': knobparams.width,
+                'thickness': knobparams.thickness,
+                'cursor': knobparams.cursor,
+                'height': knobparams.height,
+                'format': function(value) {
+                    if (valprev != value) {
+                        if (type === "note") {
+                            controlPanel.syncNoteSelection(value, "piano-roll");
+                        }
+                        setMidiParams.setParams(type, value);
+                        return value;
+                    }
+                    valprev = value;
                 }
+            });
+    }
+
+    function sendBlocks() {
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
+                //console.log( objs[i].direction);
+                objs[i].newDirection = objs[i].staticDirection;
+                objs[i].speed = config.speed;
             }
-            return this;
-        },
-        selectOctave: function(octave) {
-            for (var i = 0; i < objs.length; i++) {
-                if (objs[i].selected === true) {
-                    objs[i].octave = octave;
-                }
-            }
-            // selectNote("default");
-            return this;
-        },
-        selectVolume: function(volume) {
-            for (var i = 0; i < objs.length; i++) {
-                if (objs[i].selected === true) {
-                    objs[i].volume = volume;
-                }
-            }
-            return this;
-        },
-        selectInstrument: function(program) {
-            for (var i = 0; i < objs.length; i++) {
-                if (objs[i].selected === true) {
-                    objs[i].program = program;
-                }
-            }
-            return this;
-        },
-        selectSpeed: function(speed) {
-            for (var i = 0; i < objs.length; i++) {
-                if (objs[i].selected === true) {
-                    objs[i].speed = speed;
-                }
-            }
-        },
-        getNote: function(val) {
-            var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-            return noteArray[val];
         }
     }
-})();
 
-var controlPanel = (function() {
-    return {
-        setDefault: function() {
-            elements.noteslider.val(config.note);
-            elements.noteslider.trigger('change');
-            //elements.noteslider.find("input").val(setMidiParams.getNote(config.note));
-            elements.volumeslider.slider("value", config.volume);
-            elements.volumeslider.find("input").val(config.volume);
-            elements.octavespinner.slider("value", config.octave);
-            elements.octavespinner.find("input").val(config.octave);
-            //elements.octavespinner.val(config.octave);
+    createDial(elements.volumeknob, config.volume, "volume", 1, 120);
+    createDial(elements.durationknob, config.duration, "duration", 1, 120);
+    createDial(elements.velocityknob, config.velocity, "velocity", 1, 120);
+    createDial(elements.noteslider, config.note, "note", 1, 12);
 
-        },
-        setToBlock: function(num) {
-            elements.noteslider.val(objs[num].note);
-            elements.noteslider.trigger('change');
-            //elements.noteslider.find("input").val(setMidiParams.getNote(objs[num].note));
-            elements.volumeslider.slider("value", objs[num].volume);
-            elements.volumeslider.find("input").val(objs[num].volume);
-            elements.octavespinner.slider("value", objs[num].octave);
-            elements.octavespinner.find("input").val(objs[num].octave);
-            //elements.octavespinner.val(objs[num].octave);
+    elements.setInstrument.onchange = function() {
+        var program = $(this).val();
+        setMidiParams.setParams("instrument", program);
+        return false;
+    };
+    elements.selectDirection.find("li").click(function() {
+        var direction = $(this).attr("id");
+        $(this).addClass("active").siblings().removeClass("active");
+        setMidiParams.setParams("direction", direction);
+        // for (var i = 0; i < objs.length; i++) {
+        //     if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
+        //         objs[i].staticDirection = direction;
+        //     }
+        // }
+    });
 
-        },
-    }
+    elements.octavespinner.slider({
+        orientation: "vertical",
+        value: 4,
+        min: 0,
+        max: 7,
+        step: 1,
+        range: "min",
+        slide: function(event, ui) {
+            elements.octavespinner.find("input").val(ui.value);
+            setMidiParams.setParams("octave", ui.value);
+        }
+    });
+    elements.octavespinner.find("input").val(elements.octavespinner.slider("value"));
+    elements.sendBlocks.addEventListener("mousedown", sendBlocks, false);
 
-})();
+    $(".piano-roll li").click(function() {
+        var index = $(this).index() + 1;
+        $(this).addClass("active").siblings().removeClass('active');
+        setMidiParams.setParams("note", index);
+        controlPanel.syncNoteSelection(index, "dial");
+
+    });
+}();
 
 
 
-var setMouseEvents = (function() {
+setMouseEvents = function() {
     var mousedownX = -1;
     var mousedownY = -1;
     var blockDragLeftX = config.gridSize,
@@ -705,21 +821,6 @@ var setMouseEvents = (function() {
             return "different";
         }
     };
-
-    function sendBlocks() {
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
-                //console.log( objs[i].direction);
-                objs[i].newDirection = objs[i].staticDirection;
-                objs[i].speed = config.speed;
-            }
-            /*objs[i].selected = false;
-            objs[i].setStyle({
-                'background': objs[i].notActive
-            });*/
-        }
-
-    }
 
     function mousedrag(e) {
         e = e || window.event;
@@ -976,6 +1077,7 @@ var setMouseEvents = (function() {
     }
 
     function addBlock(gridX, gridY, type) {
+       // console.log(type+"test");
         if (gridArray[gridX][gridY] === -1) {
 
             objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
@@ -1011,143 +1113,15 @@ var setMouseEvents = (function() {
         }
     }
 
-    ////Add event listerners to window and grid
     window.addEventListener("mouseup", mouseUp, false);
     elements.section.addEventListener("mousedown", mouseDown, false);
-
-    $(".modeSelect li").click(function() {
-        var mode = $(this).attr("class");
-        $(this).addClass("active").siblings().removeClass("active");
-        mode = mode.replace("active", "");
-        console.log(mode);
-        config.mode = mode;
-    });
-
-    elements.instruments.click(function() {
-        var program = $(this).index();
-        $(this).addClass("active").siblings().removeClass("active");
-        setMidiParams.selectInstrument(program);
-    });
-
-    elements.selectDirection.find("li").click(function() {
-        var direction = $(this).attr("id");
-        //alert(direction);
-
-        $(this).addClass("active").siblings().removeClass("active");
-
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
-                objs[i].staticDirection = direction;
-            }
-        }
-    });
-
-    var knobparams = {
-        fgColor: '#6f6e6d',
-        bgColor: '#adacaa',
-        width: '27',
-        thickness: '.55',
-        cursor: 11,
-        height: '27 ',
-    };
-    var valprev = "";
-    elements.noteslider
-        .val(5)
-        .knob({
-            'min': 0,
-            'max': 11,
-            'fgColor': knobparams.fgColor,
-            'bgColor': knobparams.bgColor,
-            'width': knobparams.width,
-            'thickness': knobparams.thickness,
-            'cursor': knobparams.cursor,
-            'height': knobparams.height,
-            'format': function(value) {
-                if (valprev != value) {
-                    console.log(value);
-                    setMidiParams.selectNote(value);
-                    return value;
-                }
-                valprev = value;
-                //   console.log(value);
-                //setMidiParams.selectNote(value);
-                //return setMidiParams.getNote(value);
-
-            }
-        });
-
-    $("#note-slider").val(5);
-    $("#note-slider").trigger('change');
-
-
-
-    // elements.noteslider.slider({
-    //     value:5,
-    //     min: 0,
-    //     max: 11,
-    //     step: 1,
-    //     range: "min",
-    //     slide: function( event, ui ) {
-    //         elements.noteslider.find("input").val(setMidiParams.getNote(ui.value));
-    //         setMidiParams.selectNote(ui.value);
-    //     }
-    // });
-    // elements.noteslider.find("input").val(setMidiParams.getNote(elements.noteslider.slider("value")));
-
-    elements.volumeslider.slider({
-        value: 60,
-        min: 0,
-        max: 120,
-        range: "min",
-        slide: function(event, ui) {
-            elements.volumeslider.find("input").val(ui.value);
-            setMidiParams.selectVolume(ui.value);
-        }
-    });
-    elements.volumeslider.find("input").val(elements.volumeslider.slider("value"));
-
-    elements.octavespinner.slider({
-        orientation: "vertical",
-        value: 4,
-        min: 0,
-        max: 7,
-        step: 1,
-        range: "min",
-        slide: function(event, ui) {
-            elements.octavespinner.find("input").val(ui.value);
-            setMidiParams.selectOctave(ui.value);
-        }
-    });
-    elements.octavespinner.find("input").val(elements.octavespinner.slider("value"));
-
-
-
-
-
-    // elements.octavespinner.spinner({
-    //     min: 1,
-    //     max: 7,
-    //     start: 3
-    // });
-    // $(".octave-wrapper").find(".ui-spinner-button").click(function() {
-    //     var value = elements.octavespinner.spinner("value");
-    //     setMidiParams.selectOctave(value);
-    // });
-    // elements.octavespinner.val(3);
-
-
-
-
-
-
-    elements.sendBlocks.addEventListener("mousedown", sendBlocks, false);
 
 
     //REMOVE THIS once there is a block type indicator
     addBlock(0, 0, config.musicBlockType);
 
 
-})();
+}();
 
 
 
