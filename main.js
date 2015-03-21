@@ -44,25 +44,16 @@ config.newBlockType = config.musicBlockType;
 var elements = {
     section: document.getElementById("stage"),
     node: document.createElement("LI"),
-    setnote: document.getElementById("note-slider"),
-    setvolume: document.getElementById("setvolume"),
-    setInstrument: document.getElementById("setInstrument"),
-    leftArrow: document.getElementById("left"),
-    rightArrow: document.getElementById("right"),
-    downArrow: document.getElementById("down"),
-    upArrow: document.getElementById("up"),
+    // setnote: document.getElementById("note-slider"),
+    // setvolume: document.getElementById("setvolume"),
+    // setInstrument: document.getElementById("setInstrument"),
+    // leftArrow: document.getElementById("left"),
+    // rightArrow: document.getElementById("right"),
+    // downArrow: document.getElementById("down"),
+    // upArrow: document.getElementById("up"),
     sendBlocks: document.getElementById("sendBlocks"),
-    selectDirection: $("#selectDirection"),
     select: $(".select"),
     multiblock: $("multiblock"),
-    noteslider: $("#note-slider"),
-    volumeknob: $("#volume"),
-    durationknob: $("#duration"),
-    velocityknob: $("#velocity"),
-    levelselectors: $("#volume, #velocity, #duration"),
-    octavespinner: $("#octave-spinner"),
-    speedspinner: $("#speed-spinner"),
-    instruments: $(".instruments li")
 };
 var gridArray = new Array([]);
 var objs = [];
@@ -134,8 +125,10 @@ musicBlock.prototype.setStyle = function(propertyObject) {
 
 musicBlock.prototype.createNode = function(el, type) {
     var node = document.createElement("LI");
-    var direction = elements.selectDirection.children('.active').attr("id");
-    var blockclass = type + " " + direction;
+   // var direction = elements.selectDirection.children('.active').attr("id");
+    //var blockclass = type + " " + direction;
+    var blockclass = type;
+
     node.setAttribute("class", blockclass);
     elements.section.appendChild(node);
     this.id = type + el;
@@ -145,7 +138,7 @@ musicBlock.prototype.createNode = function(el, type) {
 };
 
 musicBlock.prototype.addBlock = function() {
-    var direction = elements.selectDirection.children('.active').attr("id");
+    //var direction = elements.selectDirection.children('.active').attr("id");
     this.setStyle({
         'top': this.posY + "px",
         'left': this.posX + "px",
@@ -154,7 +147,7 @@ musicBlock.prototype.addBlock = function() {
         'background': config.colorArray[this.program]
     });
     this.notActive = config.colorArray[this.program];
-    this.staticDirection = direction;
+    //this.staticDirection = direction;
 
 };
 
@@ -177,7 +170,6 @@ musicBlock.prototype.selectBlock = function() {
 
 musicBlock.prototype.deselectBlock = function() {
     //Only deselect block if it is already selected
-   // console.log(this.notActive);
     if (this.selected === true) {
         this.selected = false;
         this.setStyle({
@@ -241,16 +233,46 @@ musicBlock.prototype.playmidi = function() {
         MIDI.noteOff(this.program, note, duration);
     }
 };
-musicBlock.prototype.getPanelValues = function() {
-    this.volume = elements.volumeknob.val();
-    this.note = elements.noteslider.val();
-    this.duration = elements.durationknob.val();
-    this.velocity = elements.velocityknob.val();
-    this.octave = elements.octavespinner.slider("value");
-    this.program = elements.setInstrument.value;
-   // alert(this.program);
-    //console.log(this.program);
+musicBlock.prototype.setInitValues = function(el) {
+    this.volume = el.volume;
+    this.note = el.note;
+    this.duration = el.duration;
+    this.velocity = el.velocity;
+    this.octave = el.octave;
+    this.program = el.instrument;
+    this.staticDirection = el.direction;
+
 };
+musicBlock.prototype.setMidiValues = function(type, value) {
+    switch (type) {
+        case "volume":
+            this.volume = value;
+            break;
+        case "octave":
+            this.octave = value;
+            break;
+        case "duration":
+            this.duration = value;
+            break;
+        case "velocity":
+            this.velocity = value;
+            break;
+        case "note":
+            this.note = value;
+            break;
+        case "instrument":
+            this.program = value;
+            break;
+        case "direction":
+            this.staticDirection = value;
+            break;
+        default:
+            this.volume = value;
+            break;
+    }
+};
+
+
 
 //Display block info
 function displayBlockInfo(blockref) {
@@ -274,10 +296,10 @@ function rangedRandom(min, max) {
 
 //Returns a hex color based on the block type
 function getBlockColor(type) {
-  
+
     switch (type) {
         case config.musicBlockType:
-         // console.log(type);
+            // console.log(type);
             return "#DBA65C";
             break;
 
@@ -371,7 +393,6 @@ function processCollision(direction, gridX, gridY, blockref, skipcheck) {
             break;
         case "none":
             return direction;
-            break;
     }
 
     //Check for boundary collision
@@ -407,29 +428,21 @@ function oppositeDirection(direction) {
     switch (direction) {
         case "up":
             return "down";
-            break
-
         case "down":
             return "up";
-            break;
-
         case "left":
             return "right";
-            break;
-
         case "right":
             return "left";
-            break;
-
         default:
             return "none";
-            break;
     }
 }
 
 startSyncCounter = function() {
-    var running = true;
-    var syncounter = -config.blockSize;
+    var dir,
+        running = true,
+        syncounter = -config.blockSize;
 
     (function syncCounter() {
         if ((config.pause === 1 && config.advance === 1) || config.pause === -1) {
@@ -451,18 +464,18 @@ startSyncCounter = function() {
 
                     //first collision check
                     for (var l = 0; l < objs.length; l++) {
-                        var dir = processCollision(objs[l].direction, objs[l].gridX, objs[l].gridY, l, true);
+                        dir = processCollision(objs[l].direction, objs[l].gridX, objs[l].gridY, l, true);
                         objs[l].direction = objs[l].newDirection = dir;
                     }
 
                     //Update oldDirection for second collision
-                    for (var l = 0; l < objs.length; l++) {
-                        objs[l].oldDirection = objs[l].direction;
+                    for (var k = 0; k < objs.length; k++) {
+                        objs[k].oldDirection = objs[k].direction;
                     }
 
                     //second collision check
                     for (var o = 0; o < objs.length; o++) {
-                        var dir = processCollision(objs[o].direction, objs[o].gridX, objs[o].gridY, o, false);
+                        dir = processCollision(objs[o].direction, objs[o].gridX, objs[o].gridY, o, false);
                         objs[o].direction = dir;
 
                         //If block collided twice, wait
@@ -549,21 +562,21 @@ startSyncCounter = function() {
             }
 
             //After moving, update all block positions
-            for (var k = 0; k < objs.length; k++) {
+            for (var q = 0; q < objs.length; q++) {
                 //calculate new grid positions, floor handles blocks moving left and up
-                objs[k].gridX = gridify(objs[k].posX);
-                objs[k].gridY = gridify(objs[k].posY);
+                objs[q].gridX = gridify(objs[q].posX);
+                objs[q].gridY = gridify(objs[q].posY);
 
                 //if blocks are moving into a new block, move block reference 1 right or down if needed
-                if (objs[k].direction === "right" && (objs[k].posX / config.blockSize) % 1 !== 0)
-                    objs[k].gridX++;
-                if (objs[k].direction === "down" && (objs[k].posY / config.blockSize) % 1 !== 0)
-                    objs[k].gridY++;
+                if (objs[q].direction === "right" && (objs[q].posX / config.blockSize) % 1 !== 0)
+                    objs[q].gridX++;
+                if (objs[q].direction === "down" && (objs[q].posY / config.blockSize) % 1 !== 0)
+                    objs[q].gridY++;
 
-                gridArray[objs[k].gridX][objs[k].gridY] = k;
+                gridArray[objs[q].gridX][objs[q].gridY] = q;
 
-                if (syncounter === config.blockSize - config.speed && (objs[k].prevgridX !== objs[k].gridX || objs[k].prevgridY !== objs[k].gridY)) {
-                    gridArray[objs[k].prevgridX][objs[k].prevgridY] = -1;
+                if (syncounter === config.blockSize - config.speed && (objs[q].prevgridX !== objs[q].gridX || objs[q].prevgridY !== objs[q].gridY)) {
+                    gridArray[objs[q].prevgridX][objs[q].prevgridY] = -1;
                 }
             }
 
@@ -596,39 +609,38 @@ setMidiParams = function() {
             }
         });
     };
-    setParams = function(type, value) {
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true) {
-                switch (type) {
-                    case "volume":
-                        objs[i].volume = value;
-                        break;
-                    case "octave":
-                        objs[i].octave = value;
-                        break;
-                    case "duration":
-                        objs[i].duration = value;
-                        break;
-                    case "velocity":
-                        objs[i].velocity = value;
-                        break;
-                    case "note":
-                        objs[i].note = value;
-                        break;
-                    case "instrument":
-                        objs[i].program = value;
-                        break;
-                    case "direction":
-                        objs[i].staticDirection = value;
-                        break;
-                    default:
-                        objs[i].volume = value;
-                        break;
-                }
-            }
-        }
-        return this;
-    };
+    // setParams = function(type, value) {
+    //     for (var i = 0; i < objs.length; i++) {
+    //         if (objs[i].selected === true) {
+    //             switch (type) {
+    //                 case "volume":
+    //                     objs[i].volume = value;
+    //                     break;
+    //                 case "octave":
+    //                     objs[i].octave = value;
+    //                     break;
+    //                 case "duration":
+    //                     objs[i].duration = value;
+    //                     break;
+    //                 case "velocity":
+    //                     objs[i].velocity = value;
+    //                     break;
+    //                 case "note":
+    //                     objs[i].note = value;
+    //                     break;
+    //                 case "instrument":
+    //                     objs[i].program = value;
+    //                     break;
+    //                 case "direction":
+    //                     objs[i].staticDirection = value;
+    //                     break;
+    //                 default:
+    //                     objs[i].volume = value;
+    //                     break;
+    //             }
+    //         }
+    //     }
+    // };
     getNote = function(val) {
         var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
         return noteArray[val];
@@ -641,8 +653,33 @@ setMidiParams = function() {
 }();
 
 controlPanel = function() {
-    var setDefault,
-        setToBlock;
+    var elements = {
+        noteslider: $("#note-slider"),
+        volumeknob: $("#volume"),
+        durationknob: $("#duration"),
+        velocityknob: $("#velocity"),
+        levelselectors: $("#volume, #velocity, #duration"),
+        octavespinner: $("#octave-spinner"),
+        speedspinner: $("#speed-spinner"),
+        selectDirection: $("#selectDirection"),
+        setInstrument: document.getElementById("setInstrument"),
+    },
+
+        knobparams = {
+            fgColor: '#6f6e6d',
+            bgColor: '#adacaa',
+            width: '27',
+            thickness: '.55',
+            cursor: 11,
+            height: '27 ',
+        },
+        valprev = "",
+        setDefault,
+        setToBlock,
+        syncNoteSelection,
+        sendBlocks,
+        createDial;
+
     setDefault = function() {
         elements.noteslider.val(config.note);
         elements.noteslider.trigger('change');
@@ -668,43 +705,42 @@ controlPanel = function() {
         elements.octavespinner.find("input").val(objs[num].octave);
         elements.setInstrument.value = objs[num].program;
     };
+    getPanelValues = function() {
+        //      this.volume = elements.volumeknob.val();
+        // this.note = elements.noteslider.val();
+        // this.duration = elements.durationknob.val();
+        // this.velocity = elements.velocityknob.val();
+        // this.octave = elements.octavespinner.slider("value");
+        // this.program = elements.setInstrument.value;
+        return {
+            volume: elements.volumeknob.val(),
+            duration: elements.durationknob.val(),
+            note: elements.noteslider.val(),
+            velocity: elements.velocityknob.val(),
+            instrument: elements.setInstrument.value,
+            octave: elements.octavespinner.slider("value"),
+            direction: "up"
+        };
+    };
     syncNoteSelection = function(value, type) {
         if (type === "piano-roll") {
             $(".piano-roll li").eq(value - 1).addClass("active").siblings().removeClass('active');
         } else {
             elements.noteslider.val(value);
             elements.noteslider.trigger('change');
-
         }
 
     };
-    return {
-        setToBlock: setToBlock,
-        setDefault: setDefault,
-        syncNoteSelection: syncNoteSelection
+    sendBlocks = function() {
+        for (var i = 0; i < objs.length; i++) {
+            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
+                //console.log( objs[i].direction);
+                objs[i].newDirection = objs[i].staticDirection;
+                objs[i].speed = config.speed;
+            }
+        }
     };
-}();
-
-blockPanel = function() {
-    var knobparams = {
-        fgColor: '#6f6e6d',
-        bgColor: '#adacaa',
-        width: '27',
-        thickness: '.55',
-        cursor: 11,
-        height: '27 ',
-    };
-    var valprev = "";
-
-    $(".modeSelect li").click(function() {
-        var mode = $(this).attr("class");
-        $(this).addClass("active").siblings().removeClass("active");
-        mode = mode.replace("active", "");
-        console.log(mode);
-        config.mode = mode;
-    });
-
-    function createDial(obj, startVal, type, min, max) {
+    createDial = function(obj, startVal, type, min, max) {
         obj.val(startVal)
             .knob({
                 'min': min,
@@ -718,47 +754,49 @@ blockPanel = function() {
                 'format': function(value) {
                     if (valprev != value) {
                         if (type === "note") {
-                            controlPanel.syncNoteSelection(value, "piano-roll");
+                            syncNoteSelection(value, "piano-roll");
                         }
-                        setMidiParams.setParams(type, value);
+                        setParams(type, value);
                         return value;
                     }
                     valprev = value;
                 }
             });
-    }
+    };
 
-    function sendBlocks() {
+    setParams = function(type, value) {
         for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
-                //console.log( objs[i].direction);
-                objs[i].newDirection = objs[i].staticDirection;
-                objs[i].speed = config.speed;
+            if (objs[i].selected === true) {
+                objs[i].setMidiValues(type, value);
             }
         }
-    }
+    };
 
+    $(".modeSelect li").click(function() {
+        var mode = $(this).attr("class");
+        $(this).addClass("active").siblings().removeClass("active");
+        mode = mode.replace("active", "");
+        console.log(mode);
+        config.mode = mode;
+    });
+
+    // Create dials
     createDial(elements.volumeknob, config.volume, "volume", 1, 120);
     createDial(elements.durationknob, config.duration, "duration", 1, 120);
     createDial(elements.velocityknob, config.velocity, "velocity", 1, 120);
     createDial(elements.noteslider, config.note, "note", 1, 12);
 
+    // Set event handlers
     elements.setInstrument.onchange = function() {
         var program = $(this).val();
-        setMidiParams.setParams("instrument", program);
+        setParams("instrument", program);
         return false;
     };
     elements.selectDirection.find("li").click(function() {
         var direction = $(this).attr("id");
         $(this).addClass("active").siblings().removeClass("active");
-        setMidiParams.setParams("direction", direction);
-        // for (var i = 0; i < objs.length; i++) {
-        //     if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
-        //         objs[i].staticDirection = direction;
-        //     }
-        // }
+        setParams("direction", direction);
     });
-
     elements.octavespinner.slider({
         orientation: "vertical",
         value: 4,
@@ -768,22 +806,23 @@ blockPanel = function() {
         range: "min",
         slide: function(event, ui) {
             elements.octavespinner.find("input").val(ui.value);
-            setMidiParams.setParams("octave", ui.value);
+            setParams("octave", ui.value);
         }
     });
-    elements.octavespinner.find("input").val(elements.octavespinner.slider("value"));
-    elements.sendBlocks.addEventListener("mousedown", sendBlocks, false);
-
     $(".piano-roll li").click(function() {
         var index = $(this).index() + 1;
         $(this).addClass("active").siblings().removeClass('active');
-        setMidiParams.setParams("note", index);
-        controlPanel.syncNoteSelection(index, "dial");
+        setParams("note", index);
+        syncNoteSelection(index, "dial");
 
     });
+
+    return {
+        setToBlock: setToBlock,
+        setDefault: setDefault,
+        getPanelValues: getPanelValues
+    };
 }();
-
-
 
 setMouseEvents = function() {
     var mousedownX = -1;
@@ -1077,11 +1116,10 @@ setMouseEvents = function() {
     }
 
     function addBlock(gridX, gridY, type) {
-       // console.log(type+"test");
         if (gridArray[gridX][gridY] === -1) {
 
             objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
-            objs[config.cnt].getPanelValues();
+            objs[config.cnt].setInitValues(controlPanel.getPanelValues());
             objs[config.cnt].createNode(config.cnt, type).addBlock();
 
             gridArray[gridX][gridY] = config.cnt;
