@@ -1,288 +1,477 @@
-var config = {
-    newBlockType: "",
-    randomVolumeType: "rnd-vol-block",
-    randomOctaveType: "rnd-octave-block",
-    randomNoteType: "rnd-note-block",
-    musicBlockType: "block",
-    defaultVolumeMin: 30,
-    defaultVolumeMax: 70,
-    defaultOctaveMin: 3,
-    defaultOctaveMax: 5,
-    defaultNoteMin: 0,
-    defaultNoteMax: 11,
-    speed: 4,
-    blockSize: 32,
-    gridSize: 20,
-    minX: 0,
-    minY: 0,
-    maxX: 0,
-    maxY: 0,
-    minGridX: 0,
-    minGridY: 0,
-    maxGridX: 0,
-    maxGridY: 0,
-    pause: -1,
-    advance: -1,
-    shiftkey: 0,
-    numSelected: 0,
-    mode: "create",
-    cnt: 0,
-    volume: 60,
-    velocity: 60,
-    duration: 30,
-    note: 5,
-    octave: 3,
-    newblock: -1,
-    draggingBlocks: false,
-    colorArray: ["#d27743", "#cf5a4c", "#debe4e", "#ccc"]
-};
+var
+    config = {
+        newBlockType: "",
+        randomVolumeType: "rnd-vol-block",
+        randomOctaveType: "rnd-octave-block",
+        randomNoteType: "rnd-note-block",
+        musicBlockType: "block",
+        defaultVolumeMin: 30,
+        defaultVolumeMax: 70,
+        defaultOctaveMin: 3,
+        defaultOctaveMax: 5,
+        defaultNoteMin: 0,
+        defaultNoteMax: 11,
+        speed: 4,
+        blockSize: 32,
+        gridSize: 20,
+        minX: 0,
+        minY: 0,
+        maxX: 0,
+        maxY: 0,
+        minGridX: 0,
+        minGridY: 0,
+        maxGridX: 0,
+        maxGridY: 0,
+        pause: -1,
+        advance: -1,
+        shiftkey: 0,
+        numSelected: 0,
+        mode: "create",
+        cnt: 0,
+        volume: 60,
+        velocity: 60,
+        duration: 30,
+        note: 5,
+        octave: 3,
+        newblock: -1,
+        draggingBlocks: false,
+        colorArray: ["#d27743", "#cf5a4c", "#debe4e", "#ccc"]
+    },
+    elements = {
+        section: document.getElementById("stage")
+    },
+    gridArray = new Array([]),
+    blocks = [];
 
 config.maxX = config.maxY = config.blockSize * config.gridSize;
 config.maxGridX = config.maxGridY = config.gridSize - 1;
 config.newBlockType = config.musicBlockType;
 
-var elements = {
-    section: document.getElementById("stage"),
-    node: document.createElement("LI"),
-    // setnote: document.getElementById("note-slider"),
-    // setvolume: document.getElementById("setvolume"),
-    // setInstrument: document.getElementById("setInstrument"),
-    // leftArrow: document.getElementById("left"),
-    // rightArrow: document.getElementById("right"),
-    // downArrow: document.getElementById("down"),
-    // upArrow: document.getElementById("up"),
-    sendBlocks: document.getElementById("sendBlocks"),
-    select: $(".select"),
-    multiblock: $("multiblock"),
-};
-var gridArray = new Array([]);
-var objs = [];
-
-
 ///Make the grid
 (function makeGrid() {
-    for (var i = 0; i < config.gridSize; i++) {
-        var section = document.getElementById("gridHorizontal");
-        var section2 = document.getElementById("gridVertical");
-        var node = document.createElement("LI");
-        var node2 = document.createElement("LI");
-        section.appendChild(node);
-        section2.appendChild(node2);
+    var size = config.gridSize,
+        section,
+        section2,
+        node,
+        node2,
+        gridH,
+        gridV;
+
+    for (var i = 0; i < size; i++) {
+        gridH = document.getElementById("gridHorizontal");
+        gridV = document.getElementById("gridVertical");
+        node = document.createElement("LI");
+        node2 = document.createElement("LI");
+        gridH.appendChild(node);
+        gridV.appendChild(node2);
 
         ////create empty grid array
         gridArray.push([]);
-        for (var j = 0; j < config.gridSize; j++) {
+        for (var j = 0; j < size; j++) {
             gridArray[i][j] = -1;
         }
     }
 })();
 
 //////MUSIC BLOCK OBJECT AND PROTOTYPE FUNCTIONS//////
-function musicBlock(w, h, x, y, s, t) {
-    this.width = w;
-    this.height = h;
-    this.posX = x;
-    this.posY = y;
-    this.id = "";
-    this.blocknum = 0;
-    this.oldDirection = "none";
-    this.newDirection = "none";
-    this.direction = "none";
-    this.staticDirection = "none";
-    this.speed = s;
-    this.isMoving = false;
-    this.gridX = gridify(this.posX);
-    this.gridY = gridify(this.posY);
-    this.prevgridX = this.gridX;
-    this.prevgridY = this.gridY;
-    this.queued = 1;
-    this.selected = false;
-    this.type = t;
-    this.active = "#000";
-    this.notActive = getBlockColor(this.type);
-    this.halfpoint = -1;
-    this.snd = null;
-    this.note = 0;
-    this.octave = 5;
-    this.delay = 0;
-    this.volume = config.volume;
-    this.duration = config.duration;
-    this.velocity = 60;
-    this.program = 0;
-    this.waiting = false;
-    this.numCollisions = 0;
-    this.dragOffsetX = 0;
-    this.dragOffsetY = 0;
-    this.rngMin = 0;
-    this.rngMax = 0;
-}
+var proto = {
+    id: "",
+    blocknum: 0,
+    oldDirection: "none",
+    newDirection: "none",
+    direction: "none",
+    staticDirection: "none",
+    isMoving: "false",
+    queued: 1,
+    selected: false,
+    active: "#000",
+    halfpoint: -1,
+    snd: null,
+    note: config.note,
+    octave: config.octave,
+    volume: config.volume,
+    duration: config.duration,
+    veloctiy: config.veloctiy,
+    program: 0,
+    waiting: "false",
+    numCollisions: 0,
+    dragOffsetX: 0,
+    dragOffsetY: 0,
+    rngMin: 0,
+    rngMax: 0,
 
-musicBlock.prototype.setStyle = function(propertyObject) {
-    var elem = document.getElementById(this.id);
-    for (var property in propertyObject)
-        elem.style[property] = propertyObject[property];
-};
+    setStyle: function(propertyObject) {
+        var elem = document.getElementById(this.id);
+        for (var property in propertyObject)
+            elem.style[property] = propertyObject[property];
+    },
+    createNode: function(el, type) {
+        var node = document.createElement("LI");
+        // var direction = elements.selectDirection.children('.active').attr("id");
+        //var blockclass = type + " " + direction;
+        var blockclass = type;
 
-musicBlock.prototype.createNode = function(el, type) {
-    var node = document.createElement("LI");
-   // var direction = elements.selectDirection.children('.active').attr("id");
-    //var blockclass = type + " " + direction;
-    var blockclass = type;
-
-    node.setAttribute("class", blockclass);
-    elements.section.appendChild(node);
-    this.id = type + el;
-    this.blocknum = el;
-    node.setAttribute("id", this.id);
-    return this;
-};
-
-musicBlock.prototype.addBlock = function() {
-    //var direction = elements.selectDirection.children('.active').attr("id");
-    this.setStyle({
-        'top': this.posY + "px",
-        'left': this.posX + "px",
-        'width': this.width + "px",
-        'height': this.height + "px",
-        'background': config.colorArray[this.program]
-    });
-    this.notActive = config.colorArray[this.program];
-    //this.staticDirection = direction;
-
-};
-
-musicBlock.prototype.removeNode = function() {
-    var node = document.getElementById(this.id);
-    elements.section.removeChild(node);
-    node.remove();
-};
-
-musicBlock.prototype.selectBlock = function() {
-    //ONLY SELECT A BLOCK IF IT IS NOT SELECTED
-    if (this.selected !== true && config.newblock !== this.blocknum) {
-        this.selected = true;
+        node.setAttribute("class", blockclass);
+        elements.section.appendChild(node);
+        this.id = type + el;
+        this.blocknum = el;
+        node.setAttribute("id", this.id);
+        return this;
+    },
+    addBlock: function() {
+        //var direction = elements.selectDirection.children('.active').attr("id");
         this.setStyle({
-            'background': this.active
+            'top': this.posY + "px",
+            'left': this.posX + "px",
+            'width': this.width + "px",
+            'height': this.height + "px",
+            'background': config.colorArray[this.program]
         });
-        config.numSelected++;
-    }
-};
-
-musicBlock.prototype.deselectBlock = function() {
-    //Only deselect block if it is already selected
-    if (this.selected === true) {
-        this.selected = false;
-        this.setStyle({
-            'background': this.notActive
-        });
+        this.notActive = config.colorArray[this.program];
+        //this.staticDirection = direction;
+    },
+    removeNode: function() {
+        var node = document.getElementById(this.id);
+        elements.section.removeChild(node);
+        node.remove();
+    },
+    selectBlock: function() {
+        //ONLY SELECT A BLOCK IF IT IS NOT SELECTED
+        if (this.selected !== true && config.newblock !== this.blocknum) {
+            this.selected = true;
+            this.setStyle({
+                'background': this.active
+            });
+            config.numSelected++;
+        }
+    },
+    deselectBlock: function() {
+        //Only deselect block if it is already selected
+        if (this.selected === true) {
+            this.selected = false;
+            this.setStyle({
+                'background': this.notActive
+            });
+            config.numSelected--;
+        }
+    },
+    convertBlock: function(type) {
+        var elem = document.getElementById(this.id);
+        this.type = type;
+        elem.setAttribute("class", type);
+    },
+    removeBlock: function() {
+        this.removeNode();
+        blocks.splice(this.blocknum, 1);
+        for (var v = this.blocknum; v < blocks.length; v++) {
+            document.getElementById(blocks[v].id).setAttribute("id", config.musicBlockType + v);
+            blocks[v].id = config.musicBlockType + v;
+            blocks[v].blocknum = v;
+        }
+        for (var t = 0; t < config.gridSize; t++) {
+            for (var u = 0; u < config.gridSize; u++) {
+                if (gridArray[t][u] == this.blocknum)
+                    gridArray[t][u] = -1;
+                if (gridArray[t][u] >= this.blocknum)
+                    gridArray[t][u]--;
+            }
+        }
+        config.cnt--;
         config.numSelected--;
-    }
-};
+    },
+    selectNewSingle: function() {
+        for (var i = 0; i < blocks.length; i++) {
+            blocks[i].deselectBlock();
+        }
+        this.selectBlock();
+        if (this.selected === true) {
+            //setMidiBlock(this.blocknum);
+            controlPanel.setToBlock(this.blocknum);
+        }
 
-musicBlock.prototype.convertBlock = function(type) {
-    this.type = type;
-    var elem = document.getElementById(this.id);
-    elem.setAttribute("class", type);
-};
+    },
+    updatePosition: function() {
+        this.setStyle({
+            'top': this.posY + "px",
+            'left': this.posX + "px"
+        });
+    },
+    playmidi: function() {
+        if (this.type === config.musicBlockType) {
+            var duration = this.duration / 120,
+                note = this.note + 12 * this.octave;
 
-musicBlock.prototype.removeBlock = function() {
-    this.removeNode();
-    objs.splice(this.blocknum, 1);
-    for (var v = this.blocknum; v < objs.length; v++) {
-        document.getElementById(objs[v].id).setAttribute("id", config.musicBlockType + v);
-        objs[v].id = config.musicBlockType + v;
-        objs[v].blocknum = v;
-    }
-    for (var t = 0; t < config.gridSize; t++) {
-        for (var u = 0; u < config.gridSize; u++) {
-            if (gridArray[t][u] == this.blocknum)
-                gridArray[t][u] = -1;
-            if (gridArray[t][u] >= this.blocknum)
-                gridArray[t][u] --;
+            setMidiParams.triggerMidi(this.volume, this.program, note, this.velocity, duration);
+        }
+    },
+    setInitValues: function(el) {
+        this.volume = el.volume;
+        this.note = el.note;
+        this.duration = el.duration;
+        this.velocity = el.velocity;
+        this.octave = el.octave;
+        this.program = el.instrument;
+        this.staticDirection = el.direction;
+
+    },
+    setMidiValues: function(type, value) {
+        switch (type) {
+            case "volume":
+                this.volume = value;
+                break;
+            case "octave":
+                this.octave = value;
+                break;
+            case "duration":
+                this.duration = value;
+                break;
+            case "velocity":
+                this.velocity = value;
+                break;
+            case "note":
+                this.note = value;
+                break;
+            case "instrument":
+                this.program = value;
+                break;
+            case "direction":
+                this.staticDirection = value;
+                break;
+            default:
+                this.volume = value;
+                break;
         }
     }
-    config.cnt--;
-    config.numSelected--;
-};
-musicBlock.prototype.selectNewSingle = function() {
-    for (var i = 0; i < objs.length; i++) {
-        objs[i].deselectBlock();
-    }
-    this.selectBlock();
-    if (this.selected === true) {
-        //setMidiBlock(this.blocknum);
-        controlPanel.setToBlock(this.blocknum);
-    }
 
 };
-musicBlock.prototype.updatePosition = function() {
-    this.setStyle({
-        'top': this.posY + "px",
-        'left': this.posX + "px"
-    });
-};
-musicBlock.prototype.playmidi = function() {
-    if (this.type === config.musicBlockType) {
-        var duration = this.duration / 120;
-        var note = this.note + 12 * this.octave;
-        var velocity = this.velocity;
-        var volume = this.volume;
 
-        MIDI.setVolume(0, volume);
-        MIDI.noteOn(this.program, note, velocity, 0);
-        MIDI.noteOff(this.program, note, duration);
-    }
-};
-musicBlock.prototype.setInitValues = function(el) {
-    this.volume = el.volume;
-    this.note = el.note;
-    this.duration = el.duration;
-    this.velocity = el.velocity;
-    this.octave = el.octave;
-    this.program = el.instrument;
-    this.staticDirection = el.direction;
+var makeBlock = function(w, h, x, y, s, t) {
+    var block = Object.create(proto);
+    block.width = w;
+    block.height = h;
+    block.posX = x;
+    block.posY = y;
+    block.speed = s;
+    block.type = t;
+    block.gridX = gridify(block.posX);
+    block.gridY = gridify(block.posY);
+    block.prevgridX = block.gridX;
+    block.prevgridY = block.gridY;
+    block.notActive = getBlockColor(block.type);
 
+    return block;
 };
-musicBlock.prototype.setMidiValues = function(type, value) {
-    switch (type) {
-        case "volume":
-            this.volume = value;
-            break;
-        case "octave":
-            this.octave = value;
-            break;
-        case "duration":
-            this.duration = value;
-            break;
-        case "velocity":
-            this.velocity = value;
-            break;
-        case "note":
-            this.note = value;
-            break;
-        case "instrument":
-            this.program = value;
-            break;
-        case "direction":
-            this.staticDirection = value;
-            break;
-        default:
-            this.volume = value;
-            break;
-    }
-};
+
+
+
+
+function musicBlock(w, h, x, y, s, t) {
+    // this.width = w;
+    // this.height = h;
+    // this.posX = x;
+    // this.posY = y;
+    // this.id = "";
+    // this.blocknum = 0;
+    // this.oldDirection = "none";
+    // this.newDirection = "none";
+    // this.direction = "none";
+    // this.staticDirection = "none";
+    // this.speed = s;
+    // this.isMoving = false;
+    // this.gridX = gridify(this.posX);
+    // this.gridY = gridify(this.posY);
+    // this.prevgridX = this.gridX;
+    // this.prevgridY = this.gridY;
+    // this.queued = 1;
+    // this.selected = false;
+    // this.type = t;
+    // this.active = "#000";
+    // this.notActive = getBlockColor(this.type);
+    // this.halfpoint = -1;
+    // this.snd = null;
+    // this.note = 0;
+    // this.octave = 5;
+    // this.delay = 0;
+    // this.volume = config.volume;
+    // this.duration = config.duration;
+    // this.velocity = 60;
+    // this.program = 0;
+    // this.waiting = false;
+    // this.numCollisions = 0;
+    // this.dragOffsetX = 0;
+    // this.dragOffsetY = 0;
+    // this.rngMin = 0;
+    // this.rngMax = 0;
+}
+
+// musicBlock.prototype.setStyle = function(propertyObject) {
+//     var elem = document.getElementById(this.id);
+//     for (var property in propertyObject)
+//         elem.style[property] = propertyObject[property];
+// };
+
+// musicBlock.prototype.createNode = function(el, type) {
+//     var node = document.createElement("LI");
+//     // var direction = elements.selectDirection.children('.active').attr("id");
+//     //var blockclass = type + " " + direction;
+//     var blockclass = type;
+
+//     node.setAttribute("class", blockclass);
+//     elements.section.appendChild(node);
+//     this.id = type + el;
+//     this.blocknum = el;
+//     node.setAttribute("id", this.id);
+//     return this;
+// };
+
+// musicBlock.prototype.addBlock = function() {
+//     //var direction = elements.selectDirection.children('.active').attr("id");
+//     this.setStyle({
+//         'top': this.posY + "px",
+//         'left': this.posX + "px",
+//         'width': this.width + "px",
+//         'height': this.height + "px",
+//         'background': config.colorArray[this.program]
+//     });
+//     this.notActive = config.colorArray[this.program];
+//     //this.staticDirection = direction;
+
+// };
+
+// musicBlock.prototype.removeNode = function() {
+//     var node = document.getElementById(this.id);
+//     elements.section.removeChild(node);
+//     node.remove();
+// };
+
+// musicBlock.prototype.selectBlock = function() {
+//     //ONLY SELECT A BLOCK IF IT IS NOT SELECTED
+//     if (this.selected !== true && config.newblock !== this.blocknum) {
+//         this.selected = true;
+//         this.setStyle({
+//             'background': this.active
+//         });
+//         config.numSelected++;
+//     }
+// };
+
+// musicBlock.prototype.deselectBlock = function() {
+//     //Only deselect block if it is already selected
+//     if (this.selected === true) {
+//         this.selected = false;
+//         this.setStyle({
+//             'background': this.notActive
+//         });
+//         config.numSelected--;
+//     }
+// };
+
+// musicBlock.prototype.convertBlock = function(type) {
+//     this.type = type;
+//     var elem = document.getElementById(this.id);
+//     elem.setAttribute("class", type);
+// };
+
+// musicBlock.prototype.removeBlock = function() {
+//     this.removeNode();
+//     blocks.splice(this.blocknum, 1);
+//     for (var v = this.blocknum; v < blocks.length; v++) {
+//         document.getElementById(blocks[v].id).setAttribute("id", config.musicBlockType + v);
+//         blocks[v].id = config.musicBlockType + v;
+//         blocks[v].blocknum = v;
+//     }
+//     for (var t = 0; t < config.gridSize; t++) {
+//         for (var u = 0; u < config.gridSize; u++) {
+//             if (gridArray[t][u] == this.blocknum)
+//                 gridArray[t][u] = -1;
+//             if (gridArray[t][u] >= this.blocknum)
+//                 gridArray[t][u]--;
+//         }
+//     }
+//     config.cnt--;
+//     config.numSelected--;
+// };
+// musicBlock.prototype.selectNewSingle = function() {
+//     for (var i = 0; i < blocks.length; i++) {
+//         blocks[i].deselectBlock();
+//     }
+//     this.selectBlock();
+//     if (this.selected === true) {
+//         //setMidiBlock(this.blocknum);
+//         controlPanel.setToBlock(this.blocknum);
+//     }
+
+// };
+// musicBlock.prototype.updatePosition = function() {
+//     this.setStyle({
+//         'top': this.posY + "px",
+//         'left': this.posX + "px"
+//     });
+// };
+// musicBlock.prototype.playmidi = function() {
+//     if (this.type === config.musicBlockType) {
+//         var duration = this.duration / 120;
+//         var note = this.note + 12 * this.octave;
+//         var velocity = this.velocity;
+//         var volume = this.volume;
+
+//         MIDI.setVolume(0, volume);
+//         MIDI.noteOn(this.program, note, velocity, 0);
+//         MIDI.noteOff(this.program, note, duration);
+//     }
+// };
+// musicBlock.prototype.setInitValues = function(el) {
+//     this.volume = el.volume;
+//     this.note = el.note;
+//     this.duration = el.duration;
+//     this.velocity = el.velocity;
+//     this.octave = el.octave;
+//     this.program = el.instrument;
+//     this.staticDirection = el.direction;
+
+// };
+// musicBlock.prototype.setMidiValues = function(type, value) {
+//     switch (type) {
+//         case "volume":
+//             this.volume = value;
+//             break;
+//         case "octave":
+//             this.octave = value;
+//             break;
+//         case "duration":
+//             this.duration = value;
+//             break;
+//         case "velocity":
+//             this.velocity = value;
+//             break;
+//         case "note":
+//             this.note = value;
+//             break;
+//         case "instrument":
+//             this.program = value;
+//             break;
+//         case "direction":
+//             this.staticDirection = value;
+//             break;
+//         default:
+//             this.volume = value;
+//             break;
+//     }
+// };
+
+
 
 
 
 //Display block info
 function displayBlockInfo(blockref) {
     console.log("Block " + blockref +
-        " GridX: " + objs[blockref].gridX +
-        " GridY: " + objs[blockref].gridY +
-        " prevGridX: " + objs[blockref].prevgridX +
-        " prevGridY: " + objs[blockref].prevgridY +
-        " Direction: " + objs[blockref].direction +
-        " Waiting: " + objs[blockref].waiting);
+        " GridX: " + blocks[blockref].gridX +
+        " GridY: " + blocks[blockref].gridY +
+        " prevGridX: " + blocks[blockref].prevgridX +
+        " prevGridY: " + blocks[blockref].prevgridY +
+        " Direction: " + blocks[blockref].direction +
+        " Waiting: " + blocks[blockref].waiting);
 }
 
 //Gridify translates an amount of pixels to an amount of blocks
@@ -296,212 +485,341 @@ function rangedRandom(min, max) {
 
 //Returns a hex color based on the block type
 function getBlockColor(type) {
-
     switch (type) {
         case config.musicBlockType:
-            // console.log(type);
             return "#DBA65C";
-            break;
-
         case config.randomVolumeType:
             return "#5C91DB";
-            break;
-
         case config.randomNoteType:
             return "#CE6262";
-            break;
-
         case config.randomOctaveType:
             return "#7771C1";
-            break;
-
     }
 }
 
+collisions = function() {
+    var
+        processType,
+        process,
+        oppositeDirection;
 
+    oppositeDirection = function(direction) {
+        switch (direction) {
+            case "up":
+                return "down";
+            case "down":
+                return "up";
+            case "left":
+                return "right";
+            case "right":
+                return "left";
+            default:
+                return "none";
+        }
+    };
 
-function processTypeCollision(mblockref, eblockref) {
-    switch (objs[eblockref].type) {
-        case config.randomVolumeType:
-            objs[mblockref].volume = rangedRandom(objs[eblockref].rngMin, objs[eblockref].rngMax);
-            break;
-        case config.randomOctaveType:
-            objs[mblockref].octave = rangedRandom(objs[eblockref].rngMin, objs[eblockref].rngMax);
-            break;
-        case config.randomNoteType:
-            objs[mblockref].note = rangedRandom(objs[eblockref].rngMin, objs[eblockref].rngMax);
-            break;
-        default:
-            break;
-    }
-    if (config.numSelected === 1 && objs[mblockref].selected === true && eblockref.type !== config.musicBlockType) {
-        controlPanel.setToBlock(mblockref);
-    }
-}
+    processType = function(mblockref, eblockref) {
+        switch (blocks[eblockref].type) {
+            case config.randomVolumeType:
+                blocks[mblockref].volume = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+                break;
+            case config.randomOctaveType:
+                blocks[mblockref].octave = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+                break;
+            case config.randomNoteType:
+                blocks[mblockref].note = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+                break;
+            default:
+                break;
+        }
 
-function processCollision(direction, gridX, gridY, blockref, skipcheck) {
-    var directGridX, directGridY,
-        diag1GridX, diag1GridY, diag1Direction,
-        diag2GridX, diag2GridY, diag2Direction;
-    // Based on the direction passed to the function, determine which grid locations to check
-    // 1st check the grid square directly in the path of the block
-    // 2nd check the grid square clockwise to that square
-    // 3rd check the grid square counter-clockwise to that square
-    switch (direction) {
-        case "up":
-            directGridX = gridX;
-            directGridY = gridY - 1;
-            diag1GridX = gridX - 1;
-            diag1GridY = gridY - 1;
-            diag1Direction = "right";
-            diag2GridX = gridX + 1;
-            diag2GridY = gridY - 1;
-            diag2Direction = "left";
-            break;
+        if (config.numSelected === 1 && blocks[mblockref].selected === true && eblockref.type !== config.musicBlockType) {
+            controlPanel.setToBlock(mblockref);
+        }
+    };
+    process = function(direction, gridX, gridY, blockref, skipcheck) {
+        var
+            directGridX,
+            directGridY,
+            diag1GridX,
+            diag1GridY,
+            diag1Direction,
+            diag2GridX,
+            diag2GridY,
+            diag2Direction;
+        // Based on the direction passed to the function, determine which grid locations to check
+        // 1st check the grid square directly in the path of the block
+        // 2nd check the grid square clockwise to that square
+        // 3rd check the grid square counter-clockwise to that square
+        switch (direction) {
+            case "up":
+                directGridX = gridX;
+                directGridY = gridY - 1;
+                diag1GridX = gridX - 1;
+                diag1GridY = gridY - 1;
+                diag1Direction = "right";
+                diag2GridX = gridX + 1;
+                diag2GridY = gridY - 1;
+                diag2Direction = "left";
+                break;
 
-        case "down":
-            directGridX = gridX;
-            directGridY = gridY + 1;
-            diag1GridX = gridX - 1;
-            diag1GridY = gridY + 1;
-            diag1Direction = "right";
-            diag2GridX = gridX + 1;
-            diag2GridY = gridY + 1;
-            diag2Direction = "left";
-            break;
+            case "down":
+                directGridX = gridX;
+                directGridY = gridY + 1;
+                diag1GridX = gridX - 1;
+                diag1GridY = gridY + 1;
+                diag1Direction = "right";
+                diag2GridX = gridX + 1;
+                diag2GridY = gridY + 1;
+                diag2Direction = "left";
+                break;
 
-        case "left":
-            directGridX = gridX - 1;
-            directGridY = gridY;
-            diag1GridX = gridX - 1;
-            diag1GridY = gridY - 1;
-            diag1Direction = "down";
-            diag2GridX = gridX - 1;
-            diag2GridY = gridY + 1;
-            diag2Direction = "up";
-            break;
+            case "left":
+                directGridX = gridX - 1;
+                directGridY = gridY;
+                diag1GridX = gridX - 1;
+                diag1GridY = gridY - 1;
+                diag1Direction = "down";
+                diag2GridX = gridX - 1;
+                diag2GridY = gridY + 1;
+                diag2Direction = "up";
+                break;
 
-        case "right":
-            directGridX = gridX + 1;
-            directGridY = gridY;
-            diag1GridX = gridX + 1;
-            diag1GridY = gridY - 1;
-            diag1Direction = "down";
-            diag2GridX = gridX + 1;
-            diag2GridY = gridY + 1;
-            diag2Direction = "up";
-            break;
-        case "none":
+            case "right":
+                directGridX = gridX + 1;
+                directGridY = gridY;
+                diag1GridX = gridX + 1;
+                diag1GridY = gridY - 1;
+                diag1Direction = "down";
+                diag2GridX = gridX + 1;
+                diag2GridY = gridY + 1;
+                diag2Direction = "up";
+                break;
+            case "none":
+                return direction;
+        }
+
+        //Check for boundary collision
+        if ((direction === "up" && gridY === config.minGridY) || (direction === "down" && gridY === config.maxGridY) || (direction === "left" && gridX === config.minGridX) || (direction === "right" && gridX === config.maxGridX)) {
+            blocks[blockref].numCollisions++;
+            return oppositeDirection(direction);
+        }
+
+        //Check for collision with object directly in path
+        else if (gridArray[directGridX][directGridY] !== -1) {
+            processType(blockref, gridArray[directGridX][directGridY]);
+            blocks[blockref].numCollisions++;
+            return oppositeDirection(direction);
+        }
+
+        //Check for diagonal 1 collision
+        else if (diag1GridX >= config.minGridX && diag1GridY >= config.minGridY && diag1GridX <= config.maxGridX && diag1GridY <= config.maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].oldDirection === diag1Direction) {
+            processType(blockref, gridArray[diag1GridX][diag1GridY]);
+            blocks[blockref].numCollisions++;
+            return oppositeDirection(direction);
+        }
+
+        //Check for diagonal 2 collision
+        else if (diag2GridX >= config.minGridX && diag2GridY >= config.minGridY && diag2GridX <= config.maxGridX && diag2GridY <= config.maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].oldDirection === diag2Direction) {
+            processType(blockref, gridArray[diag2GridX][diag2GridY]);
+            blocks[blockref].numCollisions++;
+            return oppositeDirection(direction);
+        } else
             return direction;
-    }
+    };
 
-    //Check for boundary collision
-    if ((direction === "up" && gridY === config.minGridY) || (direction === "down" && gridY === config.maxGridY) || (direction === "left" && gridX === config.minGridX) || (direction === "right" && gridX === config.maxGridX)) {
-        objs[blockref].numCollisions++;
-        return oppositeDirection(direction);
-    }
+    return {
+        process: process,
+        processType: processType
+    };
 
-    //Check for collision with object directly in path
-    else if (gridArray[directGridX][directGridY] !== -1) {
-        processTypeCollision(blockref, gridArray[directGridX][directGridY]);
-        objs[blockref].numCollisions++;
-        return oppositeDirection(direction);
-    }
+}();
 
-    //Check for diagonal 1 collision
-    else if (diag1GridX >= config.minGridX && diag1GridY >= config.minGridY && diag1GridX <= config.maxGridX && diag1GridY <= config.maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && objs[gridArray[diag1GridX][diag1GridY]].waiting === false && (objs[gridArray[diag1GridX][diag1GridY]].numCollisions <= objs[blockref].numCollisions || skipcheck) && objs[gridArray[diag1GridX][diag1GridY]].oldDirection === diag1Direction) {
-        processTypeCollision(blockref, gridArray[diag1GridX][diag1GridY]);
-        objs[blockref].numCollisions++;
-        return oppositeDirection(direction);
-    }
+// function processTypeCollision(mblockref, eblockref) {
+//     switch (blocks[eblockref].type) {
+//         case config.randomVolumeType:
+//             blocks[mblockref].volume = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+//             break;
+//         case config.randomOctaveType:
+//             blocks[mblockref].octave = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+//             break;
+//         case config.randomNoteType:
+//             blocks[mblockref].note = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+//             break;
+//         default:
+//             break;
+//     }
+//     if (config.numSelected === 1 && blocks[mblockref].selected === true && eblockref.type !== config.musicBlockType) {
+//         controlPanel.setToBlock(mblockref);
+//     }
+// }
 
-    //Check for diagonal 2 collision
-    else if (diag2GridX >= config.minGridX && diag2GridY >= config.minGridY && diag2GridX <= config.maxGridX && diag2GridY <= config.maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && objs[gridArray[diag2GridX][diag2GridY]].waiting === false && (objs[gridArray[diag2GridX][diag2GridY]].numCollisions <= objs[blockref].numCollisions || skipcheck) && objs[gridArray[diag2GridX][diag2GridY]].oldDirection === diag2Direction) {
-        processTypeCollision(blockref, gridArray[diag2GridX][diag2GridY]);
-        objs[blockref].numCollisions++;
-        return oppositeDirection(direction);
-    } else
-        return direction;
-}
+// function processCollision(direction, gridX, gridY, blockref, skipcheck) {
+//     var directGridX, directGridY,
+//         diag1GridX, diag1GridY, diag1Direction,
+//         diag2GridX, diag2GridY, diag2Direction;
+//     // Based on the direction passed to the function, determine which grid locations to check
+//     // 1st check the grid square directly in the path of the block
+//     // 2nd check the grid square clockwise to that square
+//     // 3rd check the grid square counter-clockwise to that square
+//     switch (direction) {
+//         case "up":
+//             directGridX = gridX;
+//             directGridY = gridY - 1;
+//             diag1GridX = gridX - 1;
+//             diag1GridY = gridY - 1;
+//             diag1Direction = "right";
+//             diag2GridX = gridX + 1;
+//             diag2GridY = gridY - 1;
+//             diag2Direction = "left";
+//             break;
 
-function oppositeDirection(direction) {
-    switch (direction) {
-        case "up":
-            return "down";
-        case "down":
-            return "up";
-        case "left":
-            return "right";
-        case "right":
-            return "left";
-        default:
-            return "none";
-    }
-}
+//         case "down":
+//             directGridX = gridX;
+//             directGridY = gridY + 1;
+//             diag1GridX = gridX - 1;
+//             diag1GridY = gridY + 1;
+//             diag1Direction = "right";
+//             diag2GridX = gridX + 1;
+//             diag2GridY = gridY + 1;
+//             diag2Direction = "left";
+//             break;
+
+//         case "left":
+//             directGridX = gridX - 1;
+//             directGridY = gridY;
+//             diag1GridX = gridX - 1;
+//             diag1GridY = gridY - 1;
+//             diag1Direction = "down";
+//             diag2GridX = gridX - 1;
+//             diag2GridY = gridY + 1;
+//             diag2Direction = "up";
+//             break;
+
+//         case "right":
+//             directGridX = gridX + 1;
+//             directGridY = gridY;
+//             diag1GridX = gridX + 1;
+//             diag1GridY = gridY - 1;
+//             diag1Direction = "down";
+//             diag2GridX = gridX + 1;
+//             diag2GridY = gridY + 1;
+//             diag2Direction = "up";
+//             break;
+//         case "none":
+//             return direction;
+//     }
+
+//     //Check for boundary collision
+//     if ((direction === "up" && gridY === config.minGridY) || (direction === "down" && gridY === config.maxGridY) || (direction === "left" && gridX === config.minGridX) || (direction === "right" && gridX === config.maxGridX)) {
+//         blocks[blockref].numCollisions++;
+//         return oppositeDirection(direction);
+//     }
+
+//     //Check for collision with object directly in path
+//     else if (gridArray[directGridX][directGridY] !== -1) {
+//         processTypeCollision(blockref, gridArray[directGridX][directGridY]);
+//         blocks[blockref].numCollisions++;
+//         return oppositeDirection(direction);
+//     }
+
+//     //Check for diagonal 1 collision
+//     else if (diag1GridX >= config.minGridX && diag1GridY >= config.minGridY && diag1GridX <= config.maxGridX && diag1GridY <= config.maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].oldDirection === diag1Direction) {
+//         processTypeCollision(blockref, gridArray[diag1GridX][diag1GridY]);
+//         blocks[blockref].numCollisions++;
+//         return oppositeDirection(direction);
+//     }
+
+//     //Check for diagonal 2 collision
+//     else if (diag2GridX >= config.minGridX && diag2GridY >= config.minGridY && diag2GridX <= config.maxGridX && diag2GridY <= config.maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].oldDirection === diag2Direction) {
+//         processTypeCollision(blockref, gridArray[diag2GridX][diag2GridY]);
+//         blocks[blockref].numCollisions++;
+//         return oppositeDirection(direction);
+//     } else
+//         return direction;
+// }
+
+// function oppositeDirection(direction) {
+//     switch (direction) {
+//         case "up":
+//             return "down";
+//         case "down":
+//             return "up";
+//         case "left":
+//             return "right";
+//         case "right":
+//             return "left";
+//         default:
+//             return "none";
+//     }
+// }
 
 startSyncCounter = function() {
     var dir,
         running = true,
-        syncounter = -config.blockSize;
+        syncounter = -config.blockSize,
+        blocklength;
 
     (function syncCounter() {
+        blocklength = blocks.length;
+
         if ((config.pause === 1 && config.advance === 1) || config.pause === -1) {
             if (syncounter == config.blockSize) {
                 if (config.cnt !== 0) {
                     //update oldDirection, direction and queue flag
-                    for (var n = 0; n < objs.length; n++) {
-                        objs[n].oldDirection = objs[n].direction = objs[n].newDirection;
-                        if (objs[n].queued == 1) {
-                            objs[n].queued = 0;
+                    for (var n = 0; n < blocklength; n++) {
+                        blocks[n].oldDirection = blocks[n].direction = blocks[n].newDirection;
+                        if (blocks[n].queued == 1) {
+                            blocks[n].queued = 0;
                         }
-                        objs[n].prevgridX = objs[n].gridX;
-                        objs[n].prevgridY = objs[n].gridY;
-                        objs[n].waiting = false;
+                        blocks[n].prevgridX = blocks[n].gridX;
+                        blocks[n].prevgridY = blocks[n].gridY;
+                        blocks[n].waiting = false;
 
                         //reset numcollisions
-                        objs[n].numCollisions = 0;
+                        blocks[n].numCollisions = 0;
                     }
 
                     //first collision check
-                    for (var l = 0; l < objs.length; l++) {
-                        dir = processCollision(objs[l].direction, objs[l].gridX, objs[l].gridY, l, true);
-                        objs[l].direction = objs[l].newDirection = dir;
+                    for (var l = 0; l < blocklength; l++) {
+                        dir = collisions.process(blocks[l].direction, blocks[l].gridX, blocks[l].gridY, l, true);
+                        blocks[l].direction = blocks[l].newDirection = dir;
                     }
 
                     //Update oldDirection for second collision
-                    for (var k = 0; k < objs.length; k++) {
-                        objs[k].oldDirection = objs[k].direction;
+                    for (var k = 0; k < blocklength; k++) {
+                        blocks[k].oldDirection = blocks[k].direction;
                     }
 
                     //second collision check
-                    for (var o = 0; o < objs.length; o++) {
-                        dir = processCollision(objs[o].direction, objs[o].gridX, objs[o].gridY, o, false);
-                        objs[o].direction = dir;
+                    for (var o = 0; o < blocklength; o++) {
+                        dir = collisions.process(blocks[o].direction, blocks[o].gridX, blocks[o].gridY, o, false);
+                        blocks[o].direction = dir;
 
                         //If block collided twice, wait
-                        if (objs[o].numCollisions >= 2) {
-                            objs[o].waiting = true;
+                        if (blocks[o].numCollisions >= 2) {
+                            blocks[o].waiting = true;
                         }
 
                         //Check if block was moving and had a collision
-                        if (objs[o].numCollisions >= 1 && objs[o].waiting === false) {
-                            objs[o].playmidi();
+                        if (blocks[o].numCollisions >= 1 && blocks[o].waiting === false) {
+                            blocks[o].playmidi();
                         }
                     }
 
                     //mid-square collision detection
-                    for (var m = 0; m < objs.length; m++) {
-                        if (objs[m].direction == "up" && objs[m].waiting === false && objs[m].gridY > 1 && gridArray[objs[m].gridX][objs[m].gridY - 1] === -1 && gridArray[objs[m].gridX][objs[m].gridY - 2] !== -1 && objs[gridArray[objs[m].gridX][objs[m].gridY - 2]].waiting === false && objs[gridArray[objs[m].gridX][objs[m].gridY - 2]].direction === "down") {
-                            objs[m].halfpoint = objs[m].posY - (config.blockSize / 2);
+                    for (var m = 0; m < blocklength; m++) {
+                        if (blocks[m].direction == "up" && blocks[m].waiting === false && blocks[m].gridY > 1 && gridArray[blocks[m].gridX][blocks[m].gridY - 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY - 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].direction === "down") {
+                            blocks[m].halfpoint = blocks[m].posY - (config.blockSize / 2);
                         }
-                        if (objs[m].direction == "down" && objs[m].waiting === false && objs[m].gridY < config.gridSize - 2 && gridArray[objs[m].gridX][objs[m].gridY + 1] === -1 && gridArray[objs[m].gridX][objs[m].gridY + 2] !== -1 && objs[gridArray[objs[m].gridX][objs[m].gridY + 2]].waiting === false && objs[gridArray[objs[m].gridX][objs[m].gridY + 2]].direction === "up") {
-                            objs[m].halfpoint = objs[m].posY + (config.blockSize / 2);
+                        if (blocks[m].direction == "down" && blocks[m].waiting === false && blocks[m].gridY < config.gridSize - 2 && gridArray[blocks[m].gridX][blocks[m].gridY + 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY + 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].direction === "up") {
+                            blocks[m].halfpoint = blocks[m].posY + (config.blockSize / 2);
                         }
-                        if (objs[m].direction == "left" && objs[m].waiting === false && objs[m].gridX > 1 && gridArray[objs[m].gridX - 1][objs[m].gridY] === -1 && gridArray[objs[m].gridX - 2][objs[m].gridY] !== -1 && objs[gridArray[objs[m].gridX - 2][objs[m].gridY]].waiting === false && objs[gridArray[objs[m].gridX - 2][objs[m].gridY]].direction === "right") {
-                            objs[m].halfpoint = objs[m].posX - (config.blockSize / 2);
+                        if (blocks[m].direction == "left" && blocks[m].waiting === false && blocks[m].gridX > 1 && gridArray[blocks[m].gridX - 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX - 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX - 2][blocks[m].gridY]].waiting === false && blocks[gridArray[blocks[m].gridX - 2][blocks[m].gridY]].direction === "right") {
+                            blocks[m].halfpoint = blocks[m].posX - (config.blockSize / 2);
                         }
-                        if (objs[m].direction == "right" && objs[m].waiting === false && objs[m].gridX < config.gridSize - 2 && gridArray[objs[m].gridX + 1][objs[m].gridY] === -1 && gridArray[objs[m].gridX + 2][objs[m].gridY] !== -1 && objs[gridArray[objs[m].gridX + 2][objs[m].gridY]].waiting === false && objs[gridArray[objs[m].gridX + 2][objs[m].gridY]].direction === "left") {
-                            objs[m].halfpoint = objs[m].posX + (config.blockSize / 2);
+                        if (blocks[m].direction == "right" && blocks[m].waiting === false && blocks[m].gridX < config.gridSize - 2 && gridArray[blocks[m].gridX + 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX + 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].waiting === false && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].direction === "left") {
+                            blocks[m].halfpoint = blocks[m].posX + (config.blockSize / 2);
                         }
                     }
                 }
@@ -509,74 +827,74 @@ startSyncCounter = function() {
             }
 
             /////set block direction play note on collision
-            for (var i = 0; i < objs.length; i++) {
-                if (objs[i].waiting === false) {
-                    if (objs[i].direction == "up") {
-                        if (objs[i].queued === 0) {
-                            if (objs[i].halfpoint !== -1 && objs[i].halfpoint > objs[i].posY - objs[i].speed) {
-                                objs[i].posY = 2 * objs[i].halfpoint + config.speed - objs[i].posY;
-                                objs[i].direction = objs[i].newDirection = "down";
-                                objs[i].halfpoint = -1;
-                                objs[i].prevgridY = objs[i].gridY;
-                                objs[i].playmidi();
+            for (var i = 0; i < blocklength; i++) {
+                if (blocks[i].waiting === false) {
+                    if (blocks[i].direction == "up") {
+                        if (blocks[i].queued === 0) {
+                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posY - blocks[i].speed) {
+                                blocks[i].posY = 2 * blocks[i].halfpoint + config.speed - blocks[i].posY;
+                                blocks[i].direction = blocks[i].newDirection = "down";
+                                blocks[i].halfpoint = -1;
+                                blocks[i].prevgridY = blocks[i].gridY;
+                                blocks[i].playmidi();
 
-                            } else objs[i].posY += -1 * objs[i].speed;
+                            } else blocks[i].posY += -1 * blocks[i].speed;
                         }
-                    } else if (objs[i].direction == "down") {
-                        if (objs[i].queued === 0) {
-                            if (objs[i].halfpoint !== -1 && objs[i].halfpoint < objs[i].posY + objs[i].speed) {
-                                objs[i].posY = 2 * objs[i].halfpoint - config.speed - objs[i].posY;
-                                objs[i].direction = objs[i].newDirection = "up";
-                                objs[i].halfpoint = -1;
-                                objs[i].prevgridY = objs[i].gridY;
-                                objs[i].playmidi();
+                    } else if (blocks[i].direction == "down") {
+                        if (blocks[i].queued === 0) {
+                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint < blocks[i].posY + blocks[i].speed) {
+                                blocks[i].posY = 2 * blocks[i].halfpoint - config.speed - blocks[i].posY;
+                                blocks[i].direction = blocks[i].newDirection = "up";
+                                blocks[i].halfpoint = -1;
+                                blocks[i].prevgridY = blocks[i].gridY;
+                                blocks[i].playmidi();
 
-                            } else objs[i].posY += 1 * objs[i].speed;
-                        }
-                    }
-                    if (objs[i].direction == "left") {
-                        if (objs[i].queued === 0) {
-                            if (objs[i].halfpoint !== -1 && objs[i].halfpoint > objs[i].posX - objs[i].speed) {
-                                objs[i].posX = 2 * objs[i].halfpoint + config.speed - objs[i].posX;
-                                objs[i].direction = objs[i].newDirection = "right";
-                                objs[i].halfpoint = -1;
-                                objs[i].prevgridX = objs[i].gridX;
-                                objs[i].playmidi();
-
-                            } else objs[i].posX += -1 * objs[i].speed;
-                        }
-                    } else if (objs[i].direction == "right") {
-                        if (objs[i].queued === 0) {
-                            if (objs[i].halfpoint !== -1 && objs[i].halfpoint < objs[i].posX + objs[i].speed) {
-                                objs[i].posX = 2 * objs[i].halfpoint - config.speed - objs[i].posX;
-                                objs[i].direction = objs[i].newDirection = "left";
-                                objs[i].halfpoint = -1;
-                                objs[i].prevgridX = objs[i].gridX;
-                                objs[i].playmidi();
-
-                            } else objs[i].posX += 1 * objs[i].speed;
+                            } else blocks[i].posY += 1 * blocks[i].speed;
                         }
                     }
-                    objs[i].updatePosition();
+                    if (blocks[i].direction == "left") {
+                        if (blocks[i].queued === 0) {
+                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posX - blocks[i].speed) {
+                                blocks[i].posX = 2 * blocks[i].halfpoint + config.speed - blocks[i].posX;
+                                blocks[i].direction = blocks[i].newDirection = "right";
+                                blocks[i].halfpoint = -1;
+                                blocks[i].prevgridX = blocks[i].gridX;
+                                blocks[i].playmidi();
+
+                            } else blocks[i].posX += -1 * blocks[i].speed;
+                        }
+                    } else if (blocks[i].direction == "right") {
+                        if (blocks[i].queued === 0) {
+                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint < blocks[i].posX + blocks[i].speed) {
+                                blocks[i].posX = 2 * blocks[i].halfpoint - config.speed - blocks[i].posX;
+                                blocks[i].direction = blocks[i].newDirection = "left";
+                                blocks[i].halfpoint = -1;
+                                blocks[i].prevgridX = blocks[i].gridX;
+                                blocks[i].playmidi();
+
+                            } else blocks[i].posX += 1 * blocks[i].speed;
+                        }
+                    }
+                    blocks[i].updatePosition();
                 }
             }
 
             //After moving, update all block positions
-            for (var q = 0; q < objs.length; q++) {
+            for (var q = 0; q < blocklength; q++) {
                 //calculate new grid positions, floor handles blocks moving left and up
-                objs[q].gridX = gridify(objs[q].posX);
-                objs[q].gridY = gridify(objs[q].posY);
+                blocks[q].gridX = gridify(blocks[q].posX);
+                blocks[q].gridY = gridify(blocks[q].posY);
 
                 //if blocks are moving into a new block, move block reference 1 right or down if needed
-                if (objs[q].direction === "right" && (objs[q].posX / config.blockSize) % 1 !== 0)
-                    objs[q].gridX++;
-                if (objs[q].direction === "down" && (objs[q].posY / config.blockSize) % 1 !== 0)
-                    objs[q].gridY++;
+                if (blocks[q].direction === "right" && (blocks[q].posX / config.blockSize) % 1 !== 0)
+                    blocks[q].gridX++;
+                if (blocks[q].direction === "down" && (blocks[q].posY / config.blockSize) % 1 !== 0)
+                    blocks[q].gridY++;
 
-                gridArray[objs[q].gridX][objs[q].gridY] = q;
+                gridArray[blocks[q].gridX][blocks[q].gridY] = q;
 
-                if (syncounter === config.blockSize - config.speed && (objs[q].prevgridX !== objs[q].gridX || objs[q].prevgridY !== objs[q].gridY)) {
-                    gridArray[objs[q].prevgridX][objs[q].prevgridY] = -1;
+                if (syncounter === config.blockSize - config.speed && (blocks[q].prevgridX !== blocks[q].gridX || blocks[q].prevgridY !== blocks[q].gridY)) {
+                    gridArray[blocks[q].prevgridX][blocks[q].prevgridY] = -1;
                 }
             }
 
@@ -592,10 +910,12 @@ startSyncCounter = function() {
 
 
 
-////////SET MIDI PARAMETERS ON MUSIC BLOCKS
+// Load MIDI library and set params 
 setMidiParams = function() {
-    var setParams,
-        getNote;
+    var
+        setParams,
+        getNote,
+        tiggerMidi;
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
         MIDI.loadPlugin({
@@ -609,61 +929,37 @@ setMidiParams = function() {
             }
         });
     };
-    // setParams = function(type, value) {
-    //     for (var i = 0; i < objs.length; i++) {
-    //         if (objs[i].selected === true) {
-    //             switch (type) {
-    //                 case "volume":
-    //                     objs[i].volume = value;
-    //                     break;
-    //                 case "octave":
-    //                     objs[i].octave = value;
-    //                     break;
-    //                 case "duration":
-    //                     objs[i].duration = value;
-    //                     break;
-    //                 case "velocity":
-    //                     objs[i].velocity = value;
-    //                     break;
-    //                 case "note":
-    //                     objs[i].note = value;
-    //                     break;
-    //                 case "instrument":
-    //                     objs[i].program = value;
-    //                     break;
-    //                 case "direction":
-    //                     objs[i].staticDirection = value;
-    //                     break;
-    //                 default:
-    //                     objs[i].volume = value;
-    //                     break;
-    //             }
-    //         }
-    //     }
-    // };
+    triggerMidi = function(vol, pro, note, vel, dur) {
+        MIDI.setVolume(0, vol);
+        MIDI.noteOn(pro, note, vel, 0);
+        MIDI.noteOff(pro, note, dur);
+    };
+
     getNote = function(val) {
         var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
         return noteArray[val];
     };
     return {
         getNote: getNote,
-        setParams: setParams
-            //selectInstrument: selectInstrument
+        setParams: setParams,
+        triggerMidi: triggerMidi
     };
 }();
 
 controlPanel = function() {
-    var elements = {
-        noteslider: $("#note-slider"),
-        volumeknob: $("#volume"),
-        durationknob: $("#duration"),
-        velocityknob: $("#velocity"),
-        levelselectors: $("#volume, #velocity, #duration"),
-        octavespinner: $("#octave-spinner"),
-        speedspinner: $("#speed-spinner"),
-        selectDirection: $("#selectDirection"),
-        setInstrument: document.getElementById("setInstrument"),
-    },
+    var
+        elements = {
+            noteslider: $("#note-slider"),
+            volumeknob: $("#volume"),
+            durationknob: $("#duration"),
+            velocityknob: $("#velocity"),
+            octavespinner: $("#octave-spinner"),
+            selectDirection: $("#selectDirection"),
+            modeSelect: $(".modeSelect li"),
+            pianoroll: $(".piano-roll li"),
+            sendBlocks: document.getElementById("sendBlocks"),
+            setInstrument: document.getElementById("setInstrument")
+        },
 
         knobparams = {
             fgColor: '#6f6e6d',
@@ -675,11 +971,50 @@ controlPanel = function() {
         },
         valprev = "",
         setDefault,
+        getDirection,
+        setDirection,
         setToBlock,
         syncNoteSelection,
         sendBlocks,
         createDial;
 
+
+    getDirection = function() {
+        return elements.selectDirection.find("li.active").attr("id");
+    };
+    setDirection = function(d) {
+        elements.selectDirection.find("li#" + d).addClass("active").siblings().removeClass("active");
+    };
+    getPanelValues = function() {
+        return {
+            volume: elements.volumeknob.val(),
+            duration: elements.durationknob.val(),
+            note: elements.noteslider.val(),
+            velocity: elements.velocityknob.val(),
+            instrument: elements.setInstrument.value,
+            octave: elements.octavespinner.slider("value"),
+            direction: getDirection()
+        };
+    };
+
+    syncNoteSelection = function(value, type) {
+        if (type === "piano-roll") {
+            elements.pianoroll.eq(value - 1).addClass("active").siblings().removeClass('active');
+        } else {
+            elements.noteslider.val(value);
+            elements.noteslider.trigger('change');
+        }
+
+    };
+    sendBlocks = function() {
+        for (var i = 0; i < blocks.length; i++) {
+            if (blocks[i].selected === true && blocks[i].type === config.musicBlockType) {
+                //console.log( blocks[i].direction);
+                blocks[i].newDirection = blocks[i].staticDirection;
+                blocks[i].speed = config.speed;
+            }
+        }
+    };
     setDefault = function() {
         elements.noteslider.val(config.note);
         elements.noteslider.trigger('change');
@@ -691,54 +1026,23 @@ controlPanel = function() {
         elements.velocityknob.trigger('change');
         elements.octavespinner.slider("value", config.octave);
         elements.octavespinner.find("input").val(config.octave);
+        setDirection("up");
     };
     setToBlock = function(num) {
-        elements.noteslider.val(objs[num].note);
+        elements.noteslider.val(blocks[num].note);
         elements.noteslider.trigger('change');
-        elements.volumeknob.val(objs[num].volume);
+        elements.volumeknob.val(blocks[num].volume);
         elements.volumeknob.trigger('change');
-        elements.durationknob.val(objs[num].duration);
+        elements.durationknob.val(blocks[num].duration);
         elements.durationknob.trigger('change');
-        elements.velocityknob.val(objs[num].velocity);
+        elements.velocityknob.val(blocks[num].velocity);
         elements.velocityknob.trigger('change');
-        elements.octavespinner.slider("value", objs[num].octave);
-        elements.octavespinner.find("input").val(objs[num].octave);
-        elements.setInstrument.value = objs[num].program;
-    };
-    getPanelValues = function() {
-        //      this.volume = elements.volumeknob.val();
-        // this.note = elements.noteslider.val();
-        // this.duration = elements.durationknob.val();
-        // this.velocity = elements.velocityknob.val();
-        // this.octave = elements.octavespinner.slider("value");
-        // this.program = elements.setInstrument.value;
-        return {
-            volume: elements.volumeknob.val(),
-            duration: elements.durationknob.val(),
-            note: elements.noteslider.val(),
-            velocity: elements.velocityknob.val(),
-            instrument: elements.setInstrument.value,
-            octave: elements.octavespinner.slider("value"),
-            direction: "up"
-        };
-    };
-    syncNoteSelection = function(value, type) {
-        if (type === "piano-roll") {
-            $(".piano-roll li").eq(value - 1).addClass("active").siblings().removeClass('active');
-        } else {
-            elements.noteslider.val(value);
-            elements.noteslider.trigger('change');
-        }
+        elements.octavespinner.slider("value", blocks[num].octave);
+        elements.octavespinner.find("input").val(blocks[num].octave);
+        elements.setInstrument.value = blocks[num].program;
+        setDirection(blocks[num].staticDirection);
 
-    };
-    sendBlocks = function() {
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
-                //console.log( objs[i].direction);
-                objs[i].newDirection = objs[i].staticDirection;
-                objs[i].speed = config.speed;
-            }
-        }
+
     };
     createDial = function(obj, startVal, type, min, max) {
         obj.val(startVal)
@@ -765,18 +1069,17 @@ controlPanel = function() {
     };
 
     setParams = function(type, value) {
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true) {
-                objs[i].setMidiValues(type, value);
+        for (var i = 0; i < blocks.length; i++) {
+            if (blocks[i].selected === true) {
+                blocks[i].setMidiValues(type, value);
             }
         }
     };
 
-    $(".modeSelect li").click(function() {
+    elements.modeSelect.click(function() {
         var mode = $(this).attr("class");
         $(this).addClass("active").siblings().removeClass("active");
         mode = mode.replace("active", "");
-        console.log(mode);
         config.mode = mode;
     });
 
@@ -786,7 +1089,6 @@ controlPanel = function() {
     createDial(elements.velocityknob, config.velocity, "velocity", 1, 120);
     createDial(elements.noteslider, config.note, "note", 1, 12);
 
-    // Set event handlers
     elements.setInstrument.onchange = function() {
         var program = $(this).val();
         setParams("instrument", program);
@@ -809,13 +1111,14 @@ controlPanel = function() {
             setParams("octave", ui.value);
         }
     });
-    $(".piano-roll li").click(function() {
+    elements.pianoroll.click(function() {
         var index = $(this).index() + 1;
         $(this).addClass("active").siblings().removeClass('active');
         setParams("note", index);
         syncNoteSelection(index, "dial");
 
     });
+    elements.sendBlocks.addEventListener("mousedown", sendBlocks, false);
 
     return {
         setToBlock: setToBlock,
@@ -824,17 +1127,19 @@ controlPanel = function() {
     };
 }();
 
-setMouseEvents = function() {
-    var mousedownX = -1;
-    var mousedownY = -1;
-    var blockDragLeftX = config.gridSize,
+
+
+setStageEvents = function() {
+    var
+        mousedownX = -1,
+        mousedownY = -1,
+        blockDragLeftX = config.gridSize,
         blockDragLeftY = config.gridSize,
         blockDragWidth = 0,
         blockDragHeight = 0,
         blockDragOffsetX = 0,
-        blockDragOffsetY = 0;
-
-    var gridCheck = false;
+        blockDragOffsetY = 0,
+        gridCheck = false;
 
 
     resetBlockDrag();
@@ -851,7 +1156,7 @@ setMouseEvents = function() {
         for (var property in propertyObject) {
             elem.style[property] = propertyObject[property];
         }
-    };
+    }
 
     function compareMouse(e) {
         if (gridify(mousedownX) === gridify(e.pageX) && gridify(mousedownY) === gridify(e.pageY) && config.draggingBlocks === false) {
@@ -859,7 +1164,7 @@ setMouseEvents = function() {
         } else {
             return "different";
         }
-    };
+    }
 
     function mousedrag(e) {
         e = e || window.event;
@@ -868,18 +1173,18 @@ setMouseEvents = function() {
             var mousedowngridX = gridify(mousedownX);
             var mousedowngridY = gridify(mousedownY);
 
-            if (gridArray[mousedowngridX][mousedowngridY] != -1 && objs[gridArray[mousedowngridX][mousedowngridY]].selected === true && config.draggingBlocks === false) {
+            if (gridArray[mousedowngridX][mousedowngridY] != -1 && blocks[gridArray[mousedowngridX][mousedowngridY]].selected === true && config.draggingBlocks === false) {
                 config.draggingBlocks = true;
                 config.pause = 1;
                 var blockDragRightX = 0,
                     blockDragRightY = 0;
                 //Set the bounds of the blocks being dragged
-                for (var i = 0; i < objs.length; i++) {
-                    if (objs[i].selected === true) {
-                        blockDragLeftX = Math.min(blockDragLeftX, objs[i].gridX);
-                        blockDragLeftY = Math.min(blockDragLeftY, objs[i].gridY);
-                        blockDragRightX = Math.max(blockDragRightX, objs[i].gridX);
-                        blockDragRightY = Math.max(blockDragRightY, objs[i].gridY);
+                for (var i = 0; i < blocks.length; i++) {
+                    if (blocks[i].selected === true) {
+                        blockDragLeftX = Math.min(blockDragLeftX, blocks[i].gridX);
+                        blockDragLeftY = Math.min(blockDragLeftY, blocks[i].gridY);
+                        blockDragRightX = Math.max(blockDragRightX, blocks[i].gridX);
+                        blockDragRightY = Math.max(blockDragRightY, blocks[i].gridY);
                     }
                 }
                 blockDragWidth = blockDragRightX - blockDragLeftX;
@@ -888,10 +1193,10 @@ setMouseEvents = function() {
                 blockDragOffsetY = gridify(mousedownY) - blockDragLeftY;
 
                 //Set each block's drag offset from the drag corner
-                for (var i = 0; i < objs.length; i++) {
-                    if (objs[i].selected === true) {
-                        objs[i].dragOffsetX = objs[i].gridX - blockDragLeftX;
-                        objs[i].dragOffsetY = objs[i].gridY - blockDragLeftY;
+                for (var i = 0; i < blocks.length; i++) {
+                    if (blocks[i].selected === true) {
+                        blocks[i].dragOffsetX = blocks[i].gridX - blockDragLeftX;
+                        blocks[i].dragOffsetY = blocks[i].gridY - blockDragLeftY;
                     }
                 }
             }
@@ -911,30 +1216,30 @@ setMouseEvents = function() {
                 var validMove = true;
 
                 //Check all blocks if their new position conflicts with existing blocks
-                for (var i = 0; i < objs.length; i++) {
-                    if (objs[i].selected === true && gridArray[blockDragLeftX + objs[i].dragOffsetX][blockDragLeftY + objs[i].dragOffsetY] !== -1 && objs[gridArray[blockDragLeftX + objs[i].dragOffsetX][blockDragLeftY + objs[i].dragOffsetY]].selected === false) {
+                for (var i = 0; i < blocks.length; i++) {
+                    if (blocks[i].selected === true && gridArray[blockDragLeftX + blocks[i].dragOffsetX][blockDragLeftY + blocks[i].dragOffsetY] !== -1 && blocks[gridArray[blockDragLeftX + blocks[i].dragOffsetX][blockDragLeftY + blocks[i].dragOffsetY]].selected === false) {
                         validMove = false;
                     }
                 }
 
                 //Update block positions based on the drag block
                 if (validMove === true) {
-                    for (var i = 0; i < objs.length; i++) {
-                        if (objs[i].selected === true) {
+                    for (var i = 0; i < blocks.length; i++) {
+                        if (blocks[i].selected === true) {
                             //Update gridArray to remove block from previous locations
-                            gridArray[objs[i].prevgridX][objs[i].prevgridY] = -1
-                            gridArray[objs[i].gridX][objs[i].gridY] = -1
+                            gridArray[blocks[i].prevgridX][blocks[i].prevgridY] = -1;
+                            gridArray[blocks[i].gridX][blocks[i].gridY] = -1;
 
                             //set the new position
-                            objs[i].gridX = objs[i].prevGridX = objs[i].dragOffsetX + blockDragLeftX;
-                            objs[i].gridY = objs[i].prevGridY = objs[i].dragOffsetY + blockDragLeftY;
-                            objs[i].posX = objs[i].gridX * config.blockSize;
-                            objs[i].posY = objs[i].gridY * config.blockSize;
+                            blocks[i].gridX = blocks[i].prevGridX = blocks[i].dragOffsetX + blockDragLeftX;
+                            blocks[i].gridY = blocks[i].prevGridY = blocks[i].dragOffsetY + blockDragLeftY;
+                            blocks[i].posX = blocks[i].gridX * config.blockSize;
+                            blocks[i].posY = blocks[i].gridY * config.blockSize;
 
                             //Update the new gridArray location
-                            gridArray[objs[i].gridX][objs[i].gridY] = i;
-                            objs[i].direction = "none";
-                            objs[i].updatePosition();
+                            gridArray[blocks[i].gridX][blocks[i].gridY] = i;
+                            blocks[i].direction = "none";
+                            blocks[i].updatePosition();
                         }
                     }
                 }
@@ -971,7 +1276,7 @@ setMouseEvents = function() {
     // Compares mouseup location with mousedown, calls old click function if same, drag select if not
     function mouseUp(e) {
 
-        if (gridCheck == true) {
+        if (gridCheck === true) {
             if (config.mode === "select") {
                 elements.section.removeChild(dragbox);
             }
@@ -1004,25 +1309,25 @@ setMouseEvents = function() {
                     //Check if block exists
                     if (blockref != -1) {
                         //Check if block is not selected
-                        if (objs[blockref].selected === false) {
+                        if (blocks[blockref].selected === false) {
                             //Check if shift is off
                             if (config.shiftkey === 0) {
-                                objs[blockref].selectNewSingle();
+                                blocks[blockref].selectNewSingle();
                             }
                             //Shift is on
                             else {
-                                objs[blockref].selectBlock();
+                                blocks[blockref].selectBlock();
                             }
                         }
                         //Block is selected
                         else {
                             //Check for multiple blocks selected
                             if (config.numSelected > 1 && config.shiftkey === 0) {
-                                objs[blockref].selectNewSingle();
+                                blocks[blockref].selectNewSingle();
                             }
                             //Block is only one selected or shift is pressed
                             else {
-                                objs[blockref].deselectBlock();
+                                blocks[blockref].deselectBlock();
                             }
                         }
                     }
@@ -1030,8 +1335,8 @@ setMouseEvents = function() {
                     else if (config.mode === "create") {
                         addBlock(leftX, topY, config.newBlockType);
                     } else if (config.mode === "select") {
-                        for (var i = 0; i < objs.length; i++) {
-                            objs[i].deselectBlock();
+                        for (var i = 0; i < blocks.length; i++) {
+                            blocks[i].deselectBlock();
                         }
                     }
                 }
@@ -1043,21 +1348,22 @@ setMouseEvents = function() {
                         //Check for shift key off
                         if (config.shiftkey === 0) {
                             //If shift is off, deselect all blocks currently selected
-                            for (var q = 0; q < objs.length; q++) {
-                                objs[q].deselectBlock();
+                            for (var q = 0; q < blocks.length; q++) {
+                                blocks[q].deselectBlock();
                             }
                         }
 
                         //Select all blocks in the dragbox
-                        var cnt = 0;
-                        for (var p = 0; p < objs.length; p++) {
-                            var gridX = objs[p].gridX;
-                            var gridY = objs[p].gridY;
+                        var cnt = 0,
+                            t;
+                        for (var p = 0; p < blocks.length; p++) {
+                            var gridX = blocks[p].gridX;
+                            var gridY = blocks[p].gridY;
 
                             if (gridX < rightX && gridX >= leftX && gridY < bottomY && gridY >= topY) {
 
-                                objs[p].selectBlock();
-                                var t = p;
+                                blocks[p].selectBlock();
+                                t = p;
                                 cnt++;
 
 
@@ -1118,26 +1424,27 @@ setMouseEvents = function() {
     function addBlock(gridX, gridY, type) {
         if (gridArray[gridX][gridY] === -1) {
 
-            objs[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
-            objs[config.cnt].setInitValues(controlPanel.getPanelValues());
-            objs[config.cnt].createNode(config.cnt, type).addBlock();
+            // blocks[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
+            blocks[config.cnt] = makeBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
+            blocks[config.cnt].setInitValues(controlPanel.getPanelValues());
+            blocks[config.cnt].createNode(config.cnt, type).addBlock();
 
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
             switch (type) {
                 case config.randomVolumeType:
-                    objs[config.cnt].rngMin = config.defaultVolumeMin;
-                    objs[config.cnt].rngMax = config.defaultVolumeMax;
+                    blocks[config.cnt].rngMin = config.defaultVolumeMin;
+                    blocks[config.cnt].rngMax = config.defaultVolumeMax;
                     break;
 
                 case config.randomOctaveType:
-                    objs[config.cnt].rngMin = config.defaultOctaveMin;
-                    objs[config.cnt].rngMax = config.defaultOctaveMax;
+                    blocks[config.cnt].rngMin = config.defaultOctaveMin;
+                    blocks[config.cnt].rngMax = config.defaultOctaveMax;
                     break;
 
                 case config.randomNoteType:
-                    objs[config.cnt].rngMin = config.defaultNoteMin;
-                    objs[config.cnt].rngMax = config.defaultNoteMax;
+                    blocks[config.cnt].rngMin = config.defaultNoteMin;
+                    blocks[config.cnt].rngMax = config.defaultNoteMax;
                     break;
 
                 default:
@@ -1179,8 +1486,8 @@ var advance = (function() {
         advanceBlock();
     });
     clearBtn.addEventListener("click", function() {
-        for (var i = 0; i < objs.length; i++) {
-            objs[i].removeBlock();
+        for (var i = 0; i < blocks.length; i++) {
+            blocks[i].removeBlock();
             i--;
         }
     });
@@ -1188,8 +1495,8 @@ var advance = (function() {
         changeBlockType();
     });
     selectAllBtn.addEventListener("click", function() {
-        for (var i = 0; i < objs.length; i++) {
-            objs[i].selectBlock();
+        for (var i = 0; i < blocks.length; i++) {
+            blocks[i].selectBlock();
         }
     });
 
@@ -1222,7 +1529,7 @@ var advance = (function() {
             default:
                 break;
         }
-        objs[0].convertBlock(config.newBlockType);
+        blocks[0].convertBlock(config.newBlockType);
     }
 
 })();
@@ -1235,17 +1542,12 @@ var arrowClick = (function() {
     var stopArrow = document.getElementById("stop");
 
     function animateBlock(direction) {
-        for (var i = 0; i < objs.length; i++) {
-            if (objs[i].selected === true && objs[i].type === config.musicBlockType) {
-                objs[i].newDirection = direction;
-                objs[i].speed = config.speed;
+        for (var i = 0; i < blocks.length; i++) {
+            if (blocks[i].selected === true && blocks[i].type === config.musicBlockType) {
+                blocks[i].newDirection = direction;
+                blocks[i].speed = config.speed;
             }
-            /*objs[i].selected = false;
-            objs[i].setStyle({
-                'background': objs[i].notActive
-            });*/
         }
-
     }
 
     //Keydown handler for keyboard input
@@ -1278,9 +1580,9 @@ var arrowClick = (function() {
                 break;
 
             case 49: // 1
-                for (var s = 0; s < objs.length; s++) {
-                    if (objs[s].selected === true) {
-                        objs[s].removeBlock();
+                for (var s = 0; s < blocks.length; s++) {
+                    if (blocks[s].selected === true) {
+                        blocks[s].removeBlock();
                         s--;
                     }
                 }
@@ -1301,7 +1603,6 @@ var arrowClick = (function() {
                         out = out + gridArray[j][i] + " ";
                     }
                 }
-                console.log(out);
                 break;
 
             case 77: // m
@@ -1322,18 +1623,6 @@ var arrowClick = (function() {
         }
     }, false);
 
-    // leftArrow.addEventListener("click", function() {
-    //     animateBlock("left");
-    // });
-    // rightArrow.addEventListener("click", function() {
-    //     animateBlock("right");
-    // });
-    // upArrow.addEventListener("click", function() {
-    //     animateBlock("up");
-    // });
-    // downArrow.addEventListener("click", function() {
-    //     animateBlock("down");
-    // });
     stopArrow.addEventListener("click", function() {
         animateBlock("none");
     });
