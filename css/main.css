@@ -41,7 +41,7 @@ body {
   color: #4b4b4b;
   background: #45b29d; }
 
-.clear:after {
+.clearfix:after {
   content: "";
   display: table;
   clear: both; }
@@ -150,6 +150,9 @@ body {
   background: #fffefd; }
   .block-direction-select .active polygon {
     fill: #e27a3f; }
+
+.note-wrapper {
+  width: 123px; }
 
 .note-select, .level-select, .activate-blocks {
   border-top: 1px solid #a3a2a1;
@@ -384,7 +387,7 @@ select {
 
 #wrapper {
   margin: 0 auto;
-  /* width:640px;*/ }
+  position: relative; }
 
 #stage {
   background: none repeat scroll 0 0 #3f5765;

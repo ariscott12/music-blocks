@@ -4,10 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="description" content="">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
-
     <link rel="stylesheet" href="css/main.css">
     <title>JS Sequencer</title>
     <link rel="author" href="humans.txt">
@@ -31,24 +29,22 @@
             <ul id="gridVertical"></ul>
             <ul id="gridHorizontal"></ul>
         </div>
-
-
         <div id="panel">
-            <ul class="block-type-select clear">
+            <ul class="block-type-select clearfix">
                 <li class="active">Music Block</li>
                 <li>Effect Block</li>
             </ul>
             <div class="instrument-select">
                 <center>
-                    <select id = "setInstrument">
-                        <option value="0" value="volvo">Volvo</option>
-                        <option value="1">Saab</option>
-                        <option value="2">Mercedes</option>
-                        <option value="3">Audi</option>
+                    <select id="setInstrument">
+                        <option value="0">Piano</option>
+                        <option value="1">Steel Drum</option>
+                        <option value="2">Bells</option>
+                        <!-- <option value="3">Audi</option> -->
                     </select>
                 </center>
             </div>
-            <ul class="block-direction-select clear" id="selectDirection">
+            <ul class="block-direction-select clearfix" id="selectDirection">
                 <li id="left">
                     <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
                         <polygon fill="#717171" points="11,14 0,7 11,0 " />
@@ -59,7 +55,6 @@
                         <polygon fill="#717171" points="0,11 7,0 14,11 " />
                     </svg>
                 </li>
-
                 <li id="right">
                     <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
                         <polygon fill="#717171" points="0,0 11,7 0,14 " />
@@ -71,15 +66,15 @@
                     </svg>
                 </li>
             </ul>
-            <div class="note-select clear">
-                <div class="note-wrapper clear floatleft">
+            <div class="note-select clearfix">
+                <div class="note-wrapper clearfix floatleft">
                     <p>Note Selection</p>
                     <div class="dial_wrapper">
                         <input class="dial-input" type="text" id="note-slider">
                         <div class="dial-bg"></div>
                         <div class="connector-line"></div>
                     </div>
-                    <ul class="piano-roll clear">
+                    <ul class="piano-roll clearfix">
                         <li class="whitekey active"></li>
                         <li class="blackkey"></li>
                         <li class="whitekey"></li>
@@ -104,14 +99,12 @@
                     <input class="dial-input" type="text" value="0" id="volume">
                     <div class="dial-bg"></div>
                     <div class="connector-line"></div>
-
                 </div>
                 <p>Volume</p>
                 <div class="dial_wrapper">
                     <input class="dial-input" type="text" value="0" id="velocity">
                     <div class="dial-bg"></div>
                     <div class="connector-line"></div>
-
                 </div>
                 <p>Velocity</p>
                 <div class="dial_wrapper">
@@ -132,96 +125,24 @@
                 </center>
             </div>
             <ul class="modeSelect">
-                <li class="select"><img src="images/indexfinger.png">
+                <li id="select" class="select"><img src="images/indexfinger.png">
                 </li>
-                <li class="create active"><img src="images/multiselect.png">
+                <li id="create" class="create"><img src="images/multiselect.png">
                 </li>
-                <li class="trash"><img src="images/trashcan.png">
+                <li id="trash"><img src="images/trashcan.png">
                 </li>
             </ul>
         </div>
-
+        <ul id="arrows" class = "clearfix">
+            <li id="stop">Stop</li>
+            <li id="pause">Pause</li>
+            <li id="advance">Advance</li>
+            <li id="clearall">Clear All</li>
+            <li id="selectall">Select All</li>
+            <li id="changetype">Change New Block Type</li>
+        </ul>
     </div>
-
-
-
-
-  
-
-    <ul id="arrows">
-     
-        <li id="stop">Stop</li>
-        <li id="pause">Pause</li>
-        <li id="advance">Advance</li>
-        <li id="clearall">Clear All</li>
-        <li id="selectall">Select All</li>
-        <li id="changetype">Change New Block Type</li>
-    </ul>
-  
     <script src="main.js"></script>
-
-    <script>
-    $(function() {
-        var noteArray = ["C", "C#", "D", "D#", "E", "F", 'G', 'G#'];
-        var valprev = "";
-        var knobparams = {
-            fgColor: '#6f6e6d',
-            bgColor: '#adacaa',
-            width: '27',
-            thickness: '.55',
-            cursor: 11,
-            height: '27 ',
-
-        }
-        // $("#note-slider")
-        //     .val(0)
-        //     .knob({
-        //         'min': 0,
-        //         'max': 11,
-        //         'fgColor': knobparams.fgColor,
-        //         'bgColor': knobparams.bgColor,
-        //         'width': knobparams.width,
-        //         'thickness': knobparams.thickness,
-        //         'cursor': knobparams.cursor,
-        //         'height': knobparams.height,
-        //         'value': 0,
-        //         'format': function(value) {
-        //             if (valprev != value) {
-        //                 console.log(value);
-        //             }
-        //             valprev = value;
-        //             return noteArray[value];
-        //         }
-        //     });
-
-        // $("#velocity, #duration")
-        //     .val(70)
-        //     .knob({
-        //         'min': 0,
-        //         'max': 120,
-        //         'fgColor': knobparams.fgColor,
-        //         'bgColor': knobparams.bgColor,
-        //         'width': knobparams.width,
-        //         'thickness': knobparams.thickness,
-        //         'cursor': knobparams.cursor,
-        //         'height': knobparams.height,
-        //     });
-
-
-        // $("#octave-spinner").slider({
-        //     orientation: "vertical",
-        //     range: "min",
-        //     value: 4,
-        //     min: 1,
-        //     max: 7,
-        //     step: 1,
-        //     slide: function(event, ui) {
-        //         $(".slider-value").val(ui.value);
-        //     }
-        // });
-        // $(".slider-value").val($("#octave-spinner").slider("value"));
-    });
-    </script>
     <script src="//localhost:35729/livereload.js"></script>
 </body>
 
