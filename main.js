@@ -32,13 +32,10 @@ var
         velocity: 60,
         duration: 30,
         note: 5,
-        octave: 3,
+        octave: 4,
         newblock: -1,
         draggingBlocks: false,
         colorArray: ["#d27743", "#cf5a4c", "#debe4e", "#ccc"]
-    },
-    elements = {
-        section: document.getElementById("stage")
     },
     gridArray = new Array([]),
     blocks = [];
@@ -47,15 +44,35 @@ config.maxX = config.maxY = config.blockSize * config.gridSize;
 config.maxGridX = config.maxGridY = config.gridSize - 1;
 config.newBlockType = config.musicBlockType;
 
+
+
+// Temporary Center app in browser window
+(function getPos() {
+    // Center app in middle of screen
+    $("#wrapper").css({
+        "width": "1000px",
+        "top": "50px"
+    });
+    var xoffset = $("#wrapper").offset().left,
+        yoffset = $("#wrapper").offset().top;
+ 
+    console.log("xpos "+ xoffset);
+    console.log("ypos "+ yoffset);
+
+})();
+
+
+
 ///Make the grid
 (function makeGrid() {
-    var size = config.gridSize,
+    var
         section,
         section2,
         node,
         node2,
         gridH,
-        gridV;
+        gridV,
+        size = config.gridSize;
 
     for (var i = 0; i < size; i++) {
         gridH = document.getElementById("gridHorizontal");
@@ -73,7 +90,7 @@ config.newBlockType = config.musicBlockType;
     }
 })();
 
-//////MUSIC BLOCK OBJECT AND PROTOTYPE FUNCTIONS//////
+// Music block object and methods
 var proto = {
     id: "",
     blocknum: 0,
@@ -99,6 +116,7 @@ var proto = {
     dragOffsetY: 0,
     rngMin: 0,
     rngMax: 0,
+    section: document.getElementById("stage"),
 
     setStyle: function(propertyObject) {
         var elem = document.getElementById(this.id);
@@ -106,13 +124,13 @@ var proto = {
             elem.style[property] = propertyObject[property];
     },
     createNode: function(el, type) {
-        var node = document.createElement("LI");
+        var node = document.createElement("LI"),
+            blockclass = type;
         // var direction = elements.selectDirection.children('.active').attr("id");
         //var blockclass = type + " " + direction;
-        var blockclass = type;
 
         node.setAttribute("class", blockclass);
-        elements.section.appendChild(node);
+        this.section.appendChild(node);
         this.id = type + el;
         this.blocknum = el;
         node.setAttribute("id", this.id);
@@ -132,7 +150,7 @@ var proto = {
     },
     removeNode: function() {
         var node = document.getElementById(this.id);
-        elements.section.removeChild(node);
+        this.section.removeChild(node);
         node.remove();
     },
     selectBlock: function() {
@@ -205,6 +223,7 @@ var proto = {
         }
     },
     setInitValues: function(el) {
+        //console.log(el.note);
         this.volume = el.volume;
         this.note = el.note;
         this.duration = el.duration;
@@ -262,202 +281,6 @@ var makeBlock = function(w, h, x, y, s, t) {
     return block;
 };
 
-
-
-
-function musicBlock(w, h, x, y, s, t) {
-    // this.width = w;
-    // this.height = h;
-    // this.posX = x;
-    // this.posY = y;
-    // this.id = "";
-    // this.blocknum = 0;
-    // this.oldDirection = "none";
-    // this.newDirection = "none";
-    // this.direction = "none";
-    // this.staticDirection = "none";
-    // this.speed = s;
-    // this.isMoving = false;
-    // this.gridX = gridify(this.posX);
-    // this.gridY = gridify(this.posY);
-    // this.prevgridX = this.gridX;
-    // this.prevgridY = this.gridY;
-    // this.queued = 1;
-    // this.selected = false;
-    // this.type = t;
-    // this.active = "#000";
-    // this.notActive = getBlockColor(this.type);
-    // this.halfpoint = -1;
-    // this.snd = null;
-    // this.note = 0;
-    // this.octave = 5;
-    // this.delay = 0;
-    // this.volume = config.volume;
-    // this.duration = config.duration;
-    // this.velocity = 60;
-    // this.program = 0;
-    // this.waiting = false;
-    // this.numCollisions = 0;
-    // this.dragOffsetX = 0;
-    // this.dragOffsetY = 0;
-    // this.rngMin = 0;
-    // this.rngMax = 0;
-}
-
-// musicBlock.prototype.setStyle = function(propertyObject) {
-//     var elem = document.getElementById(this.id);
-//     for (var property in propertyObject)
-//         elem.style[property] = propertyObject[property];
-// };
-
-// musicBlock.prototype.createNode = function(el, type) {
-//     var node = document.createElement("LI");
-//     // var direction = elements.selectDirection.children('.active').attr("id");
-//     //var blockclass = type + " " + direction;
-//     var blockclass = type;
-
-//     node.setAttribute("class", blockclass);
-//     elements.section.appendChild(node);
-//     this.id = type + el;
-//     this.blocknum = el;
-//     node.setAttribute("id", this.id);
-//     return this;
-// };
-
-// musicBlock.prototype.addBlock = function() {
-//     //var direction = elements.selectDirection.children('.active').attr("id");
-//     this.setStyle({
-//         'top': this.posY + "px",
-//         'left': this.posX + "px",
-//         'width': this.width + "px",
-//         'height': this.height + "px",
-//         'background': config.colorArray[this.program]
-//     });
-//     this.notActive = config.colorArray[this.program];
-//     //this.staticDirection = direction;
-
-// };
-
-// musicBlock.prototype.removeNode = function() {
-//     var node = document.getElementById(this.id);
-//     elements.section.removeChild(node);
-//     node.remove();
-// };
-
-// musicBlock.prototype.selectBlock = function() {
-//     //ONLY SELECT A BLOCK IF IT IS NOT SELECTED
-//     if (this.selected !== true && config.newblock !== this.blocknum) {
-//         this.selected = true;
-//         this.setStyle({
-//             'background': this.active
-//         });
-//         config.numSelected++;
-//     }
-// };
-
-// musicBlock.prototype.deselectBlock = function() {
-//     //Only deselect block if it is already selected
-//     if (this.selected === true) {
-//         this.selected = false;
-//         this.setStyle({
-//             'background': this.notActive
-//         });
-//         config.numSelected--;
-//     }
-// };
-
-// musicBlock.prototype.convertBlock = function(type) {
-//     this.type = type;
-//     var elem = document.getElementById(this.id);
-//     elem.setAttribute("class", type);
-// };
-
-// musicBlock.prototype.removeBlock = function() {
-//     this.removeNode();
-//     blocks.splice(this.blocknum, 1);
-//     for (var v = this.blocknum; v < blocks.length; v++) {
-//         document.getElementById(blocks[v].id).setAttribute("id", config.musicBlockType + v);
-//         blocks[v].id = config.musicBlockType + v;
-//         blocks[v].blocknum = v;
-//     }
-//     for (var t = 0; t < config.gridSize; t++) {
-//         for (var u = 0; u < config.gridSize; u++) {
-//             if (gridArray[t][u] == this.blocknum)
-//                 gridArray[t][u] = -1;
-//             if (gridArray[t][u] >= this.blocknum)
-//                 gridArray[t][u]--;
-//         }
-//     }
-//     config.cnt--;
-//     config.numSelected--;
-// };
-// musicBlock.prototype.selectNewSingle = function() {
-//     for (var i = 0; i < blocks.length; i++) {
-//         blocks[i].deselectBlock();
-//     }
-//     this.selectBlock();
-//     if (this.selected === true) {
-//         //setMidiBlock(this.blocknum);
-//         controlPanel.setToBlock(this.blocknum);
-//     }
-
-// };
-// musicBlock.prototype.updatePosition = function() {
-//     this.setStyle({
-//         'top': this.posY + "px",
-//         'left': this.posX + "px"
-//     });
-// };
-// musicBlock.prototype.playmidi = function() {
-//     if (this.type === config.musicBlockType) {
-//         var duration = this.duration / 120;
-//         var note = this.note + 12 * this.octave;
-//         var velocity = this.velocity;
-//         var volume = this.volume;
-
-//         MIDI.setVolume(0, volume);
-//         MIDI.noteOn(this.program, note, velocity, 0);
-//         MIDI.noteOff(this.program, note, duration);
-//     }
-// };
-// musicBlock.prototype.setInitValues = function(el) {
-//     this.volume = el.volume;
-//     this.note = el.note;
-//     this.duration = el.duration;
-//     this.velocity = el.velocity;
-//     this.octave = el.octave;
-//     this.program = el.instrument;
-//     this.staticDirection = el.direction;
-
-// };
-// musicBlock.prototype.setMidiValues = function(type, value) {
-//     switch (type) {
-//         case "volume":
-//             this.volume = value;
-//             break;
-//         case "octave":
-//             this.octave = value;
-//             break;
-//         case "duration":
-//             this.duration = value;
-//             break;
-//         case "velocity":
-//             this.velocity = value;
-//             break;
-//         case "note":
-//             this.note = value;
-//             break;
-//         case "instrument":
-//             this.program = value;
-//             break;
-//         case "direction":
-//             this.staticDirection = value;
-//             break;
-//         default:
-//             this.volume = value;
-//             break;
-//     }
-// };
 
 
 
@@ -635,139 +458,23 @@ collisions = function() {
 
 }();
 
-// function processTypeCollision(mblockref, eblockref) {
-//     switch (blocks[eblockref].type) {
-//         case config.randomVolumeType:
-//             blocks[mblockref].volume = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-//             break;
-//         case config.randomOctaveType:
-//             blocks[mblockref].octave = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-//             break;
-//         case config.randomNoteType:
-//             blocks[mblockref].note = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-//             break;
-//         default:
-//             break;
-//     }
-//     if (config.numSelected === 1 && blocks[mblockref].selected === true && eblockref.type !== config.musicBlockType) {
-//         controlPanel.setToBlock(mblockref);
-//     }
-// }
-
-// function processCollision(direction, gridX, gridY, blockref, skipcheck) {
-//     var directGridX, directGridY,
-//         diag1GridX, diag1GridY, diag1Direction,
-//         diag2GridX, diag2GridY, diag2Direction;
-//     // Based on the direction passed to the function, determine which grid locations to check
-//     // 1st check the grid square directly in the path of the block
-//     // 2nd check the grid square clockwise to that square
-//     // 3rd check the grid square counter-clockwise to that square
-//     switch (direction) {
-//         case "up":
-//             directGridX = gridX;
-//             directGridY = gridY - 1;
-//             diag1GridX = gridX - 1;
-//             diag1GridY = gridY - 1;
-//             diag1Direction = "right";
-//             diag2GridX = gridX + 1;
-//             diag2GridY = gridY - 1;
-//             diag2Direction = "left";
-//             break;
-
-//         case "down":
-//             directGridX = gridX;
-//             directGridY = gridY + 1;
-//             diag1GridX = gridX - 1;
-//             diag1GridY = gridY + 1;
-//             diag1Direction = "right";
-//             diag2GridX = gridX + 1;
-//             diag2GridY = gridY + 1;
-//             diag2Direction = "left";
-//             break;
-
-//         case "left":
-//             directGridX = gridX - 1;
-//             directGridY = gridY;
-//             diag1GridX = gridX - 1;
-//             diag1GridY = gridY - 1;
-//             diag1Direction = "down";
-//             diag2GridX = gridX - 1;
-//             diag2GridY = gridY + 1;
-//             diag2Direction = "up";
-//             break;
-
-//         case "right":
-//             directGridX = gridX + 1;
-//             directGridY = gridY;
-//             diag1GridX = gridX + 1;
-//             diag1GridY = gridY - 1;
-//             diag1Direction = "down";
-//             diag2GridX = gridX + 1;
-//             diag2GridY = gridY + 1;
-//             diag2Direction = "up";
-//             break;
-//         case "none":
-//             return direction;
-//     }
-
-//     //Check for boundary collision
-//     if ((direction === "up" && gridY === config.minGridY) || (direction === "down" && gridY === config.maxGridY) || (direction === "left" && gridX === config.minGridX) || (direction === "right" && gridX === config.maxGridX)) {
-//         blocks[blockref].numCollisions++;
-//         return oppositeDirection(direction);
-//     }
-
-//     //Check for collision with object directly in path
-//     else if (gridArray[directGridX][directGridY] !== -1) {
-//         processTypeCollision(blockref, gridArray[directGridX][directGridY]);
-//         blocks[blockref].numCollisions++;
-//         return oppositeDirection(direction);
-//     }
-
-//     //Check for diagonal 1 collision
-//     else if (diag1GridX >= config.minGridX && diag1GridY >= config.minGridY && diag1GridX <= config.maxGridX && diag1GridY <= config.maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].oldDirection === diag1Direction) {
-//         processTypeCollision(blockref, gridArray[diag1GridX][diag1GridY]);
-//         blocks[blockref].numCollisions++;
-//         return oppositeDirection(direction);
-//     }
-
-//     //Check for diagonal 2 collision
-//     else if (diag2GridX >= config.minGridX && diag2GridY >= config.minGridY && diag2GridX <= config.maxGridX && diag2GridY <= config.maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].oldDirection === diag2Direction) {
-//         processTypeCollision(blockref, gridArray[diag2GridX][diag2GridY]);
-//         blocks[blockref].numCollisions++;
-//         return oppositeDirection(direction);
-//     } else
-//         return direction;
-// }
-
-// function oppositeDirection(direction) {
-//     switch (direction) {
-//         case "up":
-//             return "down";
-//         case "down":
-//             return "up";
-//         case "left":
-//             return "right";
-//         case "right":
-//             return "left";
-//         default:
-//             return "none";
-//     }
-// }
-
 startSyncCounter = function() {
     var dir,
         running = true,
-        syncounter = -config.blockSize,
-        blocklength;
+        syncounter = -config.blockSize;
+    //blocklength;
+
+
 
     (function syncCounter() {
-        blocklength = blocks.length;
+        //console.log(config.cnt);
+        //blocklength = blocks.length;
 
         if ((config.pause === 1 && config.advance === 1) || config.pause === -1) {
             if (syncounter == config.blockSize) {
                 if (config.cnt !== 0) {
                     //update oldDirection, direction and queue flag
-                    for (var n = 0; n < blocklength; n++) {
+                    for (var n = 0; n < config.cnt; n++) {
                         blocks[n].oldDirection = blocks[n].direction = blocks[n].newDirection;
                         if (blocks[n].queued == 1) {
                             blocks[n].queued = 0;
@@ -781,18 +488,18 @@ startSyncCounter = function() {
                     }
 
                     //first collision check
-                    for (var l = 0; l < blocklength; l++) {
+                    for (var l = 0; l < config.cnt; l++) {
                         dir = collisions.process(blocks[l].direction, blocks[l].gridX, blocks[l].gridY, l, true);
                         blocks[l].direction = blocks[l].newDirection = dir;
                     }
 
                     //Update oldDirection for second collision
-                    for (var k = 0; k < blocklength; k++) {
+                    for (var k = 0; k < config.cnt; k++) {
                         blocks[k].oldDirection = blocks[k].direction;
                     }
 
                     //second collision check
-                    for (var o = 0; o < blocklength; o++) {
+                    for (var o = 0; o < config.cnt; o++) {
                         dir = collisions.process(blocks[o].direction, blocks[o].gridX, blocks[o].gridY, o, false);
                         blocks[o].direction = dir;
 
@@ -808,7 +515,7 @@ startSyncCounter = function() {
                     }
 
                     //mid-square collision detection
-                    for (var m = 0; m < blocklength; m++) {
+                    for (var m = 0; m < config.cnt; m++) {
                         if (blocks[m].direction == "up" && blocks[m].waiting === false && blocks[m].gridY > 1 && gridArray[blocks[m].gridX][blocks[m].gridY - 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY - 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].direction === "down") {
                             blocks[m].halfpoint = blocks[m].posY - (config.blockSize / 2);
                         }
@@ -827,7 +534,7 @@ startSyncCounter = function() {
             }
 
             /////set block direction play note on collision
-            for (var i = 0; i < blocklength; i++) {
+            for (var i = 0; i < config.cnt; i++) {
                 if (blocks[i].waiting === false) {
                     if (blocks[i].direction == "up") {
                         if (blocks[i].queued === 0) {
@@ -880,7 +587,7 @@ startSyncCounter = function() {
             }
 
             //After moving, update all block positions
-            for (var q = 0; q < blocklength; q++) {
+            for (var q = 0; q < config.cnt; q++) {
                 //calculate new grid positions, floor handles blocks moving left and up
                 blocks[q].gridX = gridify(blocks[q].posX);
                 blocks[q].gridY = gridify(blocks[q].posY);
@@ -917,19 +624,20 @@ setMidiParams = function() {
         getNote,
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
-    window.onload = function() {
-        MIDI.loadPlugin({
-            soundfontUrl: "./soundfont/",
-            instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
-            callback: function() {
-                MIDI.programChange(0, 0);
-                MIDI.programChange(1, 114);
-                MIDI.programChange(2, 112);
-                console.log("loaded");
-            }
-        });
-    };
+    // window.onload = function() {
+    //     MIDI.loadPlugin({
+    //         soundfontUrl: "./soundfont/",
+    //         instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
+    //         callback: function() {
+    //             MIDI.programChange(0, 0);
+    //             MIDI.programChange(1, 114);
+    //             MIDI.programChange(2, 112);
+    //             console.log("loaded");
+    //         }
+    //     });
+    // };
     triggerMidi = function(vol, pro, note, vel, dur) {
+        //  console.log(note);
         MIDI.setVolume(0, vol);
         MIDI.noteOn(pro, note, vel, 0);
         MIDI.noteOff(pro, note, dur);
@@ -957,8 +665,16 @@ controlPanel = function() {
             selectDirection: $("#selectDirection"),
             modeSelect: $(".modeSelect li"),
             pianoroll: $(".piano-roll li"),
-            sendBlocks: document.getElementById("sendBlocks"),
-            setInstrument: document.getElementById("setInstrument")
+            setInstrument: document.getElementById("setInstrument"),
+            sendBlocks: document.getElementById("sendBlocks")
+
+        },
+        buttons = {
+            pause: document.getElementById("pause"),
+            advance: document.getElementById("advance"),
+            clear: document.getElementById("clearall"),
+            selectAll: document.getElementById("selectall"),
+            changeBlockType: document.getElementById("changetype")
         },
 
         knobparams = {
@@ -973,12 +689,35 @@ controlPanel = function() {
         setDefault,
         getDirection,
         setDirection,
+        changeBlockType,
         setToBlock,
         syncNoteSelection,
         sendBlocks,
         createDial;
 
+    changeBlockType = function() {
+        switch (config.newBlockType) {
+            case config.musicBlockType:
+                config.newBlockType = config.randomVolumeType;
+                break;
 
+            case config.randomVolumeType:
+                config.newBlockType = config.randomOctaveType;
+                break;
+
+            case config.randomOctaveType:
+                config.newBlockType = config.randomNoteType;
+                break;
+
+            case config.randomNoteType:
+                config.newBlockType = config.musicBlockType;
+                break;
+
+            default:
+                break;
+        }
+        blocks[0].convertBlock(config.newBlockType);
+    };
     getDirection = function() {
         return elements.selectDirection.find("li.active").attr("id");
     };
@@ -986,17 +725,17 @@ controlPanel = function() {
         elements.selectDirection.find("li#" + d).addClass("active").siblings().removeClass("active");
     };
     getPanelValues = function() {
+        //console.log(elements.noteslider.val());
         return {
             volume: elements.volumeknob.val(),
             duration: elements.durationknob.val(),
-            note: elements.noteslider.val(),
+            note: parseInt(elements.noteslider.val(), 0),
             velocity: elements.velocityknob.val(),
             instrument: elements.setInstrument.value,
             octave: elements.octavespinner.slider("value"),
             direction: getDirection()
         };
     };
-
     syncNoteSelection = function(value, type) {
         if (type === "piano-roll") {
             elements.pianoroll.eq(value - 1).addClass("active").siblings().removeClass('active');
@@ -1007,7 +746,7 @@ controlPanel = function() {
 
     };
     sendBlocks = function() {
-        for (var i = 0; i < blocks.length; i++) {
+        for (var i = 0; i < config.cnt; i++) {
             if (blocks[i].selected === true && blocks[i].type === config.musicBlockType) {
                 //console.log( blocks[i].direction);
                 blocks[i].newDirection = blocks[i].staticDirection;
@@ -1069,7 +808,8 @@ controlPanel = function() {
     };
 
     setParams = function(type, value) {
-        for (var i = 0; i < blocks.length; i++) {
+        // console.log("triggered");
+        for (var i = 0; i < config.cnt; i++) {
             if (blocks[i].selected === true) {
                 blocks[i].setMidiValues(type, value);
             }
@@ -1077,10 +817,11 @@ controlPanel = function() {
     };
 
     elements.modeSelect.click(function() {
-        var mode = $(this).attr("class");
+        var mode = $(this).attr("id");
         $(this).addClass("active").siblings().removeClass("active");
-        mode = mode.replace("active", "");
+        // mode = mode.replace("active", "");
         config.mode = mode;
+
     });
 
     // Create dials
@@ -1101,7 +842,7 @@ controlPanel = function() {
     });
     elements.octavespinner.slider({
         orientation: "vertical",
-        value: 4,
+        value: config.octave,
         min: 0,
         max: 7,
         step: 1,
@@ -1111,6 +852,7 @@ controlPanel = function() {
             setParams("octave", ui.value);
         }
     });
+    elements.octavespinner.find("input").val(config.octave);
     elements.pianoroll.click(function() {
         var index = $(this).index() + 1;
         $(this).addClass("active").siblings().removeClass('active');
@@ -1119,6 +861,32 @@ controlPanel = function() {
 
     });
     elements.sendBlocks.addEventListener("mousedown", sendBlocks, false);
+
+    buttons.pause.addEventListener("click", function() {
+        config.pause = config.pause * -1;
+    });
+
+    buttons.advance.addEventListener("click", function() {
+        config.advance *= -1;
+    });
+
+    buttons.clear.addEventListener("click", function() {
+        for (var i = 0; i < config.cnt; i++) {
+            blocks[i].removeBlock();
+            i--;
+        }
+    });
+
+    buttons.changeBlockType.addEventListener("click", function() {
+        changeBlockType();
+    });
+
+    buttons.selectAll.addEventListener("click", function() {
+        // var blocklength = blocks.length;
+        for (var i = 0; i < config.cnt; i++) {
+            blocks[i].selectBlock();
+        }
+    });
 
     return {
         setToBlock: setToBlock,
@@ -1139,47 +907,59 @@ setStageEvents = function() {
         blockDragHeight = 0,
         blockDragOffsetX = 0,
         blockDragOffsetY = 0,
-        gridCheck = false;
+        gridCheck = false,
+        resetBlockDrag,
+        mouselocation,
+        setStyles,
+        compareMouse,
+        mouseDrag,
+        mouseUp,
+        mouseDown,
+        addBlock,
+        elements = {
+            section: document.getElementById("stage")
+        };
 
-
-    resetBlockDrag();
-
-    function resetBlockDrag() {
+    resetBlockDrag = function() {
         blockDragLeftX = config.blockSize;
         blockDragLeftY = config.blockSize;
         blockDragRightX = 0;
         blockDragRightY = 0;
-    }
+    }();
 
-    function setStyles(propertyObject) {
+    setStyles = function(propertyObject) {
         var elem = document.getElementById("dragbox");
         for (var property in propertyObject) {
             elem.style[property] = propertyObject[property];
         }
-    }
+    };
 
-    function compareMouse(e) {
+    compareMouse = function(e) {
         if (gridify(mousedownX) === gridify(e.pageX) && gridify(mousedownY) === gridify(e.pageY) && config.draggingBlocks === false) {
             return "same";
         } else {
             return "different";
         }
-    }
+    };
 
-    function mousedrag(e) {
+    mouseDrag = function(e) {
         e = e || window.event;
         mouselocation = compareMouse(e);
         if (mouselocation == "different") {
-            var mousedowngridX = gridify(mousedownX);
-            var mousedowngridY = gridify(mousedownY);
+            var
+                mousedowngridX = gridify(mousedownX),
+                mousedowngridY = gridify(mousedownY),
+                blockDragRightX,
+                blockDragRightY;
 
             if (gridArray[mousedowngridX][mousedowngridY] != -1 && blocks[gridArray[mousedowngridX][mousedowngridY]].selected === true && config.draggingBlocks === false) {
                 config.draggingBlocks = true;
                 config.pause = 1;
-                var blockDragRightX = 0,
-                    blockDragRightY = 0;
+
+                blockDragRightX = 0;
+                blockDragRightY = 0;
                 //Set the bounds of the blocks being dragged
-                for (var i = 0; i < blocks.length; i++) {
+                for (var i = 0; i < config.cnt; i++) {
                     if (blocks[i].selected === true) {
                         blockDragLeftX = Math.min(blockDragLeftX, blocks[i].gridX);
                         blockDragLeftY = Math.min(blockDragLeftY, blocks[i].gridY);
@@ -1193,17 +973,19 @@ setStageEvents = function() {
                 blockDragOffsetY = gridify(mousedownY) - blockDragLeftY;
 
                 //Set each block's drag offset from the drag corner
-                for (var i = 0; i < blocks.length; i++) {
-                    if (blocks[i].selected === true) {
-                        blocks[i].dragOffsetX = blocks[i].gridX - blockDragLeftX;
-                        blocks[i].dragOffsetY = blocks[i].gridY - blockDragLeftY;
+                for (var j = 0; j < config.cnt; j++) {
+                    if (blocks[j].selected === true) {
+                        blocks[j].dragOffsetX = blocks[j].gridX - blockDragLeftX;
+                        blocks[j].dragOffsetY = blocks[j].gridY - blockDragLeftY;
                     }
                 }
             }
 
             if (config.draggingBlocks === true) {
                 //Check for new blockDrag positions being outside the grid
-                var gridpos = gridify(e.pageX) - blockDragOffsetX;
+                var
+                    gridpos = gridify(e.pageX) - blockDragOffsetX,
+                    validMove = true;
                 if (gridpos + blockDragWidth < config.gridSize && gridpos >= 0) {
                     blockDragLeftX = gridpos;
                 }
@@ -1213,42 +995,44 @@ setStageEvents = function() {
                     blockDragLeftY = gridpos;
                 }
 
-                var validMove = true;
+                validMove = true;
 
                 //Check all blocks if their new position conflicts with existing blocks
-                for (var i = 0; i < blocks.length; i++) {
-                    if (blocks[i].selected === true && gridArray[blockDragLeftX + blocks[i].dragOffsetX][blockDragLeftY + blocks[i].dragOffsetY] !== -1 && blocks[gridArray[blockDragLeftX + blocks[i].dragOffsetX][blockDragLeftY + blocks[i].dragOffsetY]].selected === false) {
+                for (var k = 0; k < config.cnt; k++) {
+                    if (blocks[k].selected === true && gridArray[blockDragLeftX + blocks[k].dragOffsetX][blockDragLeftY + blocks[k].dragOffsetY] !== -1 && blocks[gridArray[blockDragLeftX + blocks[k].dragOffsetX][blockDragLeftY + blocks[k].dragOffsetY]].selected === false) {
                         validMove = false;
                     }
                 }
 
                 //Update block positions based on the drag block
                 if (validMove === true) {
-                    for (var i = 0; i < blocks.length; i++) {
-                        if (blocks[i].selected === true) {
+                    for (var l = 0; l < config.cnt; l++) {
+                        if (blocks[l].selected === true) {
                             //Update gridArray to remove block from previous locations
-                            gridArray[blocks[i].prevgridX][blocks[i].prevgridY] = -1;
-                            gridArray[blocks[i].gridX][blocks[i].gridY] = -1;
+                            gridArray[blocks[l].prevgridX][blocks[l].prevgridY] = -1;
+                            gridArray[blocks[l].gridX][blocks[l].gridY] = -1;
 
                             //set the new position
-                            blocks[i].gridX = blocks[i].prevGridX = blocks[i].dragOffsetX + blockDragLeftX;
-                            blocks[i].gridY = blocks[i].prevGridY = blocks[i].dragOffsetY + blockDragLeftY;
-                            blocks[i].posX = blocks[i].gridX * config.blockSize;
-                            blocks[i].posY = blocks[i].gridY * config.blockSize;
+                            blocks[l].gridX = blocks[l].prevGridX = blocks[l].dragOffsetX + blockDragLeftX;
+                            blocks[l].gridY = blocks[l].prevGridY = blocks[l].dragOffsetY + blockDragLeftY;
+                            blocks[l].posX = blocks[l].gridX * config.blockSize;
+                            blocks[l].posY = blocks[l].gridY * config.blockSize;
 
                             //Update the new gridArray location
-                            gridArray[blocks[i].gridX][blocks[i].gridY] = i;
-                            blocks[i].direction = "none";
-                            blocks[i].updatePosition();
+                            gridArray[blocks[l].gridX][blocks[l].gridY] = l;
+                            blocks[l].direction = "none";
+                            blocks[l].updatePosition();
                         }
                     }
                 }
             }
 
             if (config.draggingBlocks === false) {
-                if (config.mode == "create") {
-                    var gridX = gridify(e.pageX);
-                    var gridY = gridify(e.pageY);
+
+                if (config.mode === "create") {
+                    var
+                        gridX = gridify(e.pageX),
+                        gridY = gridify(e.pageY);
 
                     ///Add music block to the grid
                     addBlock(gridX, gridY, config.newBlockType);
@@ -1271,10 +1055,10 @@ setStageEvents = function() {
                 }
             }
         }
-    }
+    };
 
     // Compares mouseup location with mousedown, calls old click function if same, drag select if not
-    function mouseUp(e) {
+    mouseUp = function(e) {
 
         if (gridCheck === true) {
             if (config.mode === "select") {
@@ -1289,17 +1073,18 @@ setStageEvents = function() {
                 blockDragWidth = 0;
                 blockDragHeight = 0;
             } else {
-                var leftX = Math.min(mousedownX, e.pageX);
-                var rightX = Math.max(mousedownX, e.pageX);
-                var topY = Math.min(mousedownY, e.pageY);
-                var bottomY = Math.max(mousedownY, e.pageY);
+                var
+                    leftX = Math.min(mousedownX, e.pageX),
+                    rightX = Math.max(mousedownX, e.pageX),
+                    topY = Math.min(mousedownY, e.pageY),
+                    bottomY = Math.max(mousedownY, e.pageY),
+                    blockref;
 
                 leftX = gridify(leftX);
                 rightX = Math.ceil(rightX / config.blockSize);
                 topY = gridify(topY);
                 bottomY = Math.ceil(bottomY / config.blockSize);
-
-                var blockref = gridArray[leftX][topY];
+                blockref = gridArray[leftX][topY];
                 e = e || window.event;
 
                 mouselocation = compareMouse(e);
@@ -1335,7 +1120,7 @@ setStageEvents = function() {
                     else if (config.mode === "create") {
                         addBlock(leftX, topY, config.newBlockType);
                     } else if (config.mode === "select") {
-                        for (var i = 0; i < blocks.length; i++) {
+                        for (var i = 0; i < config.cnt; i++) {
                             blocks[i].deselectBlock();
                         }
                     }
@@ -1348,17 +1133,20 @@ setStageEvents = function() {
                         //Check for shift key off
                         if (config.shiftkey === 0) {
                             //If shift is off, deselect all blocks currently selected
-                            for (var q = 0; q < blocks.length; q++) {
+                            for (var q = 0; q < config.cnt; q++) {
                                 blocks[q].deselectBlock();
                             }
                         }
 
                         //Select all blocks in the dragbox
-                        var cnt = 0,
-                            t;
-                        for (var p = 0; p < blocks.length; p++) {
-                            var gridX = blocks[p].gridX;
-                            var gridY = blocks[p].gridY;
+                        var
+                            cnt = 0,
+                            t,
+                            gridX,
+                            gridY;
+                        for (var p = 0; p < config.cnt; p++) {
+                            gridX = blocks[p].gridX;
+                            gridY = blocks[p].gridY;
 
                             if (gridX < rightX && gridX >= leftX && gridY < bottomY && gridY >= topY) {
 
@@ -1372,7 +1160,8 @@ setStageEvents = function() {
                         if (cnt === 1) {
                             controlPanel.setToBlock(t);
                         } else {
-                            controlPanel.setDefault();
+                            //controlPanel.setToBlock(t);
+                            // controlPanel.setDefault();
                         }
                     }
                 }
@@ -1385,20 +1174,24 @@ setStageEvents = function() {
             gridCheck = false;
 
             //Remove drag event on mouseup
-            elements.section.removeEventListener("mousemove", mousedrag);
+            elements.section.removeEventListener("mousemove", mouseDrag);
         }
-    }
+    };
 
     //Add mousedown listener, tracks positions and resets selection to 0
-    function mouseDown(e) {
+    mouseDown = function(e) {
 
-        var mouselocation = compareMouse(e);
         var dragbox;
+
+        mouselocation = compareMouse(e);
+
+
         e = e || window.event;
 
         gridCheck = true;
-
+        console.log(config.mode);
         if (config.mode === "select") {
+            console.log("foo");
             dragbox = document.createElement("div");
             dragbox.id = "dragbox";
             dragbox.setAttribute('draggable', true);
@@ -1418,13 +1211,13 @@ setStageEvents = function() {
         }
 
         //Add drag event on mousedown
-        elements.section.addEventListener('mousemove', mousedrag, false);
-    }
+        elements.section.addEventListener('mousemove', mouseDrag, false);
+    };
 
-    function addBlock(gridX, gridY, type) {
+    addBlock = function(gridX, gridY, type) {
         if (gridArray[gridX][gridY] === -1) {
 
-            // blocks[config.cnt] = new musicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
+            // Make new blocks
             blocks[config.cnt] = makeBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
             blocks[config.cnt].setInitValues(controlPanel.getPanelValues());
             blocks[config.cnt].createNode(config.cnt, type).addBlock();
@@ -1456,7 +1249,7 @@ setStageEvents = function() {
             //r Control Panel
             //controlPanel.setDefault();  
         }
-    }
+    };
 
     window.addEventListener("mouseup", mouseUp, false);
     elements.section.addEventListener("mousedown", mouseDown, false);
@@ -1470,79 +1263,11 @@ setStageEvents = function() {
 
 
 
-
-var advance = (function() {
-
-    var pauseBtn = document.getElementById("pause");
-    var advanceBtn = document.getElementById("advance");
-    var clearBtn = document.getElementById("clearall");
-    var selectAllBtn = document.getElementById("selectall");
-    var changeBlockTypeBtn = document.getElementById("changetype");
-
-    pauseBtn.addEventListener("click", function() {
-        pauseBlock();
-    });
-    advanceBtn.addEventListener("click", function() {
-        advanceBlock();
-    });
-    clearBtn.addEventListener("click", function() {
-        for (var i = 0; i < blocks.length; i++) {
-            blocks[i].removeBlock();
-            i--;
-        }
-    });
-    changeBlockTypeBtn.addEventListener("click", function() {
-        changeBlockType();
-    });
-    selectAllBtn.addEventListener("click", function() {
-        for (var i = 0; i < blocks.length; i++) {
-            blocks[i].selectBlock();
-        }
-    });
-
-    function pauseBlock() {
-        config.pause = config.pause * -1;
-    }
-
-    function advanceBlock() {
-        config.advance *= -1;
-    }
-
-    function changeBlockType() {
-        switch (config.newBlockType) {
-            case config.musicBlockType:
-                config.newBlockType = config.randomVolumeType;
-                break;
-
-            case config.randomVolumeType:
-                config.newBlockType = config.randomOctaveType;
-                break;
-
-            case config.randomOctaveType:
-                config.newBlockType = config.randomNoteType;
-                break;
-
-            case config.randomNoteType:
-                config.newBlockType = config.musicBlockType;
-                break;
-
-            default:
-                break;
-        }
-        blocks[0].convertBlock(config.newBlockType);
-    }
-
-})();
-
-
-
-
-
-var arrowClick = (function() {
+keyboardEvents = function() {
     var stopArrow = document.getElementById("stop");
 
     function animateBlock(direction) {
-        for (var i = 0; i < blocks.length; i++) {
+        for (var i = 0; i < config.cnt; i++) {
             if (blocks[i].selected === true && blocks[i].type === config.musicBlockType) {
                 blocks[i].newDirection = direction;
                 blocks[i].speed = config.speed;
@@ -1580,7 +1305,7 @@ var arrowClick = (function() {
                 break;
 
             case 49: // 1
-                for (var s = 0; s < blocks.length; s++) {
+                for (var s = 0; s < config.cnt; s++) {
                     if (blocks[s].selected === true) {
                         blocks[s].removeBlock();
                         s--;
@@ -1593,7 +1318,6 @@ var arrowClick = (function() {
                 break;
 
             case 68: // d
-                console.log("D");
                 var out = "FULL GRID DUMPMONSTER";
                 for (var i = 0; i < config.gridSize; i++) {
                     out = out + "\n";
@@ -1627,4 +1351,4 @@ var arrowClick = (function() {
         animateBlock("none");
     });
 
-})();
+}();
