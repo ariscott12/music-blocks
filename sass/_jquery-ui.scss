@@ -1,38 +1,104 @@
 .shadow {
     box-shadow: 0 5px 0 1px rgba(0, 0, 0, 0.09) inset;
 }
-.ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl {
-    border-radius: 0;
-}
-.ui-slider-vertical .ui-slider-handle {
-    left: -0.47em;
-    margin-bottom: -0.5em;
-    margin-left: 0;
-    background: $gray;
-    cursor: default;
-    height: 8px;
-    position: absolute;
-    width: 20px;
-    z-index: 2;
-    border: 1px solid #888;
-    box-shadow: 0px 4px 3px 0px rgba(0, 0, 0, 0.33);
-}
+
 .ui-slider-vertical {
+    position: relative;
+    text-align: left;
     height: 84px;
     width: 6px;
     border: none;
-    @extend .shadow;
+    background: #4d4d4d;
+    .ui-slider-handle {
+        left: -0.6em;
+        margin-bottom: -0.4em;
+        margin-left: 0;
+        background: $gray;
+        cursor: default;
+        height: 8px;
+        position: absolute;
+        width: 22px;
+        z-index: 2;
+        border: 1px solid #888;
+        box-shadow: 0px 4px 3px 0px rgba(0, 0, 0, 0.33);
+    }
+    .ui-slider-range {
+        background-position: 0 0;
+        border: 0 none;
+        display: block;
+        font-size: 0.7em;
+        position: absolute;
+        z-index: 1;
+        left: 0;
+        width: 100%;
+        //background:$gray-dark;
+    }
+    .ui-slider-range-min {
+        bottom: 0;
+    }
+    .ui-widget-header {
+        background: $aqua;
+        border: none;
+        @extend .shadow;
+    }
+    .slider-value {
+        font-size: .875rem;
+        color: $gray-font;
+    }
 }
-.ui-widget-content {
-    background: $blue-dark;
+
+.ui-widget input {
+    font-family: 'Istok Web', sans-serif;
+    color: $blue-light;
+    background: $blue-medium;
 }
-.ui-widget-header {
-    background: $aqua;
-    border: none;
-    @extend .shadow;
-}
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
-    font-family: 'Istok Web', sans-serif;;
-    font-size: .925em;
-    color:$gray-font;
+
+.ui-spinner {
+    position: relative;
+    float: left;
+    width: 50px;
+    height:28px;
+    input.spinner {
+        width: 32px;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        height: 28px;
+        padding-top: 3px;
+    }
+    a {
+        position: absolute;
+        background: $gray-extralight;
+        right: -6px;
+        color: $gray;
+        width: 25px;
+        height: 14px;
+        line-height: 14px;
+        border: 1px solid $blue-medium;
+        text-align: center;
+    }
+    .ui-spinner-up {
+        top: 0;
+        border-bottom: none;
+        .ui-icon {
+             background-image: url("../images/spinner-up-arrow.png");
+             background-position: 8px 4px;
+        }
+    }
+    .ui-spinner-down {
+        top: 14px;
+        .ui-icon {
+             background-image: url("../images/spinner-down-arrow.png");
+             background-position: 8px 4px;
+        }
+    }
+    .ui-icon {
+       
+        text-indent: -99999px;
+        background-repeat: no-repeat;
+        display: block;
+        overflow: hidden;
+        text-indent: -99999px;
+        
+    }
 }

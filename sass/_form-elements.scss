@@ -1,5 +1,4 @@
 select {
-   
     /*Removes border*/
     
     -webkit-appearance: none;
@@ -13,19 +12,20 @@ select {
     
     background-position: 82px 7px;
     /*Position of the background-image*/
+    /*Width of select dropdown to give space for arrow image*/
     
-    /*Width of select dropdown to give space for arrow image*/ text-indent: 0.01px;
+    text-indent: 0.01px;
     /* Removes default arrow from firefox*/
     
     text-overflow: "";
     /*Removes default arrow from firefox*/
-    color:$blue-light;	
-    padding:3px 10px;
-
-
-      background: none repeat scroll 0 0 #3f5765;
-    border: 2px solid #ccc;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.26) inset;
-
-
+    
+   // color: $blue-light;
+    padding: 3px 10px;
+    background: #bdbcba;
+    color:$gray-font;
+    //border: 2px solid #ccc;
+    border:none;
+   // box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.26) inset;
+    width: 164px;
 }

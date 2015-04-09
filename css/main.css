@@ -73,32 +73,132 @@ body {
     .button-basic svg polygon {
       fill: #816c29; }
 
-#panel {
+.button-select {
+  border: 1px solid #2e7466;
+  border-radius: 2px;
+  display: inline-block; }
+  .button-select.active {
+    background-color: #45b29d; }
+
+.control-panel {
   width: 206px;
-  height: 300px;
   font-size: .8125em;
   float: left; }
-  #panel p {
+  .control-panel p {
     margin-bottom: 10px; }
-  #panel .dial-input {
+  .control-panel h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: .875rem; }
+  .control-panel .dial-wrapper {
+    margin-bottom: 10px;
+    position: relative;
+    width: 116px;
+    float: left; }
+  .control-panel .range-wrapper {
+    position: relative;
+    width: 102px;
+    margin-left: 9px;
+    float: left; }
+    .control-panel .range-wrapper p {
+      margin-bottom: 0;
+      margin-left: 12px; }
+  .control-panel .dial-wrapper-range {
+    margin-bottom: 45px;
+    margin-bottom: 53px;
+    position: relative;
+    width: 51px;
+    float: left; }
+    .control-panel .dial-wrapper-range .dial-input-rangelow {
+      left: -6px;
+      top: 30px;
+      border-right: none;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0; }
+    .control-panel .dial-wrapper-range .dial-input-rangehigh {
+      left: -10px;
+      top: 30px;
+      border-left: none;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0; }
+  .control-panel .dial-outline {
+    background-color: rgba(239, 201, 76, 0.8);
+    border-radius: 21px;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+    height: 39px;
+    position: absolute;
+    top: -5px;
+    width: 92px;
+    left: -7px; }
+  .control-panel .dial-bg {
+    background-color: #ADACAA;
+    border-radius: 27px;
+    border: 2px solid #888;
+    box-shadow: 3px 4px 1px 0 rgba(0, 0, 0, 0.23);
+    height: 30px;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 30px;
+    z-index: 500; }
+  .control-panel .connector-line {
+    background: none repeat scroll 0 0 #ccc;
+    height: 1px;
+    position: absolute;
+    top: 15px;
+    width: 60px;
+    z-index: 0; }
+  .control-panel .connector-line-vertical {
+    background: none repeat scroll 0 0 #999;
+    height: 34px;
+    position: absolute;
+    top: 26px;
+    width: 1px;
+    z-index: 0;
+    left: 14px; }
+  .control-panel .ui-spinner input, .control-panel .dial-wrapper input, .control-panel .dial-wrapper-range input {
     background: none repeat scroll 0 0 #3f5765;
     border: 2px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.26) inset;
     color: #67c0cd;
     height: 33px;
-    left: 57px;
     position: absolute;
     text-align: center;
     width: 48px;
+    font-size: .775rem; }
+  .control-panel .dial-input {
+    left: 57px;
     top: -15px; }
+  .control-panel .switch {
+    margin-top: 10px;
+    background: #edce69;
+    float: left;
+    border: 1px solid #9f9f9f;
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.19) inset;
+    width: 14px;
+    height: 32px;
+    position: relative; }
+    .control-panel .switch .toggle {
+      background: #d2d1ce;
+      border-bottom: 1px solid #9f9f9f;
+      box-shadow: 0 -1px 5px 0 rgba(0, 0, 0, 0.27);
+      height: 16px;
+      left: 0;
+      position: absolute;
+      top: 15px;
+      width: 12px;
+      border-top: 1px solid #9f9f9f; }
+    .control-panel .switch p {
+      font-size: 0.715rem;
+      margin: 2px 0 5px 22px; }
 
 .block-type-select li {
   float: left;
   background: #d2d1ce;
   padding: 12px 0px;
   font-size: .8rem;
-  width: 101px;
+  width: 102px;
   text-align: center;
   opacity: .5; }
   .block-type-select li:first-child {
@@ -112,13 +212,58 @@ body {
   border-bottom: none;
   opacity: 1; }
 
+.blocks-effect select {
+  margin-bottom: 20px; }
+
+.effect-select {
+  border-left: 1px solid #a3a2a1;
+  border-right: 1px solid #a3a2a1;
+  background: #edebea;
+  padding: 20px; }
+  .effect-select li {
+    font-size: .75rem;
+    display: inline-block;
+    margin-bottom: 4px; }
+    .effect-select li:nth-child(1), .effect-select li:nth-child(3), .effect-select li:nth-child(5) {
+      width: 95px; }
+  .effect-select .button-select {
+    width: 11px;
+    height: 9px;
+    position: relative;
+    top: 2px;
+    display: inline-block;
+    margin-right: 5px; }
+
+.effect-note, .effect-volume, .effect-velocity, .effect-duration {
+  border-top: 1px solid #a3a2a1;
+  border-left: 1px solid #a3a2a1;
+  border-right: 1px solid #a3a2a1;
+  padding: 20px;
+  background: #edebea; }
+
+.effect-volume, .effect-duration, .effect-velocity {
+  display: none; }
+
+.set-to-range {
+  float: left;
+  width: 50px; }
+  .set-to-range p {
+    text-align: center; }
+  .set-to-range .button-select {
+    height: 12px;
+    width: 12px;
+    margin-left: 20px;
+    margin-bottom: 3px; }
+
+.blocks-music {
+  display: none; }
+
 .instrument-select {
   border-left: 1px solid #a3a2a1;
   border-right: 1px solid #a3a2a1;
   background: #edebea; }
   .instrument-select select {
-    margin: 25px 0;
-    width: 170px; }
+    margin: 25px 0; }
 
 .block-direction-select li {
   width: 25%;
@@ -209,32 +354,6 @@ body {
   top: 9px;
   font-size: .775rem; }
 
-.dial_wrapper {
-  margin-bottom: 10px;
-  position: relative;
-  width: 116px;
-  float: left; }
-
-.dial-bg {
-  background-color: #ADACAA;
-  border-radius: 27px;
-  border: 2px solid #888;
-  box-shadow: 3px 4px 1px 0 rgba(0, 0, 0, 0.23);
-  height: 30px;
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  width: 30px;
-  z-index: 500; }
-
-.connector-line {
-  background: none repeat scroll 0 0 #ccc;
-  height: 1px;
-  position: absolute;
-  top: 15px;
-  width: 60px;
-  z-index: 0; }
-
 .instruments li {
   background: #45b29d;
   border: 1px solid #3ea18e;
@@ -263,47 +382,96 @@ select {
   /* Removes default arrow from firefox*/
   text-overflow: "";
   /*Removes default arrow from firefox*/
-  color: #67c0cd;
   padding: 3px 10px;
-  background: none repeat scroll 0 0 #3f5765;
-  border: 2px solid #ccc;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.26) inset; }
+  background: #bdbcba;
+  color: #4b4b4b;
+  border: none;
+  width: 164px; }
 
-.shadow, .ui-slider-vertical, .ui-widget-header {
+.shadow, .ui-slider-vertical .ui-widget-header {
   box-shadow: 0 5px 0 1px rgba(0, 0, 0, 0.09) inset; }
 
-.ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl {
-  border-radius: 0; }
-
-.ui-slider-vertical .ui-slider-handle {
-  left: -0.47em;
-  margin-bottom: -0.5em;
-  margin-left: 0;
-  background: #a3a2a1;
-  cursor: default;
-  height: 8px;
-  position: absolute;
-  width: 20px;
-  z-index: 2;
-  border: 1px solid #888;
-  box-shadow: 0px 4px 3px 0px rgba(0, 0, 0, 0.33); }
-
 .ui-slider-vertical {
+  position: relative;
+  text-align: left;
   height: 84px;
   width: 6px;
-  border: none; }
+  border: none;
+  background: #4d4d4d; }
+  .ui-slider-vertical .ui-slider-handle {
+    left: -0.6em;
+    margin-bottom: -0.4em;
+    margin-left: 0;
+    background: #a3a2a1;
+    cursor: default;
+    height: 8px;
+    position: absolute;
+    width: 22px;
+    z-index: 2;
+    border: 1px solid #888;
+    box-shadow: 0px 4px 3px 0px rgba(0, 0, 0, 0.33); }
+  .ui-slider-vertical .ui-slider-range {
+    background-position: 0 0;
+    border: 0 none;
+    display: block;
+    font-size: 0.7em;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    width: 100%; }
+  .ui-slider-vertical .ui-slider-range-min {
+    bottom: 0; }
+  .ui-slider-vertical .ui-widget-header {
+    background: #45b29d;
+    border: none; }
+  .ui-slider-vertical .slider-value {
+    font-size: .875rem;
+    color: #4b4b4b; }
 
-.ui-widget-content {
-  background: #334d5c; }
-
-.ui-widget-header {
-  background: #45b29d;
-  border: none; }
-
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+.ui-widget input {
   font-family: 'Istok Web', sans-serif;
-  font-size: .925em;
-  color: #4b4b4b; }
+  color: #67c0cd;
+  background: #3f5765; }
+
+.ui-spinner {
+  position: relative;
+  float: left;
+  width: 50px;
+  height: 28px; }
+  .ui-spinner input.spinner {
+    width: 32px;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    height: 28px;
+    padding-top: 3px; }
+  .ui-spinner a {
+    position: absolute;
+    background: #e5e4e1;
+    right: -6px;
+    color: #a3a2a1;
+    width: 25px;
+    height: 14px;
+    line-height: 14px;
+    border: 1px solid #3f5765;
+    text-align: center; }
+  .ui-spinner .ui-spinner-up {
+    top: 0;
+    border-bottom: none; }
+    .ui-spinner .ui-spinner-up .ui-icon {
+      background-image: url("../images/spinner-up-arrow.png");
+      background-position: 8px 4px; }
+  .ui-spinner .ui-spinner-down {
+    top: 14px; }
+    .ui-spinner .ui-spinner-down .ui-icon {
+      background-image: url("../images/spinner-down-arrow.png");
+      background-position: 8px 4px; }
+  .ui-spinner .ui-icon {
+    text-indent: -99999px;
+    background-repeat: no-repeat;
+    display: block;
+    overflow: hidden;
+    text-indent: -99999px; }
 
 #gridHorizontal, #gridVertical {
   height: 640px;

@@ -7,7 +7,7 @@
     background: $yellow;
     color: #816c29;
     line-height: 26px;
-    border-radius:3px;
+    border-radius: 3px;
     svg {
         float: right;
         margin-right: 8px;
@@ -16,5 +16,15 @@
         polygon {
             fill: #816c29;
         }
+    }
+}
+
+.button-select {
+    border: 1px solid #2e7466;
+    border-radius: 2px;
+    display: inline-block;
+
+    &.active {
+         background-color: $aqua;
     }
 }
