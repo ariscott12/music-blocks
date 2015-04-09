@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+    <!--  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css"> -->
     <link rel="stylesheet" href="css/main.css">
     <title>JS Sequencer</title>
     <link rel="author" href="humans.txt">
@@ -29,111 +29,378 @@
             <ul id="gridVertical"></ul>
             <ul id="gridHorizontal"></ul>
         </div>
-        <div id="panel">
+        <div class="control-panel">
             <ul class="block-type-select clearfix">
-                <li class="active">Music Block</li>
-                <li>Effect Block</li>
+                <li>Music Block</li>
+                <li class="active">Effect Block</li>
             </ul>
-            <div class="instrument-select">
-                <center>
-                    <select id="setInstrument">
-                        <option value="0">Piano</option>
-                        <option value="1">Steel Drum</option>
-                        <option value="2">Bells</option>
-                        <!-- <option value="3">Audi</option> -->
-                    </select>
-                </center>
-            </div>
-            <ul class="block-direction-select clearfix" id="selectDirection">
-                <li id="left">
-                    <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                        <polygon fill="#717171" points="11,14 0,7 11,0 " />
-                    </svg>
-                </li>
-                <li class="active" id="up">
-                    <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
-                        <polygon fill="#717171" points="0,11 7,0 14,11 " />
-                    </svg>
-                </li>
-                <li id="right">
-                    <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                        <polygon fill="#717171" points="0,0 11,7 0,14 " />
-                    </svg>
-                </li>
-                <li id="down">
-                    <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
-                        <polygon fill="#717171" points="14,0 7,11 0,0 " />
-                    </svg>
-                </li>
-            </ul>
-            <div class="note-select clearfix">
-                <div class="note-wrapper clearfix floatleft">
-                    <p>Note Selection</p>
-                    <div class="dial_wrapper">
-                        <input class="dial-input" type="text" id="note-slider">
-                        <div class="dial-bg"></div>
-                        <div class="connector-line"></div>
-                    </div>
-                    <ul class="piano-roll clearfix">
-                        <li class="whitekey active"></li>
-                        <li class="blackkey"></li>
-                        <li class="whitekey"></li>
-                        <li class="blackkey"></li>
-                        <li class="whitekey"></li>
-                        <li class="whitekey"></li>
-                        <li class="blackkey"></li>
-                        <li class="whitekey"></li>
-                        <li class="blackkey"></li>
-                        <li class="whitekey"></li>
-                        <li class="blackkey"></li>
-                        <li class="whitekey"></li>
+            <div class="blocks-effect">
+                <div class="effect-select">
+                    <ul>
+                        <li class="toggle-note"><span class="active button-select">&nbsp;</span>Note</li>
+                        <li class="toggle-volume"><span class="button-select">&nbsp;</span>Volume</li>
+                        <li class="toggle-velocity"><span class="button-select">&nbsp;</span>Velocity</li>
+                        <li class="toggle-duration"><span class="button-select">&nbsp;</span>Duration</li>
+                        <li class="toggle-octave"><span class="button-select">&nbsp;</span>Octave</li>
+                        <li><span class="button-select">&nbsp;</span>Scale</li>
                     </ul>
                 </div>
-                <p>Octave</p>
-                <div id="octave-spinner" class="octave-select">
-                    <input class="slider-value" />
+                <div class="effect-wrapper">
+                    <div class="effect-note clearfix">
+                        <h3>Note Effect</h3>
+                        <center>
+                            <select id="select-note-effect">
+                                <option value="note-specific">Specific Value</option>
+                                <option value="note-random">Random Value</option>
+                                <option value="note-progression">Step Progression</option>
+                                <!-- <option value="3">Audi</option> -->
+                            </select>
+                        </center>
+                        <div class="note-specific clearfix">
+                            <div class="dial-wrapper">
+                                <input class="dial-input" type="text" id="note-specific-effect">
+                                <div class="dial-bg"></div>
+                                <div class="connector-line"></div>
+                            </div>
+                        </div>
+                        <div class="note-random clearfix">
+                            <div class="range-wrapper">
+                                <div class="dial-outline"></div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangelow note-rangelow-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangehigh note-rangehigh-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="clear"></div>
+                                <p>Set Range</p>
+                            </div>
+                            <div class="set-to-range">
+                                <div class="button-select active"></div>
+                                <p>Limit to Range</p>
+                            </div>
+                        </div>
+                        <div class="note-progression clearfix">
+                            <div class="range-wrapper">
+                                <div class="dial-outline"></div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangelow note-rangelow-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangehigh note-rangehigh-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="clear"></div>
+                                <p>Set Range</p>
+                            </div>
+                            <input class="note-step-size spinner" name="value">
+                            <div class="switch">
+                                <div class="toggle"></div>
+                                <p>up</p>
+                                <p>down</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="effect-volume clearfix">
+                        <h3>Volume Effect</h3>
+                        <center>
+                            <select id="select-volume-effect">
+                                <option value="volume-specific">Specific Value</option>
+                                <option value="volume-random">Random Value</option>
+                                <option value="volume-progression">Step Progression</option>
+                                <!-- <option value="3">Audi</option> -->
+                            </select>
+                        </center>
+                        <div class="volume-specific clearfix">
+                            <div class="dial-wrapper">
+                                <input class="dial-input" type="text" id="volume-specific-effect">
+                                <div class="dial-bg"></div>
+                                <div class="connector-line"></div>
+                            </div>
+                        </div>
+                        <div class="volume-random clearfix">
+                            <div class="range-wrapper">
+                                <div class="dial-outline"></div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangelow volume-rangelow-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangehigh volume-rangehigh-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="clear"></div>
+                                <p>Set Range</p>
+                            </div>
+                            <div class="set-to-range">
+                                <div class="button-select active"></div>
+                                <p>Limit to Range</p>
+                            </div>
+                        </div>
+                        <div class="volume-progression clearfix">
+                            <div class="range-wrapper">
+                                <div class="dial-outline"></div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangelow volume-rangelow-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangehigh volume-rangehigh-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="clear"></div>
+                                <p>Set Range</p>
+                            </div>
+                            <input class="volume-step-size spinner" name="value">
+                            <div class="switch">
+                                <div class="toggle"></div>
+                                <p>up</p>
+                                <p>down</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="effect-velocity clearfix">
+                        <h3>velocity Effect</h3>
+                        <center>
+                            <select id="select-velocity-effect">
+                                <option value="velocity-specific">Specific Value</option>
+                                <option value="velocity-random">Random Value</option>
+                                <option value="velocity-progression">Step Progression</option>
+                                <!-- <option value="3">Audi</option> -->
+                            </select>
+                        </center>
+                        <div class="velocity-specific clearfix">
+                            <div class="dial-wrapper">
+                                <input class="dial-input" type="text" id="velocity-specific-effect">
+                                <div class="dial-bg"></div>
+                                <div class="connector-line"></div>
+                            </div>
+                        </div>
+                        <div class="velocity-random clearfix">
+                            <div class="range-wrapper">
+                                <div class="dial-outline"></div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangelow velocity-rangelow-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangehigh velocity-rangehigh-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="clear"></div>
+                                <p>Set Range</p>
+                            </div>
+                            <div class="set-to-range">
+                                <div class="button-select active"></div>
+                                <p>Limit to Range</p>
+                            </div>
+                        </div>
+                        <div class="velocity-progression clearfix">
+                            <div class="range-wrapper">
+                                <div class="dial-outline"></div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangelow velocity-rangelow-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangehigh velocity-rangehigh-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="clear"></div>
+                                <p>Set Range</p>
+                            </div>
+                            <input class="velocity-step-size spinner" name="value">
+                            <div class="switch">
+                                <div class="toggle"></div>
+                                <p>up</p>
+                                <p>down</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="effect-duration clearfix">
+                        <h3>Duration Effect</h3>
+                        <center>
+                            <select id="select-duration-effect">
+                                <option value="duration-specific">Specific Value</option>
+                                <option value="duration-random">Random Value</option>
+                                <option value="duration-progression">Step Progression</option>
+                                <!-- <option value="3">Audi</option> -->
+                            </select>
+                        </center>
+                        <div class="duration-specific clearfix">
+                            <div class="dial-wrapper">
+                                <input class="dial-input" type="text" id="duration-specific-effect">
+                                <div class="dial-bg"></div>
+                                <div class="connector-line"></div>
+                            </div>
+                        </div>
+                        <div class="duration-random clearfix">
+                            <div class="range-wrapper">
+                                <div class="dial-outline"></div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangelow duration-rangelow-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangehigh duration-rangehigh-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="clear"></div>
+                                <p>Set Range</p>
+                            </div>
+                            <div class="set-to-range">
+                                <div class="button-select active"></div>
+                                <p>Limit to Range</p>
+                            </div>
+                        </div>
+                        <div class="duration-progression clearfix">
+                            <div class="range-wrapper">
+                                <div class="dial-outline"></div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangelow duration-rangelow-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="dial-wrapper-range">
+                                    <input class="dial-input-rangehigh duration-rangehigh-effect" type="text">
+                                    <div class="dial-bg"></div>
+                                    <div class="connector-line-vertical"></div>
+                                </div>
+                                <div class="clear"></div>
+                                <p>Set Range</p>
+                            </div>
+                            <input class="duration-step-size spinner" name="value">
+                            <div class="switch">
+                                <div class="toggle"></div>
+                                <p>up</p>
+                                <p>down</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="level-select">
-                <div class="dial_wrapper">
-                    <input class="dial-input" type="text" value="0" id="volume">
-                    <div class="dial-bg"></div>
-                    <div class="connector-line"></div>
+            <div class="blocks-music">
+                <div class="instrument-select">
+                    <center>
+                        <select id="set-instrument">
+                            <option value="0">Piano</option>
+                            <option value="1">Steel Drum</option>
+                            <option value="2">Bells</option>
+                            <!-- <option value="3">Audi</option> -->
+                        </select>
+                    </center>
                 </div>
-                <p>Volume</p>
-                <div class="dial_wrapper">
-                    <input class="dial-input" type="text" value="0" id="velocity">
-                    <div class="dial-bg"></div>
-                    <div class="connector-line"></div>
-                </div>
-                <p>Velocity</p>
-                <div class="dial_wrapper">
-                    <input class="dial-input" type="text" value="0" id="duration">
-                    <div class="dial-bg"></div>
-                    <div class="connector-line"></div>
-                </div>
-                <p>Duration</p>
-                <div class="clear"></div>
-            </div>
-            <div class="activate-blocks">
-                <center>
-                    <div id="sendBlocks" class="send-blocks button-basic">Send Blocks
+                <ul class="block-direction-select clearfix" id="select-direction">
+                    <li id="left">
+                        <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                            <polygon fill="#717171" points="11,14 0,7 11,0 " />
+                        </svg>
+                    </li>
+                    <li class="active" id="up">
+                        <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
+                            <polygon fill="#717171" points="0,11 7,0 14,11 " />
+                        </svg>
+                    </li>
+                    <li id="right">
                         <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
                             <polygon fill="#717171" points="0,0 11,7 0,14 " />
                         </svg>
+                    </li>
+                    <li id="down">
+                        <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
+                            <polygon fill="#717171" points="14,0 7,11 0,0 " />
+                        </svg>
+                    </li>
+                </ul>
+                <div class="note-select clearfix">
+                    <div class="note-wrapper clearfix floatleft">
+                        <p>Note Selection</p>
+                        <div class="dial-wrapper">
+                            <input class="dial-input" type="text" id="note">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line"></div>
+                        </div>
+                        <ul class="piano-roll clearfix">
+                            <li class="whitekey active"></li>
+                            <li class="blackkey"></li>
+                            <li class="whitekey"></li>
+                            <li class="blackkey"></li>
+                            <li class="whitekey"></li>
+                            <li class="whitekey"></li>
+                            <li class="blackkey"></li>
+                            <li class="whitekey"></li>
+                            <li class="blackkey"></li>
+                            <li class="whitekey"></li>
+                            <li class="blackkey"></li>
+                            <li class="whitekey"></li>
+                        </ul>
                     </div>
-                </center>
+                    <p>Octave</p>
+                    <div id="octave-spinner" class="octave-select">
+                        <input class="slider-value" />
+                    </div>
+                </div>
+                <div class="level-select">
+                    <div class="dial-wrapper">
+                        <input class="dial-input" type="text" value="0" id="volume">
+                        <div class="dial-bg"></div>
+                        <div class="connector-line"></div>
+                    </div>
+                    <p>Volume</p>
+                    <div class="dial-wrapper">
+                        <input class="dial-input" type="text" value="0" id="velocity">
+                        <div class="dial-bg"></div>
+                        <div class="connector-line"></div>
+                    </div>
+                    <p>Velocity</p>
+                    <div class="dial-wrapper">
+                        <input class="dial-input" type="text" value="0" id="duration">
+                        <div class="dial-bg"></div>
+                        <div class="connector-line"></div>
+                    </div>
+                    <p>Duration</p>
+                    <div class="clear"></div>
+                </div>
+                <div class="activate-blocks">
+                    <center>
+                        <div id="send-blocks" class="send-blocks button-basic">Send Blocks
+                            <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                                <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                            </svg>
+                        </div>
+                    </center>
+                </div>
             </div>
-            <ul class="modeSelect">
-                <li id="select" class="select"><img src="images/indexfinger.png">
-                </li>
-                <li id="create" class="create"><img src="images/multiselect.png">
-                </li>
-                <li id="trash"><img src="images/trashcan.png">
-                </li>
-            </ul>
+            <div class="block-effect">
+            </div>
         </div>
-        <ul id="arrows" class = "clearfix">
+        <div class="clear"></div>
+        <ul class="modeSelect">
+            <li id="select" class="select"><img src="images/indexfinger.png">
+            </li>
+            <li id="create" class="create"><img src="images/multiselect.png">
+            </li>
+            <li id="trash"><img src="images/trashcan.png">
+            </li>
+        </ul>
+        <ul id="arrows" class="clearfix">
             <li id="stop">Stop</li>
             <li id="pause">Pause</li>
             <li id="advance">Advance</li>
