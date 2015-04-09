@@ -47,19 +47,19 @@ config.newBlockType = config.musicBlockType;
 
 
 // Temporary Center app in browser window
-(function getPos() {
-    // Center app in middle of screen
-    $("#wrapper").css({
-        "width": "1000px",
-        "top": "50px"
-    });
-    var xoffset = $("#wrapper").offset().left,
-        yoffset = $("#wrapper").offset().top;
- 
-    console.log("xpos "+ xoffset);
-    console.log("ypos "+ yoffset);
+// (function getPos() {
+//     // Center app in middle of screen
+//     $("#wrapper").css({
+//         "width": "1000px",
+//         "top": "50px"
+//     });
+//     var xoffset = $("#wrapper").offset().left,
+//         yoffset = $("#wrapper").offset().top;
 
-})();
+//     console.log("xpos "+ xoffset);
+//     console.log("ypos "+ yoffset);
+
+// })();
 
 
 
@@ -102,6 +102,7 @@ var proto = {
     queued: 1,
     selected: false,
     active: "#000",
+    notActive: "#DBA65C",
     halfpoint: -1,
     snd: null,
     note: config.note,
@@ -166,6 +167,7 @@ var proto = {
     deselectBlock: function() {
         //Only deselect block if it is already selected
         if (this.selected === true) {
+            console.log("test");
             this.selected = false;
             this.setStyle({
                 'background': this.notActive
@@ -199,6 +201,7 @@ var proto = {
     },
     selectNewSingle: function() {
         for (var i = 0; i < blocks.length; i++) {
+
             blocks[i].deselectBlock();
         }
         this.selectBlock();
@@ -257,7 +260,7 @@ var proto = {
                 this.staticDirection = value;
                 break;
             default:
-                this.volume = value;
+                // this.volume = value;
                 break;
         }
     }
@@ -624,20 +627,20 @@ setMidiParams = function() {
         getNote,
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
-    // window.onload = function() {
-    //     MIDI.loadPlugin({
-    //         soundfontUrl: "./soundfont/",
-    //         instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
-    //         callback: function() {
-    //             MIDI.programChange(0, 0);
-    //             MIDI.programChange(1, 114);
-    //             MIDI.programChange(2, 112);
-    //             console.log("loaded");
-    //         }
-    //     });
-    // };
+    window.onload = function() {
+        // MIDI.loadPlugin({
+        //     soundfontUrl: "./soundfont/",
+        //     instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
+        //     callback: function() {
+        //         MIDI.programChange(0, 0);
+        //         MIDI.programChange(1, 114);
+        //         MIDI.programChange(2, 112);
+        //         console.log("loaded");
+        //     }
+        // });
+    };
     triggerMidi = function(vol, pro, note, vel, dur) {
-        //  console.log(note);
+
         MIDI.setVolume(0, vol);
         MIDI.noteOn(pro, note, vel, 0);
         MIDI.noteOff(pro, note, dur);
@@ -656,18 +659,22 @@ setMidiParams = function() {
 
 controlPanel = function() {
     var
-        elements = {
-            noteslider: $("#note-slider"),
+        mblock = {
+            noteknob: $("#note"),
             volumeknob: $("#volume"),
             durationknob: $("#duration"),
             velocityknob: $("#velocity"),
             octavespinner: $("#octave-spinner"),
-            selectDirection: $("#selectDirection"),
-            modeSelect: $(".modeSelect li"),
+            selectDirection: $("#select-direction"),
+            mode_select: $(".modeSelect li"),
             pianoroll: $(".piano-roll li"),
-            setInstrument: document.getElementById("setInstrument"),
-            sendBlocks: document.getElementById("sendBlocks")
+            setInstrument: document.getElementById("set-instrument"),
+            sendBlocks: document.getElementById("send-blocks")
+        },
+        // eblock = {},
 
+        eblock = {
+            select_effect: $(".effect-select")
         },
         buttons = {
             pause: document.getElementById("pause"),
@@ -691,9 +698,15 @@ controlPanel = function() {
         setDirection,
         changeBlockType,
         setToBlock,
+        toggleEffectType,
         syncNoteSelection,
+        effectMap,
         sendBlocks,
-        createDial;
+        createDial,
+        effectArray = ["note", "volume", "velocity", "duration"];
+
+
+    // Dynamically populate effectmap using effectArray as object values
 
     changeBlockType = function() {
         switch (config.newBlockType) {
@@ -719,29 +732,29 @@ controlPanel = function() {
         blocks[0].convertBlock(config.newBlockType);
     };
     getDirection = function() {
-        return elements.selectDirection.find("li.active").attr("id");
+        return mblock.selectDirection.find("li.active").attr("id");
     };
     setDirection = function(d) {
-        elements.selectDirection.find("li#" + d).addClass("active").siblings().removeClass("active");
+        mblock.selectDirection.find("li#" + d).addClass("active").siblings().removeClass("active");
     };
     getPanelValues = function() {
-        //console.log(elements.noteslider.val());
+        //console.log(mblock.noteknob.val());
         return {
-            volume: elements.volumeknob.val(),
-            duration: elements.durationknob.val(),
-            note: parseInt(elements.noteslider.val(), 0),
-            velocity: elements.velocityknob.val(),
-            instrument: elements.setInstrument.value,
-            octave: elements.octavespinner.slider("value"),
+            volume: mblock.volumeknob.val(),
+            duration: mblock.durationknob.val(),
+            note: parseInt(mblock.noteknob.val(), 0),
+            velocity: mblock.velocityknob.val(),
+            instrument: mblock.setInstrument.value,
+            octave: mblock.octavespinner.slider("value"),
             direction: getDirection()
         };
     };
     syncNoteSelection = function(value, type) {
         if (type === "piano-roll") {
-            elements.pianoroll.eq(value - 1).addClass("active").siblings().removeClass('active');
+            mblock.pianoroll.eq(value - 1).addClass("active").siblings().removeClass('active');
         } else {
-            elements.noteslider.val(value);
-            elements.noteslider.trigger('change');
+            mblock.noteknob.val(value);
+            mblock.noteknob.trigger('change');
         }
 
     };
@@ -755,33 +768,31 @@ controlPanel = function() {
         }
     };
     setDefault = function() {
-        elements.noteslider.val(config.note);
-        elements.noteslider.trigger('change');
-        elements.volumeknob.val(config.volume);
-        elements.volumeknob.trigger('change');
-        elements.durationknob.val(config.duration);
-        elements.durationknob.trigger('change');
-        elements.velocityknob.val(config.velocity);
-        elements.velocityknob.trigger('change');
-        elements.octavespinner.slider("value", config.octave);
-        elements.octavespinner.find("input").val(config.octave);
+        mblock.noteknob.val(config.note);
+        mblock.noteknob.trigger('change');
+        mblock.volumeknob.val(config.volume);
+        mblock.volumeknob.trigger('change');
+        mblock.durationknob.val(config.duration);
+        mblock.durationknob.trigger('change');
+        mblock.velocityknob.val(config.velocity);
+        mblock.velocityknob.trigger('change');
+        mblock.octavespinner.slider("value", config.octave);
+        mblock.octavespinner.find("input").val(config.octave);
         setDirection("up");
     };
     setToBlock = function(num) {
-        elements.noteslider.val(blocks[num].note);
-        elements.noteslider.trigger('change');
-        elements.volumeknob.val(blocks[num].volume);
-        elements.volumeknob.trigger('change');
-        elements.durationknob.val(blocks[num].duration);
-        elements.durationknob.trigger('change');
-        elements.velocityknob.val(blocks[num].velocity);
-        elements.velocityknob.trigger('change');
-        elements.octavespinner.slider("value", blocks[num].octave);
-        elements.octavespinner.find("input").val(blocks[num].octave);
-        elements.setInstrument.value = blocks[num].program;
+        mblock.noteknob.val(blocks[num].note);
+        mblock.noteknob.trigger('change');
+        mblock.volumeknob.val(blocks[num].volume);
+        mblock.volumeknob.trigger('change');
+        mblock.durationknob.val(blocks[num].duration);
+        mblock.durationknob.trigger('change');
+        mblock.velocityknob.val(blocks[num].velocity);
+        mblock.velocityknob.trigger('change');
+        mblock.octavespinner.slider("value", blocks[num].octave);
+        mblock.octavespinner.find("input").val(blocks[num].octave);
+        mblock.setInstrument.value = blocks[num].program;
         setDirection(blocks[num].staticDirection);
-
-
     };
     createDial = function(obj, startVal, type, min, max) {
         obj.val(startVal)
@@ -816,7 +827,38 @@ controlPanel = function() {
         }
     };
 
-    elements.modeSelect.click(function() {
+    toggleEffectType = function(effect) {
+        $("." + effect).show().siblings("div").hide();
+    };
+
+    effectMap = (function(e) {
+        var length = effectArray.length;
+        for (var i = 0; i < length; i++) {
+            eblock[e[i] + "_effect"] = $(".effect-" + e[i]);
+            eblock[e[i] + "_effect_select"] = $("#select-" + e[i] + "-effect");
+            eblock[e[i] + "_specific"] = $("#" + e[i] + "-specific-effect");
+            eblock[e[i] + "_rangelow"] = $("." + e[i] + "-rangelow-effect");
+            eblock[e[i] + "_rangehigh"] = $(("." + e[i] + "-rangehigh-effect"));
+            eblock[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
+
+            createDial(eblock[e[i] + "_specific"], config.note, e[i] + "specific", 1, 127);
+            createDial(eblock[e[i] + "_rangelow"], config.note, e[i] + "range-low", 1, 127);
+            createDial(eblock[e[i] + "_rangehigh"], config.note, e[i] + "range-high", 1, 127);
+
+            eblock[e[i] + "_step_size"].spinner({
+                min: 0,
+                max: 10
+            });
+
+            toggleEffectType(eblock[e[i] + "_effect_select"].val());
+
+        }
+
+    })(effectArray);
+
+
+
+    mblock.mode_select.click(function() {
         var mode = $(this).attr("id");
         $(this).addClass("active").siblings().removeClass("active");
         // mode = mode.replace("active", "");
@@ -824,23 +866,24 @@ controlPanel = function() {
 
     });
 
-    // Create dials
-    createDial(elements.volumeknob, config.volume, "volume", 1, 120);
-    createDial(elements.durationknob, config.duration, "duration", 1, 120);
-    createDial(elements.velocityknob, config.velocity, "velocity", 1, 120);
-    createDial(elements.noteslider, config.note, "note", 1, 12);
+    // Create Music Block Dials
+    createDial(mblock.volumeknob, config.volume, "volume", 1, 120);
+    createDial(mblock.durationknob, config.duration, "duration", 1, 120);
+    createDial(mblock.velocityknob, config.velocity, "velocity", 1, 120);
+    createDial(mblock.noteknob, config.note, "note", 1, 12);
 
-    elements.setInstrument.onchange = function() {
+
+    mblock.setInstrument.onchange = function() {
         var program = $(this).val();
         setParams("instrument", program);
         return false;
     };
-    elements.selectDirection.find("li").click(function() {
+    mblock.selectDirection.find("li").click(function() {
         var direction = $(this).attr("id");
         $(this).addClass("active").siblings().removeClass("active");
         setParams("direction", direction);
     });
-    elements.octavespinner.slider({
+    mblock.octavespinner.slider({
         orientation: "vertical",
         value: config.octave,
         min: 0,
@@ -848,20 +891,50 @@ controlPanel = function() {
         step: 1,
         range: "min",
         slide: function(event, ui) {
-            elements.octavespinner.find("input").val(ui.value);
+            mblock.octavespinner.find("input").val(ui.value);
             setParams("octave", ui.value);
         }
     });
-    elements.octavespinner.find("input").val(config.octave);
-    elements.pianoroll.click(function() {
+    mblock.octavespinner.find("input").val(config.octave);
+    mblock.pianoroll.click(function() {
         var index = $(this).index() + 1;
         $(this).addClass("active").siblings().removeClass('active');
         setParams("note", index);
         syncNoteSelection(index, "dial");
 
     });
-    elements.sendBlocks.addEventListener("mousedown", sendBlocks, false);
+    mblock.sendBlocks.addEventListener("mousedown", sendBlocks, false);
 
+
+
+    // Hide/ Show effect type on select menu change
+    $("#select-note-effect, #select-volume-effect, #select-velocity-effect, #select-duration-effect").change(function() {
+        toggleEffectType($(this).val());
+        return false;
+    });
+
+    // Show / Hide effects on click
+    eblock.select_effect.find("li").click(function() {
+        var val = $(this).attr('class'),
+            selector = $(this).find("span");
+
+        val = val.replace("toggle", "effect");
+        if (selector.hasClass('active')) {
+            $("." + val).slideUp();
+            selector.removeClass('active');
+        } else {
+            $("." + val).slideDown().prependTo('.effect-wrapper');
+            selector.addClass('active');
+        }
+        return false;
+    });
+
+
+
+
+
+
+    // Mode buttons
     buttons.pause.addEventListener("click", function() {
         config.pause = config.pause * -1;
     });
@@ -1189,9 +1262,9 @@ setStageEvents = function() {
         e = e || window.event;
 
         gridCheck = true;
-        console.log(config.mode);
+
         if (config.mode === "select") {
-            console.log("foo");
+
             dragbox = document.createElement("div");
             dragbox.id = "dragbox";
             dragbox.setAttribute('draggable', true);
