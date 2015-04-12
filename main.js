@@ -218,8 +218,11 @@ var proto = {
         }
         this.selectBlock();
         if (this.selected === true) {
-            //setMidiBlock(this.blocknum);
-            controlPanel.setToBlock(this.blocknum);
+            //controlPanel.setToBlock(this.blocknum);
+            if (this.type == "block-music") {
+                musicBlockPanel.setToBlock(this.blocknum);
+
+            }
         }
 
     },
@@ -233,11 +236,73 @@ var proto = {
         if (this.type === config.musicBlockType) {
             var duration = this.duration / 120,
                 note = this.note + 12 * this.octave;
+                //note = this.note;
+
 
             setMidiParams.triggerMidi(this.volume, this.program, note, this.velocity, duration);
         }
     },
-    setInitValues: function(el) {
+    // setInitValues: function(el) {
+    //     this.volume = el.volume;
+    //     this.note = el.note;
+    //     this.duration = el.duration;
+    //     this.velocity = el.velocity;
+    //     this.octave = el.octave;
+    //     this.program = el.instrument;
+    //     this.staticDirection = el.direction;
+
+    // },
+    // setMidiValues: function(type, value) {
+    //     switch (type) {
+    //         case "volume":
+    //             this.volume = value;
+    //             break;
+    //         case "octave":
+    //             this.octave = value;
+    //             break;
+    //         case "duration":
+    //             this.duration = value;
+    //             break;
+    //         case "velocity":
+    //             this.velocity = value;
+    //             break;
+    //         case "note":
+    //             this.note = value;
+    //             break;
+    //         case "instrument":
+    //             this.program = value;
+    //             break;
+    //         case "direction":
+    //             this.staticDirection = value;
+    //             break;
+    //         default:
+    //             // this.volume = value;
+    //             break;
+    //     }
+    // }
+
+};
+
+var makeMusicBlock = function(w, h, x, y, s, t) {
+    var block = Object.create(proto);
+    block.width = w;
+    block.height = h;
+    block.posX = x;
+    block.posY = y;
+    block.speed = s;
+    block.type = t;
+    block.notActive = getBlockColor(block.type);
+    block.note = config.note;
+    block.octave = config.octave;
+    block.volume = config.volume;
+    block.duration = config.duration;
+    block.velocity = config.veloctiy;
+
+    // Music Block Specfic Methods
+    block.tester = function() {
+        console.log("this is a music block");
+    };
+    block.setInitValues = function(el) {
         this.volume = el.volume;
         this.note = el.note;
         this.duration = el.duration;
@@ -246,8 +311,8 @@ var proto = {
         this.program = el.instrument;
         this.staticDirection = el.direction;
 
-    },
-    setMidiValues: function(type, value) {
+    };
+    block.setMidiValues = function(type, value) {
         switch (type) {
             case "volume":
                 this.volume = value;
@@ -274,29 +339,8 @@ var proto = {
                 // this.volume = value;
                 break;
         }
-    }
-
-};
-
-var makeMusicBlock = function(w, h, x, y, s, t) {
-    var block = Object.create(proto);
-    block.width = w;
-    block.height = h;
-    block.posX = x;
-    block.posY = y;
-    block.speed = s;
-    block.type = t;
-    block.notActive = getBlockColor(block.type);
-    block.note = config.note;
-    block.octave = config.octave;
-    block.volume = config.volume;
-    block.duration = config.duration;
-    block.velocity = config.veloctiy;
-
-    // Music Block Specfic Methods
-    block.tester = function() {
-        console.log("this is a music block");
     };
+
 
     return block;
 };
@@ -310,11 +354,30 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     block.posY = y;
     block.speed = s;
     block.type = t;
+    block.note_specific = null;
+    block.note_range_low = null;
+    block.note_range_high = null;
+
 
     // Effect Block Specfic Methods
     block.tester = function() {
         console.log("this is a effect block");
     };
+    block.setMidiValues = function(type, value) {
+        console.log(type);
+        this[type] = value;
+        // switch (type) {
+        //     case "note":
+
+        //        // this.note_range_low = value;
+        //        // this.note_range_high = value;
+        //         break;
+        //     case "volume":
+        //         this.octave = value;
+        //         break;
+        // }
+    };
+
 
     return block;
 };
@@ -395,9 +458,19 @@ collisions = function() {
             default:
                 break;
         }
+        if (blocks[eblockref].type == "block-effect") {
+            console.log("specific_value:" + blocks[eblockref].note_specific);
+            console.log("rangelow:" + blocks[eblockref].note_range_low);
+            console.log("rangehigh:" + blocks[eblockref].note_range_high);
+
+            blocks[mblockref].note = blocks[eblockref].note_specific;
+
+
+        }
 
         if (config.numSelected === 1 && blocks[mblockref].selected === true && eblockref.type !== config.musicBlockType) {
-            controlPanel.setToBlock(mblockref);
+            //controlPanel.setToBlock(mblockref);
+            //musicBlockPanel.setToBlock(mblockref);
         }
     };
     process = function(direction, gridX, gridY, blockref, skipcheck) {
@@ -694,26 +767,14 @@ setMidiParams = function() {
     };
 }();
 
+
 controlPanel = function() {
     var
         cpanel = {
-            select: $(".block-type-select")
+            select: $(".block-type-select"),
+            mode_select: $(".modeSelect li")
         },
-        mblock = {
-            noteknob: $("#note"),
-            volumeknob: $("#volume"),
-            durationknob: $("#duration"),
-            velocityknob: $("#velocity"),
-            octavespinner: $("#octave-spinner"),
-            selectDirection: $("#select-direction"),
-            mode_select: $(".modeSelect li"),
-            pianoroll: $(".piano-roll li"),
-            setInstrument: document.getElementById("set-instrument"),
-            sendBlocks: document.getElementById("send-blocks")
-        },
-        eblock = {
-            select_effect: $(".effect-select")
-        },
+
         buttons = {
             pause: document.getElementById("pause"),
             advance: document.getElementById("advance"),
@@ -731,21 +792,9 @@ controlPanel = function() {
             height: '27 ',
         },
         valprev = "",
-        setDefault,
-        getDirection,
-        setDirection,
-        changeBlockType,
-        setToBlock,
-        toggleEffectType,
-        syncNoteSelection,
-        effectMap,
-        getActivePanel,
-        sendBlocks,
-        createDial,
-        effectArray = ["note", "volume", "velocity", "duration"];
 
+        changeBlockType, setParams, getActivePanel, createDial;
 
-    // Dynamically populate effectmap using effectArray as object values
 
     changeBlockType = function() {
         switch (config.newBlockType) {
@@ -770,69 +819,7 @@ controlPanel = function() {
         }
         blocks[0].convertBlock(config.newBlockType);
     };
-    getDirection = function() {
-        return mblock.selectDirection.find("li.active").attr("id");
-    };
-    setDirection = function(d) {
-        mblock.selectDirection.find("li#" + d).addClass("active").siblings().removeClass("active");
-    };
-    getPanelValues = function() {
-        //console.log(mblock.noteknob.val());
-        return {
-            volume: mblock.volumeknob.val(),
-            duration: mblock.durationknob.val(),
-            note: parseInt(mblock.noteknob.val(), 0),
-            velocity: mblock.velocityknob.val(),
-            instrument: mblock.setInstrument.value,
-            octave: mblock.octavespinner.slider("value"),
-            direction: getDirection()
-        };
-    };
-    syncNoteSelection = function(value, type) {
-        if (type === "piano-roll") {
-            mblock.pianoroll.eq(value - 1).addClass("active").siblings().removeClass('active');
-        } else {
-            mblock.noteknob.val(value);
-            mblock.noteknob.trigger('change');
-        }
 
-    };
-    sendBlocks = function() {
-        for (var i = 0; i < config.cnt; i++) {
-            if (blocks[i].selected === true && blocks[i].type === config.musicBlockType) {
-                //console.log( blocks[i].direction);
-                blocks[i].newDirection = blocks[i].staticDirection;
-                blocks[i].speed = config.speed;
-            }
-        }
-    };
-    setDefault = function() {
-        mblock.noteknob.val(config.note);
-        mblock.noteknob.trigger('change');
-        mblock.volumeknob.val(config.volume);
-        mblock.volumeknob.trigger('change');
-        mblock.durationknob.val(config.duration);
-        mblock.durationknob.trigger('change');
-        mblock.velocityknob.val(config.velocity);
-        mblock.velocityknob.trigger('change');
-        mblock.octavespinner.slider("value", config.octave);
-        mblock.octavespinner.find("input").val(config.octave);
-        setDirection("up");
-    };
-    setToBlock = function(num) {
-        mblock.noteknob.val(blocks[num].note);
-        mblock.noteknob.trigger('change');
-        mblock.volumeknob.val(blocks[num].volume);
-        mblock.volumeknob.trigger('change');
-        mblock.durationknob.val(blocks[num].duration);
-        mblock.durationknob.trigger('change');
-        mblock.velocityknob.val(blocks[num].velocity);
-        mblock.velocityknob.trigger('change');
-        mblock.octavespinner.slider("value", blocks[num].octave);
-        mblock.octavespinner.find("input").val(blocks[num].octave);
-        mblock.setInstrument.value = blocks[num].program;
-        setDirection(blocks[num].staticDirection);
-    };
     createDial = function(obj, startVal, type, min, max) {
         obj.val(startVal)
             .knob({
@@ -844,62 +831,34 @@ controlPanel = function() {
                 'thickness': knobparams.thickness,
                 'cursor': knobparams.cursor,
                 'height': knobparams.height,
-                'format': function(value) {
-                    if (valprev != value) {
-                        if (type === "note") {
-                            syncNoteSelection(value, "piano-roll");
-                        }
-                        setParams(type, value);
-                        return value;
+                'change': function(v) {
+                    var value = v;
+                    if ((v % 1) >= 0.5) {
+                        value = Math.ceil(v);
+                    } else {
+                        value = Math.floor(v);
                     }
-                    valprev = value;
+                    if (type === "note") {
+                        musicBlockPanel.syncNoteSelection(value, "piano-roll");
+                    }
+                    // console.log(value);
+                    setParams(type, value);
+
                 }
             });
     };
 
     setParams = function(type, value) {
-        // console.log("triggered");
         for (var i = 0; i < config.cnt; i++) {
             if (blocks[i].selected === true) {
                 blocks[i].setMidiValues(type, value);
             }
         }
     };
-
-    toggleEffectType = function(effect) {
-        $("." + effect).show().siblings("div").hide();
-    };
     getActivePanel = function() {
         var active = cpanel.select.find("li.active").attr("id");
         return active;
     };
-
-
-    effectMap = (function(e) {
-        var length = effectArray.length;
-        for (var i = 0; i < length; i++) {
-            eblock[e[i] + "_effect"] = $(".effect-" + e[i]);
-            eblock[e[i] + "_effect_select"] = $("#select-" + e[i] + "-effect");
-            eblock[e[i] + "_specific"] = $("#" + e[i] + "-specific-effect");
-            eblock[e[i] + "_rangelow"] = $("." + e[i] + "-rangelow-effect");
-            eblock[e[i] + "_rangehigh"] = $(("." + e[i] + "-rangehigh-effect"));
-            eblock[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
-
-            createDial(eblock[e[i] + "_specific"], config.note, e[i] + "specific", 1, 127);
-            createDial(eblock[e[i] + "_rangelow"], config.note, e[i] + "range-low", 1, 127);
-            createDial(eblock[e[i] + "_rangehigh"], config.note, e[i] + "range-high", 1, 127);
-
-            eblock[e[i] + "_step_size"].spinner({
-                min: 0,
-                max: 10
-            });
-
-            toggleEffectType(eblock[e[i] + "_effect_select"].val());
-
-        }
-
-    })(effectArray);
-
 
     cpanel.select.find("li").click(function() {
         var type = $(this).attr("id");
@@ -908,78 +867,13 @@ controlPanel = function() {
 
     });
 
-    mblock.mode_select.click(function() {
+    cpanel.mode_select.click(function() {
         var mode = $(this).attr("id");
         $(this).addClass("active").siblings().removeClass("active");
         // mode = mode.replace("active", "");
         config.mode = mode;
 
     });
-
-    // Create Music Block Dials
-    createDial(mblock.volumeknob, config.volume, "volume", 1, 120);
-    createDial(mblock.durationknob, config.duration, "duration", 1, 120);
-    createDial(mblock.velocityknob, config.velocity, "velocity", 1, 120);
-    createDial(mblock.noteknob, config.note, "note", 1, 12);
-
-
-    mblock.setInstrument.onchange = function() {
-        var program = $(this).val();
-        setParams("instrument", program);
-        return false;
-    };
-    mblock.selectDirection.find("li").click(function() {
-        var direction = $(this).attr("id");
-        $(this).addClass("active").siblings().removeClass("active");
-        setParams("direction", direction);
-    });
-    mblock.octavespinner.slider({
-        orientation: "vertical",
-        value: config.octave,
-        min: 0,
-        max: 7,
-        step: 1,
-        range: "min",
-        slide: function(event, ui) {
-            mblock.octavespinner.find("input").val(ui.value);
-            setParams("octave", ui.value);
-        }
-    });
-    mblock.octavespinner.find("input").val(config.octave);
-    mblock.pianoroll.click(function() {
-        var index = $(this).index() + 1;
-        $(this).addClass("active").siblings().removeClass('active');
-        setParams("note", index);
-        syncNoteSelection(index, "dial");
-
-    });
-    mblock.sendBlocks.addEventListener("mousedown", sendBlocks, false);
-
-
-
-    // Hide/ Show effect type on select menu change
-    $("#select-note-effect, #select-volume-effect, #select-velocity-effect, #select-duration-effect").change(function() {
-        toggleEffectType($(this).val());
-        return false;
-    });
-
-    // Show / Hide effects on click
-    eblock.select_effect.find("li").click(function() {
-        var val = $(this).attr('class'),
-            selector = $(this).find("span");
-
-        val = val.replace("toggle", "effect");
-        if (selector.hasClass('active')) {
-            $("." + val).slideUp();
-            selector.removeClass('active');
-        } else {
-            $("." + val).slideDown().prependTo('.effect-wrapper');
-            selector.addClass('active');
-        }
-        return false;
-    });
-
-
 
 
 
@@ -1012,12 +906,210 @@ controlPanel = function() {
     });
 
     return {
-        setToBlock: setToBlock,
-        setDefault: setDefault,
-        getPanelValues: getPanelValues,
+        setParams: setParams,
+        createDial: createDial,
         getActivePanel: getActivePanel
     };
 }();
+
+
+
+
+musicBlockPanel = function() {
+    var
+        mblock = {
+            noteknob: $("#note"),
+            volumeknob: $("#volume"),
+            durationknob: $("#duration"),
+            velocityknob: $("#velocity"),
+            octavespinner: $("#octave-spinner"),
+            selectDirection: $("#select-direction"),
+            pianoroll: $(".piano-roll li"),
+            setInstrument: document.getElementById("set-instrument"),
+            sendBlocks: document.getElementById("send-blocks")
+        },
+        getDirection, setDirection, getPanelValues, syncNoteSelection, sendBlocks,
+        setDefault, setToBlock;
+
+    getDirection = function() {
+        return mblock.selectDirection.find("li.active").attr("id");
+    };
+    setDirection = function(d) {
+        mblock.selectDirection.find("li#" + d).addClass("active").siblings().removeClass("active");
+    };
+    getPanelValues = function() {
+        return {
+            volume: mblock.volumeknob.val(),
+            duration: mblock.durationknob.val(),
+            note: parseInt(mblock.noteknob.val(), 0),
+            velocity: mblock.velocityknob.val(),
+            instrument: mblock.setInstrument.value,
+            octave: mblock.octavespinner.slider("value"),
+            direction: getDirection()
+        };
+    };
+    syncNoteSelection = function(value, type) {
+        if (type === "piano-roll") {
+            mblock.pianoroll.eq(value - 1).addClass("active").siblings().removeClass('active');
+        } else {
+            mblock.noteknob.val(value);
+            mblock.noteknob.trigger('change');
+        }
+
+    };
+    sendBlocks = function() {
+        for (var i = 0; i < config.cnt; i++) {
+            if (blocks[i].selected === true && blocks[i].type === config.musicBlockType) {
+                blocks[i].newDirection = blocks[i].staticDirection;
+                blocks[i].speed = config.speed;
+            }
+        }
+    };
+    setDefault = function() {
+        mblock.noteknob.val(config.note);
+        mblock.noteknob.trigger('change');
+        mblock.volumeknob.val(config.volume);
+        mblock.volumeknob.trigger('change');
+        mblock.durationknob.val(config.duration);
+        mblock.durationknob.trigger('change');
+        mblock.velocityknob.val(config.velocity);
+        mblock.velocityknob.trigger('change');
+        mblock.octavespinner.slider("value", config.octave);
+        mblock.octavespinner.find("input").val(config.octave);
+        setDirection("up");
+    };
+    setToBlock = function(num) {
+        mblock.noteknob.val(blocks[num].note);
+        mblock.noteknob.trigger('change');
+        mblock.volumeknob.val(blocks[num].volume);
+        mblock.volumeknob.trigger('change');
+        mblock.durationknob.val(blocks[num].duration);
+        mblock.durationknob.trigger('change');
+        mblock.velocityknob.val(blocks[num].velocity);
+        mblock.velocityknob.trigger('change');
+        mblock.octavespinner.slider("value", blocks[num].octave);
+        mblock.octavespinner.find("input").val(blocks[num].octave);
+        mblock.setInstrument.value = blocks[num].program;
+        setDirection(blocks[num].staticDirection);
+    };
+
+
+    // Create Music Block Dials
+    controlPanel.createDial(mblock.volumeknob, config.volume, "volume", 1, 120);
+    controlPanel.createDial(mblock.durationknob, config.duration, "duration", 1, 120);
+    controlPanel.createDial(mblock.velocityknob, config.velocity, "velocity", 1, 120);
+    controlPanel.createDial(mblock.noteknob, config.note, "note", 1, 12);
+
+
+    mblock.setInstrument.onchange = function() {
+        var program = $(this).val();
+        controlPanel.setParams("instrument", program);
+        return false;
+    };
+    mblock.selectDirection.find("li").click(function() {
+        var direction = $(this).attr("id");
+        $(this).addClass("active").siblings().removeClass("active");
+        controlPanel.setParams("direction", direction);
+    });
+    mblock.octavespinner.slider({
+        orientation: "vertical",
+        value: config.octave,
+        min: 0,
+        max: 7,
+        step: 1,
+        range: "min",
+        slide: function(event, ui) {
+            mblock.octavespinner.find("input").val(ui.value);
+            controlPanel.setParams("octave", ui.value);
+        }
+    });
+    mblock.octavespinner.find("input").val(config.octave);
+    mblock.pianoroll.click(function() {
+        var index = $(this).index() + 1;
+        $(this).addClass("active").siblings().removeClass('active');
+        controlPanel.setParams("note", index);
+        syncNoteSelection(index, "dial");
+
+    });
+    mblock.sendBlocks.addEventListener("mousedown", sendBlocks, false);
+
+    return {
+        setToBlock: setToBlock,
+        syncNoteSelection: syncNoteSelection,
+        setDefault: setDefault,
+        getPanelValues: getPanelValues,
+        mblock: mblock
+    };
+}();
+
+
+effectBlockPanel = function() {
+    var
+        eblock = {
+            select_effect: $(".effect-select")
+        },
+        effectMap,
+        toggleEffectType,
+        effectArray = ["note", "volume", "velocity", "duration"];
+
+    toggleEffectType = function(effect) {
+        $("." + effect).show().siblings("div").hide();
+    };
+
+    effectMap = (function(e) {
+        var length = effectArray.length;
+        for (var i = 0; i < length; i++) {
+            eblock[e[i] + "_effect"] = $(".effect-" + e[i]);
+            eblock[e[i] + "_effect_select"] = $("#select-" + e[i] + "-effect");
+            eblock[e[i] + "_specific"] = $("#" + e[i] + "-specific-effect");
+            eblock[e[i] + "_rangelow"] = $("." + e[i] + "-rangelow-effect");
+            eblock[e[i] + "_rangehigh"] = $(("." + e[i] + "-rangehigh-effect"));
+            eblock[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
+
+            controlPanel.createDial(eblock[e[i] + "_specific"], config.note, e[i] + "_specific", 1, 127);
+            controlPanel.createDial(eblock[e[i] + "_rangelow"], config.note, e[i] + "_range_low", 1, 127);
+            controlPanel.createDial(eblock[e[i] + "_rangehigh"], config.note, e[i] + "_range_high", 1, 127);
+
+            eblock[e[i] + "_step_size"].spinner({
+                min: 0,
+                max: 10
+            });
+
+            toggleEffectType(eblock[e[i] + "_effect_select"].val());
+
+        }
+
+    })(effectArray);
+
+
+
+    // Hide/ Show effect type on select menu change
+    $("#select-note-effect, #select-volume-effect, #select-velocity-effect, #select-duration-effect").change(function() {
+        toggleEffectType($(this).val());
+        return false;
+    });
+
+    // Show / Hide effects on click
+    eblock.select_effect.find("li").click(function() {
+        var val = $(this).attr('class'),
+            selector = $(this).find("span");
+
+        val = val.replace("toggle", "effect");
+        if (selector.hasClass('active')) {
+            $("." + val).slideUp();
+            selector.removeClass('active');
+        } else {
+            $("." + val).slideDown().prependTo('.effect-wrapper');
+            selector.addClass('active');
+        }
+        return false;
+    });
+
+
+}();
+
+
+
 
 
 
@@ -1292,7 +1384,8 @@ setStageEvents = function() {
                             }
                         }
                         if (cnt === 1) {
-                            controlPanel.setToBlock(t);
+                            //controlPanel.setToBlock(t);
+                            musicBlockPanel.setToBlock(mblockref);
                         } else {
                             //controlPanel.setToBlock(t);
                             // controlPanel.setDefault();
@@ -1357,17 +1450,16 @@ setStageEvents = function() {
             // Make new blocks based on type selected in control panel
             if (type == "block-music") {
                 blocks[config.cnt] = makeMusicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
-                blocks[config.cnt].setInitValues(controlPanel.getPanelValues());
+                blocks[config.cnt].setInitValues(musicBlockPanel.getPanelValues());
 
             } else {
                 blocks[config.cnt] = makeEffectBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
-
             }
 
             blocks[config.cnt].setGrid();
             blocks[config.cnt].createNode(config.cnt, type).addBlock();
 
-            blocks[config.cnt].tester();
+            // blocks[config.cnt].tester();
 
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
