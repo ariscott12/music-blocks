@@ -84,6 +84,8 @@ body {
   width: 206px;
   font-size: .8125em;
   float: left; }
+  .control-panel .block-effect {
+    display: none; }
   .control-panel p {
     margin-bottom: 10px; }
   .control-panel h3 {
@@ -212,7 +214,7 @@ body {
   border-bottom: none;
   opacity: 1; }
 
-.blocks-effect select {
+.block-effect select {
   margin-bottom: 20px; }
 
 .effect-select {
@@ -254,9 +256,6 @@ body {
     width: 12px;
     margin-left: 20px;
     margin-bottom: 3px; }
-
-.blocks-music {
-  display: none; }
 
 .instrument-select {
   border-left: 1px solid #a3a2a1;

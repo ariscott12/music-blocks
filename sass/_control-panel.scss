@@ -1,6 +1,6 @@
     .control-panel {
-        .blocks-effect {
-            // display: none;
+        .block-effect {
+             display: none;
         }
         width: 206px;
         font-size: .8125em;
@@ -160,7 +160,7 @@
     }
     
     // Effect Blocks 
-    .blocks-effect {
+    .block-effect {
         select {
             margin-bottom: 20px;
         }
@@ -223,7 +223,7 @@
     
     // Music Blocks
     .blocks-music {
-        display: none;
+       // display: none;
     }
     
     .instrument-select {
