@@ -4,7 +4,7 @@ var
         randomVolumeType: "rnd-vol-block",
         randomOctaveType: "rnd-octave-block",
         randomNoteType: "rnd-note-block",
-        musicBlockType: "block",
+        musicBlockType: "block-music",
         defaultVolumeMin: 30,
         defaultVolumeMax: 70,
         defaultOctaveMin: 3,
@@ -105,11 +105,11 @@ var proto = {
     notActive: "#DBA65C",
     halfpoint: -1,
     snd: null,
-    note: config.note,
-    octave: config.octave,
-    volume: config.volume,
-    duration: config.duration,
-    veloctiy: config.veloctiy,
+    // note: config.note,
+    // octave: config.octave,
+    // volume: config.volume,
+    // duration: config.duration,
+    // veloctiy: config.veloctiy,
     program: 0,
     waiting: "false",
     numCollisions: 0,
@@ -117,7 +117,19 @@ var proto = {
     dragOffsetY: 0,
     rngMin: 0,
     rngMax: 0,
+    gridX: 0,
+    gridY: 0,
+    prevgridX: 0,
+    prevgridy: 0,
+
     section: document.getElementById("stage"),
+
+    setGrid: function() {
+        this.gridX = gridify(this.posX);
+        this.gridY = gridify(this.posY);
+        this.prevgridX = this.gridX;
+        this.prevgridY = this.gridY;
+    },
 
     setStyle: function(propertyObject) {
         var elem = document.getElementById(this.id);
@@ -126,10 +138,10 @@ var proto = {
     },
     createNode: function(el, type) {
         var node = document.createElement("LI"),
-            blockclass = type;
+            //blockclass = type;
+            blockclass = "block";
         // var direction = elements.selectDirection.children('.active').attr("id");
         //var blockclass = type + " " + direction;
-
         node.setAttribute("class", blockclass);
         this.section.appendChild(node);
         this.id = type + el;
@@ -226,7 +238,6 @@ var proto = {
         }
     },
     setInitValues: function(el) {
-        //console.log(el.note);
         this.volume = el.volume;
         this.note = el.note;
         this.duration = el.duration;
@@ -267,7 +278,7 @@ var proto = {
 
 };
 
-var makeBlock = function(w, h, x, y, s, t) {
+var makeMusicBlock = function(w, h, x, y, s, t) {
     var block = Object.create(proto);
     block.width = w;
     block.height = h;
@@ -275,14 +286,40 @@ var makeBlock = function(w, h, x, y, s, t) {
     block.posY = y;
     block.speed = s;
     block.type = t;
-    block.gridX = gridify(block.posX);
-    block.gridY = gridify(block.posY);
-    block.prevgridX = block.gridX;
-    block.prevgridY = block.gridY;
     block.notActive = getBlockColor(block.type);
+    block.note = config.note;
+    block.octave = config.octave;
+    block.volume = config.volume;
+    block.duration = config.duration;
+    block.velocity = config.veloctiy;
+
+    // Music Block Specfic Methods
+    block.tester = function() {
+        console.log("this is a music block");
+    };
 
     return block;
 };
+
+
+var makeEffectBlock = function(w, h, x, y, s, t) {
+    var block = Object.create(proto);
+    block.width = w;
+    block.height = h;
+    block.posX = x;
+    block.posY = y;
+    block.speed = s;
+    block.type = t;
+
+    // Effect Block Specfic Methods
+    block.tester = function() {
+        console.log("this is a effect block");
+    };
+
+    return block;
+};
+
+
 
 
 
@@ -628,16 +665,16 @@ setMidiParams = function() {
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
-        // MIDI.loadPlugin({
-        //     soundfontUrl: "./soundfont/",
-        //     instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
-        //     callback: function() {
-        //         MIDI.programChange(0, 0);
-        //         MIDI.programChange(1, 114);
-        //         MIDI.programChange(2, 112);
-        //         console.log("loaded");
-        //     }
-        // });
+        MIDI.loadPlugin({
+            soundfontUrl: "./soundfont/",
+            instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
+            callback: function() {
+                MIDI.programChange(0, 0);
+                MIDI.programChange(1, 114);
+                MIDI.programChange(2, 112);
+                console.log("loaded");
+            }
+        });
     };
     triggerMidi = function(vol, pro, note, vel, dur) {
 
@@ -659,6 +696,9 @@ setMidiParams = function() {
 
 controlPanel = function() {
     var
+        cpanel = {
+            select: $(".block-type-select")
+        },
         mblock = {
             noteknob: $("#note"),
             volumeknob: $("#volume"),
@@ -671,8 +711,6 @@ controlPanel = function() {
             setInstrument: document.getElementById("set-instrument"),
             sendBlocks: document.getElementById("send-blocks")
         },
-        // eblock = {},
-
         eblock = {
             select_effect: $(".effect-select")
         },
@@ -701,6 +739,7 @@ controlPanel = function() {
         toggleEffectType,
         syncNoteSelection,
         effectMap,
+        getActivePanel,
         sendBlocks,
         createDial,
         effectArray = ["note", "volume", "velocity", "duration"];
@@ -830,6 +869,11 @@ controlPanel = function() {
     toggleEffectType = function(effect) {
         $("." + effect).show().siblings("div").hide();
     };
+    getActivePanel = function() {
+        var active = cpanel.select.find("li.active").attr("id");
+        return active;
+    };
+
 
     effectMap = (function(e) {
         var length = effectArray.length;
@@ -857,6 +901,12 @@ controlPanel = function() {
     })(effectArray);
 
 
+    cpanel.select.find("li").click(function() {
+        var type = $(this).attr("id");
+        $("div." + type).show().siblings("div").hide();
+        $(this).addClass("active").siblings().removeClass("active");
+
+    });
 
     mblock.mode_select.click(function() {
         var mode = $(this).attr("id");
@@ -964,7 +1014,8 @@ controlPanel = function() {
     return {
         setToBlock: setToBlock,
         setDefault: setDefault,
-        getPanelValues: getPanelValues
+        getPanelValues: getPanelValues,
+        getActivePanel: getActivePanel
     };
 }();
 
@@ -990,8 +1041,10 @@ setStageEvents = function() {
         mouseDown,
         addBlock,
         elements = {
-            section: document.getElementById("stage")
+            section: document.getElementById("stage"),
         };
+
+
 
     resetBlockDrag = function() {
         blockDragLeftX = config.blockSize;
@@ -1105,10 +1158,15 @@ setStageEvents = function() {
                 if (config.mode === "create") {
                     var
                         gridX = gridify(e.pageX),
-                        gridY = gridify(e.pageY);
+                        gridY = gridify(e.pageY),
+                        activePanel = controlPanel.getActivePanel();
 
-                    ///Add music block to the grid
-                    addBlock(gridX, gridY, config.newBlockType);
+                    // Add music block to the grid 
+                    // addBlock(gridX, gridY, config.newBlockType);
+                    addBlock(gridX, gridY, activePanel);
+
+
+
                 } else {
                     var move_x = e.pageX,
                         move_y = e.pageY,
@@ -1191,7 +1249,10 @@ setStageEvents = function() {
                     }
                     //Clicked square is empty
                     else if (config.mode === "create") {
-                        addBlock(leftX, topY, config.newBlockType);
+                        var activePanel = controlPanel.getActivePanel();
+                        //addBlock(leftX, topY, config.newBlockType);
+                        addBlock(leftX, topY, activePanel);
+
                     } else if (config.mode === "select") {
                         for (var i = 0; i < config.cnt; i++) {
                             blocks[i].deselectBlock();
@@ -1254,7 +1315,8 @@ setStageEvents = function() {
     //Add mousedown listener, tracks positions and resets selection to 0
     mouseDown = function(e) {
 
-        var dragbox;
+        var dragbox,
+            activePanel = controlPanel.getActivePanel();
 
         mouselocation = compareMouse(e);
 
@@ -1280,7 +1342,9 @@ setStageEvents = function() {
         mousedownY = Math.min(e.pageY, config.blockSize * config.gridSize);
 
         if (config.mode === "create") {
-            addBlock(gridify(mousedownX), gridify(mousedownY), config.newBlockType);
+            //addBlock(gridify(mousedownX), gridify(mousedownY), config.newBlockType);
+            addBlock(gridify(mousedownX), gridify(mousedownY), activePanel);
+
         }
 
         //Add drag event on mousedown
@@ -1290,10 +1354,20 @@ setStageEvents = function() {
     addBlock = function(gridX, gridY, type) {
         if (gridArray[gridX][gridY] === -1) {
 
-            // Make new blocks
-            blocks[config.cnt] = makeBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
-            blocks[config.cnt].setInitValues(controlPanel.getPanelValues());
+            // Make new blocks based on type selected in control panel
+            if (type == "block-music") {
+                blocks[config.cnt] = makeMusicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
+                blocks[config.cnt].setInitValues(controlPanel.getPanelValues());
+
+            } else {
+                blocks[config.cnt] = makeEffectBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
+
+            }
+
+            blocks[config.cnt].setGrid();
             blocks[config.cnt].createNode(config.cnt, type).addBlock();
+
+            blocks[config.cnt].tester();
 
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
