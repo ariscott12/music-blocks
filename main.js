@@ -356,40 +356,52 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     block.speed = s;
     block.type = t;
 
-    block.note_active = true;
-    block.note_specific = null;
-    block.note_range_low = null;
-    block.note_range_high = null;
-
-    block.volume_active = false;
-    block.volume_specific = null;
-    block.volume_range_low = null;
-    block.volume_range_high = null;
-
-    // block.duration_active = false;
-    // block.velocity_active = false;
-    block.note_method = "specific";
-    block.volume_method = "specific";
+    block.configMap = {
+        note: null,
+        velocity: null,
+        duration: null,
+        volume: null
+    };
 
 
     // Effect Block Specfic Methods
-    block.tester = function() {
-        console.log("this is a effect block");
-    };
-    block.setMidiValues = function(type, value) {
-        console.log(type);
-        this[type] = value;
-        // switch (type) {
-        //     case "note":
+    block.setInitValues = function(el) {
+        var effectArray = ['note', 'volume', 'veloctiy', 'duration'];
+        var map = el.configMap;
 
-        //        // this.note_range_low = value;
-        //        // this.note_range_high = value;
-        //         break;
-        //     case "volume":
-        //         this.octave = value;
-        //         break;
-        // }
+       // console.log(map);
+        for (var key in map) {
+            this.configMap[key] = {
+                active: map[key].active,
+                method: map[key].method,
+                specific: map[key].specific,
+                rand_low: map[key].rand_low,
+                rand_high: map[key].rand_high,
+                limit_range: map[key].limit_range,
+                prog_high: map[key].prog_high,
+                prog_low: map[key].prog_low,
+                step: map[key].step,
+                direction: map[key].direction
+            };
+        }
+        // console.log(this.configMap);
     };
+
+    // console.log(el);
+    // this.volume = el.volume;
+    // this.note = el.note;
+    // this.duration = el.duration;
+    // this.velocity = el.velocity;
+    // this.octave = el.octave;
+    // this.program = el.instrument;
+    // this.staticDirection = el.direction;
+
+    // };
+    block.setMidiValues = function(type, attr, value) {
+        this.configMap[type][attr] = value;
+        console.log(this.configMap);
+    };
+
 
 
     return block;
@@ -833,8 +845,17 @@ controlPanel = function() {
         blocks[0].convertBlock(config.newBlockType);
     };
 
-    createDial = function(obj, startVal, type, min, max) {
-        obj.val(startVal)
+    createDial = function(arg_map) {
+        var
+            obj = arg_map.obj,
+            min = arg_map.min,
+            max = arg_map.max,
+            start_val = arg_map.start_val,
+            type = arg_map.type,
+            params = arg_map.params,
+            effect_type = arg_map.effect_type || null;
+
+        obj.val(start_val)
             .knob({
                 'min': min,
                 'max': max,
@@ -851,23 +872,21 @@ controlPanel = function() {
                     } else {
                         value = Math.floor(v);
                     }
-                    if (type === "note") {
-                        musicBlockPanel.syncNoteSelection(value, "piano-roll");
+                    if (type === "music-block") {
+                        if (params === "note") {
+                            musicBlockPanel.syncNoteSelection(value, "piano-roll");
+                        }
+                        musicBlockPanel.setParams(params, value);
+                    } else {
+                        effectBlockPanel.setParams(effect_type, params, value);
                     }
                     // console.log(value);
-                    setParams(type, value);
+                    //setParams(type, value);
 
                 }
             });
     };
 
-    setParams = function(type, value) {
-        for (var i = 0; i < config.cnt; i++) {
-            if (blocks[i].selected === true) {
-                blocks[i].setMidiValues(type, value);
-            }
-        }
-    };
     getActivePanel = function() {
         var active = cpanel.select.find("li.active").attr("id");
         return active;
@@ -919,7 +938,7 @@ controlPanel = function() {
     });
 
     return {
-        setParams: setParams,
+        //   setParams: setParams,
         createDial: createDial,
         getActivePanel: getActivePanel
     };
@@ -942,13 +961,21 @@ musicBlockPanel = function() {
             sendBlocks: document.getElementById("send-blocks")
         },
         getDirection, setDirection, getPanelValues, syncNoteSelection, sendBlocks,
-        setDefault, setToBlock;
+        setDefault, setToBlock, setParams;
 
     getDirection = function() {
         return mblock.selectDirection.find("li.active").attr("id");
     };
     setDirection = function(d) {
         mblock.selectDirection.find("li#" + d).addClass("active").siblings().removeClass("active");
+    };
+
+    setParams = function(type, value) {
+        for (var i = 0; i < config.cnt; i++) {
+            if (blocks[i].selected === true) {
+                blocks[i].setMidiValues(type, value);
+            }
+        }
     };
     getPanelValues = function() {
         // These are all strings, may need to use parseInt
@@ -1009,21 +1036,22 @@ musicBlockPanel = function() {
 
 
     // Create Music Block Dials
-    controlPanel.createDial(mblock.volumeknob, config.volume, "volume", 1, 120);
-    controlPanel.createDial(mblock.durationknob, config.duration, "duration", 1, 120);
-    controlPanel.createDial(mblock.velocityknob, config.velocity, "velocity", 1, 120);
-    controlPanel.createDial(mblock.noteknob, config.note, "note", 1, 12);
+    //   obj, startVal, type, params, min, max
+    // controlPanel.createDial(mblock.volumeknob, config.volume, "music-block", "volume", 1, 120);
+    // controlPanel.createDial(mblock.durationknob, config.duration, "music-block", "duration", 1, 120);
+    // controlPanel.createDial(mblock.velocityknob, config.velocity, "music-block", "velocity", 1, 120);
+    // controlPanel.createDial(mblock.noteknob, config.note, "music-block", "note", 1, 12);
 
 
     mblock.setInstrument.onchange = function() {
         var program = $(this).val();
-        controlPanel.setParams("instrument", program);
+        setParams("instrument", program);
         return false;
     };
     mblock.selectDirection.find("li").click(function() {
         var direction = $(this).attr("id");
         $(this).addClass("active").siblings().removeClass("active");
-        controlPanel.setParams("direction", direction);
+        setParams("direction", direction);
     });
     mblock.octavespinner.slider({
         orientation: "vertical",
@@ -1034,14 +1062,14 @@ musicBlockPanel = function() {
         range: "min",
         slide: function(event, ui) {
             mblock.octavespinner.find("input").val(ui.value);
-            controlPanel.setParams("octave", ui.value);
+            setParams("octave", ui.value);
         }
     });
     mblock.octavespinner.find("input").val(config.octave);
     mblock.pianoroll.click(function() {
         var index = $(this).index() + 1;
         $(this).addClass("active").siblings().removeClass('active');
-        controlPanel.setParams("note", index);
+        setParams("note", index);
         syncNoteSelection(index, "dial");
 
     });
@@ -1051,6 +1079,7 @@ musicBlockPanel = function() {
         setToBlock: setToBlock,
         syncNoteSelection: syncNoteSelection,
         setDefault: setDefault,
+        setParams: setParams,
         getPanelValues: getPanelValues,
         mblock: mblock
     };
@@ -1063,7 +1092,7 @@ effectBlockPanel = function() {
             select_effect: $(".effect-select")
         },
         effectMap,
-        toggleEffectType, getPanelValues,
+        toggleEffectMethod, getPanelValues, setParams,
         effectArray = ["note", "volume", "velocity", "duration"],
         configMap = {
             note: null,
@@ -1072,123 +1101,172 @@ effectBlockPanel = function() {
             duration: null
         };
 
-    toggleEffectType = function(effect) {
+    setParams = function(type, attr, value) {
+        for (var i = 0; i < config.cnt; i++) {
+            if (blocks[i].selected === true) {
+                blocks[i].setMidiValues(type, attr, value);
+            }
+        }
+    };
+
+    toggleEffectMethod = function(effect, load) {
+        var
+            split = effect.split("-"),
+            type = split[0],
+            method = split[1];
+
+        // Hide and show effect method    
         $("." + effect).show().siblings("div").hide();
+
+        // Set configMap method based on type
+        if (load === true) {
+            configMap[type].method = method;
+        } else {
+            // console.log(type);
+            setParams(type, 'method', method);
+        }
+
+
+
+    };
+
+    setActiveEffects = function(obj, type) {
+        if (obj.hasClass("active")) {
+            configMap[type].active = true;
+        } else {
+            configMap[type].active = false;
+        }
+        setParams(type, 'active', configMap[type].active);
     };
 
     effectMap = (function(e) {
         var length = effectArray.length;
+
         for (var i = 0; i < length; i++) {
             eblock[e[i] + "_effect"] = $(".effect-" + e[i]);
             eblock[e[i] + "_effect_select"] = $("#select-" + e[i] + "-effect");
             eblock[e[i] + "_specific"] = $("#" + e[i] + "-specific-effect");
-            eblock[e[i] + "rand_rangelow"] = $("." + e[i] + "-rand-rangelow-effect");
-            eblock[e[i] + "rand_rangehigh"] = $(("." + e[i] + "-rand-rangehigh-effect"));
-            eblock[e[i] + "prog_rangelow"] = $("." + e[i] + "-prog-rangelow-effect");
-            eblock[e[i] + "prog_rangehigh"] = $(("." + e[i] + "-prog-rangehigh-effect"));
+            eblock[e[i] + "_rand_rangelow"] = $("." + e[i] + "-rand-rangelow-effect");
+            eblock[e[i] + "_rand_rangehigh"] = $(("." + e[i] + "-rand-rangehigh-effect"));
+            eblock[e[i] + "_prog_rangelow"] = $("." + e[i] + "-prog-rangelow-effect");
+            eblock[e[i] + "_prog_rangehigh"] = $(("." + e[i] + "-prog-rangehigh-effect"));
             eblock[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
 
-            controlPanel.createDial(eblock[e[i] + "_specific"], config.note, e[i] + "_specific", 1, 127);
-            controlPanel.createDial(eblock[e[i] + "rand_rangelow"], config.note, e[i] + "prog_range_low", 1, 127);
-            controlPanel.createDial(eblock[e[i] + "rand_rangehigh"], config.note, e[i] + "prog_range_high", 1, 127);
-            controlPanel.createDial(eblock[e[i] + "prog_rangelow"], config.note, e[i] + "rand_range_low", 1, 127);
-            controlPanel.createDial(eblock[e[i] + "prog_rangehigh"], config.note, e[i] + "rand_range_high", 1, 127);
-
-            eblock[e[i] + "_step_size"].spinner({
-                min: 0,
-                max: 10
+            //   obj, startVal, type, params, min, max
+            controlPanel.createDial({
+                obj: eblock[e[i] + "_specific"],
+                start_val: config.note,
+                type: "effect-block",
+                params: "specific",
+                effect_type: e[i],
+                min: 1,
+                max: 127
             });
 
-            toggleEffectType(eblock[e[i] + "_effect_select"].val());
 
+
+            //controlPanel.createDial(eblock[e[i] + "_rand_rangelow"], config.note, "effect-block", e[i] + "_prog_low", 1, 127);
+            // controlPanel.createDial(eblock[e[i] + "_rand_rangehigh"], config.note, "effect-block", e[i] + "_prog_high", 1, 127);
+            // controlPanel.createDial(eblock[e[i] + "_prog_rangelow"], config.note, "effect-block", e[i] + "_rand_low", 1, 127);
+            // controlPanel.createDial(eblock[e[i] + "_prog_rangehigh"], config.note, "effect-block", e[i] + "_rand_high", 1, 127);
+
+            eblock[e[i] + "_step_size"]
+                .spinner({
+                    min: 0,
+                    max: 10
+                })
+                .val(3);
+
+            // Create configMap with null values to store effect panel states    
             configMap[e[i]] = {
+                type: e[i],
                 active: true,
-                method: 'specific',
-                specific: config.note,
-                rand_low: config.note,
-                rand_high: config.note,
+                method: 'null',
+                specific: null,
+                rand_low: null,
+                rand_high: null,
                 limit_range: true,
-                prog_high: config.note,
-                prog_low: config.note,
-                step: 1,
-                direction: 'down'
+                prog_high: null,
+                prog_low: null,
+                step: null,
+                direction: 'null'
             };
+
+            // Set active effects on config map based on type
+            setActiveEffects($(".toggle-" + e[i]).find('span'), e[i]);
+
+            // Show effect method panel based on selection on load
+            toggleEffectMethod(eblock[e[i] + "_effect_select"].val(), true);
         }
 
     })(effectArray);
 
     getPanelValues = function() {
+        var method_type,
+            type;
 
-        var method_type;
-        
         for (var key in configMap) {
-            if (configMap[key].active === true) {
-                method_type = configMap[key].method;
-                switch (method_type) {
-                    case "specific":
-                        configMap[key].specific = parseInt(eblock.note_specific.val(), 0);
-                        //console.log(configMap[key].specific);
-                        break;
-                    case "random":
-                        configMap[key].random_low = eblock.note_rand_ranglow.val();
-                        configMap[key].random_high = eblock.note_rand_ranghigh.val();
-                        configMap[key].random_high.limit_range = true;
-                        break;
-                    case "progression":
-                        configMap[key].random_low = eblock.note_prog_ranglow.val();
-                        configMap[key].random_high = eblock.note_prog_ranghigh.val();
-                        configMap[key].step = 1;
-                        configMap[key].direction = "down";
-                        break;
-                }
-            }
+            mapkey = configMap[key];
+            method_type = eblock[mapkey.type + "_effect_select"].val();
+            method_type = method_type.replace(mapkey.type + "-", "");
+            // if (mapkey.active === true) {
+            // method_type = mapkey.method;
+            // switch (method_type) {
+            //     case "specific":
+            mapkey.method = method_type;
+            mapkey.specific = parseInt(eblock[mapkey.type + "_specific"].val(), 0);
+            //     break;
+            // case "random":
+            mapkey.rand_low = parseInt(eblock[mapkey.type + "_rand_rangelow"].val(), 0);
+            mapkey.rand_high = parseInt(eblock[mapkey.type + "_rand_rangehigh"].val(), 0);
+            mapkey.limit_range = true;
+            // break;
+            // case "progression":
+            mapkey.prog_low = parseInt(eblock[mapkey.type + "_prog_rangelow"].val(), 0);
+            mapkey.prog_high = parseInt(eblock[mapkey.type + "_prog_rangehigh"].val(), 0);
+            mapkey.step = 1;
+            mapkey.direction = "down";
+            // break;
+            // }
+            // }
         }
-        console.log(configMap);
+        return {
+            configMap: configMap
+        };
     };
 
-    getPanelValues();
-    setActiveEffects = function(val, state) {
-        switch (val) {
-            case "effect-note":
-                note_active = state;
-                break;
-            case "effect-volume":
-                volume_active = state;
-                break;
-            case "effect-duration":
-                duration_active = state;
-                break;
-            case "effect-velocity":
-                velocity_active = state;
-        }
-    };
-
-
+    //getPanelValues();
 
 
     // Hide/ Show effect type on select menu change
     $("#select-note-effect, #select-volume-effect, #select-velocity-effect, #select-duration-effect").change(function() {
-        toggleEffectType($(this).val());
+        toggleEffectMethod($(this).val());
         return false;
     });
 
     // Show / Hide effects on click
     eblock.select_effect.find("li").click(function() {
         var val = $(this).attr('class'),
-            selector = $(this).find("span");
+            selector = $(this).find("span"),
+            type = val.replace("toggle-", "");
 
         val = val.replace("toggle", "effect");
         if (selector.hasClass('active')) {
             $("." + val).slideUp();
             selector.removeClass('active');
-            setActiveEffects(val, false);
         } else {
             $("." + val).slideDown().prependTo('.effect-wrapper');
             selector.addClass('active');
-            setActiveEffects(val, true);
         }
+        setActiveEffects(selector, type);
+
         return false;
     });
+
+    return {
+        getPanelValues: getPanelValues,
+        setParams:setParams
+    };
 
 
 }();
@@ -1539,6 +1617,7 @@ setStageEvents = function() {
 
             } else {
                 blocks[config.cnt] = makeEffectBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
+                blocks[config.cnt].setInitValues(effectBlockPanel.getPanelValues());
                 // console.log(blocks[config.cnt].note
 
             }
