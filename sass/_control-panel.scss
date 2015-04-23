@@ -1,6 +1,6 @@
     .control-panel {
         .block-effect {
-             display: none;
+            display: none;
         }
         width: 206px;
         font-size: .8125em;
@@ -107,29 +107,44 @@
             left: 57px;
             top: -15px;
         }
+        .switch-wrapper {
+            margin-top: 15px;
+            float: left;
+            p {
+                font-size: 0.715rem;
+                margin: 2px 0 5px 22px;
+            }
+        }
         .switch {
-            margin-top: 10px;
             background: $yellow-80;
             float: left;
             border: 1px solid #9f9f9f;
             box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.19) inset;
             width: 14px;
             height: 32px;
+            cursor: pointer;
             position: relative;
             .toggle {
+                transition: all .5s;
                 background: $gray-medium;
                 border-bottom: 1px solid #9f9f9f;
                 box-shadow: 0 -1px 5px 0 rgba(0, 0, 0, 0.27);
                 height: 16px;
                 left: 0;
                 position: absolute;
-                top: 15px;
+                //top: 15px;
                 width: 12px;
                 border-top: 1px solid #9f9f9f;
             }
-            p {
-                font-size: 0.715rem;
-                margin: 2px 0 5px 22px;
+        }
+        [data-direction="up"] {
+            .toggle {
+                top: -1px;
+            }
+        }
+        [data-direction="down"] {
+            .toggle {
+                top: 15px;
             }
         }
     }
@@ -207,7 +222,7 @@
         display: none;
     }
     
-    .set-to-range {
+    .limit-to-range {
         float: left;
         width: 50px;
         p {
@@ -223,7 +238,7 @@
     
     // Music Blocks
     .blocks-music {
-       // display: none;
+        // display: none;
     }
     
     .instrument-select {

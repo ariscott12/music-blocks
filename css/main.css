@@ -172,28 +172,35 @@ body {
   .control-panel .dial-input {
     left: 57px;
     top: -15px; }
+  .control-panel .switch-wrapper {
+    margin-top: 15px;
+    float: left; }
+    .control-panel .switch-wrapper p {
+      font-size: 0.715rem;
+      margin: 2px 0 5px 22px; }
   .control-panel .switch {
-    margin-top: 10px;
     background: #edce69;
     float: left;
     border: 1px solid #9f9f9f;
     box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.19) inset;
     width: 14px;
     height: 32px;
+    cursor: pointer;
     position: relative; }
     .control-panel .switch .toggle {
+      transition: all .5s;
       background: #d2d1ce;
       border-bottom: 1px solid #9f9f9f;
       box-shadow: 0 -1px 5px 0 rgba(0, 0, 0, 0.27);
       height: 16px;
       left: 0;
       position: absolute;
-      top: 15px;
       width: 12px;
       border-top: 1px solid #9f9f9f; }
-    .control-panel .switch p {
-      font-size: 0.715rem;
-      margin: 2px 0 5px 22px; }
+  .control-panel [data-direction="up"] .toggle {
+    top: -1px; }
+  .control-panel [data-direction="down"] .toggle {
+    top: 15px; }
 
 .block-type-select li {
   float: left;
@@ -246,12 +253,12 @@ body {
 .effect-volume, .effect-duration, .effect-velocity {
   display: none; }
 
-.set-to-range {
+.limit-to-range {
   float: left;
   width: 50px; }
-  .set-to-range p {
+  .limit-to-range p {
     text-align: center; }
-  .set-to-range .button-select {
+  .limit-to-range .button-select {
     height: 12px;
     width: 12px;
     margin-left: 20px;

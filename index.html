@@ -31,16 +31,16 @@
         </div>
         <div class="control-panel">
             <ul class="block-type-select clearfix">
-                <li id = "block-music" class="active">Music Block</li>
-                <li id = "block-effect">Effect Block</li>
+                <li id="block-music" class="active">Music Block</li>
+                <li id="block-effect">Effect Block</li>
             </ul>
             <div class="block-effect">
                 <div class="effect-select">
                     <ul>
-                        <li class="toggle-note"><span class="active button-select">&nbsp;</span>Note</li>
-                        <li class="toggle-volume"><span class="button-select">&nbsp;</span>Volume</li>
-                        <li class="toggle-velocity"><span class="button-select">&nbsp;</span>Velocity</li>
-                        <li class="toggle-duration"><span class="button-select">&nbsp;</span>Duration</li>
+                        <li data-type="note" class="toggle-note"><span class="active button-select">&nbsp;</span>Note</li>
+                        <li data-type="volume" class="toggle-volume"><span class="button-select">&nbsp;</span>Volume</li>
+                        <li data-type="velocity" class="toggle-velocity"><span class="button-select">&nbsp;</span>Velocity</li>
+                        <li data-type="duration" class="toggle-duration"><span class="button-select">&nbsp;</span>Duration</li>
                         <li class="toggle-octave"><span class="button-select">&nbsp;</span>Octave</li>
                         <li><span class="button-select">&nbsp;</span>Scale</li>
                     </ul>
@@ -79,8 +79,8 @@
                                 <div class="clear"></div>
                                 <p>Set Range</p>
                             </div>
-                            <div class="set-to-range">
-                                <div class="button-select active"></div>
+                            <div class="limit-to-range">
+                                <div data-type="note" class="button-select active"></div>
                                 <p>Limit to Range</p>
                             </div>
                         </div>
@@ -100,9 +100,11 @@
                                 <div class="clear"></div>
                                 <p>Set Range</p>
                             </div>
-                            <input class="note-step-size spinner" name="value">
-                            <div class="switch">
-                                <div class="toggle"></div>
+                            <input data-type="note" class="note-step-size spinner" name="value">
+                            <div class=switch-wrapper>
+                                <div data-type="note" data-direction="down" class="note-step-switch switch">
+                                    <div class="toggle"></div>
+                                </div>
                                 <p>up</p>
                                 <p>down</p>
                             </div>
@@ -141,8 +143,8 @@
                                 <div class="clear"></div>
                                 <p>Set Range</p>
                             </div>
-                            <div class="set-to-range">
-                                <div class="button-select active"></div>
+                            <div class="limit-to-range">
+                                <div data-type="volume" class="button-select active"></div>
                                 <p>Limit to Range</p>
                             </div>
                         </div>
@@ -162,9 +164,11 @@
                                 <div class="clear"></div>
                                 <p>Set Range</p>
                             </div>
-                            <input class="volume-step-size spinner" name="value">
-                            <div class="switch">
-                                <div class="toggle"></div>
+                            <input data-type="volume" class="volume-step-size spinner" name="value">
+                            <div class=switch-wrapper>
+                                <div data-type="volume" data-direction="down" class="volume-step-switch switch">
+                                    <div class="toggle"></div>
+                                </div>
                                 <p>up</p>
                                 <p>down</p>
                             </div>
@@ -203,8 +207,8 @@
                                 <div class="clear"></div>
                                 <p>Set Range</p>
                             </div>
-                            <div class="set-to-range">
-                                <div class="button-select active"></div>
+                            <div class="limit-to-range">
+                                <div data-type="velocity" class="button-select active"></div>
                                 <p>Limit to Range</p>
                             </div>
                         </div>
@@ -224,15 +228,17 @@
                                 <div class="clear"></div>
                                 <p>Set Range</p>
                             </div>
-                            <input class="velocity-step-size spinner" name="value">
-                            <div class="switch">
-                                <div class="toggle"></div>
+                            <input data-type="velocity" class="velocity-step-size spinner" name="value">
+                            <div class=switch-wrapper>
+                                <div data-type="velocity" data-direction="down" class="velocity-step-switch switch">
+                                    <div class="toggle"></div>
+                                </div>
                                 <p>up</p>
                                 <p>down</p>
                             </div>
                         </div>
                     </div>
-                     <div class="effect-duration clearfix">
+                    <div class="effect-duration clearfix">
                         <h3>Duration Effect</h3>
                         <center>
                             <select id="select-duration-effect">
@@ -265,8 +271,8 @@
                                 <div class="clear"></div>
                                 <p>Set Range</p>
                             </div>
-                            <div class="set-to-range">
-                                <div class="button-select active"></div>
+                            <div class="limit-to-range">
+                                <div data-type="duration" class="button-select active"></div>
                                 <p>Limit to Range</p>
                             </div>
                         </div>
@@ -286,9 +292,11 @@
                                 <div class="clear"></div>
                                 <p>Set Range</p>
                             </div>
-                            <input class="duration-step-size spinner" name="value">
-                            <div class="switch">
-                                <div class="toggle"></div>
+                            <input data-type="duration" class="duration-step-size spinner" name="value">
+                            <div class=switch-wrapper>
+                                <div data-type="duration" data-direction="down" class="duration-step-switch switch">
+                                    <div class="toggle"></div>
+                                </div>
                                 <p>up</p>
                                 <p>down</p>
                             </div>

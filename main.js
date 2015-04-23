@@ -313,32 +313,33 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
 
     };
     block.setMidiValues = function(type, value) {
-        switch (type) {
-            case "volume":
-                this.volume = value;
-                break;
-            case "octave":
-                this.octave = value;
-                break;
-            case "duration":
-                this.duration = value;
-                break;
-            case "velocity":
-                this.velocity = value;
-                break;
-            case "note":
-                this.note = value;
-                break;
-            case "instrument":
-                this.program = value;
-                break;
-            case "direction":
-                this.staticDirection = value;
-                break;
-            default:
-                // this.volume = value;
-                break;
-        }
+        this[type] = value;
+        // switch (type) {
+        //     case "volume":
+        //         this.volume = value;
+        //         break;
+        //     case "octave":
+        //         this.octave = value;
+        //         break;
+        //     case "duration":
+        //         this.duration = value;
+        //         break;
+        //     case "velocity":
+        //         this.velocity = value;
+        //         break;
+        //     case "note":
+        //         this.note = value;
+        //         break;
+        //     case "instrument":
+        //         this.program = value;
+        //         break;
+        //     case "direction":
+        //         this.staticDirection = value;
+        //         break;
+        //     default:
+        //         // this.volume = value;
+        //         break;
+        // }
     };
 
 
@@ -369,7 +370,6 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
         var effectArray = ['note', 'volume', 'veloctiy', 'duration'];
         var map = el.configMap;
 
-       // console.log(map);
         for (var key in map) {
             this.configMap[key] = {
                 active: map[key].active,
@@ -384,26 +384,14 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 direction: map[key].direction
             };
         }
-        // console.log(this.configMap);
-    };
-
-    // console.log(el);
-    // this.volume = el.volume;
-    // this.note = el.note;
-    // this.duration = el.duration;
-    // this.velocity = el.velocity;
-    // this.octave = el.octave;
-    // this.program = el.instrument;
-    // this.staticDirection = el.direction;
-
-    // };
-    block.setMidiValues = function(type, attr, value) {
-        this.configMap[type][attr] = value;
         console.log(this.configMap);
     };
 
-
-
+    block.setMidiValues = function(type, attr, value) {
+        this.configMap[type][attr] = value;
+        //console.log("foo");
+        console.log(this.configMap);
+    };
     return block;
 };
 
@@ -484,11 +472,10 @@ collisions = function() {
                 break;
         }
         if (blocks[eblockref].type == "block-effect") {
-            console.log("specific_value:" + blocks[eblockref].note_specific);
-            console.log("rangelow:" + blocks[eblockref].note_range_low);
-            console.log("rangehigh:" + blocks[eblockref].note_range_high);
+            // configMap has all attributes for effect blocks use dote notation to access values for example: blocks[eblockref].configMap.note.active
+            console.log(blocks[eblockref].configMap);
 
-            blocks[mblockref].note = blocks[eblockref].note_specific;
+            //blocks[mblockref].note = blocks[eblockref].configMap.note.specific;
 
 
         }
@@ -972,7 +959,7 @@ musicBlockPanel = function() {
 
     setParams = function(type, value) {
         for (var i = 0; i < config.cnt; i++) {
-            if (blocks[i].selected === true) {
+            if (blocks[i].selected === true && blocks[i].type == "block-music") {
                 blocks[i].setMidiValues(type, value);
             }
         }
@@ -1036,11 +1023,38 @@ musicBlockPanel = function() {
 
 
     // Create Music Block Dials
-    //   obj, startVal, type, params, min, max
-    // controlPanel.createDial(mblock.volumeknob, config.volume, "music-block", "volume", 1, 120);
-    // controlPanel.createDial(mblock.durationknob, config.duration, "music-block", "duration", 1, 120);
-    // controlPanel.createDial(mblock.velocityknob, config.velocity, "music-block", "velocity", 1, 120);
-    // controlPanel.createDial(mblock.noteknob, config.note, "music-block", "note", 1, 12);
+    controlPanel.createDial({
+        obj: mblock.noteknob,
+        start_val: config.note,
+        type: "music-block",
+        params: "note",
+        min: 1,
+        max: 120
+    });
+    controlPanel.createDial({
+        obj: mblock.volumeknob,
+        start_val: config.volume,
+        type: "music-block",
+        params: "volume",
+        min: 1,
+        max: 120
+    });
+    controlPanel.createDial({
+        obj: mblock.velocityknob,
+        start_val: config.velocity,
+        type: "music-block",
+        params: "velocity",
+        min: 1,
+        max: 120
+    });
+    controlPanel.createDial({
+        obj: mblock.durationknob,
+        start_val: config.duration,
+        type: "music-block",
+        params: "duration",
+        min: 1,
+        max: 120
+    });
 
 
     mblock.setInstrument.onchange = function() {
@@ -1080,8 +1094,8 @@ musicBlockPanel = function() {
         syncNoteSelection: syncNoteSelection,
         setDefault: setDefault,
         setParams: setParams,
-        getPanelValues: getPanelValues,
-        mblock: mblock
+        getPanelValues: getPanelValues
+            // mblock: mblock
     };
 }();
 
@@ -1089,7 +1103,10 @@ musicBlockPanel = function() {
 effectBlockPanel = function() {
     var
         eblock = {
-            select_effect: $(".effect-select")
+            select_effect: $(".effect-select"),
+            limit_range: $('.limit-to-range'),
+            step_switch: $('.switch')
+
         },
         effectMap,
         toggleEffectMethod, getPanelValues, setParams,
@@ -1103,7 +1120,7 @@ effectBlockPanel = function() {
 
     setParams = function(type, attr, value) {
         for (var i = 0; i < config.cnt; i++) {
-            if (blocks[i].selected === true) {
+            if (blocks[i].selected === true && blocks[i].type == "block-effect") {
                 blocks[i].setMidiValues(type, attr, value);
             }
         }
@@ -1118,17 +1135,25 @@ effectBlockPanel = function() {
         // Hide and show effect method    
         $("." + effect).show().siblings("div").hide();
 
-        // Set configMap method based on type
+        // Set configMap method type for each effect type on load
         if (load === true) {
             configMap[type].method = method;
         } else {
-            // console.log(type);
+            // Update effect block configMap method
             setParams(type, 'method', method);
         }
 
-
-
+        setParams(type, 'method', method);
     };
+
+    // setStepDirection = function(obj, type) {
+    //     if (obj.hasClass("up")) {
+    //         configMap[type].direction = 'up';
+    //     } else {
+    //         configMap[type].direction = 'down';
+    //     }
+    //     setParams(type, 'direction', configMap[type].direction);
+    // };
 
     setActiveEffects = function(obj, type) {
         if (obj.hasClass("active")) {
@@ -1151,6 +1176,7 @@ effectBlockPanel = function() {
             eblock[e[i] + "_prog_rangelow"] = $("." + e[i] + "-prog-rangelow-effect");
             eblock[e[i] + "_prog_rangehigh"] = $(("." + e[i] + "-prog-rangehigh-effect"));
             eblock[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
+            eblock[e[i] + "_step_switch"] = $(("." + e[i] + "-step-switch"));
 
             //   obj, startVal, type, params, min, max
             controlPanel.createDial({
@@ -1162,18 +1188,53 @@ effectBlockPanel = function() {
                 min: 1,
                 max: 127
             });
+            controlPanel.createDial({
+                obj: eblock[e[i] + "_rand_rangelow"],
+                start_val: config.note,
+                type: "effect-block",
+                params: "rand-low",
+                effect_type: e[i],
+                min: 1,
+                max: 127
+            });
+            controlPanel.createDial({
+                obj: eblock[e[i] + "_rand_rangehigh"],
+                start_val: config.note,
+                type: "effect-block",
+                params: "rand-high",
+                effect_type: e[i],
+                min: 1,
+                max: 127
+            });
+            controlPanel.createDial({
+                obj: eblock[e[i] + "_prog_rangelow"],
+                start_val: config.note,
+                type: "effect-block",
+                params: "prog-low",
+                effect_type: e[i],
+                min: 1,
+                max: 127
+            });
+            controlPanel.createDial({
+                obj: eblock[e[i] + "_prog_rangehigh"],
+                start_val: config.note,
+                type: "effect-block",
+                params: "prog-high",
+                effect_type: e[i],
+                min: 1,
+                max: 127
+            });
 
-
-
-            //controlPanel.createDial(eblock[e[i] + "_rand_rangelow"], config.note, "effect-block", e[i] + "_prog_low", 1, 127);
-            // controlPanel.createDial(eblock[e[i] + "_rand_rangehigh"], config.note, "effect-block", e[i] + "_prog_high", 1, 127);
-            // controlPanel.createDial(eblock[e[i] + "_prog_rangelow"], config.note, "effect-block", e[i] + "_rand_low", 1, 127);
-            // controlPanel.createDial(eblock[e[i] + "_prog_rangehigh"], config.note, "effect-block", e[i] + "_rand_high", 1, 127);
 
             eblock[e[i] + "_step_size"]
                 .spinner({
                     min: 0,
-                    max: 10
+                    max: 10,
+                    spin: function(event, ui) {
+                        var type = ($(this).data().type);
+
+                        setParams(type, 'step', ui.value);
+                    }
                 })
                 .val(3);
 
@@ -1192,8 +1253,11 @@ effectBlockPanel = function() {
                 direction: 'null'
             };
 
-            // Set active effects on config map based on type
+            // Set active effects on configMap based on type
             setActiveEffects($(".toggle-" + e[i]).find('span'), e[i]);
+
+            // Set step direciton on configMap based on type
+            // setActiveEffects($(".toggle-" + e[i]).find('span'), e[i]);
 
             // Show effect method panel based on selection on load
             toggleEffectMethod(eblock[e[i] + "_effect_select"].val(), true);
@@ -1203,40 +1267,27 @@ effectBlockPanel = function() {
 
     getPanelValues = function() {
         var method_type,
-            type;
+            type,
+            mapkey;
 
         for (var key in configMap) {
             mapkey = configMap[key];
             method_type = eblock[mapkey.type + "_effect_select"].val();
             method_type = method_type.replace(mapkey.type + "-", "");
-            // if (mapkey.active === true) {
-            // method_type = mapkey.method;
-            // switch (method_type) {
-            //     case "specific":
             mapkey.method = method_type;
             mapkey.specific = parseInt(eblock[mapkey.type + "_specific"].val(), 0);
-            //     break;
-            // case "random":
             mapkey.rand_low = parseInt(eblock[mapkey.type + "_rand_rangelow"].val(), 0);
             mapkey.rand_high = parseInt(eblock[mapkey.type + "_rand_rangehigh"].val(), 0);
-            mapkey.limit_range = true;
-            // break;
-            // case "progression":
             mapkey.prog_low = parseInt(eblock[mapkey.type + "_prog_rangelow"].val(), 0);
             mapkey.prog_high = parseInt(eblock[mapkey.type + "_prog_rangehigh"].val(), 0);
-            mapkey.step = 1;
-            mapkey.direction = "down";
-            // break;
-            // }
-            // }
+            mapkey.step = parseInt(eblock[mapkey.type + "_step_size"].val(), 0);
+            mapkey.direction = eblock[mapkey.type + "_step_switch"].attr('data-direction');
+            mapkey.limit_range = true;
         }
         return {
             configMap: configMap
         };
     };
-
-    //getPanelValues();
-
 
     // Hide/ Show effect type on select menu change
     $("#select-note-effect, #select-volume-effect, #select-velocity-effect, #select-duration-effect").change(function() {
@@ -1244,11 +1295,47 @@ effectBlockPanel = function() {
         return false;
     });
 
+    // Step direction switch toggle 
+    eblock.step_switch.click(function() {
+        var
+            selector = $(this),
+            type = $(this).data().type,
+            direction = $(this).attr('data-direction');
+
+        if (direction === 'down') {
+            $(this).attr('data-direction', 'up');
+            direction = 'up';
+
+        } else {
+            $(this).attr('data-direction', 'down');
+            direction = 'down';
+        }
+
+        setParams(type, 'direction', direction);
+        return false;
+    });
+
+    // Limit range toggle
+    eblock.limit_range.find('.button-select').click(function() {
+        var
+            type = $(this).data().type;
+
+        if ($(this).hasClass('active')) {
+            $(this).removeClass('active');
+            setParams(type, 'limit_range', false);
+        } else {
+            $(this).addClass('active');
+            setParams(type, 'limit_range', true);
+        }
+        return false;
+    });
+
     // Show / Hide effects on click
     eblock.select_effect.find("li").click(function() {
-        var val = $(this).attr('class'),
+        var
+            val = $(this).attr('class'),
             selector = $(this).find("span"),
-            type = val.replace("toggle-", "");
+            type = $(this).data().type;
 
         val = val.replace("toggle", "effect");
         if (selector.hasClass('active')) {
@@ -1265,14 +1352,11 @@ effectBlockPanel = function() {
 
     return {
         getPanelValues: getPanelValues,
-        setParams:setParams
+        setParams: setParams
     };
 
 
 }();
-
-
-
 
 
 
