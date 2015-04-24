@@ -458,6 +458,7 @@ collisions = function() {
     };
 
     processType = function(mblockref, eblockref) {
+        // Probably don't need this switch statement anymore
         switch (blocks[eblockref].type) {
             case config.randomVolumeType:
                 blocks[mblockref].volume = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
@@ -471,8 +472,12 @@ collisions = function() {
             default:
                 break;
         }
+        // Do effect processing here
         if (blocks[eblockref].type == "block-effect") {
+            
             // configMap has all attributes for effect blocks use dote notation to access values for example: blocks[eblockref].configMap.note.active
+
+            //prints entire configMap in console.  Click on the object in the console to see all the attributes
             console.log(blocks[eblockref].configMap);
 
             //blocks[mblockref].note = blocks[eblockref].configMap.note.specific;
