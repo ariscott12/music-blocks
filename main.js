@@ -48,23 +48,6 @@ config.newBlockType = config.musicBlockType;
 
 
 
-// Temporary Center app in browser window
-(function getPos() {
-    //Center app in middle of screen
-    $("#wrapper").css({
-        "width": "1000px",
-        "top": "50px"
-    });
-    config.gridOffsetX = $("#wrapper").offset().left,
-    config.gridOffsetY = $("#wrapper").offset().top;
-
-    console.log("xpos "+ config.gridOffsetX);
-    console.log("ypos "+ config.gridOffsetY);
-
-})();
-
-
-
 ///Make the grid
 (function makeGrid() {
     var
@@ -1387,8 +1370,6 @@ setStageEvents = function() {
             section: document.getElementById("stage"),
         };
 
-
-
     resetBlockDrag = function() {
         blockDragLeftX = config.blockSize;
         blockDragLeftY = config.blockSize;
@@ -1409,6 +1390,21 @@ setStageEvents = function() {
         } else {
             return "different";
         }
+    };
+
+    // Temporary Center app in browser window
+    getPos = function() {
+    //Center app in middle of screen
+    // $("#wrapper").css({
+    //     "width": "1000px",
+    //     "top": "50px"
+    // });
+    config.gridOffsetX = $("#wrapper").offset().left,
+    config.gridOffsetY = $("#wrapper").offset().top;
+
+    console.log("xoffset "+ config.gridOffsetX);
+    console.log("yoffset "+ config.gridOffsetY);
+
     };
 
     mouseDrag = function(e) {
@@ -1658,6 +1654,8 @@ setStageEvents = function() {
 
     //Add mousedown listener, tracks positions and resets selection to 0
     mouseDown = function(e) {
+
+        getPos();
 
         var dragbox,
             activePanel = controlPanel.getActivePanel();
