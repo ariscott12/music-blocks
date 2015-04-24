@@ -14,6 +14,8 @@ var
         speed: 4,
         blockSize: 32,
         gridSize: 20,
+        gridOffsetX: 0,
+        gridOffsetY: 0,
         minX: 0,
         minY: 0,
         maxX: 0,
@@ -47,19 +49,19 @@ config.newBlockType = config.musicBlockType;
 
 
 // Temporary Center app in browser window
-// (function getPos() {
-//     // Center app in middle of screen
-//     $("#wrapper").css({
-//         "width": "1000px",
-//         "top": "50px"
-//     });
-//     var xoffset = $("#wrapper").offset().left,
-//         yoffset = $("#wrapper").offset().top;
+(function getPos() {
+    //Center app in middle of screen
+    $("#wrapper").css({
+        "width": "1000px",
+        "top": "50px"
+    });
+    config.gridOffsetX = $("#wrapper").offset().left,
+    config.gridOffsetY = $("#wrapper").offset().top;
 
-//     console.log("xpos "+ xoffset);
-//     console.log("ypos "+ yoffset);
+    console.log("xpos "+ config.gridOffsetX);
+    console.log("ypos "+ config.gridOffsetY);
 
-// })();
+})();
 
 
 
@@ -1402,7 +1404,7 @@ setStageEvents = function() {
     };
 
     compareMouse = function(e) {
-        if (gridify(mousedownX) === gridify(e.pageX) && gridify(mousedownY) === gridify(e.pageY) && config.draggingBlocks === false) {
+        if (gridify(mousedownX) === gridify(e.pageX - config.gridOffsetX) && gridify(mousedownY) === gridify(e.pageY - config.gridOffsetY) && config.draggingBlocks === false) {
             return "same";
         } else {
             return "different";
@@ -1451,13 +1453,13 @@ setStageEvents = function() {
             if (config.draggingBlocks === true) {
                 //Check for new blockDrag positions being outside the grid
                 var
-                    gridpos = gridify(e.pageX) - blockDragOffsetX,
+                    gridpos = gridify(e.pageX - config.gridOffsetX) - blockDragOffsetX,
                     validMove = true;
                 if (gridpos + blockDragWidth < config.gridSize && gridpos >= 0) {
                     blockDragLeftX = gridpos;
                 }
 
-                gridpos = gridify(e.pageY) - blockDragOffsetY;
+                gridpos = gridify(e.pageY - config.gridOffsetY) - blockDragOffsetY;
                 if (gridpos + blockDragHeight < config.gridSize && gridpos >= 0) {
                     blockDragLeftY = gridpos;
                 }
@@ -1498,8 +1500,8 @@ setStageEvents = function() {
 
                 if (config.mode === "create") {
                     var
-                        gridX = gridify(e.pageX),
-                        gridY = gridify(e.pageY),
+                        gridX = gridify(e.pageX - config.gridOffsetX),
+                        gridY = gridify(e.pageY - config.gridOffsetY),
                         activePanel = controlPanel.getActivePanel();
 
                     // Add music block to the grid 
@@ -1509,8 +1511,8 @@ setStageEvents = function() {
 
 
                 } else {
-                    var move_x = e.pageX,
-                        move_y = e.pageY,
+                    var move_x = e.pageX - config.gridOffsetX,
+                        move_y = e.pageY - config.gridOffsetY,
                         width = Math.abs(move_x - mousedownX),
                         height = Math.abs(move_y - mousedownY),
                         new_x, new_y;
@@ -1546,10 +1548,10 @@ setStageEvents = function() {
                 blockDragHeight = 0;
             } else {
                 var
-                    leftX = Math.min(mousedownX, e.pageX),
-                    rightX = Math.max(mousedownX, e.pageX),
-                    topY = Math.min(mousedownY, e.pageY),
-                    bottomY = Math.max(mousedownY, e.pageY),
+                    leftX = Math.min(mousedownX, e.pageX - config.gridOffsetX),
+                    rightX = Math.max(mousedownX, e.pageX - config.gridOffsetX),
+                    topY = Math.min(mousedownY, e.pageY - config.gridOffsetY),
+                    bottomY = Math.max(mousedownY, e.pageY - config.gridOffsetY),
                     blockref;
 
                 leftX = gridify(leftX);
@@ -1680,8 +1682,9 @@ setStageEvents = function() {
                 'height': 0
             });
         }
-        mousedownX = Math.min(e.pageX, config.blockSize * config.gridSize);
-        mousedownY = Math.min(e.pageY, config.blockSize * config.gridSize);
+        console.log("X: "+ e.pageX + "  " + (e.pageX - config.gridOffsetX));
+        mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridSize);
+        mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridSize);
 
         if (config.mode === "create") {
             //addBlock(gridify(mousedownX), gridify(mousedownY), config.newBlockType);
