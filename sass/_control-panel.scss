@@ -222,7 +222,7 @@
         display: none;
     }
     
-    .limit-to-range {
+    .limit-range {
         float: left;
         width: 50px;
         p {
@@ -233,6 +233,18 @@
             width: 12px;
             margin-left: 20px;
             margin-bottom: 3px;
+        }
+    }
+    
+    [data-limit-range="true"] {
+        .button-select {
+            background: $aqua;
+        }
+    }
+    
+    [data-limit-range="false"] {
+        .button-select {
+            background: none;
         }
     }
     

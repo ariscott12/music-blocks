@@ -253,16 +253,22 @@ body {
 .effect-volume, .effect-duration, .effect-velocity {
   display: none; }
 
-.limit-to-range {
+.limit-range {
   float: left;
   width: 50px; }
-  .limit-to-range p {
+  .limit-range p {
     text-align: center; }
-  .limit-to-range .button-select {
+  .limit-range .button-select {
     height: 12px;
     width: 12px;
     margin-left: 20px;
     margin-bottom: 3px; }
+
+[data-limit-range="true"] .button-select {
+  background: #45b29d; }
+
+[data-limit-range="false"] .button-select {
+  background: none; }
 
 .instrument-select {
   border-left: 1px solid #a3a2a1;
