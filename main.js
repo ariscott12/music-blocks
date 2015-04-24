@@ -1104,7 +1104,7 @@ effectBlockPanel = function() {
     var
         eblock = {
             select_effect: $(".effect-select"),
-            limit_range: $('.limit-to-range'),
+            limit_range: $('.limit-range'),
             step_switch: $('.switch')
 
         },
@@ -1146,15 +1146,6 @@ effectBlockPanel = function() {
         setParams(type, 'method', method);
     };
 
-    // setStepDirection = function(obj, type) {
-    //     if (obj.hasClass("up")) {
-    //         configMap[type].direction = 'up';
-    //     } else {
-    //         configMap[type].direction = 'down';
-    //     }
-    //     setParams(type, 'direction', configMap[type].direction);
-    // };
-
     setActiveEffects = function(obj, type) {
         if (obj.hasClass("active")) {
             configMap[type].active = true;
@@ -1162,6 +1153,30 @@ effectBlockPanel = function() {
             configMap[type].active = false;
         }
         setParams(type, 'active', configMap[type].active);
+    };
+
+    getPanelValues = function() {
+        var method_type,
+            type,
+            mapkey;
+
+        for (var key in configMap) {
+            mapkey = configMap[key];
+            method_type = eblock[mapkey.type + "_effect_select"].val();
+            method_type = method_type.replace(mapkey.type + "-", "");
+            mapkey.method = method_type;
+            mapkey.specific = parseInt(eblock[mapkey.type + "_specific"].val(), 0);
+            mapkey.rand_low = parseInt(eblock[mapkey.type + "_rand_rangelow"].val(), 0);
+            mapkey.rand_high = parseInt(eblock[mapkey.type + "_rand_rangehigh"].val(), 0);
+            mapkey.prog_low = parseInt(eblock[mapkey.type + "_prog_rangelow"].val(), 0);
+            mapkey.prog_high = parseInt(eblock[mapkey.type + "_prog_rangehigh"].val(), 0);
+            mapkey.step = parseInt(eblock[mapkey.type + "_step_size"].val(), 0);
+            mapkey.direction = eblock[mapkey.type + "_step_switch"].attr('data-direction');
+            mapkey.limit_range = eblock[mapkey.type + "_limit_range"].attr('data-limit-range');
+        }
+        return {
+            configMap: configMap
+        };
     };
 
     effectMap = (function(e) {
@@ -1177,6 +1192,7 @@ effectBlockPanel = function() {
             eblock[e[i] + "_prog_rangehigh"] = $(("." + e[i] + "-prog-rangehigh-effect"));
             eblock[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
             eblock[e[i] + "_step_switch"] = $(("." + e[i] + "-step-switch"));
+            eblock[e[i] + "_limit_range"] = $(("." + e[i] + "-limit-to-range"));
 
             //   obj, startVal, type, params, min, max
             controlPanel.createDial({
@@ -1246,7 +1262,7 @@ effectBlockPanel = function() {
                 specific: null,
                 rand_low: null,
                 rand_high: null,
-                limit_range: true,
+                limit_range: null,
                 prog_high: null,
                 prog_low: null,
                 step: null,
@@ -1256,38 +1272,12 @@ effectBlockPanel = function() {
             // Set active effects on configMap based on type
             setActiveEffects($(".toggle-" + e[i]).find('span'), e[i]);
 
-            // Set step direciton on configMap based on type
-            // setActiveEffects($(".toggle-" + e[i]).find('span'), e[i]);
-
             // Show effect method panel based on selection on load
             toggleEffectMethod(eblock[e[i] + "_effect_select"].val(), true);
         }
 
     })(effectArray);
 
-    getPanelValues = function() {
-        var method_type,
-            type,
-            mapkey;
-
-        for (var key in configMap) {
-            mapkey = configMap[key];
-            method_type = eblock[mapkey.type + "_effect_select"].val();
-            method_type = method_type.replace(mapkey.type + "-", "");
-            mapkey.method = method_type;
-            mapkey.specific = parseInt(eblock[mapkey.type + "_specific"].val(), 0);
-            mapkey.rand_low = parseInt(eblock[mapkey.type + "_rand_rangelow"].val(), 0);
-            mapkey.rand_high = parseInt(eblock[mapkey.type + "_rand_rangehigh"].val(), 0);
-            mapkey.prog_low = parseInt(eblock[mapkey.type + "_prog_rangelow"].val(), 0);
-            mapkey.prog_high = parseInt(eblock[mapkey.type + "_prog_rangehigh"].val(), 0);
-            mapkey.step = parseInt(eblock[mapkey.type + "_step_size"].val(), 0);
-            mapkey.direction = eblock[mapkey.type + "_step_switch"].attr('data-direction');
-            mapkey.limit_range = true;
-        }
-        return {
-            configMap: configMap
-        };
-    };
 
     // Hide/ Show effect type on select menu change
     $("#select-note-effect, #select-volume-effect, #select-velocity-effect, #select-duration-effect").change(function() {
@@ -1316,17 +1306,24 @@ effectBlockPanel = function() {
     });
 
     // Limit range toggle
-    eblock.limit_range.find('.button-select').click(function() {
+    eblock.limit_range.click(function() {
         var
-            type = $(this).data().type;
+            type = $(this).data().type,
+            limit = $(this).attr('data-limit-range');
 
-        if ($(this).hasClass('active')) {
-            $(this).removeClass('active');
-            setParams(type, 'limit_range', false);
+
+        if (limit === 'true') {
+            //$(this).removeClass('active');
+            $(this).attr('data-limit-range', 'false');
+            limit = false;
         } else {
-            $(this).addClass('active');
-            setParams(type, 'limit_range', true);
+            // $(this).addClass('active');
+            limit = true;
+            $(this).attr('data-limit-range', 'true');
         }
+
+        setParams(type, 'limit_range', limit);
+
         return false;
     });
 
@@ -1337,7 +1334,7 @@ effectBlockPanel = function() {
             selector = $(this).find("span"),
             type = $(this).data().type;
 
-        val = val.replace("toggle", "effect");
+        val = val.replace('toggle', 'effect');
         if (selector.hasClass('active')) {
             $("." + val).slideUp();
             selector.removeClass('active');
