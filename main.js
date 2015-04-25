@@ -14,6 +14,8 @@ var
         speed: 4,
         blockSize: 32,
         gridSize: 20,
+        gridOffsetX: 0,
+        gridOffsetY: 0,
         minX: 0,
         minY: 0,
         maxX: 0,
@@ -43,23 +45,6 @@ var
 config.maxX = config.maxY = config.blockSize * config.gridSize;
 config.maxGridX = config.maxGridY = config.gridSize - 1;
 config.newBlockType = config.musicBlockType;
-
-
-
-// Temporary Center app in browser window
-// (function getPos() {
-//     // Center app in middle of screen
-//     $("#wrapper").css({
-//         "width": "1000px",
-//         "top": "50px"
-//     });
-//     var xoffset = $("#wrapper").offset().left,
-//         yoffset = $("#wrapper").offset().top;
-
-//     console.log("xpos "+ xoffset);
-//     console.log("ypos "+ yoffset);
-
-// })();
 
 
 
@@ -221,7 +206,10 @@ var proto = {
             //controlPanel.setToBlock(this.blocknum);
             if (this.type == "block-music") {
                 musicBlockPanel.setToBlock(this.blocknum);
-
+            }
+            if (this.type == "block-effect"){
+                effectBlockPanel.setToBlock(this.blocknum);
+                // console.log(effectBlockPanel);
             }
         }
 
@@ -367,7 +355,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
 
     // Effect Block Specfic Methods
     block.setInitValues = function(el) {
-        var effectArray = ['note', 'volume', 'veloctiy', 'duration'];
+        var effectArray = ['note', 'volume', 'velocity', 'duration'];
         var map = el.configMap;
 
         for (var key in map) {
@@ -458,22 +446,67 @@ collisions = function() {
 
     processType = function(mblockref, eblockref) {
         // Probably don't need this switch statement anymore
-        switch (blocks[eblockref].type) {
-            case config.randomVolumeType:
-                blocks[mblockref].volume = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-                break;
-            case config.randomOctaveType:
-                blocks[mblockref].octave = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-                break;
-            case config.randomNoteType:
-                blocks[mblockref].note = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-                break;
-            default:
-                break;
-        }
+        // switch (blocks[eblockref].type) {
+        //     case config.randomVolumeType:
+        //         blocks[mblockref].volume = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+        //         break;
+        //     case config.randomOctaveType:
+        //         blocks[mblockref].octave = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+        //         break;
+        //     case config.randomNoteType:
+        //         blocks[mblockref].note = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+        //         break;
+        //     default:
+        //         break;
+        // }
         // Do effect processing here
-        if (blocks[eblockref].type == "block-effect") {
 
+        if (blocks[eblockref].type == "block-effect") {
+            if (blocks[eblockref].configMap.note.active){
+                switch (blocks[eblockref].configMap.note.method){
+                    case "specific":
+                        //Set the mblock note to eblock specific
+                        blocks[mblockref].note = blocks[eblockref].configMap.note.specific;                        
+                        break;
+
+                    case "random":
+                        //REMOVE the line below this comment once limit_range flag is being set from interface
+                        blocks[eblockref].configMap.note.limit_range = false;
+
+                        //If limit range flag, set the mblock note to a random note inside specified range
+                        if(blocks[eblockref].configMap.note.limit_range){
+                            blocks[mblockref].note = rangedRandom(blocks[eblockref].configMap.note.rand_low, blocks[eblockref].configMap.note.rand_high);
+                        }
+                        //If not limit range flag, set note to random note in MIDI acceptable range
+                        else{
+                            blocks[mblockref].note = rangedRandom(1,12);
+                            blocks[mblockref].octave = rangedRandom(1,7);
+                        }
+                        break;
+
+                    case "progression":
+                        console.log("INCOMING: " + blocks[mblockref].note);
+                        //Advance note by step value
+                        blocks[mblockref].note += blocks[eblockref].configMap.note.step;
+
+                        //If the result note is lower than the low limit, then the low limit will be the max.
+                        //If the result note is higher than the high limit, then result note - high limit will be the max.
+                        //If the result note is inside the range, then leave it alone.
+                        if(blocks[mblockref].note < blocks[eblockref].configMap.note.prog_low 
+                            || blocks[mblockref].note + blocks[eblockref].configMap.note.step > blocks[eblockref].configMap.note.prog_high){
+                            blocks[mblockref].note = Math.max(blocks[mblockref].note - blocks[eblockref].configMap.note.prog_high, 
+                                                              blocks[eblockref].configMap.note.prog_low);
+                        }
+                        break
+                        console.log("OUTGOING: " + blocks[mblockref].note);
+
+                    default:
+                        //This would be an error
+                        break;
+                }
+
+            }
+            
             // configMap has all attributes for effect blocks use dote notation to access values for example: blocks[eblockref].configMap.note.active
 
             //prints entire configMap in console.  Click on the object in the console to see all the attributes
@@ -486,7 +519,7 @@ collisions = function() {
 
         if (config.numSelected === 1 && blocks[mblockref].selected === true && eblockref.type !== config.musicBlockType) {
             //controlPanel.setToBlock(mblockref);
-            //musicBlockPanel.setToBlock(mblockref);
+            musicBlockPanel.setToBlock(mblockref);
         }
     };
     process = function(direction, gridX, gridY, blockref, skipcheck) {
@@ -754,16 +787,16 @@ setMidiParams = function() {
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
-        // MIDI.loadPlugin({
-        //     soundfontUrl: "./soundfont/",
-        //     instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
-        //     callback: function() {
-        //         MIDI.programChange(0, 0);
-        //         MIDI.programChange(1, 114);
-        //         MIDI.programChange(2, 112);
-        //         console.log("loaded");
-        //     }
-        // });
+        MIDI.loadPlugin({
+            soundfontUrl: "./soundfont/",
+            instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
+            callback: function() {
+                MIDI.programChange(0, 0);
+                MIDI.programChange(1, 114);
+                MIDI.programChange(2, 112);
+                console.log("loaded");
+            }
+        });
     };
     triggerMidi = function(vol, pro, note, vel, dur) {
 
@@ -1130,6 +1163,10 @@ effectBlockPanel = function() {
         }
     };
 
+    setToBlock = function(num) {
+        //NEED TO IMPLEMENT
+    };
+
     toggleEffectMethod = function(effect, load) {
         var
             split = effect.split("-"),
@@ -1353,7 +1390,9 @@ effectBlockPanel = function() {
 
     return {
         getPanelValues: getPanelValues,
+        setToBlock: setToBlock,
         setParams: setParams
+
     };
 
 
@@ -1384,8 +1423,6 @@ setStageEvents = function() {
             section: document.getElementById("stage"),
         };
 
-
-
     resetBlockDrag = function() {
         blockDragLeftX = config.blockSize;
         blockDragLeftY = config.blockSize;
@@ -1401,11 +1438,26 @@ setStageEvents = function() {
     };
 
     compareMouse = function(e) {
-        if (gridify(mousedownX) === gridify(e.pageX) && gridify(mousedownY) === gridify(e.pageY) && config.draggingBlocks === false) {
+        if (gridify(mousedownX) === gridify(e.pageX - config.gridOffsetX) && gridify(mousedownY) === gridify(e.pageY - config.gridOffsetY) && config.draggingBlocks === false) {
             return "same";
         } else {
             return "different";
         }
+    };
+
+    // Temporary Center app in browser window
+    getPos = function() {
+    //Center app in middle of screen
+    // $("#wrapper").css({
+    //     "width": "1000px",
+    //     "top": "50px"
+    // });
+    config.gridOffsetX = $("#wrapper").offset().left,
+    config.gridOffsetY = $("#wrapper").offset().top;
+
+    console.log("xoffset "+ config.gridOffsetX);
+    console.log("yoffset "+ config.gridOffsetY);
+
     };
 
     mouseDrag = function(e) {
@@ -1450,13 +1502,13 @@ setStageEvents = function() {
             if (config.draggingBlocks === true) {
                 //Check for new blockDrag positions being outside the grid
                 var
-                    gridpos = gridify(e.pageX) - blockDragOffsetX,
+                    gridpos = gridify(e.pageX - config.gridOffsetX) - blockDragOffsetX,
                     validMove = true;
                 if (gridpos + blockDragWidth < config.gridSize && gridpos >= 0) {
                     blockDragLeftX = gridpos;
                 }
 
-                gridpos = gridify(e.pageY) - blockDragOffsetY;
+                gridpos = gridify(e.pageY - config.gridOffsetY) - blockDragOffsetY;
                 if (gridpos + blockDragHeight < config.gridSize && gridpos >= 0) {
                     blockDragLeftY = gridpos;
                 }
@@ -1497,8 +1549,8 @@ setStageEvents = function() {
 
                 if (config.mode === "create") {
                     var
-                        gridX = gridify(e.pageX),
-                        gridY = gridify(e.pageY),
+                        gridX = gridify(e.pageX - config.gridOffsetX),
+                        gridY = gridify(e.pageY - config.gridOffsetY),
                         activePanel = controlPanel.getActivePanel();
 
                     // Add music block to the grid 
@@ -1508,8 +1560,8 @@ setStageEvents = function() {
 
 
                 } else {
-                    var move_x = e.pageX,
-                        move_y = e.pageY,
+                    var move_x = e.pageX - config.gridOffsetX,
+                        move_y = e.pageY - config.gridOffsetY,
                         width = Math.abs(move_x - mousedownX),
                         height = Math.abs(move_y - mousedownY),
                         new_x, new_y;
@@ -1545,10 +1597,10 @@ setStageEvents = function() {
                 blockDragHeight = 0;
             } else {
                 var
-                    leftX = Math.min(mousedownX, e.pageX),
-                    rightX = Math.max(mousedownX, e.pageX),
-                    topY = Math.min(mousedownY, e.pageY),
-                    bottomY = Math.max(mousedownY, e.pageY),
+                    leftX = Math.min(mousedownX, e.pageX - config.gridOffsetX),
+                    rightX = Math.max(mousedownX, e.pageX - config.gridOffsetX),
+                    topY = Math.min(mousedownY, e.pageY - config.gridOffsetY),
+                    bottomY = Math.max(mousedownY, e.pageY - config.gridOffsetY),
                     blockref;
 
                 leftX = gridify(leftX);
@@ -1656,6 +1708,8 @@ setStageEvents = function() {
     //Add mousedown listener, tracks positions and resets selection to 0
     mouseDown = function(e) {
 
+        getPos();
+
         var dragbox,
             activePanel = controlPanel.getActivePanel();
 
@@ -1679,8 +1733,9 @@ setStageEvents = function() {
                 'height': 0
             });
         }
-        mousedownX = Math.min(e.pageX, config.blockSize * config.gridSize);
-        mousedownY = Math.min(e.pageY, config.blockSize * config.gridSize);
+        console.log("X: "+ e.pageX + "  " + (e.pageX - config.gridOffsetX));
+        mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridSize);
+        mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridSize);
 
         if (config.mode === "create") {
             //addBlock(gridify(mousedownX), gridify(mousedownY), config.newBlockType);
