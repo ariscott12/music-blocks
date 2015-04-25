@@ -410,6 +410,25 @@ function rangedRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+//Sets the block's note and octave based on octaveNote value
+function setBlockToOctaveNote(block, octaveNote) {
+    block.note = octaveNote % 12;
+    block.octave = Math.floor(octaveNote / 12);
+}
+
+//Retrieve octaveNote value from the block
+function convertBlockToOctaveNote(block) {
+    return block.note + block.octave * 12;
+}
+
+// function convertRangeToNote(rangeValue) {
+//     return rangeValue % 12;
+// }
+
+// function convertRangeToOctave(rangeValue) {
+//     return Math.floor(rangeValue / 12);
+//}
+
 //Returns a hex color based on the block type
 function getBlockColor(type) {
     switch (type) {
@@ -471,35 +490,40 @@ collisions = function() {
                         break;
 
                     case "random":
-                        //REMOVE the line below this comment once limit_range flag is being set from interface
-                        blocks[eblockref].configMap.note.limit_range = false;
-
-                        //If limit range flag, set the mblock note to a random note inside specified range
+                        //If limit range flag, new note is random note inside specified range
                         if(blocks[eblockref].configMap.note.limit_range){
-                            blocks[mblockref].note = rangedRandom(blocks[eblockref].configMap.note.rand_low, blocks[eblockref].configMap.note.rand_high);
+                            var octaveNote = rangedRandom(blocks[eblockref].configMap.note.rand_low, blocks[eblockref].configMap.note.rand_high);    
                         }
-                        //If not limit range flag, set note to random note in MIDI acceptable range
+
+                        //If not limit range flag, new note is random note in MIDI acceptable range
                         else{
-                            blocks[mblockref].note = rangedRandom(1,12);
-                            blocks[mblockref].octave = rangedRandom(1,7);
-                        }
+                            var octaveNote = rangedRandom(1,127);
+                        }                        
+
+                        //Set blocks note and octave based on new note
+                        setBlockToOctaveNote(blocks[mblockref], octaveNote);
+
                         break;
 
                     case "progression":
-                        console.log("INCOMING: " + blocks[mblockref].note);
-                        //Advance note by step value
-                        blocks[mblockref].note += blocks[eblockref].configMap.note.step;
+                        //Get octaveNote info from block and add step value
+                        var octaveNote = convertBlockToOctaveNote(blocks[mblockref])+ blocks[eblockref].configMap.note.step;
+                        console.log("INCOMING: " + octaveNote);
 
-                        //If the result note is lower than the low limit, then the low limit will be the max.
-                        //If the result note is higher than the high limit, then result note - high limit will be the max.
+                        //If the result note is lower than the low limit, then set to the low limit.
+                        //If the result note is higher than the high limit, then set to note - high limit.
                         //If the result note is inside the range, then leave it alone.
-                        if(blocks[mblockref].note < blocks[eblockref].configMap.note.prog_low 
-                            || blocks[mblockref].note + blocks[eblockref].configMap.note.step > blocks[eblockref].configMap.note.prog_high){
-                            blocks[mblockref].note = Math.max(blocks[mblockref].note - blocks[eblockref].configMap.note.prog_high, 
+                        if(octaveNote < blocks[eblockref].configMap.note.prog_low 
+                            || octaveNote > blocks[eblockref].configMap.note.prog_high){
+                            octaveNote = Math.max(octaveNote - blocks[eblockref].configMap.note.prog_high, 
                                                               blocks[eblockref].configMap.note.prog_low);
                         }
+
+                        //Set the block note and octave to octaveNote value
+                        setBlockToOctaveNote(blocks[mblockref], octaveNote);
+
                         break
-                        console.log("OUTGOING: " + blocks[mblockref].note);
+                        console.log("OUTGOING: " + octaveNote);
 
                     default:
                         //This would be an error
