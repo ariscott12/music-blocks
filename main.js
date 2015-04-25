@@ -372,12 +372,11 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 direction: map[key].direction
             };
         }
-        console.log(this.configMap);
+        console.log(el.configMap);
     };
 
     block.setMidiValues = function(type, attr, value) {
         this.configMap[type][attr] = value;
-        //console.log("foo");
         console.log(this.configMap);
     };
     return block;
@@ -1274,7 +1273,7 @@ effectBlockPanel = function() {
                 obj: eblock[e[i] + "_rand_rangelow"],
                 start_val: config.note,
                 type: "effect-block",
-                params: "rand-low",
+                params: "rand_low",
                 effect_type: e[i],
                 min: 1,
                 max: 127
@@ -1283,7 +1282,7 @@ effectBlockPanel = function() {
                 obj: eblock[e[i] + "_rand_rangehigh"],
                 start_val: config.note,
                 type: "effect-block",
-                params: "rand-high",
+                params: "rand_high",
                 effect_type: e[i],
                 min: 1,
                 max: 127
@@ -1292,7 +1291,7 @@ effectBlockPanel = function() {
                 obj: eblock[e[i] + "_prog_rangelow"],
                 start_val: config.note,
                 type: "effect-block",
-                params: "prog-low",
+                params: "prog_low",
                 effect_type: e[i],
                 min: 1,
                 max: 127
@@ -1301,7 +1300,7 @@ effectBlockPanel = function() {
                 obj: eblock[e[i] + "_prog_rangehigh"],
                 start_val: config.note,
                 type: "effect-block",
-                params: "prog-high",
+                params: "prog_high",
                 effect_type: e[i],
                 min: 1,
                 max: 127
