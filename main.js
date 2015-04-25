@@ -206,7 +206,10 @@ var proto = {
             //controlPanel.setToBlock(this.blocknum);
             if (this.type == "block-music") {
                 musicBlockPanel.setToBlock(this.blocknum);
-
+            }
+            if (this.type == "block-effect"){
+                effectBlockPanel.setToBlock(this.blocknum);
+                // console.log(effectBlockPanel);
             }
         }
 
@@ -352,7 +355,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
 
     // Effect Block Specfic Methods
     block.setInitValues = function(el) {
-        var effectArray = ['note', 'volume', 'veloctiy', 'duration'];
+        var effectArray = ['note', 'volume', 'velocity', 'duration'];
         var map = el.configMap;
 
         for (var key in map) {
@@ -444,21 +447,66 @@ collisions = function() {
 
     processType = function(mblockref, eblockref) {
         // Probably don't need this switch statement anymore
-        switch (blocks[eblockref].type) {
-            case config.randomVolumeType:
-                blocks[mblockref].volume = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-                break;
-            case config.randomOctaveType:
-                blocks[mblockref].octave = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-                break;
-            case config.randomNoteType:
-                blocks[mblockref].note = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
-                break;
-            default:
-                break;
-        }
+        // switch (blocks[eblockref].type) {
+        //     case config.randomVolumeType:
+        //         blocks[mblockref].volume = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+        //         break;
+        //     case config.randomOctaveType:
+        //         blocks[mblockref].octave = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+        //         break;
+        //     case config.randomNoteType:
+        //         blocks[mblockref].note = rangedRandom(blocks[eblockref].rngMin, blocks[eblockref].rngMax);
+        //         break;
+        //     default:
+        //         break;
+        // }
         // Do effect processing here
+
         if (blocks[eblockref].type == "block-effect") {
+            if (blocks[eblockref].configMap.note.active){
+                switch (blocks[eblockref].configMap.note.method){
+                    case "specific":
+                        //Set the mblock note to eblock specific
+                        blocks[mblockref].note = blocks[eblockref].configMap.note.specific;                        
+                        break;
+
+                    case "random":
+                        //REMOVE the line below this comment once limit_range flag is being set from interface
+                        blocks[eblockref].configMap.note.limit_range = false;
+
+                        //If limit range flag, set the mblock note to a random note inside specified range
+                        if(blocks[eblockref].configMap.note.limit_range){
+                            blocks[mblockref].note = rangedRandom(blocks[eblockref].configMap.note.rand_low, blocks[eblockref].configMap.note.rand_high);
+                        }
+                        //If not limit range flag, set note to random note in MIDI acceptable range
+                        else{
+                            blocks[mblockref].note = rangedRandom(1,12);
+                            blocks[mblockref].octave = rangedRandom(1,7);
+                        }
+                        break;
+
+                    case "progression":
+                        console.log("INCOMING: " + blocks[mblockref].note);
+                        //Advance note by step value
+                        blocks[mblockref].note += blocks[eblockref].configMap.note.step;
+
+                        //If the result note is lower than the low limit, then the low limit will be the max.
+                        //If the result note is higher than the high limit, then result note - high limit will be the max.
+                        //If the result note is inside the range, then leave it alone.
+                        if(blocks[mblockref].note < blocks[eblockref].configMap.note.prog_low 
+                            || blocks[mblockref].note + blocks[eblockref].configMap.note.step > blocks[eblockref].configMap.note.prog_high){
+                            blocks[mblockref].note = Math.max(blocks[mblockref].note - blocks[eblockref].configMap.note.prog_high, 
+                                                              blocks[eblockref].configMap.note.prog_low);
+                        }
+                        break
+                        console.log("OUTGOING: " + blocks[mblockref].note);
+
+                    default:
+                        //This would be an error
+                        break;
+                }
+
+            }
             
             // configMap has all attributes for effect blocks use dote notation to access values for example: blocks[eblockref].configMap.note.active
 
@@ -472,7 +520,7 @@ collisions = function() {
 
         if (config.numSelected === 1 && blocks[mblockref].selected === true && eblockref.type !== config.musicBlockType) {
             //controlPanel.setToBlock(mblockref);
-            //musicBlockPanel.setToBlock(mblockref);
+            musicBlockPanel.setToBlock(mblockref);
         }
     };
     process = function(direction, gridX, gridY, blockref, skipcheck) {
@@ -740,16 +788,16 @@ setMidiParams = function() {
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
-        // MIDI.loadPlugin({
-        //     soundfontUrl: "./soundfont/",
-        //     instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
-        //     callback: function() {
-        //         MIDI.programChange(0, 0);
-        //         MIDI.programChange(1, 114);
-        //         MIDI.programChange(2, 112);
-        //         console.log("loaded");
-        //     }
-        // });
+        MIDI.loadPlugin({
+            soundfontUrl: "./soundfont/",
+            instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
+            callback: function() {
+                MIDI.programChange(0, 0);
+                MIDI.programChange(1, 114);
+                MIDI.programChange(2, 112);
+                console.log("loaded");
+            }
+        });
     };
     triggerMidi = function(vol, pro, note, vel, dur) {
 
@@ -1116,6 +1164,10 @@ effectBlockPanel = function() {
         }
     };
 
+    setToBlock = function(num) {
+        //NEED TO IMPLEMENT
+    };
+
     toggleEffectMethod = function(effect, load) {
         var
             split = effect.split("-"),
@@ -1339,7 +1391,9 @@ effectBlockPanel = function() {
 
     return {
         getPanelValues: getPanelValues,
+        setToBlock: setToBlock,
         setParams: setParams
+
     };
 
 
