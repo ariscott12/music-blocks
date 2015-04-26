@@ -23,7 +23,15 @@ var
         minGridX: 0,
         minGridY: 0,
         maxGridX: 0,
-        maxGridY: 0,
+        maxGridY: 0,        
+        minNote: 1,
+        maxNote: 127,
+        minVelocity: 0,
+        maxVelocity: 120,
+        minDuration: 0,
+        maxDuration: 120,
+        minVolume: 0,
+        maxVolume: 120,
         pause: -1,
         advance: -1,
         shiftkey: 0,
@@ -40,6 +48,21 @@ var
         colorArray: ["#d27743", "#cf5a4c", "#debe4e", "#ccc"]
     },
     gridArray = new Array([]),
+    minMaxArray = {
+        note: {
+            min: 1,
+            max: 127
+        },
+        velocity: {
+            min: 0,
+            max: 120},
+        duration: {
+            min: 0,
+            max: 120},
+        volume: {
+            min: 0,
+            max: 120}
+    }
     blocks = [];
 
 config.maxX = config.maxY = config.blockSize * config.gridSize;
@@ -481,11 +504,13 @@ collisions = function() {
         // Do effect processing here
 
         if (blocks[eblockref].type == "block-effect") {
+            
+            // Note Effect logic
             if (blocks[eblockref].configMap.note.active){
-                switch (blocks[eblockref].configMap.note.method){
+                switch (blocks[eblockref].configMap.method){
                     case "specific":
                         //Set the mblock note to eblock specific
-                        blocks[mblockref].note = blocks[eblockref].configMap.note.specific;                        
+                        setBlockToOctaveNote(blocks[mblockref], blocks[eblockref].configMap.note.specific);
                         break;
 
                     case "random":
@@ -496,7 +521,7 @@ collisions = function() {
 
                         //If not limit range flag, new note is random note in MIDI acceptable range
                         else{
-                            var octaveNote = rangedRandom(1,127);
+                            var octaveNote = rangedRandom(config.minNote,config.maxNote);
                         }                        
 
                         //Set blocks note and octave based on new note
@@ -514,23 +539,138 @@ collisions = function() {
                         //If the result note is inside the range, then leave it alone.
                         if(octaveNote < blocks[eblockref].configMap.note.prog_low 
                             || octaveNote > blocks[eblockref].configMap.note.prog_high){
-                            octaveNote = Math.max(octaveNote - blocks[eblockref].configMap.note.prog_high, 
+                            octaveNote = Math.max(octaveNote - blocks[eblockref].configMap.note.prog_high + blocks[eblockref].configMap.note.prog_low - 1, 
                                                               blocks[eblockref].configMap.note.prog_low);
+                        }
+
+                        //If the octaveNote is still higher than the range, continually subtract the range until it is within
+                        while (octaveNote > blocks[eblockref].configMap.note.prog_high){
+                            octaveNote -= blocks[eblockref].configMap.note.prog_high - blocks[eblockref].configMap.note.prog_low - 1;
                         }
 
                         //Set the block note and octave to octaveNote value
                         setBlockToOctaveNote(blocks[mblockref], octaveNote);
+                        console.log("OUTGOING: " + octaveNote);
 
                         break
-                        console.log("OUTGOING: " + octaveNote);
 
                     default:
                         //This would be an error
                         break;
                 }
-
             }
-            
+
+            //Effects loop
+            for (var key in blocks[eblockref].configMap) {
+                if(key != "note"){
+                    if(blocks[eblockref].configMap[key].active){
+                        switch (blocks[eblockref].configMap[key].method){
+                            case "specific":
+                                //Set the mblock key to eblock specific
+                                blocks[mblockref][key] = blocks[eblockref].configMap[key].specific;
+                                break;
+
+                            case "random":
+                                //If limit range flag, new key is random key inside specified range
+                                if(blocks[eblockref].configMap[key].limit_range){
+                                    var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);    
+                                }
+
+                                //If not limit range flag, new key is random key in MIDI acceptable range
+                                else{
+                                    var newValue = rangedRandom(minMaxArray[key].min,minMaxArray[key].max);
+                                }                        
+
+                                //Set blocks key to new key
+                                blocks[mblockref][key] = newValue;
+
+                                break;
+
+                            case "progression":
+                                //Add step value to block key
+                                var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step;
+                                
+                                //If the result key is lower than the low limit, then set to the low limit.
+                                //If the result key is higher than the high limit, then set to key - high limit.
+                                //If the result key is inside the range, then leave it alone.
+                                if(newValue < blocks[eblockref].configMap[key].prog_low 
+                                    || newValue > blocks[eblockref].configMap[key].prog_high){
+                                    newValue = Math.max(newValue - blocks[eblockref].configMap[key].prog_high + blocks[eblockref].configMap[key].prog_low - 1, 
+                                                                      blocks[eblockref].configMap[key].prog_low);
+                                }
+
+                                //If the velocity is still higher than the range, continually subtract the range until it is within
+                                // while (newVelocity > blocks[eblockref].configMap.velocity.prog_high){
+                                //     newVelocity -= blocks[eblockref].configMap.velocity.prog_high - blocks[eblockref].configMap.velocity.prog_low - 1;
+                                // }
+
+                                //Set the block velocity to new value
+                                blocks[mblockref][key] = newValue;
+
+                                break
+
+                            default:
+                                //This would be an error
+                                break;
+                        }
+                    }
+                }
+            }
+        
+            /*
+            //Velocity Effect logic
+            if(blocks[eblockref].configMap.velocity.active){
+                switch (blocks[eblockref].configMap.velocity.method){
+                    case "specific":
+                        //Set the mblock velocity to eblock specific
+                        blocks[mblockref].velocity = blocks[eblockref].configMap.velocity.specific;
+                        break;
+
+                    case "random":
+                        //If limit range flag, new velocity is random velocity inside specified range
+                        if(blocks[eblockref].configMap.velocity.limit_range){
+                            var newVelocity = rangedRandom(blocks[eblockref].configMap.velocity.rand_low, blocks[eblockref].configMap.velocity.rand_high);    
+                        }
+
+                        //If not limit range flag, new velocity is random velocity in MIDI acceptable range
+                        else{
+                            var newVelocity = rangedRandom(config.minVelocity,config.maxVelocity);
+                        }                        
+
+                        //Set blocks velocity to new velocity
+                        blocks[mblockref].velocity = newVelocity;
+
+                        break;
+
+                    case "progression":
+                        //Add step value to block velocity
+                        var newVelocity = blocks[mblockref].velocity + blocks[eblockref].configMap.velocity.step;
+                        
+                        //If the result velocity is lower than the low limit, then set to the low limit.
+                        //If the result velocity is higher than the high limit, then set to velocity - high limit.
+                        //If the result velocity is inside the range, then leave it alone.
+                        if(newVelocity < blocks[eblockref].configMap.velocity.prog_low 
+                            || newVelocity > blocks[eblockref].configMap.velocity.prog_high){
+                            newVelocity = Math.max(newVelocity - blocks[eblockref].configMap.velocity.prog_high + blocks[eblockref].configMap.velocity.prog_low - 1, 
+                                                              blocks[eblockref].configMap.velocity.prog_low);
+                        }
+
+                        //If the velocity is still higher than the range, continually subtract the range until it is within
+                        // while (newVelocity > blocks[eblockref].configMap.velocity.prog_high){
+                        //     newVelocity -= blocks[eblockref].configMap.velocity.prog_high - blocks[eblockref].configMap.velocity.prog_low - 1;
+                        // }
+
+                        //Set the block velocity to new value
+                        blocks[mblockref].velocity = newVelocity;
+
+                        break
+
+                    default:
+                        //This would be an error
+                        break;
+                }
+            }
+            */
             // configMap has all attributes for effect blocks use dote notation to access values for example: blocks[eblockref].configMap.note.active
 
             //prints entire configMap in console.  Click on the object in the console to see all the attributes
