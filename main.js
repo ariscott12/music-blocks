@@ -469,7 +469,7 @@ function getBlockColor(type) {
 
 collisions = function() {
     var
-        processType,
+        processEffects,
         process,
         oppositeDirection;
 
@@ -488,7 +488,7 @@ collisions = function() {
         }
     };
 
-    processType = function(mblockref, eblockref) {
+    processEffects = function(mblockref, eblockref) {
         // Do effect processing here
 
         if (blocks[eblockref].type == "block-effect") {
@@ -518,27 +518,34 @@ collisions = function() {
                             break;
 
                         case "progression":
+                            var step_direction = 1;
+                            if(blocks[eblockref].configMap[key].direction == "down"){
+                                step_direction = -1;
+                            }
+
                             //Add step value to block key
-                            var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step;
+                            var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step * step_direction;
                             
+                            if(step_direction == 1){
                             //If the result key is lower than the low limit, then set to the low limit.
                             //If the result key is higher than the high limit, then set to key - high limit.
                             //If the result key is inside the range, then leave it alone.
-                            if(newValue < blocks[eblockref].configMap[key].prog_low 
-                                || newValue > blocks[eblockref].configMap[key].prog_high){
-                                    newValue = Math.max(newValue - blocks[eblockref].configMap[key].prog_high + blocks[eblockref].configMap[key].prog_low - 1, 
-                                                                  blocks[eblockref].configMap[key].prog_low);
-                                    //In case the newValue is still greater than low + step, mod by step and add to low. 
-                                    newValue = newValue % blocks[eblockref].configMap[key].step + blocks[eblockref].configMap[key].prog_low;
-
+                                while(newValue < blocks[eblockref].configMap[key].prog_low){
+                                    newValue += blocks[eblockref].configMap[key].step;
+                                }
+                                if(newValue > blocks[eblockref].configMap[key].prog_high){                                   
+                                    newValue = blocks[eblockref].configMap[key].prog_low + (newValue - blocks[eblockref].configMap[key].prog_high) % blocks[eblockref].configMap[key].step;
+                                }
                             }
-
+                            else{
+                                while(newValue > blocks[eblockref].configMap[key].prog_high) {
+                                    newValue -= blocks[eblockref].configMap[key].step;
+                                }
+                                if(newValue < blocks[eblockref].configMap[key].prog_low){
+                                    newValue = blocks[eblockref].configMap[key].prog_high - (blocks[eblockref].configMap[key].prog_low - newValue) % blocks[eblockref].configMap[key].step;                                        
+                                }
+                            }
                             
-                            /*//If the newValue is still greater than the low + step, subtract step until
-                             while (newValue > blocks[eblockref].configMap.velocity.prog_low + blocks[eblockref].configMap[key].step){
-                                 newValue -= blocks[eblockref].configMap[key].step;
-                             }*/
-
                             //Set the block velocity to new value
                             blocks[mblockref][key] = newValue;
 
@@ -637,21 +644,21 @@ collisions = function() {
 
         //Check for collision with object directly in path
         else if (gridArray[directGridX][directGridY] !== -1) {
-            processType(blockref, gridArray[directGridX][directGridY]);
+            processEffects(blockref, gridArray[directGridX][directGridY]);
             blocks[blockref].numCollisions++;
             return oppositeDirection(direction);
         }
 
         //Check for diagonal 1 collision
         else if (diag1GridX >= config.minGridX && diag1GridY >= config.minGridY && diag1GridX <= config.maxGridX && diag1GridY <= config.maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].oldDirection === diag1Direction) {
-            processType(blockref, gridArray[diag1GridX][diag1GridY]);
+            processEffects(blockref, gridArray[diag1GridX][diag1GridY]);
             blocks[blockref].numCollisions++;
             return oppositeDirection(direction);
         }
 
         //Check for diagonal 2 collision
         else if (diag2GridX >= config.minGridX && diag2GridY >= config.minGridY && diag2GridX <= config.maxGridX && diag2GridY <= config.maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].oldDirection === diag2Direction) {
-            processType(blockref, gridArray[diag2GridX][diag2GridY]);
+            processEffects(blockref, gridArray[diag2GridX][diag2GridY]);
             blocks[blockref].numCollisions++;
             return oppositeDirection(direction);
         } else
@@ -660,7 +667,7 @@ collisions = function() {
 
     return {
         process: process,
-        processType: processType
+        processEffects: processEffects
     };
 
 }();
