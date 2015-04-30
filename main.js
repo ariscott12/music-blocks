@@ -13,7 +13,8 @@ var
         defaultNoteMax: 11,
         speed: 4,
         blockSize: 32,
-        gridSize: 20,
+        gridHeight: 20,
+        gridWidth: 20,
         gridOffsetX: 0,
         gridOffsetY: 0,
         minX: 0,
@@ -65,8 +66,10 @@ var
     }
     blocks = [];
 
-config.maxX = config.maxY = config.blockSize * config.gridSize;
-config.maxGridX = config.maxGridY = config.gridSize - 1;
+config.maxX = config.blockSize * config.gridWidth;
+config.maxY = config.blockSize * config.gridHeight;
+config.maxGridX = config.gridWidth - 1;
+config.maxGridY = config.gridHeight - 1;
 config.newBlockType = config.musicBlockType;
 
 
@@ -79,10 +82,9 @@ config.newBlockType = config.musicBlockType;
         node,
         node2,
         gridH,
-        gridV,
-        size = config.gridSize;
+        gridV        
 
-    for (var i = 0; i < size; i++) {
+    for (var i = 0; i < config.gridWidth; i++) {
         gridH = document.getElementById("gridHorizontal");
         gridV = document.getElementById("gridVertical");
         node = document.createElement("LI");
@@ -92,7 +94,7 @@ config.newBlockType = config.musicBlockType;
 
         ////create empty grid array
         gridArray.push([]);
-        for (var j = 0; j < size; j++) {
+        for (var j = 0; j < config.gridHeight; j++) {
             gridArray[i][j] = -1;
         }
     }
@@ -208,8 +210,8 @@ var proto = {
             blocks[v].id = config.musicBlockType + v;
             blocks[v].blocknum = v;
         }
-        for (var t = 0; t < config.gridSize; t++) {
-            for (var u = 0; u < config.gridSize; u++) {
+        for (var t = 0; t < config.gridWidth; t++) {
+            for (var u = 0; u < config.gridHeight; u++) {
                 if (gridArray[t][u] == this.blocknum)
                     gridArray[t][u] = -1;
                 if (gridArray[t][u] >= this.blocknum)
@@ -724,13 +726,13 @@ startSyncCounter = function() {
                         if (blocks[m].direction == "up" && blocks[m].waiting === false && blocks[m].gridY > 1 && gridArray[blocks[m].gridX][blocks[m].gridY - 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY - 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].direction === "down") {
                             blocks[m].halfpoint = blocks[m].posY - (config.blockSize / 2);
                         }
-                        if (blocks[m].direction == "down" && blocks[m].waiting === false && blocks[m].gridY < config.gridSize - 2 && gridArray[blocks[m].gridX][blocks[m].gridY + 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY + 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].direction === "up") {
+                        if (blocks[m].direction == "down" && blocks[m].waiting === false && blocks[m].gridY < config.gridHeight - 2 && gridArray[blocks[m].gridX][blocks[m].gridY + 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY + 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].direction === "up") {
                             blocks[m].halfpoint = blocks[m].posY + (config.blockSize / 2);
                         }
                         if (blocks[m].direction == "left" && blocks[m].waiting === false && blocks[m].gridX > 1 && gridArray[blocks[m].gridX - 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX - 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX - 2][blocks[m].gridY]].waiting === false && blocks[gridArray[blocks[m].gridX - 2][blocks[m].gridY]].direction === "right") {
                             blocks[m].halfpoint = blocks[m].posX - (config.blockSize / 2);
                         }
-                        if (blocks[m].direction == "right" && blocks[m].waiting === false && blocks[m].gridX < config.gridSize - 2 && gridArray[blocks[m].gridX + 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX + 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].waiting === false && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].direction === "left") {
+                        if (blocks[m].direction == "right" && blocks[m].waiting === false && blocks[m].gridX < config.gridWidth - 2 && gridArray[blocks[m].gridX + 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX + 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].waiting === false && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].direction === "left") {
                             blocks[m].halfpoint = blocks[m].posX + (config.blockSize / 2);
                         }
                     }
@@ -1447,8 +1449,8 @@ setStageEvents = function() {
     var
         mousedownX = -1,
         mousedownY = -1,
-        blockDragLeftX = config.gridSize,
-        blockDragLeftY = config.gridSize,
+        blockDragLeftX = config.gridWidth,
+        blockDragLeftY = config.gridHeight,
         blockDragWidth = 0,
         blockDragHeight = 0,
         blockDragOffsetX = 0,
@@ -1547,12 +1549,12 @@ setStageEvents = function() {
                 var
                     gridpos = gridify(e.pageX - config.gridOffsetX) - blockDragOffsetX,
                     validMove = true;
-                if (gridpos + blockDragWidth < config.gridSize && gridpos >= 0) {
+                if (gridpos + blockDragWidth < config.gridWidth && gridpos >= 0) {
                     blockDragLeftX = gridpos;
                 }
 
                 gridpos = gridify(e.pageY - config.gridOffsetY) - blockDragOffsetY;
-                if (gridpos + blockDragHeight < config.gridSize && gridpos >= 0) {
+                if (gridpos + blockDragHeight < config.gridHeight && gridpos >= 0) {
                     blockDragLeftY = gridpos;
                 }
 
@@ -1634,8 +1636,8 @@ setStageEvents = function() {
             if (config.draggingBlocks === true) {
                 config.draggingBlocks = false;
                 config.pause = -1;
-                blockDragLeftX = config.gridSize;
-                blockDragLeftY = config.gridSize;
+                blockDragLeftX = config.gridWidth;
+                blockDragLeftY = config.gridHeight;
                 blockDragWidth = 0;
                 blockDragHeight = 0;
             } else {
@@ -1777,8 +1779,8 @@ setStageEvents = function() {
             });
         }
         console.log("X: "+ e.pageX + "  " + (e.pageX - config.gridOffsetX));
-        mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridSize);
-        mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridSize);
+        mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridWidth);
+        mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridHeight);
 
         if (config.mode === "create") {
             //addBlock(gridify(mousedownX), gridify(mousedownY), config.newBlockType);
@@ -1907,9 +1909,9 @@ keyboardEvents = function() {
 
             case 68: // d
                 var out = "FULL GRID DUMPMONSTER";
-                for (var i = 0; i < config.gridSize; i++) {
+                for (var i = 0; i < config.gridWidth; i++) {
                     out = out + "\n";
-                    for (var j = 0; j < config.gridSize; j++) {
+                    for (var j = 0; j < config.gridHeight; j++) {
                         if ((gridArray[j][i] + "").length === 1)
                             out = out + " ";
                         out = out + gridArray[j][i] + " ";
