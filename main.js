@@ -23,7 +23,7 @@ var
         minGridX: 0,
         minGridY: 0,
         maxGridX: 0,
-        maxGridY: 0,        
+        maxGridY: 0,
         minNote: 1,
         maxNote: 127,
         minVelocity: 0,
@@ -38,11 +38,11 @@ var
         numSelected: 0,
         mode: "create",
         cnt: 0,
-        volume: 60,
-        velocity: 60,
-        duration: 30,
-        note: 5,
-        octave: 4,
+        // volume: 60,
+        // velocity: 60,
+        // duration: 30,
+        // note: 60,
+        // octave: 4,
         newblock: -1,
         draggingBlocks: false,
         colorArray: ["#d27743", "#cf5a4c", "#debe4e", "#ccc"]
@@ -55,15 +55,18 @@ var
         },
         velocity: {
             min: 0,
-            max: 120},
+            max: 120
+        },
         duration: {
             min: 0,
-            max: 120},
+            max: 120
+        },
         volume: {
             min: 0,
-            max: 120}
-    }
-    blocks = [];
+            max: 120
+        }
+    };
+blocks = [];
 
 config.maxX = config.maxY = config.blockSize * config.gridSize;
 config.maxGridX = config.maxGridY = config.gridSize - 1;
@@ -105,7 +108,7 @@ var proto = {
     oldDirection: "none",
     newDirection: "none",
     direction: "none",
-    staticDirection: "none",
+    //staticDirection: "none",
     isMoving: "false",
     queued: 1,
     selected: false,
@@ -230,7 +233,7 @@ var proto = {
             if (this.type == "block-music") {
                 musicBlockPanel.setToBlock(this.blocknum);
             }
-            if (this.type == "block-effect"){
+            if (this.type == "block-effect") {
                 effectBlockPanel.setToBlock(this.blocknum);
                 // console.log(effectBlockPanel);
             }
@@ -245,12 +248,12 @@ var proto = {
     },
     playmidi: function() {
         if (this.type === config.musicBlockType) {
-            var duration = this.duration / 120,
-                note = this.note + 12 * this.octave;
+            var duration = this.duration / 120;
+            //note = this.note + 12 * this.octave;
             //note = this.note;
 
 
-            setMidiParams.triggerMidi(this.volume, this.program, note, this.velocity, duration);
+            setMidiParams.triggerMidi(this.volume, this.program, this.note, this.velocity, duration);
         }
     },
     // setInitValues: function(el) {
@@ -302,57 +305,33 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
     block.posY = y;
     block.speed = s;
     block.type = t;
+    block.staticDirection = "none";
     block.notActive = getBlockColor(block.type);
-    block.note = config.note;
-    block.octave = config.octave;
-    block.volume = config.volume;
-    block.duration = config.duration;
-    block.velocity = config.veloctiy;
+    block.note = null;
+    block.octave = null;
+    block.volume = null;
+    block.duration = null;
+    block.velocity = null;
+
 
     // Music Block Specfic Methods
     block.tester = function() {
         console.log("this is a music block");
     };
     block.setInitValues = function(el) {
-        this.volume = el.volume;
-        this.note = el.note;
-        this.duration = el.duration;
-        this.velocity = el.velocity;
-        this.octave = el.octave;
-        this.program = el.instrument;
-        this.staticDirection = el.direction;
+        var map = el.configMap;
+        this.volume = map.volume;
+        this.note = map.note;
+        this.duration = map.duration;
+        this.velocity = map.velocity;
+        this.octave = map.octave;
+        this.program = map.instrument;
+        this.staticDirection = map.direction;
 
     };
     block.setMidiValues = function(type, value) {
         this[type] = value;
-        // switch (type) {
-        //     case "volume":
-        //         this.volume = value;
-        //         break;
-        //     case "octave":
-        //         this.octave = value;
-        //         break;
-        //     case "duration":
-        //         this.duration = value;
-        //         break;
-        //     case "velocity":
-        //         this.velocity = value;
-        //         break;
-        //     case "note":
-        //         this.note = value;
-        //         break;
-        //     case "instrument":
-        //         this.program = value;
-        //         break;
-        //     case "direction":
-        //         this.staticDirection = value;
-        //         break;
-        //     default:
-        //         // this.volume = value;
-        //         break;
-        // }
     };
-
 
     return block;
 };
@@ -504,10 +483,10 @@ collisions = function() {
         // Do effect processing here
 
         if (blocks[eblockref].type == "block-effect") {
-            
+
             // Note Effect logic
-            if (blocks[eblockref].configMap.note.active){
-                switch (blocks[eblockref].configMap.method){
+            if (blocks[eblockref].configMap.note.active) {
+                switch (blocks[eblockref].configMap.method) {
                     case "specific":
                         //Set the mblock note to eblock specific
                         setBlockToOctaveNote(blocks[mblockref], blocks[eblockref].configMap.note.specific);
@@ -515,14 +494,14 @@ collisions = function() {
 
                     case "random":
                         //If limit range flag, new note is random note inside specified range
-                        if(blocks[eblockref].configMap.note.limit_range){
-                            var octaveNote = rangedRandom(blocks[eblockref].configMap.note.rand_low, blocks[eblockref].configMap.note.rand_high);    
+                        if (blocks[eblockref].configMap.note.limit_range) {
+                            var octaveNote = rangedRandom(blocks[eblockref].configMap.note.rand_low, blocks[eblockref].configMap.note.rand_high);
                         }
 
                         //If not limit range flag, new note is random note in MIDI acceptable range
-                        else{
-                            var octaveNote = rangedRandom(config.minNote,config.maxNote);
-                        }                        
+                        else {
+                            var octaveNote = rangedRandom(config.minNote, config.maxNote);
+                        }
 
                         //Set blocks note and octave based on new note
                         setBlockToOctaveNote(blocks[mblockref], octaveNote);
@@ -531,20 +510,19 @@ collisions = function() {
 
                     case "progression":
                         //Get octaveNote info from block and add step value
-                        var octaveNote = convertBlockToOctaveNote(blocks[mblockref])+ blocks[eblockref].configMap.note.step;
+                        var octaveNote = convertBlockToOctaveNote(blocks[mblockref]) + blocks[eblockref].configMap.note.step;
                         console.log("INCOMING: " + octaveNote);
 
                         //If the result note is lower than the low limit, then set to the low limit.
                         //If the result note is higher than the high limit, then set to note - high limit.
                         //If the result note is inside the range, then leave it alone.
-                        if(octaveNote < blocks[eblockref].configMap.note.prog_low 
-                            || octaveNote > blocks[eblockref].configMap.note.prog_high){
-                            octaveNote = Math.max(octaveNote - blocks[eblockref].configMap.note.prog_high + blocks[eblockref].configMap.note.prog_low - 1, 
-                                                              blocks[eblockref].configMap.note.prog_low);
+                        if (octaveNote < blocks[eblockref].configMap.note.prog_low || octaveNote > blocks[eblockref].configMap.note.prog_high) {
+                            octaveNote = Math.max(octaveNote - blocks[eblockref].configMap.note.prog_high + blocks[eblockref].configMap.note.prog_low - 1,
+                                blocks[eblockref].configMap.note.prog_low);
                         }
 
                         //If the octaveNote is still higher than the range, continually subtract the range until it is within
-                        while (octaveNote > blocks[eblockref].configMap.note.prog_high){
+                        while (octaveNote > blocks[eblockref].configMap.note.prog_high) {
                             octaveNote -= blocks[eblockref].configMap.note.prog_high - blocks[eblockref].configMap.note.prog_low - 1;
                         }
 
@@ -562,9 +540,9 @@ collisions = function() {
 
             //Effects loop
             for (var key in blocks[eblockref].configMap) {
-                if(key != "note"){
-                    if(blocks[eblockref].configMap[key].active){
-                        switch (blocks[eblockref].configMap[key].method){
+                if (key != "note") {
+                    if (blocks[eblockref].configMap[key].active) {
+                        switch (blocks[eblockref].configMap[key].method) {
                             case "specific":
                                 //Set the mblock key to eblock specific
                                 blocks[mblockref][key] = blocks[eblockref].configMap[key].specific;
@@ -572,14 +550,14 @@ collisions = function() {
 
                             case "random":
                                 //If limit range flag, new key is random key inside specified range
-                                if(blocks[eblockref].configMap[key].limit_range){
-                                    var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);    
+                                if (blocks[eblockref].configMap[key].limit_range) {
+                                    var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
                                 }
 
                                 //If not limit range flag, new key is random key in MIDI acceptable range
-                                else{
-                                    var newValue = rangedRandom(minMaxArray[key].min,minMaxArray[key].max);
-                                }                        
+                                else {
+                                    var newValue = rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
+                                }
 
                                 //Set blocks key to new key
                                 blocks[mblockref][key] = newValue;
@@ -589,14 +567,13 @@ collisions = function() {
                             case "progression":
                                 //Add step value to block key
                                 var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step;
-                                
+
                                 //If the result key is lower than the low limit, then set to the low limit.
                                 //If the result key is higher than the high limit, then set to key - high limit.
                                 //If the result key is inside the range, then leave it alone.
-                                if(newValue < blocks[eblockref].configMap[key].prog_low 
-                                    || newValue > blocks[eblockref].configMap[key].prog_high){
-                                    newValue = Math.max(newValue - blocks[eblockref].configMap[key].prog_high + blocks[eblockref].configMap[key].prog_low - 1, 
-                                                                      blocks[eblockref].configMap[key].prog_low);
+                                if (newValue < blocks[eblockref].configMap[key].prog_low || newValue > blocks[eblockref].configMap[key].prog_high) {
+                                    newValue = Math.max(newValue - blocks[eblockref].configMap[key].prog_high + blocks[eblockref].configMap[key].prog_low - 1,
+                                        blocks[eblockref].configMap[key].prog_low);
                                 }
 
                                 //If the velocity is still higher than the range, continually subtract the range until it is within
@@ -607,7 +584,7 @@ collisions = function() {
                                 //Set the block velocity to new value
                                 blocks[mblockref][key] = newValue;
 
-                                break
+                                break;
 
                             default:
                                 //This would be an error
@@ -616,7 +593,7 @@ collisions = function() {
                     }
                 }
             }
-        
+
             /*
             //Velocity Effect logic
             if(blocks[eblockref].configMap.velocity.active){
@@ -950,18 +927,18 @@ setMidiParams = function() {
         getNote,
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
-    window.onload = function() {
-        MIDI.loadPlugin({
-            soundfontUrl: "./soundfont/",
-            instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
-            callback: function() {
-                MIDI.programChange(0, 0);
-                MIDI.programChange(1, 114);
-                MIDI.programChange(2, 112);
-                console.log("loaded");
-            }
-        });
-    };
+    // window.onload = function() {
+    //     MIDI.loadPlugin({
+    //         soundfontUrl: "./soundfont/",
+    //         instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
+    //         callback: function() {
+    //             MIDI.programChange(0, 0);
+    //             MIDI.programChange(1, 114);
+    //             MIDI.programChange(2, 112);
+    //             console.log("loaded");
+    //         }
+    //     });
+    // };
     triggerMidi = function(vol, pro, note, vel, dur) {
 
         MIDI.setVolume(0, vol);
@@ -983,9 +960,9 @@ setMidiParams = function() {
 
 controlPanel = function() {
     var
-        cpanel = {
-            select: $(".block-type-select"),
-            mode_select: $(".modeSelect li")
+        jqueryMap = {
+            $select: $(".block-type-select"),
+            $mode_select: $(".modeSelect li")
         },
 
         buttons = {
@@ -993,7 +970,7 @@ controlPanel = function() {
             advance: document.getElementById("advance"),
             clear: document.getElementById("clearall"),
             selectAll: document.getElementById("selectall"),
-            changeBlockType: document.getElementById("changetype")
+            //changeBlockType: document.getElementById("changetype")
         },
 
         knobparams = {
@@ -1005,33 +982,9 @@ controlPanel = function() {
             height: '27 ',
         },
         valprev = "",
-
-        changeBlockType, setParams, getActivePanel, createDial;
-
-
-    changeBlockType = function() {
-        switch (config.newBlockType) {
-            case config.musicBlockType:
-                config.newBlockType = config.randomVolumeType;
-                break;
-
-            case config.randomVolumeType:
-                config.newBlockType = config.randomOctaveType;
-                break;
-
-            case config.randomOctaveType:
-                config.newBlockType = config.randomNoteType;
-                break;
-
-            case config.randomNoteType:
-                config.newBlockType = config.musicBlockType;
-                break;
-
-            default:
-                break;
-        }
-        blocks[0].convertBlock(config.newBlockType);
-    };
+        setParams, getActivePanel, createDial, getMultiplier,
+        start_octave = 2,
+        multiplier = (start_octave * 12) - 1;
 
     createDial = function(arg_map) {
         var
@@ -1062,10 +1015,16 @@ controlPanel = function() {
                     }
                     if (type === "music-block") {
                         if (params === "note") {
-                            musicBlockPanel.syncNoteSelection(value, "piano-roll");
+                            musicBlockPanel.updatePianoRoll(value);
                         }
                         musicBlockPanel.setParams(params, value);
                     } else {
+                        if (effect_type === 'note') {
+                            effectBlockPanel.updatePianoRoll({
+                                params: params,
+                                value: value
+                            });
+                        }
                         effectBlockPanel.setParams(effect_type, params, value);
                     }
                     // console.log(value);
@@ -1074,25 +1033,34 @@ controlPanel = function() {
                 }
             });
     };
+    getMultiplier = function() {
+        return multiplier;
+    };
 
     getActivePanel = function() {
-        var active = cpanel.select.find("li.active").attr("id");
+        var active = jqueryMap.$select.find("li.active").attr("id");
         return active;
     };
 
-    cpanel.select.find("li").click(function() {
+    jqueryMap.$select.find("li").click(function() {
         var type = $(this).attr("id");
         $("div." + type).show().siblings("div").hide();
         $(this).addClass("active").siblings().removeClass("active");
+        // mode = mode.replace("active", "");
+        if (type == "block-music") {
+            musicBlockPanel.getPanelValues();
+            musicBlockPanel.setPianoRoll();
+        } else {
+            // effectBlockPanel.getPanelValues();
+            //effectBlockPanel.setPianoRoll();
+        }
 
     });
 
-    cpanel.mode_select.click(function() {
+    jqueryMap.$mode_select.click(function() {
         var mode = $(this).attr("id");
         $(this).addClass("active").siblings().removeClass("active");
-        // mode = mode.replace("active", "");
         config.mode = mode;
-
     });
 
 
@@ -1114,9 +1082,9 @@ controlPanel = function() {
         }
     });
 
-    buttons.changeBlockType.addEventListener("click", function() {
-        changeBlockType();
-    });
+    // buttons.changeBlockType.addEventListener("click", function() {
+    //     changeBlockType();
+    // });
 
     buttons.selectAll.addEventListener("click", function() {
         // var blocklength = blocks.length;
@@ -1128,7 +1096,8 @@ controlPanel = function() {
     return {
         //   setParams: setParams,
         createDial: createDial,
-        getActivePanel: getActivePanel
+        getActivePanel: getActivePanel,
+        getMultiplier: getMultiplier
     };
 }();
 
@@ -1137,27 +1106,76 @@ controlPanel = function() {
 
 musicBlockPanel = function() {
     var
-        mblock = {
-            noteknob: $("#note"),
-            volumeknob: $("#volume"),
-            durationknob: $("#duration"),
-            velocityknob: $("#velocity"),
-            octavespinner: $("#octave-spinner"),
-            selectDirection: $("#select-direction"),
-            pianoroll: $(".piano-roll li"),
-            setInstrument: document.getElementById("set-instrument"),
-            sendBlocks: document.getElementById("send-blocks")
+    // Cache jquery selectors for better performance
+        jqueryMap = {
+            $note_knob: $("#note"),
+            $volume_knob: $("#volume"),
+            $duration_knob: $("#duration"),
+            $velocity_knob: $("#velocity"),
+            $select_direction: $("#select-direction"),
+            $piano_roll: $(".piano-wrapper li"),
+            $set_instrument: document.getElementById("set-instrument"),
+            $send_blocks: document.getElementById("send-blocks")
         },
-        getDirection, setDirection, getPanelValues, syncNoteSelection, sendBlocks,
-        setDefault, setToBlock, setParams;
+        startVal = {
+            note: 60,
+            volume: 60,
+            velocity: 60,
+            duration: 40
+        },
+        configMap = {
+            note: null,
+            volume: null,
+            duration: null,
+            velocity: null,
+            instrument: null,
+            direction: null
+        },
+        getDirection, setDirection, getPanelValues, updatePianoRoll, sendBlocks,
+        setToBlock, setParams, setPianoRoll,
+        multiplier = controlPanel.getMultiplier();
 
-    getDirection = function() {
-        return mblock.selectDirection.find("li.active").attr("id");
-    };
+    // Create Music Block Dials
+    controlPanel.createDial({
+        obj: jqueryMap.$note_knob,
+        start_val: startVal.note,
+        type: "music-block",
+        params: "note",
+        min: 24,
+        max: 107
+    });
+    controlPanel.createDial({
+        obj: jqueryMap.$volume_knob,
+        start_val: startVal.volume,
+        type: "music-block",
+        params: "volume",
+        min: 1,
+        max: 120
+    });
+    controlPanel.createDial({
+        obj: jqueryMap.$velocity_knob,
+        start_val: startVal.velocity,
+        type: "music-block",
+        params: "velocity",
+        min: 1,
+        max: 120
+    });
+    controlPanel.createDial({
+        obj: jqueryMap.$duration_knob,
+        start_val: startVal.duration,
+        type: "music-block",
+        params: "duration",
+        min: 1,
+        max: 120
+    });
+
+
     setDirection = function(d) {
-        mblock.selectDirection.find("li#" + d).addClass("active").siblings().removeClass("active");
+        jqueryMap.$select_direction.find("li#" + d).addClass("active").siblings().removeClass("active");
     };
-
+    getDirection = function() {
+        return jqueryMap.$select_direction.find("li.active").attr("id");
+    };
     setParams = function(type, value) {
         for (var i = 0; i < config.cnt; i++) {
             if (blocks[i].selected === true && blocks[i].type == "block-music") {
@@ -1167,24 +1185,16 @@ musicBlockPanel = function() {
     };
     getPanelValues = function() {
         // These are all strings, may need to use parseInt
-        return {
-            volume: mblock.volumeknob.val(),
-            duration: mblock.durationknob.val(),
-            note: parseInt(mblock.noteknob.val(), 0),
-            velocity: mblock.velocityknob.val(),
-            instrument: mblock.setInstrument.value,
-            octave: mblock.octavespinner.slider("value"),
-            direction: getDirection()
-        };
-    };
-    syncNoteSelection = function(value, type) {
-        if (type === "piano-roll") {
-            mblock.pianoroll.eq(value - 1).addClass("active").siblings().removeClass('active');
-        } else {
-            mblock.noteknob.val(value);
-            mblock.noteknob.trigger('change');
-        }
+        configMap.volume = jqueryMap.$volume_knob.val();
+        configMap.duration = jqueryMap.$duration_knob.val();
+        configMap.note = parseInt(jqueryMap.$note_knob.val(), 0);
+        configMap.velocity = jqueryMap.$velocity_knob.val();
+        configMap.instrument = jqueryMap.$set_instrument.value;
+        configMap.direction = getDirection();
 
+        return {
+            configMap: configMap
+        };
     };
     sendBlocks = function() {
         for (var i = 0; i < config.cnt; i++) {
@@ -1194,130 +1204,115 @@ musicBlockPanel = function() {
             }
         }
     };
-    setDefault = function() {
-        mblock.noteknob.val(config.note);
-        mblock.noteknob.trigger('change');
-        mblock.volumeknob.val(config.volume);
-        mblock.volumeknob.trigger('change');
-        mblock.durationknob.val(config.duration);
-        mblock.durationknob.trigger('change');
-        mblock.velocityknob.val(config.velocity);
-        mblock.velocityknob.trigger('change');
-        mblock.octavespinner.slider("value", config.octave);
-        mblock.octavespinner.find("input").val(config.octave);
-        setDirection("up");
+
+    // Sync the piano roll to the note knob (auto run on load)
+    updatePianoRoll = (function update(value) {
+        // Multipler used to account for piano roll octave range (set in controlPanel mod)
+        value = value - multiplier;
+        jqueryMap.$piano_roll.eq(value - 1).addClass("active").siblings().removeClass('active');
+        jqueryMap.$piano_roll.eq(value - 1).parent().siblings().find('li').removeClass('active');
+
+        return update;
+    }(startVal.note));
+
+    // Set the piano roll highlight on block type switch (called in controlPanel mod)
+    setPianoRoll = function() {
+        updatePianoRoll(configMap.note, 'piano-roll');
     };
+
+    // Update control panel UI to selected music block values
     setToBlock = function(num) {
-        mblock.noteknob.val(blocks[num].note);
-        mblock.noteknob.trigger('change');
-        mblock.volumeknob.val(blocks[num].volume);
-        mblock.volumeknob.trigger('change');
-        mblock.durationknob.val(blocks[num].duration);
-        mblock.durationknob.trigger('change');
-        mblock.velocityknob.val(blocks[num].velocity);
-        mblock.velocityknob.trigger('change');
-        mblock.octavespinner.slider("value", blocks[num].octave);
-        mblock.octavespinner.find("input").val(blocks[num].octave);
-        mblock.setInstrument.value = blocks[num].program;
+        jqueryMap.$note_knob.val(blocks[num].note);
+        jqueryMap.$note_knob.trigger('change');
+        jqueryMap.$volume_knob.val(blocks[num].volume);
+        jqueryMap.$volume_knob.trigger('change');
+        jqueryMap.$duration_knob.val(blocks[num].duration);
+        jqueryMap.$duration_knob.trigger('change');
+        jqueryMap.$velocity_knob.val(blocks[num].velocity);
+        jqueryMap.$velocity_knob.trigger('change');
+        jqueryMap.$set_instrument.value = blocks[num].program;
         setDirection(blocks[num].staticDirection);
+        updatePianoRoll(blocks[num].note, 'piano-roll');
     };
 
-
-    // Create Music Block Dials
-    controlPanel.createDial({
-        obj: mblock.noteknob,
-        start_val: config.note,
-        type: "music-block",
-        params: "note",
-        min: 1,
-        max: 120
-    });
-    controlPanel.createDial({
-        obj: mblock.volumeknob,
-        start_val: config.volume,
-        type: "music-block",
-        params: "volume",
-        min: 1,
-        max: 120
-    });
-    controlPanel.createDial({
-        obj: mblock.velocityknob,
-        start_val: config.velocity,
-        type: "music-block",
-        params: "velocity",
-        min: 1,
-        max: 120
-    });
-    controlPanel.createDial({
-        obj: mblock.durationknob,
-        start_val: config.duration,
-        type: "music-block",
-        params: "duration",
-        min: 1,
-        max: 120
-    });
-
-
-    mblock.setInstrument.onchange = function() {
+    //  Click Events
+    jqueryMap.$set_instrument.onchange = function() {
         var program = $(this).val();
-        setParams("instrument", program);
+        setParams('instrument', program);
+
         return false;
     };
-    mblock.selectDirection.find("li").click(function() {
+    jqueryMap.$select_direction.find("li").click(function() {
         var direction = $(this).attr("id");
         $(this).addClass("active").siblings().removeClass("active");
         setParams("direction", direction);
+
+        return false;
     });
-    mblock.octavespinner.slider({
-        orientation: "vertical",
-        value: config.octave,
-        min: 0,
-        max: 7,
-        step: 1,
-        range: "min",
-        slide: function(event, ui) {
-            mblock.octavespinner.find("input").val(ui.value);
-            setParams("octave", ui.value);
+
+    jqueryMap.$piano_roll.click(function() {
+        var
+            type = controlPanel.getActivePanel();
+
+        // If music block panel not selected don't run this functionality
+        if (type == "block-music") {
+            var
+                index = $(this).index(),
+                roll_index = ($(this).parent().index()) * 12,
+                value = (index + roll_index) + (multiplier + 1);
+
+            $(this).addClass("active").siblings().removeClass('active');
+            $(this).parent().siblings().find('li').removeClass('active');
+            setParams("note", value);
+
+            // Update note knob values
+            jqueryMap.$note_knob.val(value);
+            jqueryMap.$note_knob.trigger('change');
+
+            console.log(value);
+
+            return false;
         }
     });
-    mblock.octavespinner.find("input").val(config.octave);
-    mblock.pianoroll.click(function() {
-        var index = $(this).index() + 1;
-        $(this).addClass("active").siblings().removeClass('active');
-        setParams("note", index);
-        syncNoteSelection(index, "dial");
 
-    });
-    mblock.sendBlocks.addEventListener("mousedown", sendBlocks, false);
+    jqueryMap.$send_blocks.addEventListener("mousedown", sendBlocks, false);
 
     return {
         setToBlock: setToBlock,
-        syncNoteSelection: syncNoteSelection,
-        setDefault: setDefault,
+        updatePianoRoll: updatePianoRoll,
         setParams: setParams,
-        getPanelValues: getPanelValues
-            // mblock: mblock
+        getPanelValues: getPanelValues,
+        setPianoRoll: setPianoRoll
     };
 }();
 
 
 effectBlockPanel = function() {
     var
-        eblock = {
-            select_effect: $(".effect-select"),
-            limit_range: $('.limit-range'),
-            step_switch: $('.switch')
+        jqueryMap = {
+            $select_effect: $(".effect-select"),
+            $limit_range: $('.limit-range'),
+            $step_switch: $('.switch'),
+            $piano_roll: $('.piano-wrapper li')
 
         },
-        effectMap,
-        toggleEffectMethod, getPanelValues, setParams,
+        effectMap, updatePianoRoll,
+        toggleEffectMethod, getPanelValues, setParams, setPianoRoll,
         effectArray = ["note", "volume", "velocity", "duration"],
         configMap = {
             note: null,
             volume: null,
             velocity: null,
             duration: null
-        };
+        },
+        startVal = {
+            prog_high: 60,
+            prog_low: 30,
+            rand_high: 60,
+            rand_low: 30,
+            specific: 60
+        },
+        multiplier = controlPanel.getMultiplier();
 
     setParams = function(type, attr, value) {
         for (var i = 0; i < config.cnt; i++) {
@@ -1346,6 +1341,8 @@ effectBlockPanel = function() {
         } else {
             // Update effect block configMap method
             setParams(type, 'method', method);
+            getPanelValues();
+            updatePianoRoll('test');
         }
 
         setParams(type, 'method', method);
@@ -1359,6 +1356,59 @@ effectBlockPanel = function() {
         }
         setParams(type, 'active', configMap[type].active);
     };
+    updatePianoRoll = function() {
+        value = arguments[0].value - multiplier || null;
+        params = arguments[0].params || null;
+
+
+        if (configMap.note.method === 'specific') {
+            jqueryMap.$piano_roll.removeClass('active-high active-low');
+            if (value === null) {
+                value = configMap.note.specific - multiplier;
+            }
+
+            jqueryMap.$piano_roll.eq(value - 1).addClass("active").siblings().removeClass('active');
+            jqueryMap.$piano_roll.eq(value - 1).parent().siblings().find('li').removeClass('active');
+        } else {
+            if (configMap.note.method === 'random') {
+                if (value === null) {
+                    value = {
+                        high: configMap.note.rand_high - multiplier,
+                        low: configMap.note.rand_low - multiplier
+                    };
+                }
+            } else {
+                if (value === null) {
+                    value = {
+                        high: configMap.note.prog_high - multiplier,
+                        low: configMap.note.prog_low - multiplier
+                    };
+                }
+            }
+
+            jqueryMap.$piano_roll.removeClass('active');
+            jqueryMap.$piano_roll.eq(value.high - 1).addClass("active-high").siblings().removeClass('active-high');
+            jqueryMap.$piano_roll.eq(value.high - 1).parent().siblings().find('li').removeClass('active-high');
+            jqueryMap.$piano_roll.eq(value.low - 1).addClass("active-low").siblings().removeClass('active-low');
+            jqueryMap.$piano_roll.eq(value.low - 1).parent().siblings().find('li').removeClass('active-low');
+
+        }
+
+
+
+
+
+
+        // jqueryMap.$piano_roll.removeClass('active');
+        // // console.log(configMap);
+        // jqueryMap.$piano_roll.eq(value.high - 1).addClass("active-high").siblings().removeClass('active-high');
+        // jqueryMap.$piano_roll.eq(value.high - 1).parent().siblings().find('li').removeClass('active-high');
+        // jqueryMap.$piano_roll.eq(value.low - 1).addClass("active-low").siblings().removeClass('active-low');
+        // jqueryMap.$piano_roll.eq(value.low - 1).parent().siblings().find('li').removeClass('active-low');
+    };
+    setPianoRoll = function() {
+
+    };
 
     getPanelValues = function() {
         var method_type,
@@ -1367,87 +1417,88 @@ effectBlockPanel = function() {
 
         for (var key in configMap) {
             mapkey = configMap[key];
-            method_type = eblock[mapkey.type + "_effect_select"].val();
+            method_type = jqueryMap[mapkey.type + "_effect_select"].val();
             method_type = method_type.replace(mapkey.type + "-", "");
             mapkey.method = method_type;
-            mapkey.specific = parseInt(eblock[mapkey.type + "_specific"].val(), 0);
-            mapkey.rand_low = parseInt(eblock[mapkey.type + "_rand_rangelow"].val(), 0);
-            mapkey.rand_high = parseInt(eblock[mapkey.type + "_rand_rangehigh"].val(), 0);
-            mapkey.prog_low = parseInt(eblock[mapkey.type + "_prog_rangelow"].val(), 0);
-            mapkey.prog_high = parseInt(eblock[mapkey.type + "_prog_rangehigh"].val(), 0);
-            mapkey.step = parseInt(eblock[mapkey.type + "_step_size"].val(), 0);
-            mapkey.direction = eblock[mapkey.type + "_step_switch"].attr('data-direction');
-            mapkey.limit_range = eblock[mapkey.type + "_limit_range"].attr('data-limit-range');
+            mapkey.specific = parseInt(jqueryMap[mapkey.type + "_specific"].val(), 0);
+            mapkey.rand_low = parseInt(jqueryMap[mapkey.type + "_rand_rangelow"].val(), 0);
+            mapkey.rand_high = parseInt(jqueryMap[mapkey.type + "_rand_rangehigh"].val(), 0);
+            mapkey.prog_low = parseInt(jqueryMap[mapkey.type + "_prog_rangelow"].val(), 0);
+            mapkey.prog_high = parseInt(jqueryMap[mapkey.type + "_prog_rangehigh"].val(), 0);
+            mapkey.step = parseInt(jqueryMap[mapkey.type + "_step_size"].val(), 0);
+            mapkey.direction = jqueryMap[mapkey.type + "_step_switch"].attr('data-direction');
+            mapkey.limit_range = jqueryMap[mapkey.type + "_limit_range"].attr('data-limit-range');
         }
         return {
             configMap: configMap
         };
     };
 
+    // Loop through all effect types and create jqueryMap, UI controls
     effectMap = (function(e) {
         var length = effectArray.length;
 
         for (var i = 0; i < length; i++) {
-            eblock[e[i] + "_effect"] = $(".effect-" + e[i]);
-            eblock[e[i] + "_effect_select"] = $("#select-" + e[i] + "-effect");
-            eblock[e[i] + "_specific"] = $("#" + e[i] + "-specific-effect");
-            eblock[e[i] + "_rand_rangelow"] = $("." + e[i] + "-rand-rangelow-effect");
-            eblock[e[i] + "_rand_rangehigh"] = $(("." + e[i] + "-rand-rangehigh-effect"));
-            eblock[e[i] + "_prog_rangelow"] = $("." + e[i] + "-prog-rangelow-effect");
-            eblock[e[i] + "_prog_rangehigh"] = $(("." + e[i] + "-prog-rangehigh-effect"));
-            eblock[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
-            eblock[e[i] + "_step_switch"] = $(("." + e[i] + "-step-switch"));
-            eblock[e[i] + "_limit_range"] = $(("." + e[i] + "-limit-to-range"));
+            jqueryMap[e[i] + "_effect"] = $(".effect-" + e[i]);
+            jqueryMap[e[i] + "_effect_select"] = $("#select-" + e[i] + "-effect");
+            jqueryMap[e[i] + "_specific"] = $("#" + e[i] + "-specific-effect");
+            jqueryMap[e[i] + "_rand_rangelow"] = $("." + e[i] + "-rand-rangelow-effect");
+            jqueryMap[e[i] + "_rand_rangehigh"] = $(("." + e[i] + "-rand-rangehigh-effect"));
+            jqueryMap[e[i] + "_prog_rangelow"] = $("." + e[i] + "-prog-rangelow-effect");
+            jqueryMap[e[i] + "_prog_rangehigh"] = $(("." + e[i] + "-prog-rangehigh-effect"));
+            jqueryMap[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
+            jqueryMap[e[i] + "_step_switch"] = $(("." + e[i] + "-step-switch"));
+            jqueryMap[e[i] + "_limit_range"] = $(("." + e[i] + "-limit-to-range"));
 
             //   obj, startVal, type, params, min, max
             controlPanel.createDial({
-                obj: eblock[e[i] + "_specific"],
-                start_val: config.note,
+                obj: jqueryMap[e[i] + "_specific"],
+                start_val: startVal.specific,
                 type: "effect-block",
                 params: "specific",
                 effect_type: e[i],
-                min: 1,
-                max: 127
+                min: 24,
+                max: 107
             });
             controlPanel.createDial({
-                obj: eblock[e[i] + "_rand_rangelow"],
-                start_val: config.note,
+                obj: jqueryMap[e[i] + "_rand_rangelow"],
+                start_val: startVal.rand_low,
                 type: "effect-block",
                 params: "rand_low",
                 effect_type: e[i],
-                min: 1,
-                max: 127
+                min: 24,
+                max: 107
             });
             controlPanel.createDial({
-                obj: eblock[e[i] + "_rand_rangehigh"],
-                start_val: config.note,
+                obj: jqueryMap[e[i] + "_rand_rangehigh"],
+                start_val: startVal.rand_high,
                 type: "effect-block",
                 params: "rand_high",
                 effect_type: e[i],
-                min: 1,
-                max: 127
+                min: 24,
+                max: 107
             });
             controlPanel.createDial({
-                obj: eblock[e[i] + "_prog_rangelow"],
-                start_val: config.note,
+                obj: jqueryMap[e[i] + "_prog_rangelow"],
+                start_val: startVal.prog_low,
                 type: "effect-block",
                 params: "prog_low",
                 effect_type: e[i],
-                min: 1,
-                max: 127
+                min: 24,
+                max: 107
             });
             controlPanel.createDial({
-                obj: eblock[e[i] + "_prog_rangehigh"],
-                start_val: config.note,
+                obj: jqueryMap[e[i] + "_prog_rangehigh"],
+                start_val: startVal.prog_high,
                 type: "effect-block",
                 params: "prog_high",
                 effect_type: e[i],
-                min: 1,
-                max: 127
+                min: 24,
+                max: 107
             });
 
 
-            eblock[e[i] + "_step_size"]
+            jqueryMap[e[i] + "_step_size"]
                 .spinner({
                     min: 0,
                     max: 10,
@@ -1478,7 +1529,7 @@ effectBlockPanel = function() {
             setActiveEffects($(".toggle-" + e[i]).find('span'), e[i]);
 
             // Show effect method panel based on selection on load
-            toggleEffectMethod(eblock[e[i] + "_effect_select"].val(), true);
+            toggleEffectMethod(jqueryMap[e[i] + "_effect_select"].val(), true);
         }
 
     })(effectArray);
@@ -1491,7 +1542,7 @@ effectBlockPanel = function() {
     });
 
     // Step direction switch toggle 
-    eblock.step_switch.click(function() {
+    jqueryMap.$step_switch.click(function() {
         var
             selector = $(this),
             type = $(this).data().type,
@@ -1511,7 +1562,7 @@ effectBlockPanel = function() {
     });
 
     // Limit range toggle
-    eblock.limit_range.click(function() {
+    jqueryMap.$limit_range.click(function() {
         var
             type = $(this).data().type,
             limit = $(this).attr('data-limit-range');
@@ -1533,7 +1584,7 @@ effectBlockPanel = function() {
     });
 
     // Show / Hide effects on click
-    eblock.select_effect.find("li").click(function() {
+    jqueryMap.$select_effect.find("li").click(function() {
         var
             val = $(this).attr('class'),
             selector = $(this).find("span"),
@@ -1552,10 +1603,56 @@ effectBlockPanel = function() {
         return false;
     });
 
+    jqueryMap.$piano_roll.click(function() {
+        var
+            type = controlPanel.getActivePanel();
+
+        // If effect block panel not selected don't run this functionality
+        if (type == "block-effect") {
+            getPanelValues();
+            var
+                index = $(this).index(),
+                roll_index = ($(this).parent().index()) * 12,
+                value = (index + roll_index) + (multiplier + 1);
+
+            switch (configMap.note.method) {
+                case 'specific':
+                    $(this).addClass("active").siblings().removeClass('active');
+                    $(this).parent().siblings().find('li').removeClass('active');
+                    setParams('note', 'specific', value);
+                    jqueryMap.note_specific.val(value);
+                    jqueryMap.note_specific.trigger('change');
+                    break;
+                case 'random':
+
+                    break;
+                case 'progression':
+
+                    break;
+            }
+
+            console.log(value);
+
+            // $(this).addClass("active").siblings().removeClass('active');
+            // $(this).parent().siblings().find('li').removeClass('active');
+            // setParams("note", value);
+
+            // // Update note knob values
+            // jqueryMap.$note_knob.val(value);
+            // jqueryMap.$note_knob.trigger('change');
+
+            // console.log(value);
+
+            return false;
+        }
+    });
+
     return {
         getPanelValues: getPanelValues,
         setToBlock: setToBlock,
-        setParams: setParams
+        setParams: setParams,
+        setPianoRoll: setPianoRoll,
+        updatePianoRoll: updatePianoRoll
 
     };
 
@@ -1611,16 +1708,16 @@ setStageEvents = function() {
 
     // Temporary Center app in browser window
     getPos = function() {
-    //Center app in middle of screen
-    // $("#wrapper").css({
-    //     "width": "1000px",
-    //     "top": "50px"
-    // });
-    config.gridOffsetX = $("#wrapper").offset().left,
-    config.gridOffsetY = $("#wrapper").offset().top;
+        //Center app in middle of screen
+        // $("#wrapper").css({
+        //     "width": "1000px",
+        //     "top": "50px"
+        // });
+        config.gridOffsetX = $("#stage").offset().left,
+            config.gridOffsetY = $("#stage").offset().top;
 
-    console.log("xoffset "+ config.gridOffsetX);
-    console.log("yoffset "+ config.gridOffsetY);
+        console.log("xoffset " + config.gridOffsetX);
+        console.log("yoffset " + config.gridOffsetY);
 
     };
 
@@ -1897,7 +1994,7 @@ setStageEvents = function() {
                 'height': 0
             });
         }
-        console.log("X: "+ e.pageX + "  " + (e.pageX - config.gridOffsetX));
+        console.log("X: " + e.pageX + "  " + (e.pageX - config.gridOffsetX));
         mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridSize);
         mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridSize);
 

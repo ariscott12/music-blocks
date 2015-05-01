@@ -320,9 +320,13 @@
         padding: 20px;
     }
     
+    .piano-wrapper {
+        margin-top: 10px;
+    }
+    
     .piano-roll {
         position: relative;
-        border-top: 1px solid $gray;
+        // border-top: 1px solid $gray;
         border-bottom: 1px solid $gray;
         float: left;
         li {
@@ -342,24 +346,27 @@
             &:nth-child(11) {
                 left: 76px;
             }
-            &:nth-child(12) {
-                border-right: 1px solid $gray
+            &:hover {
+                cursor:pointer;
+                background: $yellow-80;
             }
         }
         .whitekey {
             width: 13px;
-            height: 43px;
+            height: 45px;
             background: #fff;
             border-left: 1px solid $gray;
         }
         .blackkey {
             background: #000;
-            height: 24px;
+            height: 26px;
             position: absolute;
             width: 6px;
             z-index: 100;
         }
-        .active {
+        .active,
+        .active-high,
+        .active-low {
             background: $yellow;
         }
     }

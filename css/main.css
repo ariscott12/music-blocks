@@ -318,9 +318,11 @@ body {
   background: #edebea;
   padding: 20px; }
 
+.piano-wrapper {
+  margin-top: 10px; }
+
 .piano-roll {
   position: relative;
-  border-top: 1px solid #a3a2a1;
   border-bottom: 1px solid #a3a2a1;
   float: left; }
   .piano-roll li {
@@ -335,20 +337,21 @@ body {
       left: 63px; }
     .piano-roll li:nth-child(11) {
       left: 76px; }
-    .piano-roll li:nth-child(12) {
-      border-right: 1px solid #a3a2a1; }
+    .piano-roll li:hover {
+      cursor: pointer;
+      background: #edce69; }
   .piano-roll .whitekey {
     width: 13px;
-    height: 43px;
+    height: 45px;
     background: #fff;
     border-left: 1px solid #a3a2a1; }
   .piano-roll .blackkey {
     background: #000;
-    height: 24px;
+    height: 26px;
     position: absolute;
     width: 6px;
     z-index: 100; }
-  .piano-roll .active {
+  .piano-roll .active, .piano-roll .active-high, .piano-roll .active-low {
     background: #efc94c; }
 
 .octave-select {
@@ -555,19 +558,29 @@ select {
   position: absolute;
   list-style-type: none; }
 
-.modeSelect li {
-  margin: 0 1px 1px 0;
-  padding: 7px 0;
-  width: 68px; }
-.modeSelect .create {
-  padding: 11px 0; }
-.modeSelect .trash {
-  padding: 10px 0;
-  margin-right: 0; }
+.modeSelect {
+  margin-top: 20px;
+  float: left; }
+  .modeSelect li {
+    margin: 0 1px 1px 0;
+    padding: 7px 0;
+    width: 68px;
+    display: inline-block;
+    text-align: center; }
+    .modeSelect li.active {
+      background: #3FA38F; }
+
+#arrows {
+  float: left; }
+  #arrows li {
+    display: inline-block; }
 
 #wrapper {
   margin: 0 auto;
-  position: relative; }
+  position: relative;
+  width: 1000px;
+  margin-top: 50px;
+  margin: 0 auto; }
 
 #stage {
   background: none repeat scroll 0 0 #3f5765;

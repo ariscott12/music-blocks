@@ -25,6 +25,23 @@
 
 <body>
     <div id="wrapper">
+        <ul class="modeSelect">
+            <li id="select" class="select"><img src="images/indexfinger.png">
+            </li>
+            <li id="create" class="create"><img src="images/multiselect.png">
+            </li>
+            <li id="trash"><img src="images/trashcan.png">
+            </li>
+        </ul>
+        <ul id="arrows" class="clearfix">
+            <li id="stop">Stop</li>
+            <li id="pause">Pause</li>
+            <li id="advance">Advance</li>
+            <li id="clearall">Clear All</li>
+            <li id="selectall">Select All</li>
+            <li id="changetype">Change New Block Type</li>
+        </ul>
+        <div class="clear"></div>
         <div draggable="false" id="stage">
             <ul id="gridVertical"></ul>
             <ul id="gridHorizontal"></ul>
@@ -344,7 +361,7 @@
                             <div class="dial-bg"></div>
                             <div class="connector-line"></div>
                         </div>
-                        <ul class="piano-roll clearfix">
+                        <!-- <ul class="piano-roll clearfix">
                             <li class="whitekey active"></li>
                             <li class="blackkey"></li>
                             <li class="whitekey"></li>
@@ -357,12 +374,12 @@
                             <li class="whitekey"></li>
                             <li class="blackkey"></li>
                             <li class="whitekey"></li>
-                        </ul>
+                        </ul> -->
                     </div>
-                    <p>Octave</p>
+                   <!--  <p>Octave</p>
                     <div id="octave-spinner" class="octave-select">
                         <input class="slider-value" />
-                    </div>
+                    </div> -->
                 </div>
                 <div class="level-select">
                     <div class="dial-wrapper">
@@ -397,22 +414,183 @@
             </div>
         </div>
         <div class="clear"></div>
-        <ul class="modeSelect">
-            <li id="select" class="select"><img src="images/indexfinger.png">
-            </li>
-            <li id="create" class="create"><img src="images/multiselect.png">
-            </li>
-            <li id="trash"><img src="images/trashcan.png">
-            </li>
-        </ul>
-        <ul id="arrows" class="clearfix">
-            <li id="stop">Stop</li>
-            <li id="pause">Pause</li>
-            <li id="advance">Advance</li>
-            <li id="clearall">Clear All</li>
-            <li id="selectall">Select All</li>
-            <li id="changetype">Change New Block Type</li>
-        </ul>
+        <div class="piano-wrapper">
+            <ul class="piano-roll">
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+            </ul>
+            <ul class="piano-roll">
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+            </ul>
+            <ul class="piano-roll">
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+            </ul>
+            <ul class="piano-roll">
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+            </ul>
+            <ul class="piano-roll">
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+            </ul>
+            <ul class="piano-roll">
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+            </ul>
+            <ul class="piano-roll clearfix">
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+                <li class="blackkey"></li>
+                <li class="whitekey"></li>
+            </ul>
+        </div>
+        <!-- <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+ -->
+        <!--   <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li> -->
     </div>
     <script src="main.js"></script>
     <script src="//localhost:35729/livereload.js"></script>
