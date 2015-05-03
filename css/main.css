@@ -319,7 +319,17 @@ body {
   padding: 20px; }
 
 .piano-wrapper {
-  margin-top: 10px; }
+  margin-top: 10px;
+  float: left;
+  position: relative; }
+  .piano-wrapper .range-indicator {
+    position: absolute;
+    top: 0;
+    background: #edce69;
+    height: 45px;
+    opacity: .75;
+    z-index: 1000;
+    pointer-events: none; }
 
 .piano-roll {
   position: relative;
@@ -339,7 +349,7 @@ body {
       left: 76px; }
     .piano-roll li:hover {
       cursor: pointer;
-      background: #edce69; }
+      background: #e27a3f; }
   .piano-roll .whitekey {
     width: 13px;
     height: 45px;
@@ -351,7 +361,7 @@ body {
     position: absolute;
     width: 6px;
     z-index: 100; }
-  .piano-roll .active, .piano-roll .active-high, .piano-roll .active-low {
+  .piano-roll .active {
     background: #efc94c; }
 
 .octave-select {

@@ -322,6 +322,17 @@
     
     .piano-wrapper {
         margin-top: 10px;
+        float: left;
+        position: relative;
+        .range-indicator {
+            position: absolute;
+            top: 0;
+            background: $yellow-80;
+            height: 45px;
+            opacity: .75;
+            z-index: 1000;
+            pointer-events: none;
+        }
     }
     
     .piano-roll {
@@ -347,8 +358,8 @@
                 left: 76px;
             }
             &:hover {
-                cursor:pointer;
-                background: $yellow-80;
+                cursor: pointer;
+                background: $orange;
             }
         }
         .whitekey {
@@ -364,10 +375,12 @@
             width: 6px;
             z-index: 100;
         }
-        .active,
-        .active-high,
-        .active-low {
-            background: $yellow;
+        .active {
+            background:$yellow;
+        }
+        .active-high
+        {
+           // background: #F2DB8F;
         }
     }
     
