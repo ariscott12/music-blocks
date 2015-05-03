@@ -13,7 +13,7 @@ var
         defaultNoteMax: 11,
         speed: 4,
         blockSize: 32,
-        gridHeight: 20,
+        gridHeight: 18,
         gridWidth: 20,
         gridOffsetX: 0,
         gridOffsetY: 0,
@@ -85,14 +85,23 @@ config.newBlockType = config.musicBlockType;
         node,
         node2,
         gridH,
-        gridV        
+        gridV;
+
+    for (var q = 0; q < config.gridHeight; q++) {
+        gridH = document.getElementById("gridHorizontal");
+        node = document.createElement("LI");
+        gridH.appendChild(node);
+
+
+
+    }
 
     for (var i = 0; i < config.gridWidth; i++) {
-        gridH = document.getElementById("gridHorizontal");
+        //gridH = document.getElementById("gridHorizontal");
         gridV = document.getElementById("gridVertical");
-        node = document.createElement("LI");
+        //node = document.createElement("LI");
         node2 = document.createElement("LI");
-        gridH.appendChild(node);
+        //gridH.appendChild(node);
         gridV.appendChild(node2);
 
         ////create empty grid array
@@ -387,12 +396,6 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
 };
 
 
-
-
-
-
-
-
 //Display block info
 function displayBlockInfo(blockref) {
     console.log("Block " + blockref +
@@ -473,8 +476,8 @@ collisions = function() {
         if (blocks[eblockref].type == "block-effect") {
             //Effects loop
             for (var key in blocks[eblockref].configMap) {
-                if(blocks[eblockref].configMap[key].active){
-                    switch (blocks[eblockref].configMap[key].method){
+                if (blocks[eblockref].configMap[key].active) {
+                    switch (blocks[eblockref].configMap[key].method) {
                         case "specific":
                             //Set the mblock key to eblock specific
                             blocks[mblockref][key] = blocks[eblockref].configMap[key].specific;
@@ -482,14 +485,14 @@ collisions = function() {
 
                         case "random":
                             //If limit range flag, new key is random key inside specified range
-                            if(blocks[eblockref].configMap[key].limit_range){
-                                var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);    
+                            if (blocks[eblockref].configMap[key].limit_range) {
+                                var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
                             }
 
                             //If not limit range flag, new key is random key in MIDI acceptable range
-                            else{
-                                var newValue = rangedRandom(minMaxArray[key].min,minMaxArray[key].max);
-                            }                        
+                            else {
+                                var newValue = rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
+                            }
 
                             //Set blocks key to new key
                             blocks[mblockref][key] = newValue;
@@ -498,33 +501,32 @@ collisions = function() {
 
                         case "progression":
                             var step_direction = 1;
-                            if(blocks[eblockref].configMap[key].direction == "down"){
+                            if (blocks[eblockref].configMap[key].direction == "down") {
                                 step_direction = -1;
                             }
 
                             //Add step value to block key
                             var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step * step_direction;
-                            
-                            if(step_direction == 1){
-                            //If the result key is lower than the low limit, then set to the low limit.
-                            //If the result key is higher than the high limit, then set to key - high limit.
-                            //If the result key is inside the range, then leave it alone.
-                                while(newValue < blocks[eblockref].configMap[key].prog_low){
+
+                            if (step_direction == 1) {
+                                //If the result key is lower than the low limit, then set to the low limit.
+                                //If the result key is higher than the high limit, then set to key - high limit.
+                                //If the result key is inside the range, then leave it alone.
+                                while (newValue < blocks[eblockref].configMap[key].prog_low) {
                                     newValue += blocks[eblockref].configMap[key].step;
                                 }
-                                if(newValue > blocks[eblockref].configMap[key].prog_high){                                   
+                                if (newValue > blocks[eblockref].configMap[key].prog_high) {
                                     newValue = blocks[eblockref].configMap[key].prog_low + (newValue - blocks[eblockref].configMap[key].prog_high) % blocks[eblockref].configMap[key].step;
                                 }
-                            }
-                            else{
-                                while(newValue > blocks[eblockref].configMap[key].prog_high) {
+                            } else {
+                                while (newValue > blocks[eblockref].configMap[key].prog_high) {
                                     newValue -= blocks[eblockref].configMap[key].step;
                                 }
-                                if(newValue < blocks[eblockref].configMap[key].prog_low){
-                                    newValue = blocks[eblockref].configMap[key].prog_high - (blocks[eblockref].configMap[key].prog_low - newValue) % blocks[eblockref].configMap[key].step;                                        
+                                if (newValue < blocks[eblockref].configMap[key].prog_low) {
+                                    newValue = blocks[eblockref].configMap[key].prog_high - (blocks[eblockref].configMap[key].prog_low - newValue) % blocks[eblockref].configMap[key].step;
                                 }
                             }
-                            
+
                             //Set the block velocity to new value
                             blocks[mblockref][key] = newValue;
 
@@ -534,10 +536,10 @@ collisions = function() {
                             //This would be an error
                             break;
                     }
-                }            
+                }
             }
-        
-            
+
+
             // configMap has all attributes for effect blocks use dote notation to access values for example: blocks[eblockref].configMap.note.active
 
             //prints entire configMap in console.  Click on the object in the console to see all the attributes
@@ -818,16 +820,16 @@ setMidiParams = function() {
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
-        MIDI.loadPlugin({
-            soundfontUrl: "./soundfont/",
-            instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
-            callback: function() {
-                MIDI.programChange(0, 0);
-                MIDI.programChange(1, 114);
-                MIDI.programChange(2, 112);
-                console.log("loaded");
-            }
-        });
+        // MIDI.loadPlugin({
+        //     soundfontUrl: "./soundfont/",
+        //     instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
+        //     callback: function() {
+        //         MIDI.programChange(0, 0);
+        //         MIDI.programChange(1, 114);
+        //         MIDI.programChange(2, 112);
+        //         console.log("loaded");
+        //     }
+        // });
     };
     triggerMidi = function(vol, pro, note, vel, dur) {
 
@@ -916,10 +918,17 @@ controlPanel = function() {
                             });
                         }
                         effectBlockPanel.setParams(effect_type, params, value);
+                        //effectBlockPanel.compareDialValues(effect_type, params, value);
                     }
-                    // console.log(value);
-                    //setParams(type, value);
-
+                },
+                'release': function(v) {
+                    var value = v;
+                    if ((v % 1) >= 0.5) {
+                        value = Math.ceil(v);
+                    } else {
+                        value = Math.floor(v);
+                    }
+                    effectBlockPanel.compareDialValues(effect_type, params, value);
                 }
             });
     };
@@ -941,10 +950,11 @@ controlPanel = function() {
             musicBlockPanel.getPanelValues();
             musicBlockPanel.setPianoRoll();
         } else {
-            // effectBlockPanel.getPanelValues();
-            //effectBlockPanel.setPianoRoll();
-        }
+            // Get effect block panel values before you set the piano roll
+            effectBlockPanel.getPanelValues();
+            effectBlockPanel.updatePianoRoll();
 
+        }
     });
 
     jqueryMap.$mode_select.click(function() {
@@ -1003,7 +1013,7 @@ musicBlockPanel = function() {
             $duration_knob: $("#duration"),
             $velocity_knob: $("#velocity"),
             $select_direction: $("#select-direction"),
-            $piano_roll: $(".piano-wrapper li"),
+            $piano_key: $(".piano-wrapper li"),
             $set_instrument: document.getElementById("set-instrument"),
             $send_blocks: document.getElementById("send-blocks")
         },
@@ -1099,8 +1109,8 @@ musicBlockPanel = function() {
     updatePianoRoll = (function update(value) {
         // Multipler used to account for piano roll octave range (set in controlPanel mod)
         value = value - multiplier;
-        jqueryMap.$piano_roll.eq(value - 1).addClass("active").siblings().removeClass('active');
-        jqueryMap.$piano_roll.eq(value - 1).parent().siblings().find('li').removeClass('active');
+        jqueryMap.$piano_key.eq(value - 1).addClass("active").siblings().removeClass('active');
+        jqueryMap.$piano_key.eq(value - 1).parent().siblings().find('li').removeClass('active');
 
         return update;
     }(startVal.note));
@@ -1140,7 +1150,7 @@ musicBlockPanel = function() {
         return false;
     });
 
-    jqueryMap.$piano_roll.click(function() {
+    jqueryMap.$piano_key.click(function() {
         var
             type = controlPanel.getActivePanel();
 
@@ -1183,11 +1193,13 @@ effectBlockPanel = function() {
             $select_effect: $(".effect-select"),
             $limit_range: $('.limit-range'),
             $step_switch: $('.switch'),
-            $piano_roll: $('.piano-wrapper li')
-
+            $piano_key: $('.piano-wrapper li'),
+            $piano_roll: $('.piano-roll'),
+            $black_key: $('.blackkey'),
+            $white_key: $('.whitekey'),
+            $range_indicator: $('.range-indicator')
         },
-        effectMap, updatePianoRoll,
-        toggleEffectMethod, getPanelValues, setParams, setPianoRoll,
+        effectMap, toggleEffectMethod, getPanelValues, setParams, setPianoRoll, compareValues,
         effectArray = ["note", "volume", "velocity", "duration"],
         configMap = {
             note: null,
@@ -1202,7 +1214,9 @@ effectBlockPanel = function() {
             rand_low: 30,
             specific: 60
         },
-        multiplier = controlPanel.getMultiplier();
+        multiplier = controlPanel.getMultiplier(),
+        black_key_width = jqueryMap.$black_key.outerWidth(),
+        white_key_width = jqueryMap.$white_key.outerWidth();
 
     setParams = function(type, attr, value) {
         for (var i = 0; i < config.cnt; i++) {
@@ -1216,11 +1230,45 @@ effectBlockPanel = function() {
         //NEED TO IMPLEMENT
     };
 
+    compareDialValues = function(effect_type, param, value) {
+
+        // jqueryMap.note_specific.val(80);
+        // jqueryMap.note_specific.trigger('change');
+        //    console.log('test');
+        getPanelValues();
+        var test = null;
+
+        if (param === 'rand_high' || param === 'prog_high') {
+            test = param.replace("high", "low");
+
+            if (value < configMap[effect_type][test]) {
+                jqueryMap[effect_type + "_" + test].val(configMap[effect_type][param] - 1);
+                jqueryMap[effect_type + "_" + test].trigger('change');
+            }
+        }
+        if (param === 'rand_low' || param === 'prog_low') {
+            test = param.replace("low", "high");
+
+            if (value > configMap[effect_type][test]) {
+                jqueryMap[effect_type + "_" + test].val(configMap[effect_type][param] + 1);
+                jqueryMap[effect_type + "_" + test].trigger('change');
+            }
+        }
+
+        if (effect_type === 'note') {
+            updatePianoRoll();
+        }
+
+        // console.log(param);
+        // console.log(value);
+    };
+
     toggleEffectMethod = function(effect, load) {
         var
             split = effect.split("-"),
             type = split[0],
-            method = split[1];
+            method = split[1],
+            setActive;
 
         // Hide and show effect method    
         $("." + effect).show().siblings("div").hide();
@@ -1232,12 +1280,12 @@ effectBlockPanel = function() {
             // Update effect block configMap method
             setParams(type, 'method', method);
             getPanelValues();
-            updatePianoRoll('test');
+            updatePianoRoll();
         }
-
         setParams(type, 'method', method);
     };
 
+    // Set active effects when clicking effect type button
     setActiveEffects = function(obj, type) {
         if (obj.hasClass("active")) {
             configMap[type].active = true;
@@ -1247,58 +1295,97 @@ effectBlockPanel = function() {
         setParams(type, 'active', configMap[type].active);
     };
     updatePianoRoll = function() {
-        value = arguments[0].value - multiplier || null;
-        params = arguments[0].params || null;
+        var
+            valueMap = {},
+            attr = null,
+            value = null,
+            params = null,
+            setActive,
+            pos_high,
+            pos_low;
 
+        setActive = function(attr) {
+            var index_high, index_low,
+                width = $('.piano-roll').width(),
+                pos_high,
+                pos_low;
+
+            if (attr === 'both') {
+                jqueryMap.$piano_key.removeClass('active');
+                jqueryMap.$range_indicator.show();
+            }
+            if (attr === 'high' || attr === 'both') {
+                jqueryMap.$piano_key.eq(valueMap.high - 1).addClass("active-high").siblings().removeClass('active-high');
+                jqueryMap.$piano_key.eq(valueMap.high - 1).parent().siblings().find('li').removeClass('active-high');
+                if (jqueryMap.$piano_key.eq(valueMap.high - 1).hasClass('blackkey')) {
+                    width_add = black_key_width;
+                } else {
+                    width_add = white_key_width;
+                }
+
+            }
+            if (attr === 'low' || attr === 'both') {
+                jqueryMap.$piano_key.eq(valueMap.low - 1).addClass("active-low").siblings().removeClass('active-low');
+                jqueryMap.$piano_key.eq(valueMap.low - 1).parent().siblings().find('li').removeClass('active-low');
+            }
+
+            // Set high and low position of range-indicator
+            index_high = jqueryMap.$piano_roll.find('.active-high').parent().index() * width;
+            index_low = jqueryMap.$piano_roll.find('.active-low').parent().index() * width;
+            pos_high = jqueryMap.$piano_roll.find('.active-high').position();
+            pos_high = pos_high.left + index_high;
+            pos_low = jqueryMap.$piano_roll.find('.active-low').position();
+            pos_low = pos_low.left + index_low;
+
+            jqueryMap.$range_indicator.css({
+                'width': pos_high - pos_low + width_add,
+                'left': pos_low
+            });
+
+
+        };
+
+        if (arguments.length >= 1) {
+            value = arguments[0].value - multiplier;
+            params = arguments[0].params;
+        }
 
         if (configMap.note.method === 'specific') {
-            jqueryMap.$piano_roll.removeClass('active-high active-low');
+            jqueryMap.$piano_key.removeClass('active-high active-low');
+            jqueryMap.$range_indicator.hide();
             if (value === null) {
                 value = configMap.note.specific - multiplier;
             }
-
-            jqueryMap.$piano_roll.eq(value - 1).addClass("active").siblings().removeClass('active');
-            jqueryMap.$piano_roll.eq(value - 1).parent().siblings().find('li').removeClass('active');
+            jqueryMap.$piano_key.eq(value - 1).addClass("active").siblings().removeClass('active');
+            jqueryMap.$piano_key.eq(value - 1).parent().siblings().find('li').removeClass('active');
         } else {
             if (configMap.note.method === 'random') {
                 if (value === null) {
-                    value = {
-                        high: configMap.note.rand_high - multiplier,
-                        low: configMap.note.rand_low - multiplier
-                    };
+                    valueMap['high'] = configMap.note.rand_high - multiplier;
+                    valueMap['low'] = configMap.note.rand_low - multiplier;
+                    setActive('both');
+                } else {
+                    attr = params.split("_");
+                    valueMap[attr[1]] = value;
+                    setActive(attr[1]);
                 }
             } else {
                 if (value === null) {
-                    value = {
-                        high: configMap.note.prog_high - multiplier,
-                        low: configMap.note.prog_low - multiplier
-                    };
+                    valueMap['high'] = configMap.note.prog_high - multiplier;
+                    valueMap['low'] = configMap.note.prog_low - multiplier;
+                    setActive('both');
+                } else {
+                    attr = params.split("_");
+                    valueMap[attr[1]] = value;
+                    setActive(attr[1]);
                 }
             }
-
-            jqueryMap.$piano_roll.removeClass('active');
-            jqueryMap.$piano_roll.eq(value.high - 1).addClass("active-high").siblings().removeClass('active-high');
-            jqueryMap.$piano_roll.eq(value.high - 1).parent().siblings().find('li').removeClass('active-high');
-            jqueryMap.$piano_roll.eq(value.low - 1).addClass("active-low").siblings().removeClass('active-low');
-            jqueryMap.$piano_roll.eq(value.low - 1).parent().siblings().find('li').removeClass('active-low');
-
         }
-
-
-
-
-
-
-        // jqueryMap.$piano_roll.removeClass('active');
-        // // console.log(configMap);
-        // jqueryMap.$piano_roll.eq(value.high - 1).addClass("active-high").siblings().removeClass('active-high');
-        // jqueryMap.$piano_roll.eq(value.high - 1).parent().siblings().find('li').removeClass('active-high');
-        // jqueryMap.$piano_roll.eq(value.low - 1).addClass("active-low").siblings().removeClass('active-low');
-        // jqueryMap.$piano_roll.eq(value.low - 1).parent().siblings().find('li').removeClass('active-low');
     };
-    setPianoRoll = function() {
 
-    };
+    // setPianoRoll = function() {
+
+    // };
 
     getPanelValues = function() {
         var method_type,
@@ -1311,10 +1398,10 @@ effectBlockPanel = function() {
             method_type = method_type.replace(mapkey.type + "-", "");
             mapkey.method = method_type;
             mapkey.specific = parseInt(jqueryMap[mapkey.type + "_specific"].val(), 0);
-            mapkey.rand_low = parseInt(jqueryMap[mapkey.type + "_rand_rangelow"].val(), 0);
-            mapkey.rand_high = parseInt(jqueryMap[mapkey.type + "_rand_rangehigh"].val(), 0);
-            mapkey.prog_low = parseInt(jqueryMap[mapkey.type + "_prog_rangelow"].val(), 0);
-            mapkey.prog_high = parseInt(jqueryMap[mapkey.type + "_prog_rangehigh"].val(), 0);
+            mapkey.rand_low = parseInt(jqueryMap[mapkey.type + "_rand_low"].val(), 0);
+            mapkey.rand_high = parseInt(jqueryMap[mapkey.type + "_rand_high"].val(), 0);
+            mapkey.prog_low = parseInt(jqueryMap[mapkey.type + "_prog_low"].val(), 0);
+            mapkey.prog_high = parseInt(jqueryMap[mapkey.type + "_prog_high"].val(), 0);
             mapkey.step = parseInt(jqueryMap[mapkey.type + "_step_size"].val(), 0);
             mapkey.direction = jqueryMap[mapkey.type + "_step_switch"].attr('data-direction');
             mapkey.limit_range = jqueryMap[mapkey.type + "_limit_range"].attr('data-limit-range');
@@ -1332,10 +1419,10 @@ effectBlockPanel = function() {
             jqueryMap[e[i] + "_effect"] = $(".effect-" + e[i]);
             jqueryMap[e[i] + "_effect_select"] = $("#select-" + e[i] + "-effect");
             jqueryMap[e[i] + "_specific"] = $("#" + e[i] + "-specific-effect");
-            jqueryMap[e[i] + "_rand_rangelow"] = $("." + e[i] + "-rand-rangelow-effect");
-            jqueryMap[e[i] + "_rand_rangehigh"] = $(("." + e[i] + "-rand-rangehigh-effect"));
-            jqueryMap[e[i] + "_prog_rangelow"] = $("." + e[i] + "-prog-rangelow-effect");
-            jqueryMap[e[i] + "_prog_rangehigh"] = $(("." + e[i] + "-prog-rangehigh-effect"));
+            jqueryMap[e[i] + "_rand_low"] = $("." + e[i] + "-rand-rangelow-effect");
+            jqueryMap[e[i] + "_rand_high"] = $(("." + e[i] + "-rand-rangehigh-effect"));
+            jqueryMap[e[i] + "_prog_low"] = $("." + e[i] + "-prog-rangelow-effect");
+            jqueryMap[e[i] + "_prog_high"] = $(("." + e[i] + "-prog-rangehigh-effect"));
             jqueryMap[e[i] + "_step_size"] = $(("." + e[i] + "-step-size"));
             jqueryMap[e[i] + "_step_switch"] = $(("." + e[i] + "-step-switch"));
             jqueryMap[e[i] + "_limit_range"] = $(("." + e[i] + "-limit-to-range"));
@@ -1351,7 +1438,7 @@ effectBlockPanel = function() {
                 max: 107
             });
             controlPanel.createDial({
-                obj: jqueryMap[e[i] + "_rand_rangelow"],
+                obj: jqueryMap[e[i] + "_rand_low"],
                 start_val: startVal.rand_low,
                 type: "effect-block",
                 params: "rand_low",
@@ -1360,7 +1447,7 @@ effectBlockPanel = function() {
                 max: 107
             });
             controlPanel.createDial({
-                obj: jqueryMap[e[i] + "_rand_rangehigh"],
+                obj: jqueryMap[e[i] + "_rand_high"],
                 start_val: startVal.rand_high,
                 type: "effect-block",
                 params: "rand_high",
@@ -1369,7 +1456,7 @@ effectBlockPanel = function() {
                 max: 107
             });
             controlPanel.createDial({
-                obj: jqueryMap[e[i] + "_prog_rangelow"],
+                obj: jqueryMap[e[i] + "_prog_low"],
                 start_val: startVal.prog_low,
                 type: "effect-block",
                 params: "prog_low",
@@ -1378,7 +1465,7 @@ effectBlockPanel = function() {
                 max: 107
             });
             controlPanel.createDial({
-                obj: jqueryMap[e[i] + "_prog_rangehigh"],
+                obj: jqueryMap[e[i] + "_prog_high"],
                 start_val: startVal.prog_high,
                 type: "effect-block",
                 params: "prog_high",
@@ -1457,13 +1544,10 @@ effectBlockPanel = function() {
             type = $(this).data().type,
             limit = $(this).attr('data-limit-range');
 
-
         if (limit === 'true') {
-            //$(this).removeClass('active');
             $(this).attr('data-limit-range', 'false');
             limit = false;
         } else {
-            // $(this).addClass('active');
             limit = true;
             $(this).attr('data-limit-range', 'true');
         }
@@ -1493,17 +1577,20 @@ effectBlockPanel = function() {
         return false;
     });
 
-    jqueryMap.$piano_roll.click(function() {
+    jqueryMap.$piano_key.click(function() {
         var
             type = controlPanel.getActivePanel();
 
         // If effect block panel not selected don't run this functionality
-        if (type == "block-effect") {
-            getPanelValues();
+        if (type === "block-effect") {
             var
-                index = $(this).index(),
-                roll_index = ($(this).parent().index()) * 12,
-                value = (index + roll_index) + (multiplier + 1);
+                value = getValue($(this)),
+                active_high = getValue($('.active-high')),
+                active_low = getValue($('.active-low'));
+
+            // Used to determine if selected piano key is closer to active high or active low
+            active_high = Math.abs(value - active_high);
+            active_low = Math.abs(value - active_low);
 
             switch (configMap.note.method) {
                 case 'specific':
@@ -1514,39 +1601,52 @@ effectBlockPanel = function() {
                     jqueryMap.note_specific.trigger('change');
                     break;
                 case 'random':
-
+                    update('rand');
                     break;
                 case 'progression':
-
+                    update('prog');
                     break;
             }
-
-            console.log(value);
-
-            // $(this).addClass("active").siblings().removeClass('active');
-            // $(this).parent().siblings().find('li').removeClass('active');
-            // setParams("note", value);
-
-            // // Update note knob values
-            // jqueryMap.$note_knob.val(value);
-            // jqueryMap.$note_knob.trigger('change');
-
-            // console.log(value);
-
-            return false;
         }
+
+        function getValue(obj) {
+            var
+                index = obj.index(),
+                roll_index = (obj.parent().index()) * 12,
+                value = (index + roll_index) + (multiplier + 1);
+
+            return value;
+        }
+
+        function update(type) {
+            if (active_high < active_low) {
+                jqueryMap['note_' + type + '_high'].val(value);
+                jqueryMap['note_' + type + '_high'].trigger('change');
+                updatePianoRoll({
+                    value: value,
+                    params: type + '_high'
+                });
+            } else {
+                jqueryMap['note_' + type + '_low'].val(value);
+                jqueryMap['note_' + type + '_low'].trigger('change');
+                updatePianoRoll({
+                    value: value,
+                    params: type + '_low'
+                });
+            }
+        }
+
+        return false;
     });
 
     return {
         getPanelValues: getPanelValues,
         setToBlock: setToBlock,
         setParams: setParams,
-        setPianoRoll: setPianoRoll,
-        updatePianoRoll: updatePianoRoll
+        updatePianoRoll: updatePianoRoll,
+        compareDialValues: compareDialValues
 
     };
-
-
 }();
 
 
@@ -1603,8 +1703,8 @@ setStageEvents = function() {
         //     "width": "1000px",
         //     "top": "50px"
         // });
-        config.gridOffsetX = $("#stage").offset().left,
-            config.gridOffsetY = $("#stage").offset().top;
+        config.gridOffsetX = $("#stage").offset().left;
+        config.gridOffsetY = $("#stage").offset().top;
 
         console.log("xoffset " + config.gridOffsetX);
         console.log("yoffset " + config.gridOffsetY);
@@ -1884,7 +1984,7 @@ setStageEvents = function() {
                 'height': 0
             });
         }
-        console.log("X: "+ e.pageX + "  " + (e.pageX - config.gridOffsetX));
+        console.log("X: " + e.pageX + "  " + (e.pageX - config.gridOffsetX));
         mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridWidth);
         mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridHeight);
 
