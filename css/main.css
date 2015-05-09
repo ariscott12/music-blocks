@@ -103,11 +103,12 @@ body {
     margin-left: 9px;
     float: left; }
     .control-panel .range-wrapper p {
-      margin-bottom: 0;
-      margin-left: 12px; }
+      margin: 0 10px 0 8px;
+      display: inline;
+      font-size: .925em; }
   .control-panel .dial-wrapper-range {
     margin-bottom: 45px;
-    margin-bottom: 53px;
+    margin-bottom: 51px;
     position: relative;
     width: 51px;
     float: left; }
