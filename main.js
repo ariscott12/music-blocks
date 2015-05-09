@@ -46,7 +46,6 @@ var
         // octave: 4,
         newblock: -1,
         draggingBlocks: false,
-        colorArray: ["#d27743", "#cf5a4c", "#debe4e", "#ccc"]
     },
     gridArray = new Array([]),
     minMaxArray = {
@@ -77,32 +76,37 @@ config.newBlockType = config.musicBlockType;
 
 
 
-///Make the grid
+// Make the grid on load using blockSize, gridWidth and gridHeight from config object 
 (function makeGrid() {
     var
         section,
         section2,
         node,
-        node2,
         gridH,
-        gridV;
+        gridV,
+
+        elements = {
+            grid: document.getElementById("grid"),
+            gridH: document.getElementById("gridHorizontal"),
+            gridV: document.getElementById("gridVertical")
+        };
+
+    elements.grid.style.width = (config.blockSize * config.gridWidth) + 'px';
+    elements.grid.style.height = (config.blockSize * config.gridHeight) + 'px';
 
     for (var q = 0; q < config.gridHeight; q++) {
-        gridH = document.getElementById("gridHorizontal");
         node = document.createElement("LI");
-        gridH.appendChild(node);
-
-
-
+        elements.gridH.appendChild(node);
+        node.style.width = (config.blockSize * config.gridWidth) + 'px';
+        node.style.marginTop = (config.blockSize - 1) + 'px';
     }
 
     for (var i = 0; i < config.gridWidth; i++) {
-        //gridH = document.getElementById("gridHorizontal");
-        gridV = document.getElementById("gridVertical");
-        //node = document.createElement("LI");
-        node2 = document.createElement("LI");
-        //gridH.appendChild(node);
-        gridV.appendChild(node2);
+        elements.gridV = document.getElementById("gridVertical");
+        node = document.createElement("LI");
+        elements.gridV.appendChild(node);
+        node.style.height = (config.blockSize * config.gridHeight) + 'px';
+        node.style.marginRight = (config.blockSize - 1) + 'px';
 
         ////create empty grid array
         gridArray.push([]);
@@ -144,7 +148,7 @@ var proto = {
     prevgridX: 0,
     prevgridy: 0,
 
-    section: document.getElementById("stage"),
+    section: document.getElementById("grid"),
 
     setGrid: function() {
         this.gridX = gridify(this.posX);
@@ -172,15 +176,18 @@ var proto = {
         return this;
     },
     addBlock: function() {
+        var
+            colorArray = ["#d27743", "#cf5a4c", "#debe4e", "#ccc"];
+
         //var direction = elements.selectDirection.children('.active').attr("id");
         this.setStyle({
             'top': this.posY + "px",
             'left': this.posX + "px",
             'width': this.width + "px",
             'height': this.height + "px",
-            'background': config.colorArray[this.program]
+            'background': colorArray[this.program]
         });
-        this.notActive = config.colorArray[this.program];
+        this.notActive = colorArray[this.program];
         //this.staticDirection = direction;
     },
     removeNode: function() {
@@ -188,20 +195,43 @@ var proto = {
         this.section.removeChild(node);
         node.remove();
     },
+
+    shadeColor: function(color, percent) {
+
+        var R = parseInt(color.substring(1, 3), 16);
+        var G = parseInt(color.substring(3, 5), 16);
+        var B = parseInt(color.substring(5, 7), 16);
+
+        R = parseInt(R * (100 + percent) / 100, 0);
+        G = parseInt(G * (100 + percent) / 100, 0);
+        B = parseInt(B * (100 + percent) / 100, 0);
+
+        R = (R < 255) ? R : 255;
+        G = (G < 255) ? G : 255;
+        B = (B < 255) ? B : 255;
+
+        var RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
+        var GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
+        var BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+
+        return "#" + RR + GG + BB;
+
+    },
     selectBlock: function() {
-        //ONLY SELECT A BLOCK IF IT IS NOT SELECTED
+        var color = this.shadeColor(this.notActive, 50);
+        // Only select a block if it's not selected
         if (this.selected !== true && config.newblock !== this.blocknum) {
             this.selected = true;
             this.setStyle({
-                'background': this.active
+                'background': color
             });
             config.numSelected++;
         }
     },
+
     deselectBlock: function() {
         //Only deselect block if it is already selected
         if (this.selected === true) {
-            // console.log("test");
             this.selected = false;
             this.setStyle({
                 'background': this.notActive
@@ -1135,7 +1165,7 @@ musicBlockPanel = function() {
     //  Click Events
     jqueryMap.$set_instrument.onchange = function() {
         var program = $(this).val();
-        setParams('instrument', program);
+        setParams('program', program);
 
         return false;
     };
@@ -1688,7 +1718,7 @@ effectBlockPanel = function() {
 
 
 
-setStageEvents = function() {
+setGridEvents = function() {
     var
         mousedownX = -1,
         mousedownY = -1,
@@ -1708,7 +1738,7 @@ setStageEvents = function() {
         mouseDown,
         addBlock,
         elements = {
-            section: document.getElementById("stage"),
+            section: document.getElementById("grid"),
         };
 
     resetBlockDrag = function() {
@@ -1740,8 +1770,8 @@ setStageEvents = function() {
         //     "width": "1000px",
         //     "top": "50px"
         // });
-        config.gridOffsetX = $("#stage").offset().left;
-        config.gridOffsetY = $("#stage").offset().top;
+        config.gridOffsetX = $("#grid").offset().left;
+        config.gridOffsetY = $("#grid").offset().top;
 
         // console.log("xoffset " + config.gridOffsetX);
         // console.log("yoffset " + config.gridOffsetY);

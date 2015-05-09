@@ -1,28 +1,34 @@
-#gridHorizontal, #gridVertical {
-    height: 640px;
+#grid {
+    background: none repeat scroll 0 0 #3f5765;
+    position: relative;
+    float: left;
+    margin-right: 10px;
+}
+
+#gridHorizontal,
+#gridVertical {
     margin-top: 0;
     position: absolute;
     top: 0;
-    width: 640px;
     z-index: 1000;
 }
+
 #gridHorizontal li {
     background: none repeat scroll 0 0 #394e5b;
-    height:1px;
+    height: 1px;
     line-height: 1px;
-    margin-top: 31px;
 }
+
 #gridVertical li {
     background: none repeat scroll 0 0 #394e5b;
     display: inline-block;
-    height: 640px;
-    margin-right: 31px;
     width: 1px;
 }
+
 #dragbox {
     background: none repeat scroll 0 0 transparent;
     border: 1px solid #000;
     position: absolute;
-    background:rgba(229,25,128,.7);
-    z-index: 999;
+    background: rgba(229, 25, 128, .7);
+    z-index: 2000;
 }
