@@ -444,7 +444,7 @@ function gridify(pixels) {
 }
 
 function noteToString(note){
-    return note / 12 + config.noteArray[note % 12];
+    return config.noteArray[note % 12] + Math.floor(note / 12);
 }
 
 function stringToNote(noteString){
