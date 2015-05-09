@@ -46,6 +46,7 @@ var
         // octave: 4,
         newblock: -1,
         draggingBlocks: false,
+        noteArray: ["C", "C#", "D", "D#","E", "F", "F#", "G", "G#", "A", "A#", "B"]
     },
     gridArray = new Array([]),
     minMaxArray = {
@@ -440,6 +441,17 @@ function displayBlockInfo(blockref) {
 //Gridify translates an amount of pixels to an amount of blocks
 function gridify(pixels) {
     return Math.floor((pixels - config.minX) / config.blockSize);
+}
+
+function noteToString(note){
+    return note / 12 + config.noteArray[note % 12];
+}
+
+function stringToNote(noteString){
+    octave = + noteString.charAt(noteString.length - 1);
+    noteStr = noteString.substring(0, noteString.length - 1);
+    note = config.noteArray.indexOf(noteStr);
+    return octave * 12 + note;
 }
 
 function rangedRandom(min, max) {
