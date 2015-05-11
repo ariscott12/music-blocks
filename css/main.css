@@ -84,7 +84,7 @@ body {
   width: 206px;
   font-size: .8125em;
   float: left; }
-  .control-panel .block-effect {
+  .control-panel .block-effect-panel {
     display: none; }
   .control-panel p {
     margin-bottom: 10px; }
@@ -222,7 +222,7 @@ body {
   border-bottom: none;
   opacity: 1; }
 
-.block-effect select {
+.block-effect-panel select {
   margin-bottom: 20px; }
 
 .effect-select {
@@ -330,7 +330,8 @@ body {
     height: 45px;
     opacity: .75;
     z-index: 1000;
-    pointer-events: none; }
+    pointer-events: none;
+    display: none; }
 
 .piano-roll {
   position: relative;
@@ -503,7 +504,11 @@ select {
   background: none repeat scroll 0 0 #3f5765;
   position: relative;
   float: left;
-  margin-right: 10px; }
+  margin-right: 10px;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none; }
 
 #gridHorizontal, #gridVertical {
   margin-top: 0;
@@ -528,24 +533,27 @@ select {
   background: rgba(229, 25, 128, 0.7);
   z-index: 2000; }
 
-.block {
-  background: #DBA65C;
+.block-music, .block-effect {
   position: absolute;
   list-style-type: none;
   z-index: 1000;
   border-bottom: 1px solid #394e5b;
-  border-left: 1px solid #394e5b; }
+  border-left: 1px solid #394e5b;
+  border-radius: 4px; }
 
-.modeSelect {
+.scale {
+  transform: scale(1); }
+
+.mode-select {
   margin-top: 20px;
   float: left; }
-  .modeSelect li {
+  .mode-select li {
     margin: 0 1px 1px 0;
     padding: 7px 0;
     width: 68px;
     display: inline-block;
     text-align: center; }
-    .modeSelect li.active {
+    .mode-select li.active {
       background: #3FA38F; }
 
 #arrows {

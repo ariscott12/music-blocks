@@ -1,5 +1,5 @@
     .control-panel {
-        .block-effect {
+        .block-effect-panel {
             display: none;
         }
         width: 206px;
@@ -176,7 +176,7 @@
     }
     
     // Effect Blocks 
-    .block-effect {
+    .block-effect-panel {
         select {
             margin-bottom: 20px;
         }
@@ -333,6 +333,7 @@
             opacity: .75;
             z-index: 1000;
             pointer-events: none;
+            display:none;
         }
     }
     
