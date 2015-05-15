@@ -5,31 +5,12 @@ var
     config = {
 
         musicBlockType: "block-music",
-        // defaultVolumeMin: 30,
-        // defaultVolumeMax: 70,
-        // defaultOctaveMin: 3,
-        // defaultOctaveMax: 5,
-        // defaultNoteMin: 0,
-        // defaultNoteMax: 11,
         speed: 4,
         blockSize: 32,
         gridHeight: 18,
         gridWidth: 20,
         gridOffsetX: 0,
         gridOffsetY: 0,
-        // minX: 0,
-        // minY: 0,
-        // maxX: 0,
-        // maxY: 0,
-
-        // minNote: 1,
-        // maxNote: 127,
-        // minVelocity: 0,
-        // maxVelocity: 120,
-        // minDuration: 0,
-        // maxDuration: 120,
-        // minVolume: 0,
-        // maxVolume: 120,
         pause: -1,
         advance: -1,
         shiftkey: 0,
@@ -64,13 +45,7 @@ var
         }
     };
 blocks = [];
-
-// config.maxX = config.blockSize * config.gridWidth;
-// config.maxY = config.blockSize * config.gridHeight;
-
 config.newBlockType = config.musicBlockType;
-
-
 
 // Make the grid on load using blockSize, gridWidth and gridHeight from config object 
 (function makeGrid() {
@@ -148,8 +123,8 @@ var proto = {
     section: document.getElementById('grid'),
 
     setGrid: function() {
-        this.gridX = gridify(this.posX);
-        this.gridY = gridify(this.posY);
+        this.gridX = utilities.gridify(this.posX);
+        this.gridY = utilities.gridify(this.posY);
         this.prevgridX = this.gridX;
         this.prevgridY = this.gridY;
     },
@@ -159,22 +134,6 @@ var proto = {
         for (var property in propertyObject)
             elem.style[property] = propertyObject[property];
     },
-    // createNode: function(el, type) {
-    //     var node = document.createElement("LI");
-    //     // direction = elements.selectDirection.children('.active').attr("id");
-
-    //     node.setAttribute("class", this.type);
-
-    //     // Code to animate blocks on add
-    //     // $(node).addClass(this.type).delay(10).queue(function(next) {
-    //     //     $(this).addClass("scale");
-    //     // });
-    //     this.section.appendChild(node);
-    //     this.id = type + el;
-    //     this.blocknum = el;
-    //     node.setAttribute("id", this.id);
-    //     return this;
-    // },
     addBlock: function(el) {
         this.blocknum = el;
         var color;
@@ -189,12 +148,6 @@ var proto = {
             this.active = this.shadeColor(this.notActive, -35);
         }
     },
-    // removeNode: function() {
-    //     var node = document.getElementById(this.id);
-    //     this.section.removeChild(node);
-    //     node.remove();
-    // },
-
     shadeColor: function(color, percent) {
 
         var
@@ -234,11 +187,6 @@ var proto = {
             config.numSelected--;
         }
     },
-    // convertBlock: function(type) {
-    //     var elem = document.getElementById(this.id);
-    //     this.type = type;
-    //     elem.setAttribute("class", type);
-    // },
     removeBlock: function() {
         blocks.splice(this.blocknum, 1);
         for (var v = this.blocknum; v < blocks.length; v++) {
@@ -277,19 +225,6 @@ var proto = {
     resetColor: function(selected) {
         this.notActive = this.colorArray[this.program];
     },
-    // updatePosition: function() {
-    //     this.setStyle({
-    //         'top': this.posY + "px",
-    //         'left': this.posX + "px"
-    //     });
-    // },
-    // resetColor: function(selected) {
-    //     if (selected === false) {
-    //         this.setStyle({
-    //             'background': this.notActive
-    //         });
-    //     }
-    // },
     playmidi: function() {
         var
             duration = this.duration / 120;
@@ -317,7 +252,7 @@ var proto = {
             this.size--;
         }
         context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-    };
+    }
 };
 
 var makeMusicBlock = function(w, h, x, y, s, t) {
@@ -374,7 +309,6 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
         volume: null
     };
 
-
     // Effect Block Specfic Methods
     block.setInitValues = function(el) {
         var effectArray = ['note', 'volume', 'velocity', 'duration'];
@@ -414,26 +348,33 @@ function displayBlockInfo(blockref) {
         ' Waiting: ' + blocks[blockref].waiting);
 }
 
-//Gridify translates an amount of pixels to an amount of blocks
-function gridify(pixels) {
-    var minX = 0;
-    return Math.floor((pixels - minX) / config.blockSize);
-}
 
-function rangedRandom(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+utilities = function() {
 
-//Sets the block's note and octave based on octaveNote value
-function setBlockToOctaveNote(block, octaveNote) {
-    block.note = octaveNote % 12;
-    block.octave = Math.floor(octaveNote / 12);
-}
+    //Gridify translates an amount of pixels to an amount of blocks
+    return {
+        gridify: function(pixels) {
+            var minX = 0;
+            return Math.floor((pixels - minX) / config.blockSize);
+        },
 
-//Retrieve octaveNote value from the block
-function convertBlockToOctaveNote(block) {
-    return block.note + block.octave * 12;
-}
+        rangedRandom: function(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        },
+
+        //Sets the block's note and octave based on octaveNote value
+        setBlockToOctaveNote: function(block, octaveNote) {
+            block.note = octaveNote % 12;
+            block.octave = Math.floor(octaveNote / 12);
+        },
+
+        //Retrieve octaveNote value from the block
+        convertBlockToOctaveNote: function(block) {
+            return block.note + block.octave * 12;
+        }
+    };
+}();
+
 
 // function convertRangeToNote(rangeValue) {
 //     return rangeValue % 12;
@@ -494,12 +435,12 @@ collisions = function() {
                         case "random":
                             //If limit range flag, new key is random key inside specified range
                             if (blocks[eblockref].configMap[key].limit_range) {
-                                var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
+                                var newValue = utilities.rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
                             }
 
                             //If not limit range flag, new key is random key in MIDI acceptable range
                             else {
-                                var newValue = rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
+                                var newValue = utilities.rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
                             }
 
                             //Set blocks key to new key
@@ -800,15 +741,15 @@ startSyncCounter = function() {
                             } else blocks[i].posX += 1 * blocks[i].speed;
                         }
                     }
-                    blocks[i].updatePosition();
+                    // blocks[i].updatePosition();
                 }
             }
 
             //After moving, update all block positions
             for (var q = 0; q < config.cnt; q++) {
                 //calculate new grid positions, floor handles blocks moving left and up
-                blocks[q].gridX = gridify(blocks[q].posX);
-                blocks[q].gridY = gridify(blocks[q].posY);
+                blocks[q].gridX = utilities.gridify(blocks[q].posX);
+                blocks[q].gridY = utilities.gridify(blocks[q].posY);
 
                 //if blocks are moving into a new block, move block reference 1 right or down if needed
                 if (blocks[q].direction === "right" && (blocks[q].posX / config.blockSize) % 1 !== 0)
@@ -1783,7 +1724,7 @@ setGridEvents = function() {
     }();
 
     compareMouse = function(e) {
-        if (gridify(mousedownX) === gridify(e.pageX - config.gridOffsetX) && gridify(mousedownY) === gridify(e.pageY - config.gridOffsetY) && config.draggingBlocks === false) {
+        if (utilities.gridify(mousedownX) === utilities.gridify(e.pageX - config.gridOffsetX) && utilities.gridify(mousedownY) === utilities.gridify(e.pageY - config.gridOffsetY) && config.draggingBlocks === false) {
             return "same";
         } else {
             return "different";
@@ -1812,8 +1753,8 @@ setGridEvents = function() {
         mouselocation = compareMouse(e);
         if (mouselocation == "different") {
             var
-                mousedowngridX = gridify(mousedownX),
-                mousedowngridY = gridify(mousedownY),
+                mousedowngridX = utilities.gridify(mousedownX),
+                mousedowngridY = utilities.gridify(mousedownY),
                 blockDragRightX,
                 blockDragRightY;
 
@@ -1834,8 +1775,8 @@ setGridEvents = function() {
                 }
                 blockDragWidth = blockDragRightX - blockDragLeftX;
                 blockDragHeight = blockDragRightY - blockDragLeftY;
-                blockDragOffsetX = gridify(mousedownX) - blockDragLeftX;
-                blockDragOffsetY = gridify(mousedownY) - blockDragLeftY;
+                blockDragOffsetX = utilities.gridify(mousedownX) - blockDragLeftX;
+                blockDragOffsetY = utilities.gridify(mousedownY) - blockDragLeftY;
 
                 //Set each block's drag offset from the drag corner
                 for (var j = 0; j < config.cnt; j++) {
@@ -1849,13 +1790,13 @@ setGridEvents = function() {
             if (config.draggingBlocks === true) {
                 //Check for new blockDrag positions being outside the grid
                 var
-                    gridpos = gridify(e.pageX - config.gridOffsetX) - blockDragOffsetX,
+                    gridpos = utilities.gridify(e.pageX - config.gridOffsetX) - blockDragOffsetX,
                     validMove = true;
                 if (gridpos + blockDragWidth < config.gridWidth && gridpos >= 0) {
                     blockDragLeftX = gridpos;
                 }
 
-                gridpos = gridify(e.pageY - config.gridOffsetY) - blockDragOffsetY;
+                gridpos = utilities.gridify(e.pageY - config.gridOffsetY) - blockDragOffsetY;
                 if (gridpos + blockDragHeight < config.gridHeight && gridpos >= 0) {
                     blockDragLeftY = gridpos;
                 }
@@ -1895,8 +1836,8 @@ setGridEvents = function() {
 
                 if (config.mode === "create") {
                     var
-                        gridX = gridify(e.pageX - config.gridOffsetX),
-                        gridY = gridify(e.pageY - config.gridOffsetY),
+                        gridX = utilities.gridify(e.pageX - config.gridOffsetX),
+                        gridY = utilities.gridify(e.pageY - config.gridOffsetY),
                         activePanel = controlPanel.getActivePanel();
 
                     // Add music block to the grid 
@@ -1946,9 +1887,9 @@ setGridEvents = function() {
                     blockref;
 
 
-                leftX = gridify(leftX);
+                leftX = utilities.gridify(leftX);
                 rightX = Math.ceil(rightX / config.blockSize);
-                topY = gridify(topY);
+                topY = utilities.gridify(topY);
                 bottomY = Math.ceil(bottomY / config.blockSize);
                 blockref = gridArray[leftX][topY];
                 e = e || window.event;
@@ -2077,8 +2018,8 @@ setGridEvents = function() {
 
 
         if (config.mode === "create") {
-            //addBlock(gridify(mousedownX), gridify(mousedownY), config.newBlockType);
-            addBlock(gridify(mousedownX), gridify(mousedownY), activePanel);
+            //addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), config.newBlockType);
+            addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);
 
         }
 
@@ -2102,26 +2043,6 @@ setGridEvents = function() {
 
             blocks[config.cnt].setGrid();
             blocks[config.cnt].addBlock(config.cnt);
-
-            switch (type) {
-                case config.randomVolumeType:
-                    blocks[config.cnt].rngMin = config.defaultVolumeMin;
-                    blocks[config.cnt].rngMax = config.defaultVolumeMax;
-                    break;
-
-                case config.randomOctaveType:
-                    blocks[config.cnt].rngMin = config.defaultOctaveMin;
-                    blocks[config.cnt].rngMax = config.defaultOctaveMax;
-                    break;
-
-                case config.randomNoteType:
-                    blocks[config.cnt].rngMin = config.defaultNoteMin;
-                    blocks[config.cnt].rngMax = config.defaultNoteMax;
-                    break;
-
-                default:
-                    break;
-            }
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
             config.cnt++;
@@ -2225,9 +2146,9 @@ keyboardEvents = function() {
         }
     }, false);
 
-    stopArrow.addEventListener("click", function() {
-        animateBlock("none");
-    });
+    // stopArrow.addEventListener("click", function() {
+    //     animateBlock("none");
+    // });
 
 }();
 
