@@ -84,9 +84,9 @@ config.newBlockType = config.musicBlockType;
         height = config.blockSize * config.gridHeight,
 
         elements = {
-            grid: document.getElementById("grid_lines"),
-            gridH: document.getElementById("gridHorizontal"),
-            gridV: document.getElementById("gridVertical")
+            grid: document.getElementById('grid_lines'),
+            gridH: document.getElementById('gridHorizontal'),
+            gridV: document.getElementById('gridVertical')
         };
 
     elements.grid.style.width = width + 'px';
@@ -96,15 +96,15 @@ config.newBlockType = config.musicBlockType;
     canvas.height = height;
 
     for (var q = 0; q < config.gridHeight; q++) {
-        node = document.createElement("LI");
+        node = document.createElement('LI');
         elements.gridH.appendChild(node);
         node.style.width = (config.blockSize * config.gridWidth) + 'px';
         node.style.marginTop = (config.blockSize - 1) + 'px';
     }
 
     for (var i = 0; i < config.gridWidth; i++) {
-        elements.gridV = document.getElementById("gridVertical");
-        node = document.createElement("LI");
+        elements.gridV = document.getElementById('gridVertical');
+        node = document.createElement('LI');
         elements.gridV.appendChild(node);
         node.style.height = (config.blockSize * config.gridHeight) + 'px';
         node.style.marginRight = (config.blockSize - 1) + 'px';
@@ -119,26 +119,21 @@ config.newBlockType = config.musicBlockType;
 
 // Music block object and methods
 var proto = {
-    id: "",
+    id: '',
     blocknum: 0,
-    oldDirection: "none",
-    newDirection: "none",
-    direction: "none",
-    //staticDirection: "none",
-    isMoving: "false",
+    oldDirection: 'none',
+    newDirection: 'none',
+    direction: 'none',
+    //staticDirection: 'none',
+    isMoving: 'false',
     queued: 1,
     selected: false,
-    active: "#000",
+    active: null,
     notActive: null,
     halfpoint: -1,
     snd: null,
-    // note: config.note,
-    // octave: config.octave,
-    // volume: config.volume,
-    // duration: config.duration,
-    // veloctiy: config.veloctiy,
     program: 0,
-    waiting: "false",
+    waiting: 'false',
     numCollisions: 0,
     dragOffsetX: 0,
     dragOffsetY: 0,
@@ -146,10 +141,11 @@ var proto = {
     rngMax: 0,
     gridX: 0,
     gridY: 0,
+    size: 8,
     prevgridX: 0,
     prevgridy: 0,
-
-    section: document.getElementById("grid"),
+    colorArray: ['#d27743', '#cf5a4c', '#debe4e', '#ccc'],
+    section: document.getElementById('grid'),
 
     setGrid: function() {
         this.gridX = gridify(this.posX);
@@ -160,53 +156,44 @@ var proto = {
 
     setStyle: function(propertyObject) {
         var elem = document.getElementById(this.id);
-        // $(elem).addClass('scale');
         for (var property in propertyObject)
             elem.style[property] = propertyObject[property];
     },
-    createNode: function(el, type) {
-        var node = document.createElement("LI");
-        // direction = elements.selectDirection.children('.active').attr("id");
+    // createNode: function(el, type) {
+    //     var node = document.createElement("LI");
+    //     // direction = elements.selectDirection.children('.active').attr("id");
 
-        node.setAttribute("class", this.type);
+    //     node.setAttribute("class", this.type);
 
-        // Code to animate blocks on add
-        // $(node).addClass(this.type).delay(10).queue(function(next) {
-        //     $(this).addClass("scale");
-        // });
-        this.section.appendChild(node);
-        this.id = type + el;
+    //     // Code to animate blocks on add
+    //     // $(node).addClass(this.type).delay(10).queue(function(next) {
+    //     //     $(this).addClass("scale");
+    //     // });
+    //     this.section.appendChild(node);
+    //     this.id = type + el;
+    //     this.blocknum = el;
+    //     node.setAttribute("id", this.id);
+    //     return this;
+    // },
+    addBlock: function(el) {
         this.blocknum = el;
-        node.setAttribute("id", this.id);
-        return this;
-    },
-    addBlock: function() {
-        var
-            colorArray = ["#d27743", "#cf5a4c", "#debe4e", "#ccc"],
-            color;
+        var color;
 
         //var direction = elements.selectDirection.children('.active').attr("id");
-        if (this.type === "block-music") {
-            this.notActive = colorArray[this.program];
-            color = colorArray[this.program];
+        if (this.type === 'block-music') {
+            this.notActive = this.colorArray[this.program];
+            this.active = this.shadeColor(this.notActive, -35);
         } else {
             color = '#EDEBEA';
             this.notActive = color;
+            this.active = this.shadeColor(this.notActive, -35);
         }
-        this.setStyle({
-            'top': this.posY + "px",
-            'left': this.posX + "px",
-            'width': this.width + "px",
-            'height': this.height + "px",
-            'background': color
-        });
-        //this.staticDirection = direction;
     },
-    removeNode: function() {
-        var node = document.getElementById(this.id);
-        this.section.removeChild(node);
-        node.remove();
-    },
+    // removeNode: function() {
+    //     var node = document.getElementById(this.id);
+    //     this.section.removeChild(node);
+    //     node.remove();
+    // },
 
     shadeColor: function(color, percent) {
 
@@ -224,26 +211,21 @@ var proto = {
         B = (B < 255) ? B : 255;
 
         var
-            RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16)),
-            GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16)),
-            BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+            RR = ((R.toString(16).length == 1) ? '0' + R.toString(16) : R.toString(16)),
+            GG = ((G.toString(16).length == 1) ? '0' + G.toString(16) : G.toString(16)),
+            BB = ((B.toString(16).length == 1) ? '0' + B.toString(16) : B.toString(16));
 
         return "#" + RR + GG + BB;
 
     },
     selectBlock: function() {
-        var color = this.shadeColor(this.notActive, -70);
-        // Only select a block if it's not selected
-        if (this.selected !== true && config.newblock !== this.blocknum) {
-            this.selected = true;
-            this.setStyle({
-                'background': color
-            });
-            config.numSelected++;
-        }
-        console.log("foo");
-
-    },
+         var color = this.shadeColor(this.notActive, -70);
+         // Only select a block if it's not selected
+         if (this.selected !== true && config.newblock !== this.blocknum) {
+             this.selected = true;
+             config.numSelected++;
+         }
+     },
 
     deselectBlock: function() {
         //Only deselect block if it is already selected
