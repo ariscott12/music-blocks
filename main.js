@@ -1,38 +1,32 @@
 var
     config = {
-        newBlockType: "",
-        randomVolumeType: "rnd-vol-block",
-        randomOctaveType: "rnd-octave-block",
-        randomNoteType: "rnd-note-block",
+
         musicBlockType: "block-music",
-        defaultVolumeMin: 30,
-        defaultVolumeMax: 70,
-        defaultOctaveMin: 3,
-        defaultOctaveMax: 5,
-        defaultNoteMin: 0,
-        defaultNoteMax: 11,
+        // defaultVolumeMin: 30,
+        // defaultVolumeMax: 70,
+        // defaultOctaveMin: 3,
+        // defaultOctaveMax: 5,
+        // defaultNoteMin: 0,
+        // defaultNoteMax: 11,
         speed: 4,
         blockSize: 32,
         gridHeight: 18,
         gridWidth: 20,
         gridOffsetX: 0,
         gridOffsetY: 0,
-        minX: 0,
-        minY: 0,
-        maxX: 0,
-        maxY: 0,
-        minGridX: 0,
-        minGridY: 0,
-        maxGridX: 0,
-        maxGridY: 0,
-        minNote: 1,
-        maxNote: 127,
-        minVelocity: 0,
-        maxVelocity: 120,
-        minDuration: 0,
-        maxDuration: 120,
-        minVolume: 0,
-        maxVolume: 120,
+        // minX: 0,
+        // minY: 0,
+        // maxX: 0,
+        // maxY: 0,
+
+        // minNote: 1,
+        // maxNote: 127,
+        // minVelocity: 0,
+        // maxVelocity: 120,
+        // minDuration: 0,
+        // maxDuration: 120,
+        // minVolume: 0,
+        // maxVolume: 120,
         pause: -1,
         advance: -1,
         shiftkey: 0,
@@ -68,10 +62,9 @@ var
     };
 blocks = [];
 
-config.maxX = config.blockSize * config.gridWidth;
-config.maxY = config.blockSize * config.gridHeight;
-config.maxGridX = config.gridWidth - 1;
-config.maxGridY = config.gridHeight - 1;
+// config.maxX = config.blockSize * config.gridWidth;
+// config.maxY = config.blockSize * config.gridHeight;
+
 config.newBlockType = config.musicBlockType;
 
 
@@ -474,7 +467,8 @@ function displayBlockInfo(blockref) {
 
 //Gridify translates an amount of pixels to an amount of blocks
 function gridify(pixels) {
-    return Math.floor((pixels - config.minX) / config.blockSize);
+    var minX = 0;
+    return Math.floor((pixels - minX) / config.blockSize);
 }
 
 function rangedRandom(min, max) {
@@ -629,7 +623,14 @@ collisions = function() {
             diag1Direction,
             diag2GridX,
             diag2GridY,
-            diag2Direction;
+            diag2Direction,
+            minGridX = 0,
+            minGridY = 0,
+            maxGridX = 0,
+            maxGridY = 0;
+
+        maxGridX = config.gridWidth - 1;
+        maxGridY = config.gridHeight - 1;
         // Based on the direction passed to the function, determine which grid locations to check
         // 1st check the grid square directly in the path of the block
         // 2nd check the grid square clockwise to that square
@@ -683,7 +684,7 @@ collisions = function() {
         }
 
         //Check for boundary collision
-        if ((direction === "up" && gridY === config.minGridY) || (direction === "down" && gridY === config.maxGridY) || (direction === "left" && gridX === config.minGridX) || (direction === "right" && gridX === config.maxGridX)) {
+        if ((direction === "up" && gridY === minGridY) || (direction === "down" && gridY === maxGridY) || (direction === "left" && gridX === minGridX) || (direction === "right" && gridX === maxGridX)) {
             blocks[blockref].numCollisions++;
             return oppositeDirection(direction);
         }
@@ -696,14 +697,14 @@ collisions = function() {
         }
 
         //Check for diagonal 1 collision
-        else if (diag1GridX >= config.minGridX && diag1GridY >= config.minGridY && diag1GridX <= config.maxGridX && diag1GridY <= config.maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].oldDirection === diag1Direction) {
+        else if (diag1GridX >= minGridX && diag1GridY >= minGridY && diag1GridX <= maxGridX && diag1GridY <= maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].oldDirection === diag1Direction) {
             processEffects(blockref, gridArray[diag1GridX][diag1GridY]);
             blocks[blockref].numCollisions++;
             return oppositeDirection(direction);
         }
 
         //Check for diagonal 2 collision
-        else if (diag2GridX >= config.minGridX && diag2GridY >= config.minGridY && diag2GridX <= config.maxGridX && diag2GridY <= config.maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].oldDirection === diag2Direction) {
+        else if (diag2GridX >= minGridX && diag2GridY >= minGridY && diag2GridX <= maxGridX && diag2GridY <= maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].oldDirection === diag2Direction) {
             processEffects(blockref, gridArray[diag2GridX][diag2GridY]);
             blocks[blockref].numCollisions++;
             return oppositeDirection(direction);
@@ -2157,25 +2158,25 @@ setGridEvents = function() {
 
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
-            switch (type) {
-                case config.randomVolumeType:
-                    blocks[config.cnt].rngMin = config.defaultVolumeMin;
-                    blocks[config.cnt].rngMax = config.defaultVolumeMax;
-                    break;
+            // switch (type) {
+            //     case config.randomVolumeType:
+            //         blocks[config.cnt].rngMin = config.defaultVolumeMin;
+            //         blocks[config.cnt].rngMax = config.defaultVolumeMax;
+            //         break;
 
-                case config.randomOctaveType:
-                    blocks[config.cnt].rngMin = config.defaultOctaveMin;
-                    blocks[config.cnt].rngMax = config.defaultOctaveMax;
-                    break;
+            //     case config.randomOctaveType:
+            //         blocks[config.cnt].rngMin = config.defaultOctaveMin;
+            //         blocks[config.cnt].rngMax = config.defaultOctaveMax;
+            //         break;
 
-                case config.randomNoteType:
-                    blocks[config.cnt].rngMin = config.defaultNoteMin;
-                    blocks[config.cnt].rngMax = config.defaultNoteMax;
-                    break;
+            //     case config.randomNoteType:
+            //         blocks[config.cnt].rngMin = config.defaultNoteMin;
+            //         blocks[config.cnt].rngMax = config.defaultNoteMax;
+            //         break;
 
-                default:
-                    break;
-            }
+            //     default:
+            //         break;
+            // }
 
             config.cnt++;
 
