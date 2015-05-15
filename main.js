@@ -328,7 +328,7 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
     block.posY = y;
     block.speed = s;
     block.type = t;
-    block.staticDirection = "none";
+    block.staticDirection = 'none';
     block.notActive = getBlockColor(block.type);
     block.note = null;
     block.octave = null;
@@ -338,9 +338,6 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
 
 
     // Music Block Specfic Methods
-    block.tester = function() {
-        console.log("this is a music block");
-    };
     block.setInitValues = function(el) {
         var map = el.configMap;
         this.volume = map.volume;
@@ -397,12 +394,10 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 direction: map[key].direction
             };
         }
-        //console.log(el.configMap);
     };
 
     block.setMidiValues = function(type, attr, value) {
         this.configMap[type][attr] = value;
-        console.log(this.configMap);
     };
     return block;
 };
@@ -410,13 +405,13 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
 
 //Display block info
 function displayBlockInfo(blockref) {
-    console.log("Block " + blockref +
-        " GridX: " + blocks[blockref].gridX +
-        " GridY: " + blocks[blockref].gridY +
-        " prevGridX: " + blocks[blockref].prevgridX +
-        " prevGridY: " + blocks[blockref].prevgridY +
-        " Direction: " + blocks[blockref].direction +
-        " Waiting: " + blocks[blockref].waiting);
+    console.log('Block ' + blockref +
+        ' GridX: ' + blocks[blockref].gridX +
+        ' GridY: ' + blocks[blockref].gridY +
+        ' prevGridX: ' + blocks[blockref].prevgridX +
+        ' prevGridY: ' + blocks[blockref].prevgridY +
+        ' Direction: ' + blocks[blockref].direction +
+        ' Waiting: ' + blocks[blockref].waiting);
 }
 
 //Gridify translates an amount of pixels to an amount of blocks
