@@ -1,3 +1,6 @@
+ 
+var canvas = document.getElementById("grid"),
+    context = canvas.getContext("2d");
 var
     config = {
 
@@ -77,15 +80,20 @@ config.newBlockType = config.musicBlockType;
         node,
         gridH,
         gridV,
+        width = config.blockSize * config.gridWidth,
+        height = config.blockSize * config.gridHeight,
 
         elements = {
-            grid: document.getElementById("grid"),
+            grid: document.getElementById("grid_lines"),
             gridH: document.getElementById("gridHorizontal"),
             gridV: document.getElementById("gridVertical")
         };
 
-    elements.grid.style.width = (config.blockSize * config.gridWidth) + 'px';
-    elements.grid.style.height = (config.blockSize * config.gridHeight) + 'px';
+    elements.grid.style.width = width + 'px';
+    elements.grid.style.height = height + 'px';
+
+    canvas.width = width;
+    canvas.height = height;
 
     for (var q = 0; q < config.gridHeight; q++) {
         node = document.createElement("LI");
