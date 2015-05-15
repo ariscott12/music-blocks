@@ -283,9 +283,9 @@ var proto = {
             blocks[i].deselectBlock();
         }
         if (config.mode === 'trash') {
-         
-                this.removeBlock();
-          
+
+            this.removeBlock();
+
         } else {
             this.selectBlock();
             if (this.selected === true) {
@@ -1032,7 +1032,6 @@ controlPanel = function() {
     jqueryMap.$mode_select.find('li').click(function() {
         var mode = $(this).attr('class');
         $(this).addClass('active').siblings().removeClass('active');
-
         switch (mode) {
             case 'pause':
                 config.pause = config.pause * -1;
@@ -1048,46 +1047,48 @@ controlPanel = function() {
                     }
                 }
                 break;
+            case 'advance':
+                config.advance *= -1;
+                break;
+            case 'clear-all':
+                for (var i = 0; i < config.cnt; i++) {
+                    blocks[i].removeBlock();
+                    i--;
+                }
+                break;
+            case 'select-all':
+                for (var j = 0; j < config.cnt; j++) {
+                    blocks[j].selectBlock();
+                }
+                break;
         }
-
         config.mode = mode;
     });
-    // jqueryMap.$mode_select.find('pause').click(function() {
-    //     var type = $(this).attr('class');
 
-    //     switch(type) {
-    //         case 'pause'
-    //             break;
-    //     }
-    //     $(this).addClass('active').siblings().removeClass('active');
-    //     config.mode = mode;
+
+
+
+
+    // buttons.pause.addEventListener("click", function() {
+    //     config.pause = config.pause * -1;
     // });
 
+    // buttons.advance.addEventListener("click", function() {
+    //     config.advance *= -1;
+    // });
 
-
-
-
-
-    buttons.pause.addEventListener("click", function() {
-        config.pause = config.pause * -1;
-    });
-
-    buttons.advance.addEventListener("click", function() {
-        config.advance *= -1;
-    });
-
-    buttons.clear.addEventListener("click", function() {
-        for (var i = 0; i < config.cnt; i++) {
-            blocks[i].removeBlock();
-            i--;
-        }
-    });
-    buttons.selectAll.addEventListener("click", function() {
-        // var blocklength = blocks.length;
-        for (var i = 0; i < config.cnt; i++) {
-            blocks[i].selectBlock();
-        }
-    });
+    // buttons.clear.addEventListener("click", function() {
+    //     for (var i = 0; i < config.cnt; i++) {
+    //         blocks[i].removeBlock();
+    //         i--;
+    //     }
+    // });
+    // buttons.selectAll.addEventListener("click", function() {
+    //     // var blocklength = blocks.length;
+    //     for (var i = 0; i < config.cnt; i++) {
+    //         blocks[i].selectBlock();
+    //     }
+    // });
 
     return {
         createDial: createDial,
