@@ -219,35 +219,29 @@ var proto = {
 
     },
     selectBlock: function() {
-         var color = this.shadeColor(this.notActive, -70);
-         // Only select a block if it's not selected
-         if (this.selected !== true && config.newblock !== this.blocknum) {
-             this.selected = true;
-             config.numSelected++;
-         }
-     },
+        var color = this.shadeColor(this.notActive, -70);
+        // Only select a block if it's not selected
+        if (this.selected !== true && config.newblock !== this.blocknum) {
+            this.selected = true;
+            config.numSelected++;
+        }
+    },
 
     deselectBlock: function() {
         //Only deselect block if it is already selected
         if (this.selected === true) {
             this.selected = false;
-            this.setStyle({
-                'background': this.notActive
-            });
             config.numSelected--;
         }
     },
-    convertBlock: function(type) {
-        var elem = document.getElementById(this.id);
-        this.type = type;
-        elem.setAttribute("class", type);
-    },
+    // convertBlock: function(type) {
+    //     var elem = document.getElementById(this.id);
+    //     this.type = type;
+    //     elem.setAttribute("class", type);
+    // },
     removeBlock: function() {
-        this.removeNode();
         blocks.splice(this.blocknum, 1);
         for (var v = this.blocknum; v < blocks.length; v++) {
-            document.getElementById(blocks[v].id).setAttribute("id", config.musicBlockType + v);
-            blocks[v].id = config.musicBlockType + v;
             blocks[v].blocknum = v;
         }
         for (var t = 0; t < config.gridWidth; t++) {
@@ -266,13 +260,10 @@ var proto = {
             blocks[i].deselectBlock();
         }
         if (config.mode === 'trash') {
-
             this.removeBlock();
-
         } else {
             this.selectBlock();
             if (this.selected === true) {
-                //controlPanel.setToBlock(this.blocknum);
                 if (this.type == 'block-music') {
                     musicBlockPanel.setToBlock(this.blocknum);
                 }
@@ -282,78 +273,51 @@ var proto = {
                 controlPanel.setActivePanel(this.type);
             }
         }
-
-    },
-    updatePosition: function() {
-        this.setStyle({
-            'top': this.posY + "px",
-            'left': this.posX + "px"
-        });
     },
     resetColor: function(selected) {
-        if (selected === false) {
-            this.setStyle({
-                'background': this.notActive
-            });
-        }
+        this.notActive = this.colorArray[this.program];
     },
-    playmidi: function() {
-        var
-            duration = this.duration / 120;
-
-        // If music block is note selected create 'light effect' on collision
-        if (this.selected === false) {
-            var color = this.shadeColor(this.notActive, 50);
-            this.setStyle({
-                'background': color
-            });
-            var that = this;
-            // Set timeout calls function to reset color back to original shade
-            setTimeout(function() {
-                that.resetColor(that.selected);
-            }, 100);
-        }
-        setMidiParams.triggerMidi(this.volume, this.program, this.note, this.velocity, duration);
-    },
-    // setInitValues: function(el) {
-    //     this.volume = el.volume;
-    //     this.note = el.note;
-    //     this.duration = el.duration;
-    //     this.velocity = el.velocity;
-    //     this.octave = el.octave;
-    //     this.program = el.instrument;
-    //     this.staticDirection = el.direction;
-
+    // updatePosition: function() {
+    //     this.setStyle({
+    //         'top': this.posY + "px",
+    //         'left': this.posX + "px"
+    //     });
     // },
-    // setMidiValues: function(type, value) {
-    //     switch (type) {
-    //         case "volume":
-    //             this.volume = value;
-    //             break;
-    //         case "octave":
-    //             this.octave = value;
-    //             break;
-    //         case "duration":
-    //             this.duration = value;
-    //             break;
-    //         case "velocity":
-    //             this.velocity = value;
-    //             break;
-    //         case "note":
-    //             this.note = value;
-    //             break;
-    //         case "instrument":
-    //             this.program = value;
-    //             break;
-    //         case "direction":
-    //             this.staticDirection = value;
-    //             break;
-    //         default:
-    //             // this.volume = value;
-    //             break;
+    // resetColor: function(selected) {
+    //     if (selected === false) {
+    //         this.setStyle({
+    //             'background': this.notActive
+    //         });
     //     }
-    // }
+    // },
+    playmidi: function() {
+         var
+             duration = this.duration / 120;
 
+         // If music block is note selected create 'light effect' on collision
+         if (this.selected === false) {
+             this.notActive = this.shadeColor(this.notActive, 50);
+             var that = this;
+             // Set timeout calls function to reset color back to original shade
+             setTimeout(function() {
+                 that.resetColor(that.selected);
+             }, 100);
+         }
+         setMidiParams.triggerMidi(this.volume, this.program, this.note, this.velocity, duration);
+     },
+     render: function() {
+         if (this.selected === false) {
+             context.fillStyle = this.notActive;
+             context.fill();
+         } else {
+             context.fillStyle = this.active;
+             context.fill();
+         }
+         if (this.size > 0) {
+             this.size--;
+         }
+         context.fillRect(this.posX+1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+     };
 };
 
 var makeMusicBlock = function(w, h, x, y, s, t) {
