@@ -46,7 +46,9 @@ var
         // octave: 4,
         newblock: -1,
         draggingBlocks: false,
-        noteArray: ["C", "C#", "D", "D#","E", "F", "F#", "G", "G#", "A", "A#", "B"]
+        noteArray: ["C", "C#", "D", "D#","E", "F", "F#", "G", "G#", "A", "A#", "B"],
+        scaleNameArray: [],
+        scaleArray: []
     },
     gridArray = new Array([]),
     minMaxArray = {
@@ -115,6 +117,15 @@ config.newBlockType = config.musicBlockType;
             gridArray[i][j] = -1;
         }
     }
+    //Add scales to scale arrays
+    addScale("Chromatic",
+            [0,1,2,3,4,5,6,7,8,9,10,11]);
+
+    addScale("CMaj",
+            [0,2,4,5,7,9,11]);
+
+    addScale("CMin",
+            [0,2,3,5,7,8,10]);
 })();
 
 // Music block object and methods
@@ -443,6 +454,18 @@ function gridify(pixels) {
     return Math.floor((pixels - config.minX) / config.blockSize);
 }
 
+function addScale(scaleName, scale){
+    config.scaleNameArray.push(scaleName);
+    config.scaleArray.push(scale);
+}
+
+function getScale(scaleName){
+    console.log(scaleName + "GETTING");
+    console.log(config.scaleNameArray);
+    console.log(config.scaleArray);
+    return config.scaleArray[config.scaleNameArray.indexOf(scaleName)];
+}
+
 function noteToString(note){
     return config.noteArray[note % 12] + Math.floor(note / 12);
 }
@@ -536,6 +559,16 @@ collisions = function() {
                                 var newValue = rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
                             }
 
+                            //REPLACE scale with effect block scale attribute once it exists
+                            var scale = true;
+                            if (scale){
+                                var validNotes = getScale("CMin");
+                                var newNote = newValue % 12;
+                                if(validNotes.indexOf(newNote) == -1){
+                                    newValue --;              
+                                }
+                            }
+                            
                             //Set blocks key to new key
                             blocks[mblockref][key] = newValue;
 
@@ -862,16 +895,16 @@ setMidiParams = function() {
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
-        // MIDI.loadPlugin({
-        //     soundfontUrl: "./soundfont/",
-        //     instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
-        //     callback: function() {
-        //         MIDI.programChange(0, 0);
-        //         MIDI.programChange(1, 114);
-        //         MIDI.programChange(2, 112);
-        //         console.log("loaded");
-        //     }
-        // });
+        MIDI.loadPlugin({
+            soundfontUrl: "./soundfont/",
+            instruments: ["acoustic_grand_piano", "steel_drums", "tinkle_bell"],
+            callback: function() {
+                MIDI.programChange(0, 0);
+                MIDI.programChange(1, 114);
+                MIDI.programChange(2, 112);
+                console.log("loaded");
+            }
+        });
     };
     triggerMidi = function(vol, pro, note, vel, dur) {
 
