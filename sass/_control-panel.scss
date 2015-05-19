@@ -8,16 +8,12 @@
         p {
             margin-bottom: 10px;
         }
-        h3 {
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: .875rem;
-        }
         .dial-wrapper {
             margin-bottom: 10px;
             position: relative;
             width: 116px;
             float: left;
+            cursor: pointer;
         }
         .range-wrapper {
             position: relative;
@@ -25,9 +21,9 @@
             margin-left: 9px;
             float: left;
             p {
-               margin: 0 10px 0 8px;
-               display:inline;
-               font-size: .925em;
+                margin: 0 10px 0 8px;
+                display: inline;
+                font-size: .925em;
             }
         }
         .dial-wrapper-range {
@@ -36,6 +32,7 @@
             position: relative;
             width: 51px;
             float: left;
+            cursor: pointer;
             .dial-input-rangelow {
                 left: -6px;
                 top: 30px;
@@ -63,7 +60,10 @@
         }
         .dial-bg {
             background-color: #ADACAA;
-            border-radius: 27px;
+            @include border-top-radius(27px);
+            @include border-right-radius(27px);
+            @include border-bottom-radius(27px);
+            @include border-left-radius(27px);
             border: 2px solid #888;
             box-shadow: 3px 4px 1px 0 rgba(0, 0, 0, 0.23);
             height: 30px;
@@ -74,7 +74,7 @@
             z-index: 500;
         }
         .connector-line {
-            background: none repeat scroll 0 0 #ccc;
+            background: #ccc;
             height: 1px;
             position: absolute;
             top: 15px;
@@ -82,7 +82,7 @@
             z-index: 0;
         }
         .connector-line-vertical {
-            background: none repeat scroll 0 0 #999;
+            background: #999;
             height: 34px;
             position: absolute;
             top: 26px;
@@ -93,7 +93,7 @@
         .ui-spinner input,
         .dial-wrapper input,
         .dial-wrapper-range input {
-            background: none repeat scroll 0 0 $blue-medium;
+            background: $blue-medium;
             border: 2px solid #ccc;
             border-radius: 4px;
             box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.26) inset;
@@ -102,7 +102,7 @@
             position: absolute;
             text-align: center;
             width: 48px;
-            font-size: .775rem;
+            font-size: .925em;
         }
         .dial-input {
             left: 57px;
@@ -112,7 +112,7 @@
             margin-top: 15px;
             float: left;
             p {
-                font-size: 0.715rem;
+                font-size: 0.915em;
                 margin: 2px 0 5px 22px;
             }
         }
@@ -126,14 +126,13 @@
             cursor: pointer;
             position: relative;
             .toggle {
-                transition: all .5s;
+                @include transition(all .5s);
                 background: $gray-medium;
                 border-bottom: 1px solid #9f9f9f;
                 box-shadow: 0 -1px 5px 0 rgba(0, 0, 0, 0.27);
                 height: 16px;
                 left: 0;
                 position: absolute;
-                //top: 15px;
                 width: 12px;
                 border-top: 1px solid #9f9f9f;
             }
@@ -155,11 +154,10 @@
             float: left;
             background: $gray-medium;
             padding: 12px 0px;
-            font-size: .8rem;
             width: 102px;
             text-align: center;
-            opacity: .5;
-            // border:1px solid $gray-medium;
+            opacity: .6;
+            cursor: pointer;
             &:first-child {
                 margin-right: 2px;
                 width: 102px;
@@ -180,13 +178,78 @@
         select {
             margin-bottom: 20px;
         }
+        #select-note-scale {
+            margin: 10px 0 5px 0;
+        }
+        .header {
+            background: #D6D4D4;
+            border: 1px solid #999;
+            border-top: none;
+            position: relative;
+            .activator {
+                border-right: 1px solid #a3a2a1;
+                float: left;
+                height: 26px;
+                width: 31px;
+                cursor: pointer;
+                &[data-active="true"] {
+                    .activator-button {
+                        background: $orange;
+                    }
+                }
+                &[data-active="false"] {
+                    .activator-button {
+                        background: none;
+                        border: 1px solid $gray;
+                    }
+                }
+            }
+            .activator-button {
+                @include border-top-radius(15px);
+                @include border-bottom-radius(15px);
+                @include border-left-radius(15px);
+                @include border-right-radius(15px);
+                display: inline-block;
+                height: 15px;
+                margin-left: 7px;
+                margin-top: 6px;
+                width: 15px;
+            }
+            svg {
+                float: right;
+                margin-top: 6px;
+                width: 10px;
+                @include transition(all .5s);
+                polygon {
+                    fill: $gray;
+                }
+            }
+            .toggle-drop {
+                cursor: pointer;
+                float: left;
+                height: 26px;
+            }
+            .active {
+                svg {
+                    @include transform(rotateZ(90deg));
+                }
+            }
+        }
+        h3 {
+            float: left;
+            font-size: 0.915em;
+            line-height: 25px;
+            margin-left: 25px;
+            position: relative;
+            top: 2px;
+            width: 124px;
+        }
     }
     
     .effect-select {
         border-left: 1px solid $gray;
         border-right: 1px solid $gray;
         background: $gray-light;
-        // height: 200px;
         padding: 20px;
         li {
             font-size: .75rem;
@@ -210,9 +273,9 @@
     .effect-volume,
     .effect-velocity,
     .effect-duration {
-        border-top: 1px solid $gray;
         border-left: 1px solid $gray;
         border-right: 1px solid $gray;
+        border-bottom: 1px solid $gray;
         padding: 20px;
         background: $gray-light;
     }
@@ -230,6 +293,7 @@
             text-align: center;
         }
         .button-select {
+            cursor: pointer;
             height: 12px;
             width: 12px;
             margin-left: 20px;
@@ -249,11 +313,7 @@
         }
     }
     
-    // Music Blocks
-    .blocks-music {
-        // display: none;
-    }
-    
+    // Music Blocks 
     .instrument-select {
         border-left: 1px solid $gray;
         border-right: 1px solid $gray;
@@ -272,6 +332,7 @@
             border-left: 1px solid $gray;
             border-top: 1px solid $gray;
             position: relative;
+            cursor: pointer;
             &:last-child {
                 border-right: 1px solid $gray;
             }
@@ -333,13 +394,12 @@
             opacity: .75;
             z-index: 1000;
             pointer-events: none;
-            display:none;
+            display: none;
         }
     }
     
     .piano-roll {
         position: relative;
-        // border-top: 1px solid $gray;
         border-bottom: 1px solid $gray;
         float: left;
         li {
@@ -378,22 +438,7 @@
             z-index: 100;
         }
         .active {
-            background:$yellow;
-        }
-        .active-high
-        {
-           // background: #F2DB8F;
-        }
-    }
-    
-    .octave-select {
-        float: left;
-        margin-left: 12px;
-        .slider-value {
-            background: none;
-            border: none;
-            width: 11px;
-            margin-left: 19px;
+            background: $yellow;
         }
     }
     
@@ -401,26 +446,7 @@
         p {
             float: left;
             position: relative;
-            top: 9px;
-            font-size: .775rem;
-        }
-    }
-    
-    .instruments {
-        li {
-            background: $aqua;
-            border: 1px solid #3ea18e;
-            float: left;
-            height: 87px;
-            margin: 0 1px 1px 0;
-            width: 103px;
-        }
-        .instrument2,
-        .instrument4 {
-            margin-right: 0;
-            width: 102px;
-        }
-        .active {
-            background: $green;
+            top: 10px;
+            font-size: .95em;
         }
     }

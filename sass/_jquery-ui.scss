@@ -2,50 +2,50 @@
     box-shadow: 0 5px 0 1px rgba(0, 0, 0, 0.09) inset;
 }
 
-.ui-slider-vertical {
-    position: relative;
-    text-align: left;
-    height: 84px;
-    width: 6px;
-    border: none;
-    background: #4d4d4d;
-    .ui-slider-handle {
-        left: -0.6em;
-        margin-bottom: -0.4em;
-        margin-left: 0;
-        background: $gray;
-        cursor: default;
-        height: 8px;
-        position: absolute;
-        width: 22px;
-        z-index: 2;
-        border: 1px solid #888;
-        box-shadow: 0px 4px 3px 0px rgba(0, 0, 0, 0.33);
-    }
-    .ui-slider-range {
-        background-position: 0 0;
-        border: 0 none;
-        display: block;
-        font-size: 0.7em;
-        position: absolute;
-        z-index: 1;
-        left: 0;
-        width: 100%;
-        //background:$gray-dark;
-    }
-    .ui-slider-range-min {
-        bottom: 0;
-    }
-    .ui-widget-header {
-        background: $aqua;
-        border: none;
-        @extend .shadow;
-    }
-    .slider-value {
-        font-size: .875rem;
-        color: $gray-font;
-    }
-}
+// .ui-slider-vertical {
+//     position: relative;
+//     text-align: left;
+//     height: 84px;
+//     width: 6px;
+//     border: none;
+//     background: #4d4d4d;
+//     .ui-slider-handle {
+//         left: -0.6em;
+//         margin-bottom: -0.4em;
+//         margin-left: 0;
+//         background: $gray;
+//         cursor: default;
+//         height: 8px;
+//         position: absolute;
+//         width: 22px;
+//         z-index: 2;
+//         border: 1px solid #888;
+//         box-shadow: 0px 4px 3px 0px rgba(0, 0, 0, 0.33);
+//     }
+//     .ui-slider-range {
+//         background-position: 0 0;
+//         border: 0 none;
+//         display: block;
+//         font-size: 0.7em;
+//         position: absolute;
+//         z-index: 1;
+//         left: 0;
+//         width: 100%;
+//         //background:$gray-dark;
+//     }
+//     .ui-slider-range-min {
+//         bottom: 0;
+//     }
+//     .ui-widget-header {
+//         background: $aqua;
+//         border: none;
+//         @extend .shadow;
+//     }
+//     .slider-value {
+//         font-size: .875rem;
+//         color: $gray-font;
+//     }
+// }
 
 .ui-widget input {
     font-family: 'Istok Web', sans-serif;
@@ -76,6 +76,7 @@
         line-height: 14px;
         border: 1px solid $blue-medium;
         text-align: center;
+        cursor:pointer;
     }
     .ui-spinner-up {
         top: 0;

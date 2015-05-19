@@ -1,6 +1,7 @@
 .mode-select {
     margin-top:20px;
     float:left;
+    cursor:pointer;
     li {
         margin:0 1px 1px 0;
         padding: 7px 0;
@@ -15,24 +16,5 @@
         img {
             // width: 35px;
         }
-    }
-    // .create {
-    //     padding: 11px 0;
-    //     img {
-    //         // width: 35px;  
-    //     }
-    // }
-    // .trash {
-    //     padding: 10px 0;
-    //     margin-right:0;
-    //     img {
-    //         // width: 32px;  
-    //     }
-    // }
-}
-#arrows {
-    float:left;
-    li {
-        display: inline-block;
     }
 }
