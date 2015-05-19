@@ -10,17 +10,23 @@
     <title>JS Sequencer</title>
     <link rel="author" href="humans.txt">
     <link href='http://fonts.googleapis.com/css?family=Istok+Web:400,700' rel='stylesheet' type='text/css'>
-    <script src="./js/MIDI/AudioDetect.js" type="text/javascript"></script>
-    <script src="./js/MIDI/LoadPlugin.js" type="text/javascript"></script>
-    <script src="./js/MIDI/Plugin.js" type="text/javascript"></script>
-    <script src="./js/MIDI/Player.js" type="text/javascript"></script>
-    <script src="./js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
-    <!-- extras -->
-    <script src="./inc/Base64.js" type="text/javascript"></script>
-    <script src="./inc/base64binary.js" type="text/javascript"></script>
-    <script src="./js/jquery.js" type="text/javascript"></script>
-    <script src="./js/jquery-ui.js" type="text/javascript"></script>
+    <script src="inc/shim/Base64.js" type="text/javascript"></script>
+    <script src="inc/shim/Base64binary.js" type="text/javascript"></script>
+    <script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+    <!-- midi.js package -->
+    <script src="js/midi/audioDetect.js" type="text/javascript"></script>
+    <script src="js/midi/gm.js" type="text/javascript"></script>
+    <script src="js/midi/loader.js" type="text/javascript"></script>
+    <script src="js/midi/plugin.audiotag.js" type="text/javascript"></script>
+    <script src="js/midi/plugin.webaudio.js" type="text/javascript"></script>
+    <script src="js/midi/plugin.webmidi.js" type="text/javascript"></script>
+    <!-- utils -->
+    <script src="js/util/dom_request_xhr.js" type="text/javascript"></script>
+    <script src="js/util/dom_request_script.js" type="text/javascript"></script>
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/jquery-ui.js" type="text/javascript"></script>
     <script src="js/jquery.knob.js"></script>
+    <script src="js/rAF.js"></script>
 </head>
 
 <body>
@@ -34,7 +40,7 @@
             <li class="select-all">Select All</li>
             <li class="clear-all">Clear All</li>
         </ul>
-      <!--   <ul id="arrows" class="clearfix">
+        <!--   <ul id="arrows" class="clearfix">
             <li id="stop">Stop</li>
             <li id="pause">Pause</li>
             <li id="advance">Advance</li>
@@ -43,7 +49,7 @@
             <li id="changetype">Change New Block Type</li>
         </ul> -->
         <div class="clear"></div>
-         <canvas id = "grid" width = "640" height = "640"></canvas>
+        <canvas id="grid" width="640" height="640"></canvas>
         <div draggable="false" id="grid_lines">
             <ul id="gridVertical"></ul>
             <ul id="gridHorizontal"></ul>
@@ -54,7 +60,7 @@
                 <li id="block-effect">Effect Block</li>
             </ul>
             <div class="block-effect-panel">
-                <div class="effect-select">
+                <!--  <div class="effect-select">
                     <ul>
                         <li data-type="note" class="toggle-note"><span class="active button-select">&nbsp;</span>Note</li>
                         <li data-type="volume" class="toggle-volume"><span class="button-select">&nbsp;</span>Volume</li>
@@ -63,18 +69,26 @@
                         <li class="toggle-octave"><span class="button-select">&nbsp;</span>Octave</li>
                         <li><span class="button-select">&nbsp;</span>Scale</li>
                     </ul>
-                </div>
+                </div> -->
                 <div class="effect-wrapper">
-                    <div class="effect-note clearfix">
-                        <h3>Note Effect</h3>
-                        <center>
-                            <select id="select-note-effect">
-                                <option value="note-specific">Specific Value</option>
-                                <option value="note-random">Random Value</option>
-                                <option value="note-progression">Step Progression</option>
-                                <!-- <option value="3">Audi</option> -->
-                            </select>
-                        </center>
+                    <div class="header clearfix">
+                        <div class="activator note-activator" data-active="true" data-type="note">
+                            <span class='activator-button'></span>
+                        </div>
+                        <div class="toggle-drop active">
+                            <h3>Note Effect</h3>
+                            <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                                <polygon points="0,0 11,7 0,14 " fill="#717171">
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="effect-note effect-box clearfix">
+                        <select id="select-note-effect">
+                            <option value="note-specific">Specific Value</option>
+                            <option value="note-random">Random Value</option>
+                            <option value="note-progression">Step Progression</option>
+                            <!-- <option value="3">Audi</option> -->
+                        </select>
                         <div class="note-specific clearfix">
                             <div class="dial-wrapper">
                                 <input class="dial-input" type="text" id="note-specific-effect">
@@ -130,9 +144,28 @@
                                 <p>down</p>
                             </div>
                         </div>
+                        <select id="select-note-scale">
+                            <option value="chromatic">Set Scale</option>
+                            <option value="c-major">C Major</option>
+                            <option value="c-minor">C Minor</option>
+                            <option value="e-major">E Major</option>
+                            <option value="e-minor">E Minor</option>
+                            <option value="g-major">G Major</option>
+                            <option value="g-minor">G Minor</option>
+                        </select>
                     </div>
-                    <div class="effect-volume clearfix">
-                        <h3>Volume Effect</h3>
+                    <div class="header clearfix">
+                        <div class="activator volume-activator" data-active="false" data-type="volume">
+                            <span class='activator-button'></span>
+                        </div>
+                        <div class="toggle-drop">
+                            <h3>Volume Effect</h3>
+                            <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                                <polygon points="0,0 11,7 0,14 " fill="#717171">
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="effect-volume effect-box clearfix">
                         <center>
                             <select id="select-volume-effect">
                                 <option value="volume-specific">Specific Value</option>
@@ -196,8 +229,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="effect-velocity clearfix">
-                        <h3>velocity Effect</h3>
+                    <div class="header clearfix">
+                        <div class="activator velocity-activator" data-active="false" data-type="velocity">
+                            <span class='activator-button'></span>
+                        </div>
+                        <div class="toggle-drop">
+                            <h3>Velocity Effect</h3>
+                            <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                                <polygon points="0,0 11,7 0,14 " fill="#717171">
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="effect-velocity effect-box  clearfix">
                         <center>
                             <select id="select-velocity-effect">
                                 <option value="velocity-specific">Specific Value</option>
@@ -262,8 +305,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="effect-duration clearfix">
-                        <h3>Duration Effect</h3>
+                    <div class="header clearfix">
+                        <div class="activator duration-activator" data-active="false" data-type="duration">
+                            <span class='activator-button'></span>
+                        </div>
+                        <div class="toggle-drop">
+                            <h3>Duration Effect</h3>
+                            <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                                <polygon points="0,0 11,7 0,14 " fill="#717171">
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="effect-duration effect-box  clearfix">
                         <center>
                             <select id="select-duration-effect">
                                 <option value="duration-specific">Specific Value</option>
@@ -334,10 +387,10 @@
                 <div class="instrument-select">
                     <center>
                         <select id="set-instrument">
-                            <option value="0">Piano</option>
+                          <!--   <option value="0">Piano</option>
                             <option value="1">Steel Drum</option>
                             <option value="2">Bells</option>
-                            <!-- <option value="3">Audi</option> -->
+                            <option value="3">Accordion</option> -->
                         </select>
                     </center>
                 </div>
@@ -414,7 +467,7 @@
                 </div>
                 <div class="activate-blocks">
                     <center>
-                        <div id="send-blocks" class="send-blocks button-basic">Send Blocks
+                        <div class="send-blocks button-basic">Send Blocks
                             <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
                                 <polygon fill="#717171" points="0,0 11,7 0,14 " />
                             </svg>
