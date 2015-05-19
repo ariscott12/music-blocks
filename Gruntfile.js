@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
     //  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
     grunt.initConfig({
+
         sass: {
             dist: {
 
@@ -8,7 +9,9 @@ module.exports = function(grunt) {
                     'css/main.css': 'sass/main.scss',
                 },
                 options: { // Target options
-                    style: 'compact'
+                    includePaths: require('node-bourbon').includePaths,
+                    style: 'compact' 
+                    
                 }
             }
         },
