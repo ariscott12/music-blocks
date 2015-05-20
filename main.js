@@ -13,8 +13,11 @@ var
         mode: "create",
         cnt: 0,
         newblock: -1,
-        instrumentsToLoad: 5,
+        instrumentsToLoad: 2,
         draggingBlocks: false,
+        noteArray: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+        scaleNameArray: [],
+        scaleArray: []
     },
      
     canvas = document.getElementById("grid"),
@@ -42,20 +45,20 @@ blocks = [];
 midiInstruments = {
     'overdriven_guitar': 29,
     'acoustic_bass': 32,
-    'fretless_bass': 35,
     'orchestral_harp': 46,
     'acoustic_grand_piano': 0,
     'rock_organ': 18,
     'harpsichord': 6,
     'xylophone': 13,
     'marimba': 12,
-    // 'hammond_organ': 16,
     'harmonica': 22,
     'accordion': 21,
-    // 'electric_jazz_guitar': 26,
     'synth_strings_1': 50,
     'trumpet': 56,
-    'trombone': 57
+    'trombone': 57,
+    //    'fretless_bass': 35,
+    // 'hammond_organ': 16,
+    // 'electric_jazz_guitar': 26,
     // 'alto_sax': 65,
     // 'tenor_sax': 66,
     // 'flute': 73,
@@ -106,6 +109,10 @@ midiInstruments = {
             gridArray[i][j] = -1;
         }
     }
+    //Add scales to scale arrays
+    addScale("Chromatic", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    addScale("CMaj", [0, 2, 4, 5, 7, 9, 11]);
+    addScale("CMin", [0, 2, 3, 5, 7, 8, 10]);
 })();
 
 // Music block object and methods
@@ -397,8 +404,34 @@ function displayBlockInfo(blockref) {
 }
 
 
-utilities = function() {
+function addScale(scaleName, scale) {
+    config.scaleNameArray.push(scaleName);
+    config.scaleArray.push(scale);
+}
 
+function getScale(scaleName) {
+    console.log(scaleName + "GETTING");
+    console.log(config.scaleNameArray);
+    console.log(config.scaleArray);
+    return config.scaleArray[config.scaleNameArray.indexOf(scaleName)];
+}
+
+function noteToString(note) {
+    return config.noteArray[note % 12] + Math.floor(note / 12);
+}
+
+function stringToNote(noteString) {
+    octave = +noteString.charAt(noteString.length - 1);
+    noteStr = noteString.substring(0, noteString.length - 1);
+    note = config.noteArray.indexOf(noteStr);
+    return octave * 12 + note;
+}
+
+function rangedRandom(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+utilities = function() {
     //Gridify translates an amount of pixels to an amount of blocks
     return {
         gridify: function(pixels) {
@@ -466,6 +499,16 @@ collisions = function() {
                             //If not limit range flag, new key is random key in MIDI acceptable range
                             else {
                                 var newValue = utilities.rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
+                            }
+
+                            //REPLACE scale with effect block scale attribute once it exists
+                            var scale = true;
+                            if (scale) {
+                                var validNotes = getScale("CMin");
+                                var newNote = newValue % 12;
+                                if (validNotes.indexOf(newNote) == -1) {
+                                    newValue--;
+                                }
                             }
 
                             //Set blocks key to new key
@@ -805,10 +848,14 @@ setMidiParams = function() {
         tiggerMidi;
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
-        var cnt = 0;
+        var cnt = 0,
+            str = [];
+        for (var i = 0; i < config.instrumentsToLoad; i++) {
+            str[i] = Object.keys(midiInstruments)[i];
+        }
         MIDI.loadPlugin({
             soundfontUrl: "./soundfont/",
-            instruments: [Object.keys(midiInstruments)[0], Object.keys(midiInstruments)[1], Object.keys(midiInstruments)[2], Object.keys(midiInstruments)[3]],
+            instruments: str,
             onprogress: function(state, progress) {
                 console.log(state, progress);
             },
@@ -1140,13 +1187,12 @@ musicBlockPanel = function() {
 
         for (var key in midiInstruments) {
             key = key.replace(/_/g, ' ');
-            if (cnt > config.instrumentsToLoad) {
+            if (cnt > config.instrumentsToLoad - 1) {
                 key = key + ' (not loaded)';
-                el = 'not-loaded'
+                el = 'not-loaded';
             }
-            jqueryMap.$set_instrument.append('<option class = \"' + el + '\" value="' + cnt + '">' + key + '</option>')
+            jqueryMap.$set_instrument.append('<option class = \"' + el + '\" value="' + cnt + '">' + key + '</option>');
             cnt++;
-
         }
     })();
 
@@ -1190,8 +1236,8 @@ musicBlockPanel = function() {
 
         //console.log(isloaded);
         if (isloaded === 'not-loaded') {
-            var str =  option.text().replace(/\(|\)/g, '').replace(/not loaded/g,'');
-           // str = option.text()
+            var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '');
+            // str = option.text()
             option.attr('class', 'loaded');
             option.text(str);
             MIDI.loadPlugin({
