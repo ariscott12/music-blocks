@@ -13,7 +13,7 @@ var
         mode: "create",
         cnt: 0,
         newblock: -1,
-        instrumentsToLoad: 2,
+        instrumentsToLoad: 0,
         draggingBlocks: false,
         noteArray: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
         scaleNameArray: [],
@@ -416,16 +416,16 @@ function getScale(scaleName) {
     return config.scaleArray[config.scaleNameArray.indexOf(scaleName)];
 }
 
-function noteToString(note) {
-    return config.noteArray[note % 12] + Math.floor(note / 12);
-}
+// function noteToString(note) {
+//     return config.noteArray[note % 12] + Math.floor(note / 12);
+// }
 
-function stringToNote(noteString) {
-    octave = +noteString.charAt(noteString.length - 1);
-    noteStr = noteString.substring(0, noteString.length - 1);
-    note = config.noteArray.indexOf(noteStr);
-    return octave * 12 + note;
-}
+// function stringToNote(noteString) {
+//     octave = +noteString.charAt(noteString.length - 1);
+//     noteStr = noteString.substring(0, noteString.length - 1);
+//     note = config.noteArray.indexOf(noteStr);
+//     return octave * 12 + note;
+// }
 
 function rangedRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -452,9 +452,19 @@ utilities = function() {
         //Retrieve octaveNote value from the block
         convertBlockToOctaveNote: function(block) {
             return block.note + block.octave * 12;
+        },
+        noteToString: function(note) {
+            return config.noteArray[note % 12] + Math.floor(note / 12);
+        },
+        stringToNote: function(noteString) {
+            var octave = +noteString.charAt(noteString.length - 1);
+            noteStr = noteString.substring(0, noteString.length - 1);
+            note = config.noteArray.indexOf(noteStr);
+            return octave * 12 + note;
         }
     };
 }();
+
 
 collisions = function() {
     var
@@ -970,7 +980,11 @@ controlPanel = function() {
                         value = Math.floor(v);
                     }
                     effectBlockPanel.compareDialValues(effect_type, params, value);
+                },
+                'format': function(value) {
+                    return utilities.noteToString(value);
                 }
+
             });
     };
     getMultiplier = function() {
