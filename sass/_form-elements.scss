@@ -1,12 +1,11 @@
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
-    background: url('dropdown_arrow.png') no-repeat $blue-dark;
-    background-position: 82px 7px;
+    background: url('../images/block-arrow.png') no-repeat #bdbcba;;
+    background-position: 145px 8px;
     text-indent: 0.01px;
     text-overflow: "";
     padding: 3px 10px;
-    background: #bdbcba;
     color: $gray-font;
     border: none;
     width: 164px;
