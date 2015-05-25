@@ -160,6 +160,10 @@ body {
     display: none; }
   .control-panel p {
     margin-bottom: 10px; }
+  .control-panel .small {
+    margin: 5px 0 0 0;
+    font-size: .875em;
+    font-style: italic; }
   .control-panel .dial-wrapper {
     margin-bottom: 10px;
     position: relative;
@@ -515,12 +519,11 @@ body {
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: url('dropdown_arrow.png') no-repeat #334d5c;
-  background-position: 82px 7px;
+  background: url('../images/block-arrow.png') no-repeat #bdbcba;
+  background-position: 145px 8px;
   text-indent: 0.01px;
   text-overflow: "";
   padding: 3px 10px;
-  background: #bdbcba;
   color: #4b4b4b;
   border: none;
   width: 164px;
