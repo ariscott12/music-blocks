@@ -494,8 +494,7 @@ body {
     .piano-roll li:nth-child(11) {
       left: 76px; }
     .piano-roll li:hover {
-      cursor: pointer;
-      background: #e27a3f; }
+      cursor: pointer; }
   .piano-roll .whitekey {
     width: 13px;
     height: 45px;
