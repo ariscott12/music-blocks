@@ -110,8 +110,17 @@ midiInstruments = {
     }
     //Add scales to scale arrays
     addScale("Chromatic", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-    addScale("CMaj", [0, 2, 4, 5, 7, 9, 11]);
-    addScale("CMin", [0, 2, 3, 5, 7, 8, 10]);
+    addScale("C Major", [0, 2, 4, 5, 7, 9, 11]);
+    addScale("C Minor", [0, 2, 3, 5, 7, 8, 10]);
+
+    var sel = document.getElementById('select-note-scale');
+    for(var i = 0; i < config.scaleNameArray.length; i++) {
+        var opt = document.createElement('option');
+        opt.innerHTML = config.scaleNameArray[i];
+        opt.value = config.scaleNameArray[i];
+        sel.appendChild(opt);
+    }
+
 })();
 
 // Music block object and methods
@@ -476,6 +485,18 @@ collisions = function() {
         }
     };
 
+    NewRandomValue = function(eblockref,key){
+        //If limit range flag, new key is random key inside specified range
+        if (blocks[eblockref].configMap[key].limit_range) {
+            return newValue = utilities.rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
+        }
+
+        //If not limit range flag, new key is random key in MIDI acceptable range
+        else {
+            return newValue = utilities.rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
+        }
+    }
+
     processEffects = function(mblockref, eblockref) {
         // Do effect processing here
 
@@ -490,28 +511,39 @@ collisions = function() {
                             break;
 
                         case "random":
-                            //If limit range flag, new key is random key inside specified range
-                            if (blocks[eblockref].configMap[key].limit_range) {
-                                var newValue = utilities.rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
-                            }
-
-                            //If not limit range flag, new key is random key in MIDI acceptable range
-                            else {
-                                var newValue = utilities.rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
-                            }
-
+                            
+                            var newValue = NewRandomValue(eblockref,key)
                             //REPLACE scale with effect block scale attribute once it exists
-                            var scale = true;
-                            if (scale) {
-                                var validNotes = getScale("CMin");
+                            //NEED TO FIX THIS WITH EFFECT ATTR
+                            if (key == "note") {
+                                var validNotes = getScale(blocks[eblockref].configMap[key].scale);
+                                var newNote = newValue % 12;
+                                while(validNotes.indexOf(newNote) == -1){
+                                    newValue = NewRandomValue(eblockref,key);
+                                    newNote = newValue % 12;
+                                }
+
+                                /*var validNotes = getScale(blocks[eblockref].configMap[key].scale);
                                 var newNote = newValue % 12;
                                 if (validNotes.indexOf(newNote) == -1) {
-                                    newValue--;
-                                }
+                                    /*var lowNoteRef = -1;
+                                    var lowNote = -100;
+                                    var randOctave = Math.floor(newValue / 12);
+                                    
+                                    //Find index of scale value that is just before newValue
+                                    for(var i = 0; i < validNotes.length; i++) {                                    
+                                        if(newValue > validNotes[i] + randOctave * 12){
+                                            lowNoteRef = i;                                            
+                                        }
+
+                                    //Set newValue to closest scale value
+                                    if(Math.abs(newValue - validNotes - randOctave * 12 <  ))
+
+                                }*/
                             }
 
                             //Set blocks key to new key
-                            blocks[mblockref][key] = newValue;
+                            blocks[mblockref][key] = newValue;                            
 
                             break;
 
@@ -552,6 +584,12 @@ collisions = function() {
                             //This would be an error
                             break;
                     }
+
+                    if(blocks[mblockref].selected == true){
+                                musicBlockPanel.updatePianoRoll({
+                                    value: blocks[mblockref].note
+                                });
+                            }
                 }
             }
 
@@ -1774,7 +1812,7 @@ effectBlockPanel = function() {
                 prog_low: null,
                 step: null,
                 direction: null,
-                scale: 'chromatic'
+                scale: config.scaleNameArray[0]
             };
 
             // Note effect is only active effect on load
