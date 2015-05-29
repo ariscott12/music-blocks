@@ -1065,7 +1065,9 @@ controlPanel = function() {
     // Top Panel
     jqueryMap.$mode_select.find('li').click(function() {
         var mode = $(this).attr('class');
-        $(this).addClass('active').siblings().removeClass('active');
+        if(mode != 'select-all'){
+            $(this).addClass('active').siblings().removeClass('active');
+        }
         switch (mode) {
             case 'pause':
                 config.pause = config.pause * -1;
@@ -1097,6 +1099,7 @@ controlPanel = function() {
                 for (var j = 0; j < config.cnt; j++) {
                     blocks[j].selectBlock();
                 }
+                mode = config.mode;
                 break;
         }
         config.mode = mode;
