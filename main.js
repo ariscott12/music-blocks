@@ -537,8 +537,8 @@ collisions = function() {
                             //If limit range flag, new key is random key inside specified range
                             if (blocks[eblockref].configMap[key].limit_range) {
                                 if(key == "note"){
-                                    var rndIndex = rangedRandom(0, blocks[eblockref].range_valid_notes.length - 1);
-                                    var newValue = blocks[eblockref].range_valid_notes[rndIndex];
+                                    var rndIndex = rangedRandom(0, blocks[eblockref].configMap[key].range_valid_notes.length - 1);
+                                    var newValue = blocks[eblockref].configMap[key].range_valid_notes[rndIndex];
                                 }
                                 else{
                                     var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
