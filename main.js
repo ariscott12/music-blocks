@@ -398,21 +398,21 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
         //Create the random valid notes array based on scale and rand_low and rand_high
         this.configMap.note.range_valid_notes = [];
         var valid_notes = getScale(this.configMap.note.scale);
-        var low_octave = Math.floor(this.configMap.note.rand_low / 12);
+        var low_octave = Math.floor(this.configMap.note.prog_low / 12);
         var i = 0;
-        //If rand_low is greater than the largest value in valid_notes, then the value we want to start is one octave higher
-        if(this.configMap.note.rand_low > valid_notes[valid_notes.length-1] + low_octave*12){
+        //If prog_low is greater than the largest value in valid_notes, then the value we want to start is one octave higher
+        if(this.configMap.note.prog_low > valid_notes[valid_notes.length-1] + low_octave*12){
             low_octave++;
         }
         else{
-            //Advance i until it is >= rand_low
-            while(this.configMap.note.rand_low > valid_notes[i] + low_octave * 12){
+            //Advance i until it is >= prog_low
+            while(this.configMap.note.prog_low > valid_notes[i] + low_octave * 12){
                 i++;            
             }
         }
 
         //Add values to the array until we exceed the range limit
-        while(this.configMap.note.rand_high >= valid_notes[i] + low_octave * 12){
+        while(this.configMap.note.prog_high >= valid_notes[i] + low_octave * 12){
             this.configMap.note.range_valid_notes.push(valid_notes[i] + low_octave * 12);
             i++;
             if(i == valid_notes.length){
@@ -420,6 +420,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 low_octave++;
             }
         }        
+        console.log("REBUILT " + this.configMap.note.range_valid_notes);
     }
 
     block.setMidiValues = function(type, attr, value) {
@@ -535,13 +536,18 @@ collisions = function() {
                         case "random":
                             //If limit range flag, new key is random key inside specified range
                             if (blocks[eblockref].configMap[key].limit_range) {
-                                var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
+                                if(key == "note"){
+                                    var rndIndex = rangedRandom(0, blocks[eblockref].range_valid_notes.length - 1);
+                                    var newValue = blocks[eblockref].range_valid_notes[rndIndex];
+                                }
+                                else{
+                                    var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
+                                }
                             }
 
                             //If not limit range flag, new key is random key in MIDI acceptable range
                             else {
-                                var rndIndex = rangedRandom(0, blocks[eblockref].range_valid_notes.length - 1);
-                                var newValue = blocks[eblockref].range_valid_notes[rndIndex];
+                               var newValue = utilities.rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
                             }
 
                             //Set blocks key to new key
@@ -555,29 +561,51 @@ collisions = function() {
                                 step_direction = -1;
                             }
 
-                            //Add step value to block key
-                            var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step * step_direction;
+                            if(key == "note"){
+                                //Find the current note in the valid note array
+                                var prog_index = blocks[eblockref].configMap[key].range_valid_notes.indexOf(blocks[mblockref].note);
 
-                            if (step_direction == 1) {
-                                //If the result key is lower than the low limit, then set to the low limit.
-                                //If the result key is higher than the high limit, then set to key - high limit.
-                                //If the result key is inside the range, then leave it alone.
-                                while (newValue < blocks[eblockref].configMap[key].prog_low) {
-                                    newValue += blocks[eblockref].configMap[key].step;
+                                //Advance index. If incoming note not found, prog_index will start at 0
+                                if(prog_index == -1){
+                                    prog_index = 0;
                                 }
-                                if (newValue > blocks[eblockref].configMap[key].prog_high) {
-                                    newValue = blocks[eblockref].configMap[key].prog_low + (newValue - blocks[eblockref].configMap[key].prog_high) % blocks[eblockref].configMap[key].step;
+                                //Otherwise, advance by the step amount in the step direction
+                                else{
+                                    prog_index += step_direction * blocks[eblockref].configMap[key].step;
+                                }                                
+                                //If we are out of the range, we add or subtract the length to wrap around the range
+                                while(prog_index >= blocks[eblockref].configMap[key].range_valid_notes.length || prog_index < 0){
+                                    prog_index -= step_direction * blocks[eblockref].configMap[key].range_valid_notes.length;
                                 }
-                            } else {
-                                while (newValue > blocks[eblockref].configMap[key].prog_high) {
-                                    newValue -= blocks[eblockref].configMap[key].step;
-                                }
-                                if (newValue < blocks[eblockref].configMap[key].prog_low) {
-                                    newValue = blocks[eblockref].configMap[key].prog_high - (blocks[eblockref].configMap[key].prog_low - newValue) % blocks[eblockref].configMap[key].step;
+                                //Set new note value to the new indexed value from the range array
+                                var newValue = blocks[eblockref].configMap[key].range_valid_notes[prog_index];
+                            }
+                            else{
+                                //Add step value to block key
+                                var newValue = blocks[mblockref][key];
+                                //var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step * step_direction;
+
+                                if (step_direction == 1) {
+                                    //If the result key is lower than the low limit, then set to the low limit.
+                                    if(newValue < blocks[eblockref].configMap[key].prog_low){
+                                        newValue = blocks[eblockref].configMap[key].prog_low;
+                                    }
+                                    //If the result key is higher than the high limit, then set to key - high limit.
+                                    else if(newValue > blocks[eblockref].configMap[key].prog_high){
+                                        newValue = blocks[eblockref].configMap[key].prog_high;
+                                    }
+                                    //If the result key is inside the range, then advance it.
+                                    else{
+                                        newValue += blocks[eblockref].configMap[key].step * step_direction;
+                                    }
+                                    //If we are out of the range, we add or subtract the size of the range to wrap around the range
+                                    while(newValue > blocks[eblockref].configMap[key].prog_high || newValue < blocks[eblockref].configMap[key].prog_low){
+                                        newValue -= step_direction * (blocks[eblockref].configMap[key].prog_high - blocks[eblockref].configMap[key].prog_low + 1);
+                                    }                                   
                                 }
                             }
 
-                            //Set the block velocity to new value
+                            //Set the block value to new value
                             blocks[mblockref][key] = newValue;
 
                             break;
@@ -1948,7 +1976,7 @@ effectBlockPanel = function() {
                 });
                 setParams('note', type + '_low', value);
             }
-            if(type == 'rand'){
+            if(type == 'rand' || type == 'prog'){
                 for(i = 0; i < blocks.length; i++){
                     if(blocks[i].selected == true){
                         blocks[i].rebuildRangeValidNotes();
