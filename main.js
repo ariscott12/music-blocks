@@ -121,6 +121,9 @@ midiInstruments = {
         sel.appendChild(opt);
     }
 
+    //Make create icon active at start
+    $('li.create').addClass('active');
+
 })();
 
 // Music block object and methods
@@ -386,16 +389,47 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
             };
             if (key === 'note') {
                 this.configMap.note.scale = map[key].scale;
+                this.configMap.note.range_valid_notes = map[key].range_valid_notes;
             }
         }
     };
+
+    block.rebuildRangeValidNotes = function(){
+        //Create the random valid notes array based on scale and rand_low and rand_high
+        this.configMap.note.range_valid_notes = [];
+        var valid_notes = getScale(this.configMap.note.scale);
+        var low_octave = Math.floor(this.configMap.note.rand_low / 12);
+        var i = 0;
+        //If rand_low is greater than the largest value in valid_notes, then the value we want to start is one octave higher
+        if(this.configMap.note.rand_low > valid_notes[valid_notes.length-1] + low_octave*12){
+            low_octave++;
+        }
+        else{
+            //Advance i until it is >= rand_low
+            while(this.configMap.note.rand_low > valid_notes[i] + low_octave * 12){
+                i++;            
+            }
+        }
+
+        //Add values to the array until we exceed the range limit
+        while(this.configMap.note.rand_high >= valid_notes[i] + low_octave * 12){
+            this.configMap.note.range_valid_notes.push(valid_notes[i] + low_octave * 12);
+            i++;
+            if(i == valid_notes.length){
+                i = 0;
+                low_octave++;
+            }
+        }        
+    }
 
     block.setMidiValues = function(type, attr, value) {
         // console.log('midi'+value);
         this.configMap[type][attr] = value;
     };
+
     return block;
 };
+
 
 
 //Display block info
@@ -501,64 +535,13 @@ collisions = function() {
                         case "random":
                             //If limit range flag, new key is random key inside specified range
                             if (blocks[eblockref].configMap[key].limit_range) {
-                                var newValue = utilities.rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
+                                var newValue = rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
                             }
 
                             //If not limit range flag, new key is random key in MIDI acceptable range
                             else {
-                                var newValue = utilities.rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
-                            }
-
-                            //Handling for scale processing
-                            if (key == "note") {
-                                //NewRandomValue
-                                /*var validNotes = getScale(blocks[eblockref].configMap[key].scale);
-                                var newNote = newValue % 12;
-                                while(validNotes.indexOf(newNote) == -1){
-                                    newValue = NewRandomValue(eblockref,key);
-                                    newNote = newValue % 12;
-                                }*/
-
-                                var validNotes = [];
-                                validNotes = getScale(blocks[eblockref].configMap[key].scale).slice(0);
-                                var newNote = newValue % 12;
-                                if (validNotes.indexOf(newNote) == -1) {
-                                    validNotes.push(validNotes[0] + 12)                        
-                                    var lowNoteRef = -1;
-                                    var randOctave = Math.floor(newValue / 12);
-                                    
-                                    //Find index of scale value that is just before newValue
-                                    for(var i = 0; i < validNotes.length; i++){
-                                        validNotes[i] += randOctave * 12;
-                                        console.log("SEARCH: " + newValue + " " + validNotes[i]);
-                                        if(newValue > validNotes[i]){
-                                            lowNoteRef = i;      
-                                        }   
-                                        else{
-                                            break;
-                                        }                                   
-                                    }
-
-                                    //Set newValue to closest scale value
-                                    if(Math.abs(newValue - validNotes[lowNoteRef] < validNotes[lowNoteRef+1] - newValue )){
-                                        //If random value exceeds range high, set one note lower
-                                        if(newValue >= blocks[eblockref].configMap[key].rand_low)
-                                            newValue = validNotes[lowNoteRef];
-                                        else{
-                                            newValue = validNotes[lowNoteRef+1];
-                                        }
-                                    }
-                                    else{
-                                        //If new value exceeds range low, set one note higher
-                                        if(validNotes[lowNoteRef+1] <= blocks[eblockref].configMap[key].rand_high){
-                                            newValue = validNotes[lowNoteRef+1];
-
-                                        }
-                                        else{
-                                            newValue = validNotes[lowNoteRef];
-                                        }
-                                    }
-                                }
+                                var rndIndex = rangedRandom(0, blocks[eblockref].range_valid_notes.length - 1);
+                                var newValue = blocks[eblockref].range_valid_notes[rndIndex];
                             }
 
                             //Set blocks key to new key
@@ -1412,6 +1395,10 @@ effectBlockPanel = function() {
             if (blocks[i].selected === true && blocks[i].type == 'block-effect') {
                 blocks[i].setMidiValues(type, attr, value);
                 blocks[i].activate();
+                console.log(type + attr + value);
+                if(attr == "scale"){
+                    blocks[i].rebuildRangeValidNotes();
+                }        
             }
         }
 
@@ -1493,7 +1480,7 @@ effectBlockPanel = function() {
         if (load === true) {
             configMap.note.scale = scale;
         }
-        setParams('note', 'scale', scale);
+        setParams('note', 'scale', scale);        
     };
     updatePianoRoll = function() {
         var
@@ -1581,7 +1568,7 @@ effectBlockPanel = function() {
                     setActive(attr[1]);
                 }
             }
-        }
+        }        
     };
 
     // Loop through and get effect panel values and return as configMap
@@ -1617,6 +1604,7 @@ effectBlockPanel = function() {
             mapkey.active = mapkey.active === 'true' ? true : false;
         }
         configMap.note.scale = jqueryMap.$select_scale.val();
+        configMap.note.range_valid_notes = [];
         return {
             configMap: configMap
         };
@@ -1838,7 +1826,8 @@ effectBlockPanel = function() {
                 prog_low: null,
                 step: null,
                 direction: null,
-                scale: config.scaleNameArray[0]
+                scale: config.scaleNameArray[0],
+                range_valid_notes: []
             };
 
             // Note effect is only active effect on load
@@ -1958,6 +1947,13 @@ effectBlockPanel = function() {
                     params: type + '_low'
                 });
                 setParams('note', type + '_low', value);
+            }
+            if(type == 'rand'){
+                for(i = 0; i < blocks.length; i++){
+                    if(blocks[i].selected == true){
+                        blocks[i].rebuildRangeValidNotes();
+                    }
+                }
             }
         }
 
@@ -2330,8 +2326,8 @@ setGridEvents = function() {
 
             } else {
                 blocks[config.cnt] = makeEffectBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
-                blocks[config.cnt].setInitValues(effectBlockPanel.getPanelValues());
-
+                blocks[config.cnt].setInitValues(effectBlockPanel.getPanelValues());   
+                blocks[config.cnt].rebuildRangeValidNotes();             
             }
 
             blocks[config.cnt].setGrid();
