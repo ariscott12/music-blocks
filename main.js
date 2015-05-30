@@ -16,7 +16,8 @@ var
         instrumentsToLoad: 1,
         draggingBlocks: false,
         scaleNameArray: [],
-        scaleArray: []
+        scaleArray: [],
+        pianoSliderArray: [0, 10, 16, 23, 29, 39, 49, 55, 62, 68, 75, 81, 91]
     },
      
     canvas = document.getElementById("grid"),
@@ -42,10 +43,10 @@ var
     };
 blocks = [];
 midiInstruments = {
+    'acoustic_grand_piano': 0,
     'overdriven_guitar': 29,
     'acoustic_bass': 32,
-    'orchestral_harp': 46,
-    'acoustic_grand_piano': 0,
+    'orchestral_harp': 46,    
     'rock_organ': 18,
     'harpsichord': 6,
     'xylophone': 13,
@@ -964,6 +965,7 @@ controlPanel = function() {
             $block_music: $('#block-music'),
             $block_effect: $('#block-effect'),
             $range_indicator: $('.range-indicator'),
+            $piano_roll_slider: $('.piano-roll-slider')
         },
         knobparams = {
             fgColor: '#6f6e6d',
@@ -1060,6 +1062,7 @@ controlPanel = function() {
             musicBlockPanel.updatePianoRoll();
             jqueryMap.$block_music.addClass('active').siblings().removeClass('active');
             jqueryMap.$range_indicator.hide();
+            jqueryMap.$piano_roll_slider.hide();            
         } else {
             effectBlockPanel.updatePianoRoll();
             jqueryMap.$block_effect.addClass('active').siblings().removeClass('active');
@@ -1424,7 +1427,7 @@ effectBlockPanel = function() {
                 blocks[i].setMidiValues(type, attr, value);
                 blocks[i].activate();
                 console.log(type + attr + value);
-                if(attr == "scale"){
+                if(attr == "scale" || attr == "prog_high" || attr == "prog_low"){
                     blocks[i].rebuildRangeValidNotes();
                 }        
             }
@@ -1531,6 +1534,8 @@ effectBlockPanel = function() {
             if (attr === 'both') {
                 jqueryMap.$piano_key.removeClass('active');
                 jqueryMap.$range_indicator.show();
+                piano_slider_max.show();
+                piano_slider_min.show();
             }
             if (attr === 'high' || attr === 'both') {
                 jqueryMap.$piano_key.eq(valueMap.high - 1).addClass('active-high').siblings().removeClass('active-high');
@@ -1559,6 +1564,16 @@ effectBlockPanel = function() {
                 'width': pos_high - pos_low + width_add,
                 'left': pos_low
             });
+
+            //Update slider positions
+            piano_slider_min.slider ({
+                value: pos_low
+            })
+
+            piano_slider_max.slider ({
+                value: pos_high + 10
+            })
+
         };
 
         if (arguments.length >= 1) {
@@ -1569,6 +1584,8 @@ effectBlockPanel = function() {
         if (method === 'note-specific') {
             jqueryMap.$piano_key.removeClass('active-high active-low');
             jqueryMap.$range_indicator.hide();
+            piano_slider_max.hide();
+            piano_slider_min.hide();
             if (value === null) {
                 value = utilities.stringToNote(jqueryMap.note_specific.val()) - multiplier;
             }
@@ -1681,6 +1698,8 @@ effectBlockPanel = function() {
                 if (map[key].active === false) {
                     jqueryMap.$piano_key.removeClass('active');
                     jqueryMap.$range_indicator.hide();
+                    piano_slider_max.hide();
+                    piano_slider_min.hide();
                 } else {
                     updatePianoRoll();
                 }
@@ -1743,13 +1762,113 @@ effectBlockPanel = function() {
                 if (map[key].active === false) {
                     jqueryMap.$piano_key.removeClass('active');
                     jqueryMap.$range_indicator.hide();
+                    piano_slider_max.hide();
+                    piano_slider_min.hide();
                 } else {
                     updatePianoRoll();
                 }
             }
         }
     };
+    
+    var piano_slider_min = $("#piano-slider-min");
+    var piano_slider_max = $("#piano-slider-max");
+    
+    piano_slider_min.slider({
+        orientation: "horizontal",
+        value: 300,
+        min: 0,
+        max: 637,//white_key_width * 56,
+        //range: true,
+        background: "url('../images/piano-slider-min.png') no-repeat #bdbcba",  
+        step: 1,
+        slide: function(event, ui) {
+            piano_slider_min.find("input").val(ui.value);
+            var notePixels = ui.value % 91;
+            var octave = Math.floor(ui.value / 91);
+            var i = 1;
+            while(i <= config.pianoSliderArray.length - 1 && notePixels > config.pianoSliderArray[i]){
+                i++;                    
+            }
+            
+            i--;
+            
+            //console.log(i + octave*12 + 24 + ": NOTE IS THIS" + " i " + i + " array " + config.pianoSliderArray[i] + " oct " + octave*12 + " NP "+ notePixels);
+            musicBlockPanel.updatePianoRoll({
+                            value: i + octave*12 + 24
+                        });
+            if(ui.value > piano_slider_max.slider("value")){
+                piano_slider_max.slider("value", ui.value); 
+                updatePianoRoll({
+                    value: i + octave*12 + 24,
+                    params: 'prog_high'
+                });
+                setParams('note', 'prog_high', i + octave*12 + 24);                
+            }
 
+            updatePianoRoll({
+                value: i + octave*12 + 24,
+                params: 'prog_low'
+            });
+            setParams('note', 'prog_low', i + octave*12 + 24);
+            //Play the note that the slider is on
+            setMidiParams.triggerMidi(60, 0, value+23, 20, .3);
+            
+            jqueryMap['note_prog_low'].val(i + octave*12 + 24);
+            jqueryMap['note_prog_low'].trigger('change');
+        }
+    });
+
+    piano_slider_max.slider({
+        orientation: "horizontal",
+        value: 400,
+        min: 0,
+        max: 637,//white_key_width * 56,
+        //range: true,
+        background: "url('../images/piano-slider-max.png')",
+        step: 1,
+        slide: function(event, ui) {
+            piano_slider_max.find("input").val(ui.value);
+            //ui.value += 20;
+            var notePixels = ui.value % 91;
+            var octave = Math.floor(ui.value / 91);
+            var i = 1;
+            while(i <= config.pianoSliderArray.length - 1 && notePixels > config.pianoSliderArray[i]){
+                i++;                    
+            }
+            
+            i--;
+            
+
+
+            musicBlockPanel.updatePianoRoll({
+                            value: i + octave*12 + 24
+                        });
+            if(ui.value < piano_slider_min.slider("value")){                
+                piano_slider_min.slider("value", ui.value);   
+                updatePianoRoll({
+                    value: i + octave*12 + 24,
+                    params: 'prog_low'
+                });
+                setParams('note', 'prog_low', i + octave*12 + 24);                 
+            }
+
+            updatePianoRoll({
+                value: i + octave*12 + 24,
+                params: 'prog_high'
+            });
+            setParams('note', 'prog_high', i + octave*12 + 24);
+            //Play the note that the slider is on
+            setMidiParams.triggerMidi(60, 0, value+23, 20, .3);
+
+            //Update knob value
+            jqueryMap['note_prog_high'].val(i + octave*12 + 24);
+            jqueryMap['note_prog_high'].trigger('change');
+        }
+    });
+
+    piano_slider_max.hide();
+    piano_slider_min.hide();
 
     // Loop through all effect types and create jqueryMap, UI controls
     effectMap = (function(e) {
