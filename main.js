@@ -17,7 +17,8 @@ var
         draggingBlocks: false,
         scaleNameArray: [],
         scaleArray: [],
-        pianoSliderArray: [0, 10, 16, 23, 29, 39, 49, 55, 62, 68, 75, 81, 91]
+        pianoSliderArray: [0, 10, 16, 23, 29, 39, 49, 55, 62, 68, 75, 81, 91],
+        loadedInstruments: []
     },
      
     canvas = document.getElementById("grid"),
@@ -291,7 +292,10 @@ var proto = {
         if (this.selected === false) {
             this.activate();
         }
-        setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+        console.log(this.instrument);
+        if(config.loadedInstruments[this.instrument]){
+            setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+        }
     },
     render: function() {
 
@@ -921,6 +925,10 @@ setMidiParams = function() {
         for (var i = 0; i < config.instrumentsToLoad; i++) {
             str[i] = Object.keys(midiInstruments)[i];
         }
+        console.log(Object.keys(midiInstruments).length);
+        for (var i = 0; i < Object.keys(midiInstruments).length; i++) {
+            config.loadedInstruments.push(false);
+        }
         MIDI.loadPlugin({
             soundfontUrl: "./soundfont/",
             instruments: str,
@@ -932,10 +940,11 @@ setMidiParams = function() {
                 for (var key in midiInstruments) {
                     if (cnt < config.instrumentsToLoad) {
                         MIDI.programChange(cnt, midiInstruments[key]);
+                        config.loadedInstruments[cnt] = true;
                         cnt++;
-                    }
+                    }                    
                 }
-                console.log("loaded");
+                console.log("loaded");                
             }
         });
     };
@@ -1332,6 +1341,7 @@ musicBlockPanel = function() {
                 instruments: [Object.keys(midiInstruments)[program]],
                 onsuccess: function() {
                     MIDI.programChange(program, midiInstruments[Object.keys(midiInstruments)[program]]);
+                    config.loadedInstruments[program] = true;
                     console.log("loaded");
                 }
             });
