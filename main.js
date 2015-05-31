@@ -111,9 +111,15 @@ midiInstruments = {
         }
     }
     //Add scales to scale arrays
-    addScale("Chromatic", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    addScale("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     addScale("C Major", [0, 2, 4, 5, 7, 9, 11]);
-    addScale("C Minor", [0, 2, 3, 5, 7, 8, 10]);
+    addScale("D Major", [1, 2, 4, 6, 7, 9, 11]);
+    addScale("E Major", [1, 3, 4, 6, 8, 9, 11]);
+    addScale("F Major", [0, 2, 4, 5, 7, 9, 10]);
+    addScale("G Major", [0, 2, 4, 6, 7, 9, 11]);
+    addScale("A Major", [1, 2, 4, 6, 8, 9, 11]);
+    addScale("B Major", [1, 3, 4, 6, 8, 10, 11]);
+
 
     var sel = document.getElementById('select-note-scale');
     for(var i = 0; i < config.scaleNameArray.length; i++) {
