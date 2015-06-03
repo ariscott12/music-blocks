@@ -367,11 +367,13 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 active: map[key].active,
                 method: map[key].method,
                 specific: map[key].specific,
-                rand_low: map[key].rand_low,
-                rand_high: map[key].rand_high,
+                // rand_low: map[key].rand_low,
+                // rand_high: map[key].rand_high,
                 limit_range: map[key].limit_range,
-                prog_high: map[key].prog_high,
-                prog_low: map[key].prog_low,
+                // prog_high: map[key].prog_high,
+                // prog_low: map[key].prog_low,
+                range_low: map[key].range_low,
+                range_high: map[key].range_high,
                 step: map[key].step,
                 direction: map[key].direction
             };
@@ -379,10 +381,12 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 this.configMap.note.scale = map[key].scale;
             }
         }
+
     };
 
     block.setMidiValues = function(type, attr, value) {
         // console.log('midi'+value);
+        console.log(this.configMap);
         this.configMap[type][attr] = value;
     };
     return block;
@@ -492,7 +496,7 @@ collisions = function() {
                         case "random":
                             //If limit range flag, new key is random key inside specified range
                             if (blocks[eblockref].configMap[key].limit_range) {
-                                var newValue = utilities.rangedRandom(blocks[eblockref].configMap[key].rand_low, blocks[eblockref].configMap[key].rand_high);
+                                var newValue = utilities.rangedRandom(blocks[eblockref].configMap[key].range_low, blocks[eblockref].configMap[key].range_high);
                             }
 
                             //If not limit range flag, new key is random key in MIDI acceptable range
@@ -528,18 +532,18 @@ collisions = function() {
                                 //If the result key is lower than the low limit, then set to the low limit.
                                 //If the result key is higher than the high limit, then set to key - high limit.
                                 //If the result key is inside the range, then leave it alone.
-                                while (newValue < blocks[eblockref].configMap[key].prog_low) {
+                                while (newValue < blocks[eblockref].configMap[key].range_low) {
                                     newValue += blocks[eblockref].configMap[key].step;
                                 }
-                                if (newValue > blocks[eblockref].configMap[key].prog_high) {
-                                    newValue = blocks[eblockref].configMap[key].prog_low + (newValue - blocks[eblockref].configMap[key].prog_high) % blocks[eblockref].configMap[key].step;
+                                if (newValue > blocks[eblockref].configMap[key].range_high) {
+                                    newValue = blocks[eblockref].configMap[key].range_low + (newValue - blocks[eblockref].configMap[key].range_high) % blocks[eblockref].configMap[key].step;
                                 }
                             } else {
-                                while (newValue > blocks[eblockref].configMap[key].prog_high) {
+                                while (newValue > blocks[eblockref].configMap[key].range_high) {
                                     newValue -= blocks[eblockref].configMap[key].step;
                                 }
-                                if (newValue < blocks[eblockref].configMap[key].prog_low) {
-                                    newValue = blocks[eblockref].configMap[key].prog_high - (blocks[eblockref].configMap[key].prog_low - newValue) % blocks[eblockref].configMap[key].step;
+                                if (newValue < blocks[eblockref].configMap[key].range_low) {
+                                    newValue = blocks[eblockref].configMap[key].range_high - (blocks[eblockref].configMap[key].range_low - newValue) % blocks[eblockref].configMap[key].step;
                                 }
                             }
 
@@ -1356,16 +1360,9 @@ effectBlockPanel = function() {
     };
 
     compareDialValues = function(effect_type, param, value) {
-        if (param === 'rand_high' || param === 'prog_high') {
+        if (param === 'range_high') {
             var val_low = 0;
             param = param.replace('high', 'low');
-            // if (effect_type === 'note') {
-            //   val_low = utilities.stringToNote(jqueryMap[effect_type + '_' + param].val());
-            //val_low = configMap.
-
-            //  } else {
-            // val_low = jqueryMap[effect_type + '_' + param].val();
-            //}
             val_low = configMap[effect_type][param];
 
             if (value <= val_low) {
@@ -1378,14 +1375,9 @@ effectBlockPanel = function() {
                 setParams(effect_type, param, value - 1);
             }
         }
-        if (param === 'rand_low' || param === 'prog_low') {
+        if (param === 'range_low') {
             var val_high = 0;
             param = param.replace('low', 'high');
-            // if (effect_type === 'note') {
-            //     val_high = utilities.stringToNote(jqueryMap[effect_type + '_' + param].val());
-            // } else {
-            //     val_high = jqueryMap[effect_type + '_' + param].val();
-            // }
             val_high = configMap[effect_type][param];
 
             if (value >= val_high) {
@@ -1413,13 +1405,27 @@ effectBlockPanel = function() {
         if (type === 'note') {
             if (method === 'specific') {
                 jqueryMap.$select_scale.hide();
+
             } else {
                 jqueryMap.$select_scale.show();
             }
         }
 
         // Hide and show effect method    
+
         $('.' + effect).show().siblings('div').hide();
+        if (method === 'random' || method === 'progression') {
+            $('.' + type + '-range-wrapper').show();
+            //   $('.note_range_low') = configMap[type].range_low;
+            //  jqueryMap.note_range_low.hide();
+            // jqueryMap[type + '_range_low'].val(configMap[type].range_low);
+            // jqueryMap[type + '_range_low'].trigger('change');
+            // jqueryMap[type + '_range_high'].val(configMap[type].range_high);
+            // jqueryMap[type + '_range_high'].trigger('change');
+
+            // jqueryMap[type + '_range_high'] = configMap[type].range_high;
+            // jqueryMap[type + '_range_high'].trigger('change');
+        }
 
         // Set configMap method type for each effect type on load
         // if (load === true) {
@@ -1504,27 +1510,29 @@ effectBlockPanel = function() {
             jqueryMap.$piano_key.eq(value - 1).addClass('active').siblings().removeClass('active');
             jqueryMap.$piano_key.eq(value - 1).parent().siblings().find('li').removeClass('active');
         } else {
-            if (method === 'note-random') {
-                if (value === null) {
-                    valueMap['high'] = configMap.note.rand_high - multiplier;
-                    valueMap['low'] = configMap.note.rand_low - multiplier;
-                    setActive('both');
-                } else {
-                    attr = params.split("_");
-                    valueMap[attr[1]] = value;
-                    setActive(attr[1]);
-                }
+            // if (method === 'note-random') {
+            if (value === null) {
+                // valueMap['high'] = configMap.note.rand_high - multiplier;
+                // valueMap['low'] = configMap.note.rand_low - multiplier;
+                valueMap['high'] = configMap.note.range_high - multiplier;
+                valueMap['low'] = configMap.note.range_low - multiplier;
+                setActive('both');
             } else {
-                if (value === null) {
-                    valueMap['high'] = configMap.note.prog_high - multiplier;
-                    valueMap['low'] = configMap.note.prog_low - multiplier;
-                    setActive('both');
-                } else {
-                    attr = params.split('_');
-                    valueMap[attr[1]] = value;
-                    setActive(attr[1]);
-                }
+                attr = params.split("_");
+                valueMap[attr[1]] = value;
+                setActive(attr[1]);
             }
+            // } else {
+            //     if (value === null) {
+            //         valueMap['high'] = configMap.note.prog_high - multiplier;
+            //         valueMap['low'] = configMap.note.prog_low - multiplier;
+            //         setActive('both');
+            //     } else {
+            //         attr = params.split('_');
+            //         valueMap[attr[1]] = value;
+            //         setActive(attr[1]);
+            //     }
+            // }
         }
     };
 
@@ -1592,7 +1600,7 @@ effectBlockPanel = function() {
                         console.log(key + " -> " + key2 + " -> " + map[key][key2]);
                         if (key2 !== 'method') {
                             if (key2 === 'limit_range' || key2 === 'direction' || key2 === 'active') {
-                                var data_key = key2.replace('_','-');
+                                var data_key = key2.replace('_',  '-');
                                 jqueryMap[key + '_' + key2].attr('data-' + data_key, blocks[num].configMap[key][key2]);
                             } else if (key2 !== 'scale') {
                                 jqueryMap[key + '_' + key2].val(blocks[num].configMap[key][key2]);
@@ -1603,6 +1611,7 @@ effectBlockPanel = function() {
                             $('.' + key + '-' + map[key][key2]).show().siblings('div').hide();
                             if (map[key][key2] !== 'specific') {
                                 jqueryMap.$select_scale.show();
+                                $('.' + key + '-range-wrapper').show();
                             } else {
                                 jqueryMap.$select_scale.hide();
                             }
@@ -1741,10 +1750,13 @@ effectBlockPanel = function() {
             // jqueryMap[e[i] + "_effect"] = $(".effect-" + e[i]);
             jqueryMap[e[i] + "_effect_select"] = $("#select-" + e[i] + "-effect");
             jqueryMap[e[i] + "_specific"] = $("#" + e[i] + "-specific-effect");
-            jqueryMap[e[i] + "_rand_low"] = $("." + e[i] + "-rand-rangelow-effect");
-            jqueryMap[e[i] + "_rand_high"] = $(("." + e[i] + "-rand-rangehigh-effect"));
-            jqueryMap[e[i] + "_prog_low"] = $("." + e[i] + "-prog-rangelow-effect");
-            jqueryMap[e[i] + "_prog_high"] = $(("." + e[i] + "-prog-rangehigh-effect"));
+            // jqueryMap[e[i] + "_rand_low"] = $("." + e[i] + "-rand-rangelow-effect");
+            // jqueryMap[e[i] + "_rand_high"] = $(("." + e[i] + "-rand-rangehigh-effect"));
+            jqueryMap[e[i] + "_range_low"] = $("." + e[i] + "-rangelow-effect");
+            jqueryMap[e[i] + "_range_high"] = $(("." + e[i] + "-rangehigh-effect"));
+
+            // jqueryMap[e[i] + "_prog_low"] = $("." + e[i] + "-prog-rangelow-effect");
+            // jqueryMap[e[i] + "_prog_high"] = $(("." + e[i] + "-prog-rangehigh-effect"));
             jqueryMap[e[i] + "_step"] = $(("." + e[i] + "-step-size"));
             jqueryMap[e[i] + "_direction"] = $(("." + e[i] + "-step-switch"));
             jqueryMap[e[i] + "_limit_range"] = $(("." + e[i] + "-limit-to-range"));
@@ -1756,11 +1768,13 @@ effectBlockPanel = function() {
                 active: false,
                 method: 'progression',
                 specific: 60,
-                rand_low: 50,
-                rand_high: 80,
+                // rand_low: 50,
+                // rand_high: 80,
+                range_low: 50,
+                range_high: 80,
                 limit_range: true,
-                prog_low: 50,
-                prog_high: 80,
+                // prog_low: 50,
+                // prog_high: 80,
                 step: 5,
                 direction: 'up',
                 scale: 'chromatic'
@@ -1789,41 +1803,41 @@ effectBlockPanel = function() {
                 max: rangeLimits.max
             });
             controlPanel.createDial({
-                obj: jqueryMap[e[i] + "_rand_low"],
-                start_val: configMap[e[i]].rand_low,
+                obj: jqueryMap[e[i] + "_range_low"],
+                start_val: configMap[e[i]].range_low,
                 type: "effect-block",
-                params: "rand_low",
+                params: "range_low",
                 effect_type: e[i],
                 min: rangeLimits.min,
                 max: rangeLimits.max
             });
             controlPanel.createDial({
-                obj: jqueryMap[e[i] + "_rand_high"],
-                start_val: configMap[e[i]].rand_high,
+                obj: jqueryMap[e[i] + "_range_high"],
+                start_val: configMap[e[i]].range_high,
                 type: "effect-block",
-                params: "rand_high",
+                params: "range_high",
                 effect_type: e[i],
                 min: rangeLimits.min,
                 max: rangeLimits.max
             });
-            controlPanel.createDial({
-                obj: jqueryMap[e[i] + "_prog_low"],
-                start_val: configMap[e[i]].prog_low,
-                type: "effect-block",
-                params: "prog_low",
-                effect_type: e[i],
-                min: rangeLimits.min,
-                max: rangeLimits.max
-            });
-            controlPanel.createDial({
-                obj: jqueryMap[e[i] + "_prog_high"],
-                start_val: configMap[e[i]].prog_high,
-                type: "effect-block",
-                params: "prog_high",
-                effect_type: e[i],
-                min: rangeLimits.min,
-                max: rangeLimits.max
-            });
+            // controlPanel.createDial({
+            //     obj: jqueryMap[e[i] + "_prog_low"],
+            //     start_val: configMap[e[i]].prog_low,
+            //     type: "effect-block",
+            //     params: "prog_low",
+            //     effect_type: e[i],
+            //     min: rangeLimits.min,
+            //     max: rangeLimits.max
+            // });
+            // controlPanel.createDial({
+            //     obj: jqueryMap[e[i] + "_prog_high"],
+            //     start_val: configMap[e[i]].prog_high,
+            //     type: "effect-block",
+            //     params: "prog_high",
+            //     effect_type: e[i],
+            //     min: rangeLimits.min,
+            //     max: rangeLimits.max
+            // });
 
 
             jqueryMap[e[i] + "_step"]
@@ -1844,7 +1858,7 @@ effectBlockPanel = function() {
             }
 
             // Show effect method panel based on previous selection on load
-            toggleEffectMethod(jqueryMap[e[i] + "_effect_select"], true);
+              toggleEffectMethod(jqueryMap[e[i] + "_effect_select"], true);
         }
 
     })(effectArray);
@@ -1973,12 +1987,13 @@ effectBlockPanel = function() {
                     jqueryMap.note_specific.val(value);
                     jqueryMap.note_specific.trigger('change');
                     break;
-                case 'random':
-                    update('rand');
-                    break;
                 case 'progression':
-                    update('prog');
+                case 'random':
+                    update('range');
                     break;
+                    // case 'progression':
+                    //     update('prog');
+                    //     break;
             }
         }
 
