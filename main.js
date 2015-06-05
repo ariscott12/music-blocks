@@ -1101,7 +1101,7 @@ controlPanel = function() {
     // Top Panel
     jqueryMap.$mode_select.find('li').click(function() {
         var mode = $(this).attr('class');
-        if (mode != 'select-all') {
+        if (mode != 'select-all' && mode != 'pause') {
             $(this).addClass('active').siblings().removeClass('active');
         }
         switch (mode) {
