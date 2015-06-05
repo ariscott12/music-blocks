@@ -46,6 +46,52 @@
 //         color: $gray-font;
 //     }
 // }
+.ui-slider-horizontal {
+    margin-top: 0px;
+    position: relative;
+    text-align: left;
+    height: 0px;
+    width: 637px;
+    border: none;
+    background: #4d4d4d;
+}
+
+.ui-slider-horizontal .ui-slider-handle {
+    top: -0.4em;
+    margin-left: 0px;
+    background: #a3a2a1;
+    cursor: default;
+    height: 20px;
+    position: absolute;
+    width: 20px;
+    z-index: 1005;
+}
+
+.ui-slider-horizontal .ui-slider-range {
+    background-position: 0 0;
+    border: 0 none;
+    display: block;
+    font-size: 0.7em;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    width: 100%;
+}
+
+.ui-slider-horizontal .ui-slider-range-min {
+    bottom: 0;
+}
+
+.ui-slider-horizontal .ui-widget-header {
+    background: #45b29d;
+    border: none;
+}
+
+.ui-slider-horizontal .slider-value {
+    font-size: .875rem;
+    color: #4b4b4b;
+}
+/*Added by MIKE ENDS*/
 
 .ui-widget input {
     font-family: 'Istok Web', sans-serif;
@@ -57,7 +103,7 @@
     position: relative;
     float: left;
     width: 50px;
-    height:28px;
+    height: 28px;
     input.spinner {
         width: 32px;
         margin: 0;
@@ -76,30 +122,28 @@
         line-height: 14px;
         border: 1px solid $blue-medium;
         text-align: center;
-        cursor:pointer;
+        cursor: pointer;
     }
     .ui-spinner-up {
         top: 0;
         border-bottom: none;
         .ui-icon {
-             background-image: url("../images/spinner-up-arrow.png");
-             background-position: 8px 4px;
+            background-image: url("../images/spinner-up-arrow.png");
+            background-position: 8px 4px;
         }
     }
     .ui-spinner-down {
         top: 14px;
         .ui-icon {
-             background-image: url("../images/spinner-down-arrow.png");
-             background-position: 8px 4px;
+            background-image: url("../images/spinner-down-arrow.png");
+            background-position: 8px 4px;
         }
     }
     .ui-icon {
-       
         text-indent: -99999px;
         background-repeat: no-repeat;
         display: block;
         overflow: hidden;
         text-indent: -99999px;
-        
     }
 }

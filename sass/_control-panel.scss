@@ -10,7 +10,7 @@
         }
         .small {
             margin: 5px 0 0 0;
-            font-size:.875em;
+            font-size: .875em;
             font-style: italic;
         }
         .dial-wrapper {
@@ -387,6 +387,15 @@
         padding: 20px;
     }
     
+    // .note-random,
+    // .note-specific,
+    // .volume-specific,
+    // .volume-random,
+    
+    // {
+    //     display: none;
+    // }
+    
     .piano-wrapper {
         margin-top: 10px;
         float: left;
@@ -394,9 +403,9 @@
         .range-indicator {
             position: absolute;
             top: 0;
-            background: $yellow-80;
+            background: $purple;
             height: 45px;
-            opacity: .75;
+            opacity: .6;
             z-index: 1000;
             pointer-events: none;
             display: none;
@@ -446,6 +455,39 @@
             background: $yellow;
         }
     }
+    
+    .piano-roll-slider-min {
+        float: left;
+    }
+    
+    .piano-roll-slider .slider-value {
+        background: none;
+        border: none;
+        width: 637px;
+    }
+    
+    .piano-roll-slider {
+        float: left;
+    }
+    
+    .piano-roll-slider .slider-value {
+        background: none;
+        border: none;
+        width: 637px;
+    }
+    
+    #piano-slider-min .ui-slider-handle {
+        margin-top: 10px;
+        margin-left: -5px;
+        background: url('../images/piano-slider-min.png') no-repeat;
+    }
+    
+    #piano-slider-max .ui-slider-handle {
+        margin-top: -5px;
+        margin-left: -15px;
+        background: url('../images/piano-slider-max.png') no-repeat;
+    }
+    /*Added by MIKE ENDS*/
     
     .level-select {
         p {

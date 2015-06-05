@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/main.css">
     <title>JS Sequencer</title>
     <link rel="author" href="humans.txt">
-    <link href='http://fonts.googleapis.com/css?family=Istok+Web:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Istok+Web:500,700' rel='stylesheet' type='text/css'>
     <script src="inc/shim/Base64.js" type="text/javascript"></script>
     <script src="inc/shim/Base64binary.js" type="text/javascript"></script>
     <script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
@@ -84,9 +84,9 @@
                     </div>
                     <div class="effect-note effect-box clearfix">
                         <select id="select-note-effect">
-                            <option value="note-specific">Specific Value</option>
-                            <option value="note-random">Random Value</option>
                             <option value="note-progression">Step Progression</option>
+                            <option value="note-random">Random Value</option>
+                            <option value="note-specific">Specific Value</option>
                             <!-- <option value="3">Audi</option> -->
                         </select>
                         <div class="note-specific clearfix">
@@ -145,15 +145,7 @@
                                 <p>down</p>
                             </div>
                         </div>
-                        <select id="select-note-scale">
-                            <option value="chromatic">Set Scale</option>
-                            <option value="c-major">C Major</option>
-                            <option value="c-minor">C Minor</option>
-                            <option value="e-major">E Major</option>
-                            <option value="e-minor">E Minor</option>
-                            <option value="g-major">G Major</option>
-                            <option value="g-minor">G Minor</option>
-                        </select>
+                        <select id="select-note-scale"></select>
                     </div>
                     <div class="header clearfix">
                         <div class="activator volume-activator" data-active="false" data-type="volume">
@@ -355,7 +347,7 @@
                             </div>
                         </div>
                         <div class="duration-progression clearfix">
-                           <!--  <div class="range-wrapper">
+                            <!--  <div class="range-wrapper">
                                 <div class="dial-outline"></div>
                                 <div class="dial-wrapper-range">
                                     <input class="dial-input-rangelow duration-prog-rangelow-effect" type="text">
@@ -457,6 +449,10 @@
             </div>
         </div>
         <div class="clear"></div>
+        <div id="piano-slider-min" class="piano-roll-slider">
+            <input class="slider-value" />
+        </div>
+        <div class="clear"></div>
         <div class="piano-wrapper clearfix">
             <ul class="piano-roll">
                 <li class="whitekey"></li>
@@ -556,6 +552,10 @@
                 <li class="blackkey"></li>
                 <li class="whitekey"></li>
             </ul>
+            <div id="piano-slider-max" class="piano-roll-slider">
+                <input class="slider-value" />
+            </div>
+            <div class="clear"></div>
             <div class="range-indicator"></div>
         </div>
     </div>

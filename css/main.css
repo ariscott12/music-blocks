@@ -463,6 +463,10 @@ body {
   background: #edebea;
   padding: 20px; }
 
+
+/*background: #edce69;
+//opacity: .75;*/
+    
 .piano-wrapper {
   margin-top: 10px;
   float: left;
@@ -470,12 +474,51 @@ body {
   .piano-wrapper .range-indicator {
     position: absolute;
     top: 0;
-    background: #edce69;
+    background: #6543CB;
+    opacity: .6;
     height: 45px;
-    opacity: .75;
     z-index: 1000;
     pointer-events: none;
     display: none; }
+
+/*Added by MIKE BEGINS*/
+.ui-slider-horizontal {
+  margin-top: 0px;
+  position: relative;
+  text-align: left;
+  height: 0px;
+  width: 637px;
+  border: none;
+  background: #4d4d4d; }
+   
+  .ui-slider-horizontal .ui-slider-handle {
+    top: -0.4em;
+    margin-left: 0px;    
+    background: #a3a2a1;
+    cursor: default;
+    height: 20px;
+    position: absolute;
+    width: 20px;
+    z-index: 1005;
+    }
+  .ui-slider-horizontal .ui-slider-range {
+    background-position: 0 0;
+    border: 0 none;
+    display: block;
+    font-size: 0.7em;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    width: 100%; }
+  .ui-slider-horizontal .ui-slider-range-min {
+    bottom: 0; }
+  .ui-slider-horizontal .ui-widget-header {
+    background: #45b29d;
+    border: none; }
+  .ui-slider-horizontal .slider-value {
+    font-size: .875rem;
+    color: #4b4b4b; }
+/*Added by MIKE ENDS*/
 
 .piano-roll {
   position: relative;
@@ -508,6 +551,36 @@ body {
     z-index: 100; }
   .piano-roll .active {
     background: #efc94c; }
+
+/*Added by MIKE BEGINS*/
+.piano-roll-slider-min {float: left;
+  }
+  .piano-roll-slider .slider-value {
+    background: none;
+    border: none;
+    width: 637px;
+    }
+
+.piano-roll-slider {float: left;
+  }
+  .piano-roll-slider .slider-value {
+    background: none;
+    border: none;
+    width: 637px;
+    }
+
+#piano-slider-min .ui-slider-handle {
+  margin-top: 10px;
+  margin-left: -5px;
+  background: url('../images/piano-slider-min.png') no-repeat ;
+}
+
+#piano-slider-max .ui-slider-handle {
+  margin-top: -5px;
+  margin-left: -15px;
+  background: url('../images/piano-slider-max.png') no-repeat ;
+}
+/*Added by MIKE ENDS*/
 
 .level-select p {
   float: left;
