@@ -7,6 +7,7 @@ var
         gridOffsetX: 0,
         gridOffsetY: 0,
         pause: -1,
+        loading_instrument: false,
         advance: -1,
         shiftkey: 0,
         numSelected: 0,
@@ -777,7 +778,7 @@ startSyncCounter = function() {
         context.fill();
         context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);
 
-        if ((config.pause === 1 && config.advance === 1) || config.pause === -1) {
+        if (!config.loading_instrument && ((config.pause === 1 && config.advance === 1) || config.pause === -1)) {
             // Clear canvas on loop and redraw blocks
 
 
@@ -1334,6 +1335,7 @@ musicBlockPanel = function() {
         if (isloaded === 'not-loaded') {
             var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '...');
             // str = option.text()
+            config.loading_instrument = true;
 
             option.text(str);
             MIDI.loadPlugin({
@@ -1346,6 +1348,7 @@ musicBlockPanel = function() {
                     option.attr('class', 'loaded');
                     str = option.text().replace(/\(|\)/g, '').replace(/\.\.\./g, '');
                     option.text(str);
+                    config.loading_instrument = false;
                 }
             });
         }
