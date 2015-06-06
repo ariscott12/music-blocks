@@ -208,7 +208,6 @@ var proto = {
             this.notActive = this.shadeColor(color, 0);
             this.active = this.shadeColor(color, -35);
         }
-        this.selectNewSingle();
     },
     shadeColor: function(color, percent) {
         var
@@ -1159,7 +1158,7 @@ controlPanel = function() {
     // Top Panel
     jqueryMap.$mode_select.find('li').click(function() {
         var mode = $(this).attr('class');
-        if (mode != 'select-all' && mode != 'pause') {
+        if (mode != 'select-all' && mode != 'pause' && mode != 'advance') {
             $(this).addClass('active').siblings().removeClass('active');
         }
         switch (mode) {
@@ -1177,9 +1176,6 @@ controlPanel = function() {
                     }
                 }
                 break;
-            case 'advance':
-                config.advance *= -1;
-                break;
             case 'clear-all':
                 for (var i = 0; i < config.cnt; i++) {
                     blocks[i].removeBlock();
@@ -1193,10 +1189,11 @@ controlPanel = function() {
                 for (var j = 0; j < config.cnt; j++) {
                     blocks[j].selectBlock();
                 }
-                mode = config.mode;
                 break;
-        }
-        config.mode = mode;
+            default:
+                config.mode = mode;
+                break;
+        }        
     });
 
 
