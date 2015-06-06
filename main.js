@@ -19,7 +19,13 @@ var
         scaleNameArray: [],
         scaleArray: [],
         pianoSliderArray: [0, 10, 16, 23, 29, 39, 49, 55, 62, 68, 75, 81, 91],
-        loadedInstruments: []
+        loadedInstruments: [],
+        block_fx_image: new Image(),
+        note_active_image: new Image(),
+        volume_active_image: new Image(),
+        velocity_active_image: new Image(),
+        duration_active_image: new Image(),
+        black_image: new Image()
     },
      
     canvas = document.getElementById("grid"),
@@ -45,13 +51,13 @@ var
     };
 blocks = [];
 midiInstruments = {
+    'xylophone': 13,
     'acoustic_grand_piano': 0,
     'overdriven_guitar': 29,
     'acoustic_bass': 32,
     'orchestral_harp': 46,
     'rock_organ': 18,
     'harpsichord': 6,
-    'xylophone': 13,
     'marimba': 12,
     'harmonica': 22,
     'accordion': 21,
@@ -122,6 +128,12 @@ midiInstruments = {
     addScale("A Major", [1, 2, 4, 6, 8, 9, 11]);
     addScale("B Major", [1, 3, 4, 6, 8, 10, 11]);
 
+    //Add images
+    config.note_active_image.src = './images/note_active.png';
+    config.volume_active_image.src = './images/volume_active.png';
+    config.velocity_active_image.src = './images/velocity_active.png';
+    config.duration_active_image.src = './images/duration_active.png';
+    config.black_image.src = './images/black.png';
 
     var sel = document.getElementById('select-note-scale');
     for (var i = 0; i < config.scaleNameArray.length; i++) {
@@ -169,6 +181,7 @@ var proto = {
     $send_blocks: $('.send-blocks'),
     timer: null,
     activeStore: null,
+    sprite: new Image(),    
 
     setGrid: function() {
         this.gridX = utilities.gridify(this.posX);
@@ -195,6 +208,7 @@ var proto = {
             this.notActive = this.shadeColor(color, 0);
             this.active = this.shadeColor(color, -35);
         }
+        this.selectNewSingle();
     },
     shadeColor: function(color, percent) {
         var
@@ -327,7 +341,50 @@ var proto = {
             context.fillStyle = "rgb(" + (this.active.red + this.activeCount) + ", " + (this.active.green + this.activeCount) + ", " + (this.active.blue + this.activeCount) + ")";
             context.fill();
         }
-        context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+        if(this.type === "block-effect"){
+            context.drawImage(this.sprite, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+            var effect_bar_width = (this.width - (this.size * 2) - 1)-4;
+            var effect_square_width = effect_bar_width / 4;
+            if(this.configMap.note.active){
+                context.drawImage(config.note_active_image, 
+                                    3 + this.posX + this.size, 
+                                    2 + this.posY + this.size, 
+                                    effect_square_width, 
+                                    effect_square_width);
+            }
+            if(this.configMap.volume.active){
+                context.drawImage(config.volume_active_image, 
+                                    3 + this.posX + effect_bar_width - effect_square_width,                                    
+                                    2 + this.posY + this.size, 
+                                    effect_square_width, 
+                                    effect_square_width);
+            }
+            if(this.configMap.velocity.active){
+                context.drawImage(config.velocity_active_image, 
+                                    3 + this.posX + this.size, 
+                                    2 + this.posY + effect_bar_width - effect_square_width, 
+                                    effect_square_width, 
+                                    effect_square_width);
+            }
+            if(this.configMap.duration.active){
+                context.drawImage(config.duration_active_image, 
+                                    3 + this.posX + effect_bar_width - effect_square_width, 
+                                    2 + this.posY + effect_bar_width - effect_square_width, 
+                                    effect_square_width, 
+                                    effect_square_width);
+            }
+
+            //shade the block if selected
+            if(this.selected){
+                context.globalAlpha = 0.3;
+                context.drawImage(config.black_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+                context.globalAlpha = 1.0;
+            }
+            
+        }
+        else{
+            context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+        }
     }
 };
 
@@ -377,7 +434,8 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     block.posY = y;
     block.speed = s;
     block.type = t;
-
+    block.sprite.src = './images/block-fx3.png';
+    
     block.configMap = {
         note: null,
         velocity: null,
@@ -388,7 +446,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     // Effect Block Specfic Methods
     block.setInitValues = function(el) {
         var effectArray = ['note', 'volume', 'velocity', 'duration'];
-        var map = el.configMap;
+        var map = el.configMap;        
 
         for (var key in map) {
             this.configMap[key] = {
@@ -2358,7 +2416,6 @@ setGridEvents = function() {
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
             config.cnt++;
-
         }
     };
 
