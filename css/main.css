@@ -463,10 +463,6 @@ body {
   background: #edebea;
   padding: 20px; }
 
-
-/*background: #edce69;
-//opacity: .75;*/
-    
 .piano-wrapper {
   margin-top: 10px;
   float: left;
@@ -474,51 +470,12 @@ body {
   .piano-wrapper .range-indicator {
     position: absolute;
     top: 0;
-    background: #6543CB;
-    opacity: .6;
+    background: #6543cb;
     height: 45px;
+    opacity: .6;
     z-index: 1000;
     pointer-events: none;
     display: none; }
-
-/*Added by MIKE BEGINS*/
-.ui-slider-horizontal {
-  margin-top: 0px;
-  position: relative;
-  text-align: left;
-  height: 0px;
-  width: 637px;
-  border: none;
-  background: #4d4d4d; }
-   
-  .ui-slider-horizontal .ui-slider-handle {
-    top: -0.4em;
-    margin-left: 0px;    
-    background: #a3a2a1;
-    cursor: default;
-    height: 20px;
-    position: absolute;
-    width: 20px;
-    z-index: 1005;
-    }
-  .ui-slider-horizontal .ui-slider-range {
-    background-position: 0 0;
-    border: 0 none;
-    display: block;
-    font-size: 0.7em;
-    position: absolute;
-    z-index: 1;
-    left: 0;
-    width: 100%; }
-  .ui-slider-horizontal .ui-slider-range-min {
-    bottom: 0; }
-  .ui-slider-horizontal .ui-widget-header {
-    background: #45b29d;
-    border: none; }
-  .ui-slider-horizontal .slider-value {
-    font-size: .875rem;
-    color: #4b4b4b; }
-/*Added by MIKE ENDS*/
 
 .piano-roll {
   position: relative;
@@ -552,36 +509,33 @@ body {
   .piano-roll .active {
     background: #efc94c; }
 
-/*Added by MIKE BEGINS*/
-.piano-roll-slider-min {float: left;
-  }
-  .piano-roll-slider .slider-value {
-    background: none;
-    border: none;
-    width: 637px;
-    }
+.piano-roll-slider-min {
+  float: left; }
 
-.piano-roll-slider {float: left;
-  }
-  .piano-roll-slider .slider-value {
-    background: none;
-    border: none;
-    width: 637px;
-    }
+.piano-roll-slider .slider-value {
+  background: none;
+  border: none;
+  width: 637px; }
+
+.piano-roll-slider {
+  float: left; }
+
+.piano-roll-slider .slider-value {
+  background: none;
+  border: none;
+  width: 637px; }
 
 #piano-slider-min .ui-slider-handle {
   margin-top: 10px;
   margin-left: -5px;
-  background: url('../images/piano-slider-min.png') no-repeat ;
-}
+  background: url('../images/piano-slider-min.png') no-repeat; }
 
 #piano-slider-max .ui-slider-handle {
   margin-top: -5px;
   margin-left: -15px;
-  background: url('../images/piano-slider-max.png') no-repeat ;
-}
-/*Added by MIKE ENDS*/
+  background: url('../images/piano-slider-max.png') no-repeat; }
 
+/*Added by MIKE ENDS*/
 .level-select p {
   float: left;
   position: relative;
@@ -604,6 +558,47 @@ select {
 .shadow {
   box-shadow: 0 5px 0 1px rgba(0, 0, 0, 0.09) inset; }
 
+.ui-slider-horizontal {
+  margin-top: 0px;
+  position: relative;
+  text-align: left;
+  height: 0px;
+  width: 637px;
+  border: none;
+  background: #4d4d4d; }
+
+.ui-slider-horizontal .ui-slider-handle {
+  top: -0.4em;
+  margin-left: 0px;
+  background: #a3a2a1;
+  cursor: default;
+  height: 20px;
+  position: absolute;
+  width: 20px;
+  z-index: 1005; }
+
+.ui-slider-horizontal .ui-slider-range {
+  background-position: 0 0;
+  border: 0 none;
+  display: block;
+  font-size: 0.7em;
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  width: 100%; }
+
+.ui-slider-horizontal .ui-slider-range-min {
+  bottom: 0; }
+
+.ui-slider-horizontal .ui-widget-header {
+  background: #45b29d;
+  border: none; }
+
+.ui-slider-horizontal .slider-value {
+  font-size: .875rem;
+  color: #4b4b4b; }
+
+/*Added by MIKE ENDS*/
 .ui-widget input {
   font-family: 'Istok Web', sans-serif;
   color: #67c0cd;
@@ -678,18 +673,22 @@ select {
   display: inline-block;
   width: 1px; }
 
-.mode-select {
-  margin-top: 20px;
+.mode-select, .play-select, .batch-edits {
+  margin: 50px 20px 10px 0;
   float: left;
-  cursor: pointer; }
-  .mode-select li {
+  cursor: pointer;
+  border: 1px solid #8CCDC1;
+  padding: 0 5px; }
+  .mode-select li, .play-select li, .batch-edits li {
     margin: 0 1px 1px 0;
-    padding: 7px 0;
-    width: 68px;
     display: inline-block;
-    text-align: center; }
-    .mode-select li.active {
-      background: #3FA38F; }
+    text-align: center;
+    opacity: .45;
+    padding: 0 5px;
+    height: 38px;
+    line-height: 50px; }
+    .mode-select li.active, .mode-select li:hover, .play-select li.active, .play-select li:hover, .batch-edits li.active, .batch-edits li:hover {
+      opacity: 1; }
 
 #wrapper {
   margin: 0 auto;

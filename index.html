@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/main.css">
     <title>JS Sequencer</title>
     <link rel="author" href="humans.txt">
-    <link href='http://fonts.googleapis.com/css?family=Istok+Web:500,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Istok+Web:400,700' rel='stylesheet' type='text/css'>
     <script src="inc/shim/Base64.js" type="text/javascript"></script>
     <script src="inc/shim/Base64binary.js" type="text/javascript"></script>
     <script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
@@ -31,23 +31,24 @@
 
 <body>
     <div id="wrapper">
+        <p>Mode Select</p>
         <ul class="mode-select">
-            <li class="create" class="create active"><img src="images/multiselect.png"></li>
-            <li class="select" class="select"><img src="images/indexfinger.png"></li>
-            <li class="trash"><img src="images/trashcan.png"></li>
-            <li class="pause">Pause</li>
+            <li data-mode = "create" class="create"><img  height = "22px" src="images/svg/mode-create.svg"></li>
+            <li data-mode = "select" class="select" ><img height = "23px" src="images/svg/mode-select.svg"></li>
+            <li data-mode = "trash" class="trash" ><img height = "23px" src="images/svg/mode-delete.svg"></li>
+           <!--  <li class="pause">Pause</li>
             <li class="advance">Advance</li>
             <li class="select-all">Select All</li>
-            <li class="clear-all">Clear All</li>
+            <li class="clear-all">Clear All</li> -->
         </ul>
-        <!--   <ul id="arrows" class="clearfix">
-            <li id="stop">Stop</li>
-            <li id="pause">Pause</li>
-            <li id="advance">Advance</li>
-            <li id="clearall">Clear All</li>
-            <li id="selectall">Select All</li>
-            <li id="changetype">Change New Block Type</li>
-        </ul> -->
+        <ul class="play-select">
+            <li data-mode = "play" class="active"><img height = "19px" src="images/svg/mode-play.svg"></li>
+            <li data-mode = "pause"><img height = "19px"  src="images/svg/mode-pause.svg"></li>
+        </ul>
+        <ul class="batch-edits">
+            <li data-mode = "clear-all"><img height = "19px"  src="images/svg/batch-delete.svg"></li>
+            <li data-mode = "select-all"><img height = "24px"  src="images/svg/batch-select.svg"></li>
+        </ul>
         <div class="clear"></div>
         <canvas id="grid" width="640" height="640"></canvas>
         <div draggable="false" id="grid_lines">
@@ -60,16 +61,6 @@
                 <li id="block-effect">Effect Block</li>
             </ul>
             <div class="block-effect-panel">
-                <!--  <div class="effect-select">
-                    <ul>
-                        <li data-type="note" class="toggle-note"><span class="active button-select">&nbsp;</span>Note</li>
-                        <li data-type="volume" class="toggle-volume"><span class="button-select">&nbsp;</span>Volume</li>
-                        <li data-type="velocity" class="toggle-velocity"><span class="button-select">&nbsp;</span>Velocity</li>
-                        <li data-type="duration" class="toggle-duration"><span class="button-select">&nbsp;</span>Duration</li>
-                        <li class="toggle-octave"><span class="button-select">&nbsp;</span>Octave</li>
-                        <li><span class="button-select">&nbsp;</span>Scale</li>
-                    </ul>
-                </div> -->
                 <div class="effect-wrapper">
                     <div class="header clearfix">
                         <div class="activator note-activator" data-active="true" data-type="note">
@@ -120,22 +111,6 @@
                             </div>
                         </div>
                         <div class="note-progression clearfix">
-                            <!--  <div class="range-wrapper">
-                                <div class="dial-outline"></div>
-                                <div class="dial-wrapper-range">
-                                    <input class="dial-input-rangelow note-rangelow-effect" type="text" disabled>
-                                    <div class="dial-bg"></div>
-                                    <div class="connector-line-vertical"></div>
-                                </div>
-                                <div class="dial-wrapper-range">
-                                    <input class="dial-input-rangehigh note-rangehigh-effect" type="text" disabled>
-                                    <div class="dial-bg"></div>
-                                    <div class="connector-line-vertical"></div>
-                                </div>
-                                <div class="clear"></div>
-                                <p>Low</p>
-                                <p>High</p>
-                            </div> -->
                             <input data-type="note" class="note-step-size spinner" name="value">
                             <div class="switch-wrapper">
                                 <div data-type="note" data-direction="up" class="note-step-switch switch">
@@ -196,22 +171,6 @@
                             </div>
                         </div>
                         <div class="volume-progression clearfix">
-                            <!--   <div class="range-wrapper">
-                                <div class="dial-outline"></div>
-                                <div class="dial-wrapper-range">
-                                    <input class="dial-input-rangelow volume-prog-rangelow-effect" type="text">
-                                    <div class="dial-bg"></div>
-                                    <div class="connector-line-vertical"></div>
-                                </div>
-                                <div class="dial-wrapper-range">
-                                    <input class="dial-input-rangehigh volume-prog-rangehigh-effect" type="text">
-                                    <div class="dial-bg"></div>
-                                    <div class="connector-line-vertical"></div>
-                                </div>
-                                <div class="clear"></div>
-                                <p>Low</p>
-                                <p>High</p>
-                            </div> -->
                             <input data-type="volume" class="volume-step-size spinner" name="value">
                             <div class="switch-wrapper">
                                 <div data-type="volume" data-direction="up" class="volume-step-switch switch">
@@ -239,7 +198,6 @@
                                 <option value="velocity-specific">Specific Value</option>
                                 <option value="velocity-random">Random Value</option>
                                 <option value="velocity-progression">Step Progression</option>
-                                <!-- <option value="3">Audi</option> -->
                             </select>
                         </center>
                         <div class="velocity-specific clearfix">
@@ -272,22 +230,6 @@
                             </div>
                         </div>
                         <div class="velocity-progression clearfix">
-                            <!--  <div class="range-wrapper">
-                                <div class="dial-outline"></div>
-                                <div class="dial-wrapper-range">
-                                    <input class="dial-input-rangelow velocity-prog-rangelow-effect" type="text">
-                                    <div class="dial-bg"></div>
-                                    <div class="connector-line-vertical"></div>
-                                </div>
-                                <div class="dial-wrapper-range">
-                                    <input class="dial-input-rangehigh velocity-prog-rangehigh-effect" type="text">
-                                    <div class="dial-bg"></div>
-                                    <div class="connector-line-vertical"></div>
-                                </div>
-                                <div class="clear"></div>
-                                <p>Low</p>
-                                <p>High</p>
-                            </div> -->
                             <input data-type="velocity" class="velocity-step-size spinner" name="value">
                             <div class="switch-wrapper">
                                 <div data-type="velocity" data-direction="up" class="velocity-step-switch switch">
@@ -347,22 +289,6 @@
                             </div>
                         </div>
                         <div class="duration-progression clearfix">
-                            <!--  <div class="range-wrapper">
-                                <div class="dial-outline"></div>
-                                <div class="dial-wrapper-range">
-                                    <input class="dial-input-rangelow duration-prog-rangelow-effect" type="text">
-                                    <div class="dial-bg"></div>
-                                    <div class="connector-line-vertical"></div>
-                                </div>
-                                <div class="dial-wrapper-range">
-                                    <input class="dial-input-rangehigh duration-prog-rangehigh-effect" type="text">
-                                    <div class="dial-bg"></div>
-                                    <div class="connector-line-vertical"></div>
-                                </div>
-                                <div class="clear"></div>
-                                <p>Low</p>
-                                <p>High</p>
-                            </div> -->
                             <input data-type="duration" class="duration-step-size spinner" name="value">
                             <div class=switch-wrapper>
                                 <div data-type="duration" data-direction="up" class="duration-step-switch switch">
