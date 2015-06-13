@@ -1,3 +1,4 @@
+// "use strict";
 var
     config = {
         speed: 4,
@@ -513,7 +514,27 @@ utilities = function() {
             noteStr = noteString.substring(0, noteString.length - 1);
             note = noteArray.indexOf(noteStr);
             return octave * 12 + note;
+        },
+        deleteSelectedBlocks: function() {
+            for (var i = 0; i < config.cnt; i++) {
+                if (blocks[i].selected === true) {
+                    blocks[i].removeBlock();
+                    i--;
+                }
+            }
+        },
+        deleteAllBlocks: function() {
+            for (var j = 0; j < config.cnt; j++) {
+                blocks[j].removeBlock();
+                j--;
+            }
+        },
+        selectAllBlocks: function() {
+            for (var k = 0; k < config.cnt; k++) {
+                blocks[k].selectBlock();
+            }
         }
+
     };
 }();
 
@@ -937,7 +958,7 @@ setMidiParams = function() {
         for (var i = 0; i < config.instrumentsToLoad; i++) {
             str[i] = Object.keys(midiInstruments)[i];
         }
-        console.log(Object.keys(midiInstruments).length);
+        // console.log(Object.keys(midiInstruments).length);
         for (var i = 0; i < Object.keys(midiInstruments).length; i++) {
             config.loadedInstruments.push(false);
         }
@@ -977,12 +998,107 @@ setMidiParams = function() {
     };
 }();
 
+topPanel = function() {
+    var jqueryMap = {
+        $mode_select: $('.mode-select'),
+        $play_select: $('.play-select'),
+        $batch_edits: $('.batch-edits')
+    };
+
+    jqueryMap.$batch_edits.find('li').click(function() {
+        var mode = $(this).attr('data-mode');
+
+        if (mode === 'select-all') {
+            utilities.selectAllBlocks();
+        } else {
+            utilities.deleteAllBlocks();
+        }
+    });
+
+    jqueryMap.$play_select.find('li').click(function() {
+        var mode = $(this).attr('data-mode');
+        $(this).addClass('active').siblings().removeClass('active');
+
+        if (mode === 'pause') {
+            config.pause = 1;
+        } else {
+            config.pause = -1;
+        }
+    });
+
+    jqueryMap.$mode_select.find('li').click(function() {
+        var mode = $(this).attr('data-mode');
+        $(this).addClass('active').siblings().removeClass('active');
+
+        if (mode === 'trash') {
+            utilities.deleteSelectedBlocks();
+        }
+        config.mode = mode;
+        // if (mode != 'select-all') {
+        //     $(this).addClass('active').siblings().removeClass('active');
+        // }
+        // switch (mode) {
+        //     case 'pause':
+        //         config.pause = config.pause * -1;
+        //         break;
+        //     case 'advance':
+        //         config.advance *= -1;
+        //         break;
+        //     case 'trash':
+        //         utilities.deleteSelectedBlocks();
+        //         break;
+        // case 'advance':
+        //     config.advance *= -1;
+        //     break;
+        // case 'clear-all':
+        //     for (var i = 0; i < config.cnt; i++) {
+        //         blocks[i].removeBlock();
+        //         i--;
+        //     }
+        //     $(this).removeClass('active');
+        //     $('li.create').addClass('active');
+        //     mode = 'create';
+        //     break;
+        // case 'select-all':
+        //     for (var j = 0; j < config.cnt; j++) {
+        //         blocks[j].selectBlock();
+        //     }
+        //     mode = config.mode;
+        //     break;
+        //    }
+        //   config.mode = mode;
+    });
+
+
+
+
+
+    // buttons.pause.addEventListener("click", function() {
+    //     config.pause = config.pause * -1;
+    // });
+
+    // buttons.advance.addEventListener("click", function() {
+    //     config.advance *= -1;
+    // });
+
+    // buttons.clear.addEventListener("click", function() {
+    //     for (var i = 0; i < config.cnt; i++) {
+    //         blocks[i].removeBlock();
+    //         i--;
+    //     }
+    // });
+    // buttons.selectAll.addEventListener("click", function() {
+    //     // var blocklength = blocks.length;
+    //     for (var i = 0; i < config.cnt; i++) {
+    //         blocks[i].selectBlock();
+    //     }
+    // });
+}()
 
 controlPanel = function() {
     var
         jqueryMap = {
             $select: $('.block-type-select'),
-            $mode_select: $('.mode-select'),
             $block_music: $('#block-music'),
             $block_effect: $('#block-effect'),
             $range_indicator: $('.range-indicator'),
@@ -1021,18 +1137,6 @@ controlPanel = function() {
                 'thickness': knobparams.thickness,
                 'cursor': knobparams.cursor,
                 'height': knobparams.height,
-                // 'release': function(v) {
-                //     if (type === "effect-block") {
-                //         var value = v;
-                //         if ((v % 1) >= 0.5) {
-                //             value = Math.ceil(v);
-                //         } else {
-                //             value = Math.floor(v);
-                //         }
-                //         console.log('release');
-                //         // effectBlockPanel.compareDialValues(effect_type, params, value);
-                //     }
-                // },
                 'change': function(v) {
                     var value = v;
                     if ((v % 1) >= 0.5) {
@@ -1095,75 +1199,6 @@ controlPanel = function() {
         var type = $(this).attr('id');
         setActivePanel(type);
     });
-
-
-    // Top Panel
-    jqueryMap.$mode_select.find('li').click(function() {
-        var mode = $(this).attr('class');
-        if (mode != 'select-all') {
-            $(this).addClass('active').siblings().removeClass('active');
-        }
-        switch (mode) {
-            case 'pause':
-                config.pause = config.pause * -1;
-                break;
-            case 'advance':
-                config.advance *= -1;
-                break;
-            case 'trash':
-                for (var s = 0; s < config.cnt; s++) {
-                    if (blocks[s].selected === true) {
-                        blocks[s].removeBlock();
-                        s--;
-                    }
-                }
-                break;
-            case 'advance':
-                config.advance *= -1;
-                break;
-            case 'clear-all':
-                for (var i = 0; i < config.cnt; i++) {
-                    blocks[i].removeBlock();
-                    i--;
-                }
-                $(this).removeClass('active');
-                $('li.create').addClass('active');
-                mode = 'create';
-                break;
-            case 'select-all':
-                for (var j = 0; j < config.cnt; j++) {
-                    blocks[j].selectBlock();
-                }
-                mode = config.mode;
-                break;
-        }
-        config.mode = mode;
-    });
-
-
-
-
-
-    // buttons.pause.addEventListener("click", function() {
-    //     config.pause = config.pause * -1;
-    // });
-
-    // buttons.advance.addEventListener("click", function() {
-    //     config.advance *= -1;
-    // });
-
-    // buttons.clear.addEventListener("click", function() {
-    //     for (var i = 0; i < config.cnt; i++) {
-    //         blocks[i].removeBlock();
-    //         i--;
-    //     }
-    // });
-    // buttons.selectAll.addEventListener("click", function() {
-    //     // var blocklength = blocks.length;
-    //     for (var i = 0; i < config.cnt; i++) {
-    //         blocks[i].selectBlock();
-    //     }
-    // });
 
     return {
         createDial: createDial,
@@ -2267,7 +2302,7 @@ setGridEvents = function() {
                 //Mouse button was dragged to other squares
                 else {
                     //Handle select mode
-                    if (config.mode === "select") {
+                    if (config.mode === "select" || config.mode === "trash") {
                         //Check for shift key off
                         if (config.shiftkey === 0) {
                             //If shift is off, deselect all blocks currently selected
@@ -2291,10 +2326,15 @@ setGridEvents = function() {
                             if (gridX < rightX && gridX >= leftX && gridY < bottomY && gridY >= topY) {
 
                                 blocks[p].selectBlock();
-                                t = p;
+
+                               // t = p;
                                 typeArray[cnt] = blocks[p].type;
                                 cnt++;
+
                             }
+                        }
+                        if (config.mode === "trash") {
+                            utilities.deleteSelectedBlocks();
                         }
                         compareTypes(typeArray);
                     }
