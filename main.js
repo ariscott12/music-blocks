@@ -1005,95 +1005,43 @@ topPanel = function() {
         $batch_edits: $('.batch-edits')
     };
 
-    jqueryMap.$batch_edits.find('li').click(function() {
+    updateMode = function() {
         var mode = $(this).attr('data-mode');
-
-        if (mode === 'select-all') {
-            utilities.selectAllBlocks();
-        } else {
-            utilities.deleteAllBlocks();
+        if ($(this).parent().attr('class') !== 'batch-edits') {
+            $(this).addClass('active').siblings().removeClass('active');
         }
-    });
 
-    jqueryMap.$play_select.find('li').click(function() {
-        var mode = $(this).attr('data-mode');
-        $(this).addClass('active').siblings().removeClass('active');
-
-        if (mode === 'pause') {
-            config.pause = 1;
-        } else {
-            config.pause = -1;
+        switch (mode) {
+            case 'select':
+            case 'create':
+                config.mode = mode;
+                break;
+            case 'trash':
+                config.mode = mode;
+                utilities.deleteSelectedBlocks();
+                break;
+            case 'pause':
+                config.pause = 1;
+                break;
+            case 'play':
+                config.pause = -1;
+                break;
+            case 'select-all':
+                utilities.selectAllBlocks();
+                break;
+            case 'clear-all':
+                utilities.deleteAllBlocks();
+                break;
+            default:
+                config.mode = mode;
+                break;
         }
-    });
+    };
+    jqueryMap.$mode_select.find('li').click(updateMode);
+    jqueryMap.$play_select.find('li').click(updateMode);
+    jqueryMap.$batch_edits.find('li').click(updateMode);
 
-    jqueryMap.$mode_select.find('li').click(function() {
-        var mode = $(this).attr('data-mode');
-        $(this).addClass('active').siblings().removeClass('active');
-
-        if (mode === 'trash') {
-            utilities.deleteSelectedBlocks();
-        }
-        config.mode = mode;
-        // if (mode != 'select-all') {
-        //     $(this).addClass('active').siblings().removeClass('active');
-        // }
-        // switch (mode) {
-        //     case 'pause':
-        //         config.pause = config.pause * -1;
-        //         break;
-        //     case 'advance':
-        //         config.advance *= -1;
-        //         break;
-        //     case 'trash':
-        //         utilities.deleteSelectedBlocks();
-        //         break;
-        // case 'advance':
-        //     config.advance *= -1;
-        //     break;
-        // case 'clear-all':
-        //     for (var i = 0; i < config.cnt; i++) {
-        //         blocks[i].removeBlock();
-        //         i--;
-        //     }
-        //     $(this).removeClass('active');
-        //     $('li.create').addClass('active');
-        //     mode = 'create';
-        //     break;
-        // case 'select-all':
-        //     for (var j = 0; j < config.cnt; j++) {
-        //         blocks[j].selectBlock();
-        //     }
-        //     mode = config.mode;
-        //     break;
-        //    }
-        //   config.mode = mode;
-    });
-
-
-
-
-
-    // buttons.pause.addEventListener("click", function() {
-    //     config.pause = config.pause * -1;
-    // });
-
-    // buttons.advance.addEventListener("click", function() {
-    //     config.advance *= -1;
-    // });
-
-    // buttons.clear.addEventListener("click", function() {
-    //     for (var i = 0; i < config.cnt; i++) {
-    //         blocks[i].removeBlock();
-    //         i--;
-    //     }
-    // });
-    // buttons.selectAll.addEventListener("click", function() {
-    //     // var blocklength = blocks.length;
-    //     for (var i = 0; i < config.cnt; i++) {
-    //         blocks[i].selectBlock();
-    //     }
-    // });
-}()
+}();
 
 controlPanel = function() {
     var
@@ -2327,7 +2275,7 @@ setGridEvents = function() {
 
                                 blocks[p].selectBlock();
 
-                               // t = p;
+                                // t = p;
                                 typeArray[cnt] = blocks[p].type;
                                 cnt++;
 
