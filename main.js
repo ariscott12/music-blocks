@@ -19,7 +19,8 @@ var
         scaleNameArray: [],
         scaleArray: [],
         pianoSliderArray: [0, 10, 16, 23, 29, 39, 49, 55, 62, 68, 75, 81, 91],
-        loadedInstruments: []
+        loadedInstruments: [],
+        blockSolo: false
     },
      
     canvas = document.getElementById("grid"),
@@ -128,7 +129,7 @@ midiInstruments = {
         var opt = document.createElement('option');
         opt.innerHTML = config.scaleNameArray[i];
         opt.value = config.scaleNameArray[i];
-        sel.appendChild(opt);
+        //  sel.appendChild(opt);
     }
 
     //Make create icon active at start
@@ -293,19 +294,27 @@ var proto = {
         this.notActive = this.colorArray[this.instrument];
     },
     playmidi: function() {
+
         var
             duration = this.duration / 120,
             $selected_instrument = $("#set-instrument option:selected");
-
-        //console.log($("#set-instrument option:selected").attr('class') + "runi");
 
         // If music block is note selected create 'light effect' on collision
         if (this.selected === false) {
             this.activate();
         }
-        //console.log(this.instrument);
         if ($('#set-instrument option:selected').attr('class') === 'loaded') {
-            setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+            // check if block is muted
+            if (this.mute !== true) {
+                if (config.blockSolo === true) {
+                    if (this.solo === true) {
+                        setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+                    }
+                } else {
+                    setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+                }
+
+            }
         }
     },
     render: function() {
@@ -346,6 +355,8 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
     block.duration = null;
     block.velocity = null;
     block.instrument = 0;
+    block.solo = false;
+    block.mute = false;
 
 
     // Music Block Specfic Methods
@@ -358,6 +369,10 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
         this.octave = map.octave;
         this.instrument = map.instrument;
         this.static_direction = map.static_direction;
+        this.mute = map.mute;
+        this.solo = map.solo;
+
+        console.log(map.solo);
 
     };
     block.setMidiValues = function(type, value) {
@@ -439,12 +454,10 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 low_octave++;
             }
         }
-        console.log("REBUILT " + this.configMap.note.range_valid_notes);
+        //  console.log("REBUILT " + this.configMap.note.range_valid_notes);
     };
 
     block.setMidiValues = function(type, attr, value) {
-        // console.log('midi'+value);
-        console.log(this.configMap);
         this.configMap[type][attr] = value;
     };
 
@@ -1170,7 +1183,10 @@ musicBlockPanel = function() {
             $direction: $('#select-direction'),
             $piano_key: $('.piano-wrapper li'),
             $instrument: $('#set-instrument'),
-            $send_blocks: $(".send-blocks")
+            $send_blocks: $(".send-blocks"),
+            $mute: $('.mute-toggle'),
+            $solo: $('.solo-toggle'),
+            $mute_solo: $('.mute-solo')
         },
         configMap = {
             note: 60,
@@ -1178,7 +1194,9 @@ musicBlockPanel = function() {
             duration: 40,
             velocity: 60,
             instrument: 0,
-            static_direction: 'up'
+            static_direction: 'up',
+            mute: false,
+            solo: false
         },
         setDirection, getDirection, getPanelValues, updatePianoRoll, sendBlocks,
         setToBlock, setParams, populateInstruments,
@@ -1249,6 +1267,7 @@ musicBlockPanel = function() {
             }
         }
         // update configMap anytime a value is updated on the music block panel
+        // console.log(value);
         configMap[type] = value;
     };
     sendBlocks = function(direction) {
@@ -1292,17 +1311,40 @@ musicBlockPanel = function() {
             var mapkey = configMap[key];
             configMap[key] = blocks[num][key];
             if (mapkey != blocks[num][key]) {
-                if (key === 'static_direction') {
-                    setDirection(blocks[num].static_direction);
-                } else if (key === 'instrument') {
-                    jqueryMap.$instrument.val(blocks[num].instrument);
-                } else {
-                    jqueryMap['$' + key].val(blocks[num][key]);
-                    jqueryMap['$' + key].trigger('change');
-                    if (key === 'note') {
-                        updatePianoRoll(blocks[num].note);
-                    }
+                switch (key) {
+                    case 'static_direciton':
+                        setDirection(blocks[num].static_direction);
+                        break;
+                    case 'instrument':
+                        jqueryMap.$instrument.val(blocks[num].instrument);
+                        break;
+                    case 'solo':
+                    case 'mute':
+                        jqueryMap['$' + key].attr('data-active', blocks[num][key]);
+                        break;
+
+                    default:
+                        jqueryMap['$' + key].val(blocks[num][key]);
+                        jqueryMap['$' + key].trigger('change');
+                        if (key === 'note') {
+                            updatePianoRoll(blocks[num].note);
+                        }
+                        break;
+
                 }
+                // if (key === 'static_direction') {
+                //     setDirection(blocks[num].static_direction);
+                // } else if (key === 'instrument') {
+                //     jqueryMap.$instrument.val(blocks[num].instrument);
+                // } else if (key === 'mute') {
+                //     jqueryMap.$mute_toggle.attr('data-mute', blocks[num].mute);
+                // } else {
+                //     jqueryMap['$' + key].val(blocks[num][key]);
+                //     jqueryMap['$' + key].trigger('change');
+                //     if (key === 'note') {
+                //         updatePianoRoll(blocks[num].note);
+                //     }
+                // }
             }
         }
     };
@@ -1336,11 +1378,45 @@ musicBlockPanel = function() {
         setParams('instrument', program);
         return false;
     });
+
     jqueryMap.$direction.find('li').click(function() {
         var direction = $(this).attr('id');
         $(this).addClass('active').siblings().removeClass('active');
         setParams('static_direction', direction);
         return false;
+    });
+
+    jqueryMap.$mute_solo.find('span').click(function() {
+        var val = $(this).attr('data-active'),
+            type = $(this).attr('data-type');
+
+        if (val === 'true') {
+            $(this).attr('data-active', 'false');
+            val = false;
+
+            // console.log(config.blockSolo);
+
+        } else {
+            $(this).attr('data-active', 'true');
+            val = true;
+            if (type === 'solo') {
+                config.blockSolo = true;
+            }
+        }
+        setParams(type, val);
+
+        if (type === 'solo') {
+            // set global blockSolo to false, loop through music blocks and set back to true if any of them are true
+            config.blockSolo = val;
+
+            for (var k = 0; k < config.cnt; k++) {
+                console.log(blocks[k].solo);
+                if (blocks[k].solo === true) {
+                    config.blockSolo = true;
+                }
+            }
+        }
+
     });
 
     jqueryMap.$piano_key.mousedown(function() {
@@ -1419,7 +1495,6 @@ effectBlockPanel = function() {
                 }
             }
         }
-        console.log('test');
         // Update configMap anytime the effect block panel is updated
         configMap[type][attr] = value;
     };
