@@ -496,7 +496,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 low_octave++;
             }
         }
-        console.log("REBUILT " + this.configMap.note.range_valid_notes);
+        //console.log("REBUILT " + this.configMap.note.range_valid_notes);
     };
 
     block.setMidiValues = function(type, attr, value) {
@@ -528,9 +528,9 @@ function addScale(scaleName, scale) {
 }
 
 function getScale(scaleName) {
-    console.log(scaleName + "GETTING");
-    console.log(config.scaleNameArray);
-    console.log(config.scaleArray);
+    //console.log(scaleName + "GETTING");
+    //console.log(config.scaleNameArray);
+    //console.log(config.scaleArray);
     return config.scaleArray[config.scaleNameArray.indexOf(scaleName)];
 }
 
@@ -637,29 +637,32 @@ collisions = function() {
                                 step_direction = -1;
                             }
 
-                            if (key == "note") {
-                                //Find the current note in the valid note array
-                                var prog_index = blocks[eblockref].configMap[key].range_valid_notes.indexOf(blocks[mblockref].note);
+                            //Default newValue to the original value
+                            var newValue = blocks[mblockref][key];
 
-                                //Advance index. If incoming note not found, prog_index will start at 0
-                                if (prog_index == -1) {
-                                    prog_index = 0;
+                            if (key == "note") {
+                                if(blocks[eblockref].configMap[key].range_valid_notes.length > 0){
+                                   //Find the current note in the valid note array
+                                    var prog_index = blocks[eblockref].configMap[key].range_valid_notes.indexOf(blocks[mblockref].note);
+
+                                    //Advance index. If incoming note not found, prog_index will start at 0
+                                    if (prog_index == -1) {
+                                        prog_index = 0;
+                                    }
+                                    //Otherwise, advance by the step amount in the step direction
+                                    else {
+                                        prog_index += step_direction * blocks[eblockref].configMap[key].step;
+                                    }
+                                    //If we are out of the range, we add or subtract the length to wrap around the range
+                                    while (prog_index >= blocks[eblockref].configMap[key].range_valid_notes.length || prog_index < 0) {
+                                        prog_index -= step_direction * blocks[eblockref].configMap[key].range_valid_notes.length;
+                                    }
+
+                                    //Set new note value to the new indexed value from the range array
+                                    newValue = blocks[eblockref].configMap[key].range_valid_notes[prog_index];                           
                                 }
-                                //Otherwise, advance by the step amount in the step direction
-                                else {
-                                    prog_index += step_direction * blocks[eblockref].configMap[key].step;
-                                }
-                                //If we are out of the range, we add or subtract the length to wrap around the range
-                                while (prog_index >= blocks[eblockref].configMap[key].range_valid_notes.length || prog_index < 0) {
-                                    prog_index -= step_direction * blocks[eblockref].configMap[key].range_valid_notes.length;
-                                }
-                                //Set new note value to the new indexed value from the range array
-                                var newValue = blocks[eblockref].configMap[key].range_valid_notes[prog_index];
                             } else {
                                 //Add step value to block key
-                                var newValue = blocks[mblockref][key];
-                                //var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step * step_direction;
-
                                 if (step_direction == 1) {
                                     //If the result key is lower than the low limit, then set to the low limit.
                                     if (newValue < blocks[eblockref].configMap[key].range_low) {
@@ -681,7 +684,9 @@ collisions = function() {
                             }
 
                             //Set the block value to new value
-                            blocks[mblockref][key] = newValue;
+                            if(newValue != null){
+                               blocks[mblockref][key] = newValue;
+                            }
 
                             break;
 
@@ -995,7 +1000,7 @@ setMidiParams = function() {
         for (var i = 0; i < config.instrumentsToLoad; i++) {
             str[i] = Object.keys(midiInstruments)[i];
         }
-        console.log(Object.keys(midiInstruments).length);
+        //console.log(Object.keys(midiInstruments).length);
         for (var i = 0; i < Object.keys(midiInstruments).length; i++) {
             config.loadedInstruments.push(false);
         }
