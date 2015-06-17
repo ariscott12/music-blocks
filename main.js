@@ -1188,7 +1188,7 @@ controlPanel = function() {
                 }
                 $(this).removeClass('active');
                 $('li.create').addClass('active');
-                mode = 'create';
+                config.mode = 'create';
                 break;
             case 'select-all':
                 for (var j = 0; j < config.cnt; j++) {
