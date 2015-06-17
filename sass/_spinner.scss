@@ -1,0 +1,122 @@
+.spinner-page {
+    width: 100%;
+    top: 40%;
+    text-align: center;
+    position: absolute;
+    z-index:30000;
+    p {
+        font-size:12px;
+        margin-bottom:12px;
+        color:#fff;
+
+    }
+}
+
+.spinner {
+  margin: 0 auto;
+  // width: 50px;
+  // height: 30px;
+  // text-align: center;
+  font-size: 10px;
+}
+
+.spinner > div {
+  background-color: #eee;
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+  height:36px;
+  
+  -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+  animation: stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+.spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@-webkit-keyframes stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes stretchdelay {
+  0%, 40%, 100% { 
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% { 
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
+
+.spinner-instrument {
+    background: rgba(0, 0, 0, 0.4) none repeat scroll 0 0;
+    height: 576px;
+    padding-top: 240px;
+    position: absolute;
+    text-align: center;
+    width: 640px;
+    z-index: 20000;
+    display: none;
+}
+
+// .spinner > div {
+//     width: 18px;
+//     height: 18px;
+//     background-color: #EDEBEA;
+//     border-radius: 100%;
+//     display: inline-block;
+//     -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+//     animation: bouncedelay 1.4s infinite ease-in-out;
+//     /* Prevent first frame from flickering when animation starts */
+    
+//     -webkit-animation-fill-mode: both;
+//     animation-fill-mode: both;
+// }
+
+// .spinner .bounce1 {
+//     -webkit-animation-delay: -0.32s;
+//     animation-delay: -0.32s;
+// }
+
+// .spinner .bounce2 {
+//     -webkit-animation-delay: -0.16s;
+//     animation-delay: -0.16s;
+// }
+
+// @-webkit-keyframes bouncedelay {
+//     0%, 80%, 100% {
+//         -webkit-transform: scale(0.0)
+//     }
+//     40% {
+//         -webkit-transform: scale(1.0)
+//     }
+// }
+
+// @keyframes bouncedelay {
+//     0%, 80%, 100% {
+//         transform: scale(0.0);
+//         -webkit-transform: scale(0.0);
+//     }
+//     40% {
+//         transform: scale(1.0);
+//         -webkit-transform: scale(1.0);
+//     }
+// }

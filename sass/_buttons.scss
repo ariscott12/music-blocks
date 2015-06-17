@@ -29,12 +29,24 @@
     }
 }
 
-.button-select {
-    border: 1px solid #2e7466;
-    border-radius: 2px;
+.button-trigger {
+    border: 1px solid #6d1d1d;
+    border-radius: 3px;
+    background: rgba(109, 4, 1, 0.65) none repeat scroll 0 0;
     display: inline-block;
+    height: 13px;
+    margin-right: 9px;
+    width: 13px;
+    cursor: pointer;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.5) inset, 0 1px 1px rgba(255, 255, 255, 0.66) inset;
+}
+
+.button-select {
+  // border: 1px solid #2e7466;
+   // border-radius: 2px;
+   // display: inline-block;
     &.active {
-        background-color: $aqua;
+       //background-color: $aqua;
     }
 }
 

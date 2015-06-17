@@ -297,7 +297,7 @@
         p {
             text-align: center;
         }
-        .button-select {
+        .button-trigger {
             cursor: pointer;
             height: 12px;
             width: 12px;
@@ -307,16 +307,16 @@
     }
     
     [data-limit-range="true"] {
-        .button-select {
-            background: $aqua;
+        .button-trigger {
+            background: $red-bright;
         }
     }
     
-    [data-limit-range="false"] {
-        .button-select {
-            background: none;
-        }
-    }
+    // [data-limit-range="false"] {
+    //     .button-select {
+    //         background: none;
+    //     }
+    // }
     
     // Music Blocks 
     .instrument-select {
@@ -387,15 +387,29 @@
         padding: 20px;
     }
     
+    .mute-solo {
+        margin-left: 20px;
+        li {
+            float: left;
+            margin: 13px 18px 0 0;
+        }
+        span {
+            position: relative;
+            top: 2px;
+            &[data-active="true"] {
+                background: $red-bright;
+                //@include background(linear-gradient(red, green) left repeat, radial-gradient(red, orange) left repeat);
+            }
+        }
+    }
+    
     // .note-random,
     // .note-specific,
     // .volume-specific,
     // .volume-random,
-    
     // {
     //     display: none;
     // }
-    
     .piano-wrapper {
         margin-top: 10px;
         float: left;

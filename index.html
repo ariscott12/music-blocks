@@ -30,27 +30,42 @@
 </head>
 
 <body>
+    <div class="spinner-page spinner">
+        <p>Doing Big Things Son!</p>
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+    </div>
     <div id="wrapper">
         <p>Mode Select</p>
         <ul class="mode-select">
-            <li data-mode = "create" class="create"><img  height = "22px" src="images/svg/mode-create.svg"></li>
-            <li data-mode = "select" class="select" ><img height = "23px" src="images/svg/mode-select.svg"></li>
-            <li data-mode = "trash" class="trash" ><img height = "23px" src="images/svg/mode-delete.svg"></li>
-           <!--  <li class="pause">Pause</li>
+            <li data-mode="create" class="create"><img height="22px" src="images/svg/mode-create.svg"></li>
+            <li data-mode="select" class="select"><img height="23px" src="images/svg/mode-select.svg"></li>
+            <li data-mode="trash" class="trash"><img height="23px" src="images/svg/mode-delete.svg"></li>
+            <!--  <li class="pause">Pause</li>
             <li class="advance">Advance</li>
             <li class="select-all">Select All</li>
             <li class="clear-all">Clear All</li> -->
         </ul>
         <ul class="play-select">
-            <li data-mode = "play" class="active"><img height = "19px" src="images/svg/mode-play.svg"></li>
-            <li data-mode = "pause"><img height = "19px"  src="images/svg/mode-pause.svg"></li>
+            <li data-mode="play" class="active"><img height="19px" src="images/svg/mode-play.svg"></li>
+            <li data-mode="pause"><img height="19px" src="images/svg/mode-pause.svg"></li>
         </ul>
         <ul class="batch-edits">
-            <li data-mode = "clear-all"><img height = "19px"  src="images/svg/batch-delete.svg"></li>
-            <li data-mode = "select-all"><img height = "24px"  src="images/svg/batch-select.svg"></li>
+            <li data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
+            <li data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
         </ul>
         <div class="clear"></div>
         <canvas id="grid" width="640" height="640"></canvas>
+        <div class="spinner spinner-instrument">
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+        </div>
         <div draggable="false" id="grid_lines">
             <ul id="gridVertical"></ul>
             <ul id="gridHorizontal"></ul>
@@ -60,6 +75,85 @@
                 <li id="block-music" class="active">Music Block</li>
                 <li id="block-effect">Effect Block</li>
             </ul>
+            <div class="block-music-panel">
+                <div class="instrument-select">
+                    <center>
+                        <select id="set-instrument">
+                        </select>
+                    </center>
+                </div>
+                <ul class="block-direction-select clearfix" id="select-direction">
+                    <li id="left">
+                        <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                            <polygon fill="#717171" points="11,14 0,7 11,0 " />
+                        </svg>
+                    </li>
+                    <li class="active" id="up">
+                        <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
+                            <polygon fill="#717171" points="0,11 7,0 14,11 " />
+                        </svg>
+                    </li>
+                    <li id="right">
+                        <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                            <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                        </svg>
+                    </li>
+                    <li id="down">
+                        <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
+                            <polygon fill="#717171" points="14,0 7,11 0,0 " />
+                        </svg>
+                    </li>
+                </ul>
+                <div class="note-select clearfix">
+                    <div class="note-wrapper">
+                        <p>Note Selection</p>
+                        <div class="dial-wrapper">
+                            <input class="dial-input note-music" type="text" id="note" disabled>
+                            <div class="dial-bg"></div>
+                            <div class="connector-line"></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <p class="small">(or set with piano roll)</p>
+                </div>
+                <div class="level-select">
+                    <div class="dial-wrapper">
+                        <input class="dial-input volume-music" type="text" value="0" id="volume">
+                        <div class="dial-bg"></div>
+                        <div class="connector-line"></div>
+                    </div>
+                    <p>Volume</p>
+                    <div class="dial-wrapper">
+                        <input class="dial-input velocity-music" type="text" value="0" id="velocity">
+                        <div class="dial-bg"></div>
+                        <div class="connector-line"></div>
+                    </div>
+                    <p>Velocity</p>
+                    <div class="dial-wrapper">
+                        <input class="dial-input duration-music" type="text" value="0" id="duration">
+                        <div class="dial-bg"></div>
+                        <div class="connector-line"></div>
+                    </div>
+                    <p>Duration</p>
+                    <div class="clear"></div>
+                    <ul class="mute-solo clearfix">
+                        <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute</li>
+                        <li><span data-type="solo" data-active="false" class="solo-toggle button-trigger"></span>Solo</li>
+                    </ul>
+                </div>
+                <!--  <div class = "mute-solo-select">
+                    <ul>
+                </div> -->
+                <div class="activate-blocks">
+                    <center>
+                        <div class="send-blocks button-basic">Send Blocks
+                            <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                                <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                            </svg>
+                        </div>
+                    </center>
+                </div>
+            </div>
             <div class="block-effect-panel">
                 <div class="effect-wrapper">
                     <div class="header clearfix">
@@ -106,7 +200,7 @@
                         </div>
                         <div class="note-random clearfix">
                             <div class="note-limit-to-range limit-range" data-type="note" data-limit-range="true">
-                                <div class="button-select"></div>
+                                <div class="button-trigger"></div>
                                 <p>Limit to Range</p>
                             </div>
                         </div>
@@ -299,78 +393,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="block-music-panel">
-                <div class="instrument-select">
-                    <center>
-                        <select id="set-instrument">
-                        </select>
-                    </center>
-                </div>
-                <ul class="block-direction-select clearfix" id="select-direction">
-                    <li id="left">
-                        <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                            <polygon fill="#717171" points="11,14 0,7 11,0 " />
-                        </svg>
-                    </li>
-                    <li class="active" id="up">
-                        <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
-                            <polygon fill="#717171" points="0,11 7,0 14,11 " />
-                        </svg>
-                    </li>
-                    <li id="right">
-                        <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                            <polygon fill="#717171" points="0,0 11,7 0,14 " />
-                        </svg>
-                    </li>
-                    <li id="down">
-                        <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
-                            <polygon fill="#717171" points="14,0 7,11 0,0 " />
-                        </svg>
-                    </li>
-                </ul>
-                <div class="note-select clearfix">
-                    <div class="note-wrapper">
-                        <p>Note Selection</p>
-                        <div class="dial-wrapper">
-                            <input class="dial-input note-music" type="text" id="note" disabled>
-                            <div class="dial-bg"></div>
-                            <div class="connector-line"></div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-                    <p class="small">(or set with piano roll)</p>
-                </div>
-                <div class="level-select">
-                    <div class="dial-wrapper">
-                        <input class="dial-input volume-music" type="text" value="0" id="volume">
-                        <div class="dial-bg"></div>
-                        <div class="connector-line"></div>
-                    </div>
-                    <p>Volume</p>
-                    <div class="dial-wrapper">
-                        <input class="dial-input velocity-music" type="text" value="0" id="velocity">
-                        <div class="dial-bg"></div>
-                        <div class="connector-line"></div>
-                    </div>
-                    <p>Velocity</p>
-                    <div class="dial-wrapper">
-                        <input class="dial-input duration-music" type="text" value="0" id="duration">
-                        <div class="dial-bg"></div>
-                        <div class="connector-line"></div>
-                    </div>
-                    <p>Duration</p>
-                    <div class="clear"></div>
-                </div>
-                <div class="activate-blocks">
-                    <center>
-                        <div class="send-blocks button-basic">Send Blocks
-                            <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                                <polygon fill="#717171" points="0,0 11,7 0,14 " />
-                            </svg>
-                        </div>
-                    </center>
                 </div>
             </div>
         </div>
