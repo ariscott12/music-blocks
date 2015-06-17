@@ -14,7 +14,7 @@ var
         mode: "create",
         cnt: 0,
         newblock: -1,
-        instrumentsToLoad: 1,
+        instrumentsToLoad: 4,
         draggingBlocks: false,
         scaleNameArray: [],
         scaleArray: [],
@@ -129,7 +129,7 @@ midiInstruments = {
         var opt = document.createElement('option');
         opt.innerHTML = config.scaleNameArray[i];
         opt.value = config.scaleNameArray[i];
-        //  sel.appendChild(opt);
+        sel.appendChild(opt);
     }
 
     //Make create icon active at start
@@ -303,19 +303,19 @@ var proto = {
         if (this.selected === false) {
             this.activate();
         }
-        if ($('#set-instrument option:selected').attr('class') === 'loaded') {
-            // check if block is muted
-            if (this.mute !== true) {
-                if (config.blockSolo === true) {
-                    if (this.solo === true) {
-                        setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
-                    }
-                } else {
+        //if ($('#set-instrument option:selected').attr('class') === 'loaded') {
+        // check if block is muted
+        if (this.mute !== true) {
+            if (config.blockSolo === true) {
+                if (this.solo === true) {
                     setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
                 }
-
+            } else {
+                setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
             }
+
         }
+        //}
     },
     render: function() {
 
@@ -372,7 +372,7 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
         this.mute = map.mute;
         this.solo = map.solo;
 
-        console.log(map.solo);
+       // console.log(map.solo);
 
     };
     block.setMidiValues = function(type, value) {
@@ -425,7 +425,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 this.configMap.note.range_valid_notes = map[key].range_valid_notes;
             }
         }
-        console.log(this.configMap);
+      //  console.log(this.configMap);
 
     };
 
@@ -484,9 +484,9 @@ function addScale(scaleName, scale) {
 }
 
 function getScale(scaleName) {
-    console.log(scaleName + "GETTING");
-    console.log(config.scaleNameArray);
-    console.log(config.scaleArray);
+    // console.log(scaleName + "GETTING");
+    // console.log(config.scaleNameArray);
+    // console.log(config.scaleArray);
     return config.scaleArray[config.scaleNameArray.indexOf(scaleName)];
 }
 
@@ -962,8 +962,8 @@ startSyncCounter = function() {
 setMidiParams = function() {
     var
         setParams,
-        //getNote,
         tiggerMidi;
+
     //LOAD MIDI SOUNDFONTS
     window.onload = function() {
         var cnt = 0,
@@ -972,17 +972,21 @@ setMidiParams = function() {
             str[i] = Object.keys(midiInstruments)[i];
         }
         // console.log(Object.keys(midiInstruments).length);
-        for (var i = 0; i < Object.keys(midiInstruments).length; i++) {
-            config.loadedInstruments.push(false);
-        }
+        // for (var i = 0; i < Object.keys(midiInstruments).length; i++) {
+        //     config.loadedInstruments.push(false);
+        // }
         MIDI.loadPlugin({
             soundfontUrl: "./soundfont/",
             instruments: str,
-            onprogress: function(state, progress) {
-                console.log(state, progress);
-            },
+            // onprogress: function(state, progress) {
+              
+
+            // },
             // load first 4 instruments in array
             onsuccess: function() {
+                $("#wrapper").fadeIn();
+                $(".spinner-page").fadeOut();
+              //   alert(progress);
                 for (var key in midiInstruments) {
                     if (cnt < config.instrumentsToLoad) {
                         MIDI.programChange(cnt, midiInstruments[key]);
@@ -1354,11 +1358,15 @@ musicBlockPanel = function() {
         var
             option = $(this).find('option:selected'),
             isloaded = option.attr('class'),
-            program = $(this).val();
+            program = $(this).val(),
+            $spinner = $('.spinner-instrument');
 
         if (isloaded === 'not-loaded') {
             var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '...');
-            // str = option.text()
+            config.pause = 1;
+           // alert('test');
+
+            $spinner.show();
 
             option.text(str);
             MIDI.loadPlugin({
@@ -1371,6 +1379,8 @@ musicBlockPanel = function() {
                     option.attr('class', 'loaded');
                     str = option.text().replace(/\(|\)/g, '').replace(/\.\.\./g, '');
                     option.text(str);
+                    config.pause = -1;
+                    $spinner.hide();
                 }
             });
         }
@@ -1393,9 +1403,6 @@ musicBlockPanel = function() {
         if (val === 'true') {
             $(this).attr('data-active', 'false');
             val = false;
-
-            // console.log(config.blockSolo);
-
         } else {
             $(this).attr('data-active', 'true');
             val = true;
@@ -1410,13 +1417,11 @@ musicBlockPanel = function() {
             config.blockSolo = val;
 
             for (var k = 0; k < config.cnt; k++) {
-                console.log(blocks[k].solo);
                 if (blocks[k].solo === true) {
                     config.blockSolo = true;
                 }
             }
         }
-
     });
 
     jqueryMap.$piano_key.mousedown(function() {
@@ -1665,7 +1670,7 @@ effectBlockPanel = function() {
 
     // Set effect control panel values from block configMap
     setToBlock = function(num) {
-        console.log('test');
+      //  console.log('test');
         var
             map = blocks[num].configMap,
             open_effect = false;
@@ -1680,7 +1685,7 @@ effectBlockPanel = function() {
                 }
                 for (var key2 in map[key]) {
                     if (configMap[key][key2] !== blocks[num].configMap[key][key2] && key2 !== 'range_valid_notes') {
-                        console.log(key + " -> " + key2 + " -> " + map[key][key2]);
+                       // console.log(key + " -> " + key2 + " -> " + map[key][key2]);
                         if (key2 !== 'method') {
                             if (key2 === 'limit_range' || key2 === 'direction' || key2 === 'active') {
                                 var data_key = key2.replace('_',  '-');
