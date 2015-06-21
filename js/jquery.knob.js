@@ -81,6 +81,7 @@
         this.$div = null; // component div
 
         this.run = function () {
+            //console.log('running');
             var cf = function (e, conf) {
                 var k;
                 for (k in conf) {
@@ -173,6 +174,7 @@
                 this.$.bind(
                     'change blur',
                     function () {
+                  //      console.log(s.$.val());
                         s.val(s._validate(s.o.parse(s.$.val())));
                     }
                 );
