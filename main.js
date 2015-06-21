@@ -182,7 +182,7 @@ var proto = {
     $send_blocks: $('.send-blocks'),
     timer: null,
     activeStore: null,
-    sprite: new Image(),    
+    sprite: new Image(),
 
     setGrid: function() {
         this.gridX = utilities.gridify(this.posX);
@@ -349,48 +349,47 @@ var proto = {
             context.fillStyle = "rgb(" + (this.active.red + this.activeCount) + ", " + (this.active.green + this.activeCount) + ", " + (this.active.blue + this.activeCount) + ")";
             context.fill();
         }
-        if(this.type === "block-effect"){
+        if (this.type === "block-effect") {
             context.drawImage(this.sprite, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-            var effect_bar_width = (this.width - (this.size * 2) - 1)-4;
+            var effect_bar_width = (this.width - (this.size * 2) - 1) - 4;
             var effect_square_width = effect_bar_width / 4;
-            if(this.configMap.note.active){
-                context.drawImage(config.note_active_image, 
-                                    3 + this.posX + this.size, 
-                                    2 + this.posY + this.size, 
-                                    effect_square_width, 
-                                    effect_square_width);
+            if (this.configMap.note.active) {
+                context.drawImage(config.note_active_image,
+                    3 + this.posX + this.size,
+                    2 + this.posY + this.size,
+                    effect_square_width,
+                    effect_square_width);
             }
-            if(this.configMap.volume.active){
-                context.drawImage(config.volume_active_image, 
-                                    3 + this.posX + effect_bar_width - effect_square_width,                                    
-                                    2 + this.posY + this.size, 
-                                    effect_square_width, 
-                                    effect_square_width);
+            if (this.configMap.volume.active) {
+                context.drawImage(config.volume_active_image,
+                    3 + this.posX + effect_bar_width - effect_square_width,
+                    2 + this.posY + this.size,
+                    effect_square_width,
+                    effect_square_width);
             }
-            if(this.configMap.velocity.active){
-                context.drawImage(config.velocity_active_image, 
-                                    3 + this.posX + this.size, 
-                                    2 + this.posY + effect_bar_width - effect_square_width, 
-                                    effect_square_width, 
-                                    effect_square_width);
+            if (this.configMap.velocity.active) {
+                context.drawImage(config.velocity_active_image,
+                    3 + this.posX + this.size,
+                    2 + this.posY + effect_bar_width - effect_square_width,
+                    effect_square_width,
+                    effect_square_width);
             }
-            if(this.configMap.duration.active){
-                context.drawImage(config.duration_active_image, 
-                                    3 + this.posX + effect_bar_width - effect_square_width, 
-                                    2 + this.posY + effect_bar_width - effect_square_width, 
-                                    effect_square_width, 
-                                    effect_square_width);
+            if (this.configMap.duration.active) {
+                context.drawImage(config.duration_active_image,
+                    3 + this.posX + effect_bar_width - effect_square_width,
+                    2 + this.posY + effect_bar_width - effect_square_width,
+                    effect_square_width,
+                    effect_square_width);
             }
 
             //shade the block if selected
-            if(this.selected){
+            if (this.selected) {
                 context.globalAlpha = 0.3;
                 context.drawImage(config.black_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
                 context.globalAlpha = 1.0;
             }
-            
-        }
-        else{
+
+        } else {
             context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
         }
     }
@@ -449,7 +448,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     block.speed = s;
     block.type = t;
     block.sprite.src = './images/block-fx3.png';
-    
+
     block.configMap = {
         note: null,
         velocity: null,
@@ -460,7 +459,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     // Effect Block Specfic Methods
     block.setInitValues = function(el) {
         var effectArray = ['note', 'volume', 'velocity', 'duration'];
-        var map = el.configMap;        
+        var map = el.configMap;
 
         for (var key in map) {
             this.configMap[key] = {
@@ -680,8 +679,8 @@ collisions = function() {
                             var newValue = blocks[mblockref][key];
 
                             if (key == "note") {
-                                if(blocks[eblockref].configMap[key].range_valid_notes.length > 0){
-                                   //Find the current note in the valid note array
+                                if (blocks[eblockref].configMap[key].range_valid_notes.length > 0) {
+                                    //Find the current note in the valid note array
                                     var prog_index = blocks[eblockref].configMap[key].range_valid_notes.indexOf(blocks[mblockref].note);
 
                                     //Advance index. If incoming note not found, prog_index will start at 0
@@ -698,7 +697,7 @@ collisions = function() {
                                     }
 
                                     //Set new note value to the new indexed value from the range array
-                                    newValue = blocks[eblockref].configMap[key].range_valid_notes[prog_index];                           
+                                    newValue = blocks[eblockref].configMap[key].range_valid_notes[prog_index];
                                 }
                             } else {
                                 //Add step value to block key
@@ -723,8 +722,8 @@ collisions = function() {
                             }
 
                             //Set the block value to new value
-                            if(newValue != null){
-                               blocks[mblockref][key] = newValue;
+                            if (newValue != null) {
+                                blocks[mblockref][key] = newValue;
                             }
 
                             break;
@@ -1085,10 +1084,13 @@ setMidiParams = function() {
 
 topPanel = function() {
     var jqueryMap = {
-        $mode_select: $('.mode-select'),
-        $play_select: $('.play-select'),
-        $batch_edits: $('.batch-edits')
-    };
+            $mode_select: $('.mode-select'),
+            $play_select: $('.play-select'),
+            $batch_edits: $('.batch-edits'),
+            $hotkey_btn: $('[data-id = "hotkeys"]'),
+            $hotkey_menu: $('[data-id = "hotkey-menu"]')
+        },
+        updateMode;
 
     updateMode = function() {
         var mode = $(this).attr('data-mode');
@@ -1125,6 +1127,17 @@ topPanel = function() {
     jqueryMap.$mode_select.find('li').click(updateMode);
     jqueryMap.$play_select.find('li').click(updateMode);
     jqueryMap.$batch_edits.find('li').click(updateMode);
+    jqueryMap.$hotkey_btn.click(function() {
+        jqueryMap.$hotkey_menu.fadeIn(300);
+    });
+    jqueryMap.$hotkey_menu.click(function(event) {
+        var target = $(event.target);
+        if (!target.is("td")) {
+            $(this).fadeOut(300);
+        }
+
+
+    });
 
 }();
 
@@ -2328,10 +2341,10 @@ setGridEvents = function() {
     mouseUp = function(e) {
         // Set to null to remove dragbox in draw loop
         dragBox = {};
-       
-       if(e.which === 3) {
-        utilities.deselectAllBlocks();
-       }
+
+        if (e.which === 3) {
+            utilities.deselectAllBlocks();
+        }
 
 
         if (gridCheck === true) {
@@ -2512,7 +2525,7 @@ setGridEvents = function() {
 
 
 keyboardEvents = function() {
-    var stopArrow = document.getElementById("stop");
+    // var stopArrow = document.getElementById("stop");
 
     //Keydown handler for keyboard input
     window.addEventListener('keydown', function(event) {
@@ -2525,9 +2538,9 @@ keyboardEvents = function() {
                 if (config.draggingBlocks === false) {
                     config.pause = config.pause * -1;
                     if (config.pause === -1) {
-                        $("li[data-mode='play']").addClass('active').siblings().removeClass('active');
+                        $("[data-mode='play']").addClass('active').siblings().removeClass('active');
                     } else {
-                        $("li[data-mode='pause']").addClass('active').siblings().removeClass('active');
+                        $("[data-mode='pause']").addClass('active').siblings().removeClass('active');
                     }
                 }
                 break;
@@ -2549,31 +2562,45 @@ keyboardEvents = function() {
                 break;
 
             case 49: // 1
+                utilities.selectAllBlocks();
+                break;
+            case 50: // 2
+                utilities.deselectAllBlocks();
+                break;
+            case 51: // 3
                 utilities.deleteSelectedBlocks();
                 break;
-
-            // case 65: // a
-            //     config.advance *= -1;
-            //     break;
-
-            // case 68: // d
-            //     var out = "FULL GRID DUMPMONSTER";
-            //     for (var i = 0; i < config.gridWidth; i++) {
-            //         out = out + "\n";
-            //         for (var j = 0; j < config.gridHeight; j++) {
-            //             if ((gridArray[j][i] + "").length === 1)
-            //                 out = out + " ";
-            //             out = out + gridArray[j][i] + " ";
-            //         }
-            //     }
-            //     break;
-
-            case 77: // m
-                if (config.mode === "select")
-                    config.mode = "create";
-                else
-                    config.mode = "select";
+            case 52: // 4
+                utilities.deleteAllBlocks();
                 break;
+             case 77: // m
+                if (config.mode === 'create') {
+                    config.mode = 'select';
+                } else if(config.mode === 'select') {
+                    config.mode = 'trash';
+                } else {
+                    config.mode = 'create';
+                }
+                $('[data-mode='+config.mode+']').addClass('active').siblings().removeClass('active');
+                break;
+
+                // case 65: // a
+                //     config.advance *= -1;
+                //     break;
+
+                // case 68: // d
+                //     var out = "FULL GRID DUMPMONSTER";
+                //     for (var i = 0; i < config.gridWidth; i++) {
+                //         out = out + "\n";
+                //         for (var j = 0; j < config.gridHeight; j++) {
+                //             if ((gridArray[j][i] + "").length === 1)
+                //                 out = out + " ";
+                //             out = out + gridArray[j][i] + " ";
+                //         }
+                //     }
+                //     break;
+
+           
         }
     }, false);
 
