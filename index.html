@@ -39,9 +39,10 @@
         <div class="rect5"></div>
     </div>
     <div id="wrapper">
+        <div class = "show-hotkeys" data-id = "hotkeys">Hotkeys</div>
         <div class="top-panel-wrapper">
             <p>Mode Select</p>
-            <div class = "border"></div>
+            <div class="border"></div>
             <ul class="mode-select">
                 <li data-mode="create" class="create"><img height="22px" src="images/svg/mode-create.svg"></li>
                 <li data-mode="select" class="select"><img height="23px" src="images/svg/mode-select.svg"></li>
@@ -54,7 +55,7 @@
         </div>
         <div class="top-panel-wrapper">
             <p>Play/Pause</p>
-            <div class = "border"></div>
+            <div class="border"></div>
             <ul class="play-select">
                 <li data-mode="play" class="active"><img height="19px" src="images/svg/mode-play.svg"></li>
                 <li data-mode="pause"><img height="19px" src="images/svg/mode-pause.svg"></li>
@@ -62,7 +63,7 @@
         </div>
         <div class="top-panel-wrapper">
             <p>Batch Edits</p>
-            <div class = "border"></div>
+            <div class="border"></div>
             <ul class="batch-edits">
                 <li data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
                 <li data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
@@ -517,6 +518,74 @@
             <div class="clear"></div>
             <div class="range-indicator"></div>
         </div>
+    </div>
+    <div class="hotekeys" data-id = "hotkey-menu">
+        <table>
+
+            <tr>
+                <td>Send Selected Blocks Left</td>
+                <td>
+                    <span class="key-btn"> 
+                        <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" width="8px" enable-background="new 0 0 11 14" xml:space="preserve">
+                            <polygon fill="#717171" points="11,14 0,7 11,0 " />
+                        </svg>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>Send Selected Block Up</td>
+                <td>
+                    <span class="key-btn sml"> 
+                         <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" width="10px" enable-background="new 0 0 14 11" xml:space="preserve">
+                            <polygon fill="#717171" points="0,11 7,0 14,11 " />
+                        </svg>
+                    </span></td>
+            </tr>
+            <tr>
+                <td>Send Selected Block Right</td>
+                <td>  
+                    <span class="key-btn"> 
+                        <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" width="8px" enable-background="new 0 0 11 14" xml:space="preserve">
+                            <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                        </svg>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>Send Selected Block Down</td>
+                <td>  
+                    <span class="key-btn sml"> 
+                        <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" width="10px" enable-background="new 0 0 14 11" xml:space="preserve">
+                            <polygon fill="#717171" points="14,0 7,11 0,0 " />
+                        </svg>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>Select All Blocks</td>
+                <td><span class="key-btn"> 1</span></td>
+            </tr>
+            <tr>
+                <td>Deselect All Blocks</td>
+                <td><span class="key-btn"> 2</span></td>
+            </tr>
+             <tr>
+                <td>Delete Selected Blocks</td>
+                <td><span class="key-btn"> 3</span></td>
+            </tr>
+             <tr>
+                <td>Delete All Blocks</td>
+                <td><span class="key-btn"> 4</span></td>
+            </tr>
+            <tr>
+                <td>Play/Pause</td>
+                <td><span class="key-btn"> Spacebar</span></td>
+            </tr>
+             <tr>
+                <td>Change Mode</td>
+                <td><span class="key-btn"> M</span></td>
+            </tr>
+        </table>
     </div>
     <script src="main.js"></script>
     <!--  <script src="//localhost:35729/livereload.js"></script>-->
