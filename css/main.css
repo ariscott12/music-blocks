@@ -688,7 +688,8 @@ select {
 
 .top-panel-wrapper {
   float: left;
-  margin-right: 18px; }
+  margin-right: 18px;
+  margin-top: 50px; }
   .top-panel-wrapper p {
     color: #eee;
     font-size: 12px;
@@ -720,8 +721,7 @@ select {
 #wrapper {
   margin: 0 auto;
   position: relative;
-  width: 1000px;
-  margin-top: 50px;
+  width: 856px;
   display: none; }
 
 .spinner-page {
@@ -789,3 +789,53 @@ select {
   width: 640px;
   z-index: 20000;
   display: none; }
+
+.hotekeys {
+  display: none;
+  background: rgba(0, 0, 0, 0.7) none repeat scroll 0 0;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 20000;
+  padding-top: 130px; }
+  .hotekeys table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0 auto;
+    width: 400px;
+    background: #e5e4e1;
+    padding: 10px 10px 8px; }
+    .hotekeys table td {
+      border: 1px solid #a3a2a1;
+      padding: 12px;
+      font-size: .9em; }
+      .hotekeys table td:last-child {
+        text-align: center; }
+
+.key-btn {
+  background: #fff none repeat scroll 0 0;
+  border: 1px solid #999;
+  border-radius: 2px;
+  font-size: 0.875em;
+  padding: 2px 10px 0;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.4); }
+  .key-btn .left {
+    position: relative;
+    left: -1px; }
+  .key-btn .right {
+    position: relative;
+    left: 1px;
+    top: 1px; }
+  .key-btn.sml {
+    padding: 2px 9px 0; }
+
+.show-hotkeys {
+  font-size: .875em;
+  cursor: pointer;
+  border: 1px solid #8ccdc1;
+  position: absolute;
+  top: 10px;
+  right: 0;
+  padding: 10px 10px 8px 10px;
+  color: #eee; }
