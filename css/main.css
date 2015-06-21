@@ -90,9 +90,9 @@ body {
   border-radius: 3px;
   background: rgba(109, 4, 1, 0.65) none repeat scroll 0 0;
   display: inline-block;
-  height: 13px;
-  margin-right: 9px;
-  width: 13px;
+  height: 11px;
+  margin-right: 7px;
+  width: 11px;
   cursor: pointer;
   box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.5) inset, 0 1px 1px rgba(255, 255, 255, 0.66) inset; }
 
@@ -258,6 +258,8 @@ body {
   .control-panel .dial-input {
     left: 57px;
     top: -15px; }
+  .control-panel .note-music {
+    left: 49px; }
   .control-panel .switch-wrapper {
     margin-top: 15px;
     float: left; }
@@ -464,16 +466,14 @@ body {
   background: #edebea;
   padding: 20px; }
 
-.mute-solo {
-  margin-left: 20px; }
-  .mute-solo li {
-    float: left;
-    margin: 13px 18px 0 0; }
-  .mute-solo span {
-    position: relative;
-    top: 2px; }
-    .mute-solo span[data-active="true"] {
-      background: #EA1010; }
+.mute-solo li {
+  font-size: 12px;
+  margin-bottom: 7px; }
+.mute-solo span {
+  position: relative;
+  top: 2px; }
+  .mute-solo span[data-active="true"] {
+    background: #EA1010; }
 
 .piano-wrapper {
   margin-top: 10px;
@@ -661,7 +661,8 @@ select {
   float: left;
   margin-right: 10px;
   z-index: 10000;
-  position: relative; }
+  position: relative;
+  cursor: pointer; }
 
 #grid_lines {
   position: absolute;
@@ -685,29 +686,42 @@ select {
   display: inline-block;
   width: 1px; }
 
-.mode-select, .play-select, .batch-edits {
-  margin: 50px 20px 10px 0;
+.top-panel-wrapper {
   float: left;
-  cursor: pointer;
-  border: 1px solid #8CCDC1;
-  padding: 0 5px; }
-  .mode-select li, .play-select li, .batch-edits li {
-    margin: 0 1px 1px 0;
-    display: inline-block;
+  margin-right: 18px; }
+  .top-panel-wrapper p {
+    color: #eee;
+    font-size: 12px;
+    margin-bottom: 4px;
+    text-align: center; }
+  .top-panel-wrapper .border {
+    background: #8ccdc1;
+    height: 7px;
+    margin: 0 auto;
     text-align: center;
-    opacity: .45;
-    padding: 0 5px;
-    height: 38px;
-    line-height: 50px; }
-    .mode-select li.active, .mode-select li:hover, .play-select li.active, .play-select li:hover, .batch-edits li.active, .batch-edits li:hover {
-      opacity: 1; }
+    width: 1px; }
+  .top-panel-wrapper ul {
+    margin-bottom: 10px;
+    float: left;
+    cursor: pointer;
+    border: 1px solid #8CCDC1;
+    padding: 0 5px; }
+    .top-panel-wrapper ul li {
+      margin: 0 1px 1px 0;
+      display: inline-block;
+      text-align: center;
+      opacity: .45;
+      padding: 0 5px;
+      height: 38px;
+      line-height: 50px; }
+      .top-panel-wrapper ul li.active, .top-panel-wrapper ul li:hover {
+        opacity: 1; }
 
 #wrapper {
   margin: 0 auto;
   position: relative;
   width: 1000px;
   margin-top: 50px;
-  margin: 0 auto;
   display: none; }
 
 .spinner-page {

@@ -39,24 +39,35 @@
         <div class="rect5"></div>
     </div>
     <div id="wrapper">
-        <p>Mode Select</p>
-        <ul class="mode-select">
-            <li data-mode="create" class="create"><img height="22px" src="images/svg/mode-create.svg"></li>
-            <li data-mode="select" class="select"><img height="23px" src="images/svg/mode-select.svg"></li>
-            <li data-mode="trash" class="trash"><img height="23px" src="images/svg/mode-delete.svg"></li>
-            <!--  <li class="pause">Pause</li>
-            <li class="advance">Advance</li>
-            <li class="select-all">Select All</li>
-            <li class="clear-all">Clear All</li> -->
-        </ul>
-        <ul class="play-select">
-            <li data-mode="play" class="active"><img height="19px" src="images/svg/mode-play.svg"></li>
-            <li data-mode="pause"><img height="19px" src="images/svg/mode-pause.svg"></li>
-        </ul>
-        <ul class="batch-edits">
-            <li data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
-            <li data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
-        </ul>
+        <div class="top-panel-wrapper">
+            <p>Mode Select</p>
+            <div class = "border"></div>
+            <ul class="mode-select">
+                <li data-mode="create" class="create"><img height="22px" src="images/svg/mode-create.svg"></li>
+                <li data-mode="select" class="select"><img height="23px" src="images/svg/mode-select.svg"></li>
+                <li data-mode="trash" class="trash"><img height="23px" src="images/svg/mode-delete.svg"></li>
+                <!--  <li class="pause">Pause</li>
+                <li class="advance">Advance</li>
+                <li class="select-all">Select All</li>
+                <li class="clear-all">Clear All</li> -->
+            </ul>
+        </div>
+        <div class="top-panel-wrapper">
+            <p>Play/Pause</p>
+            <div class = "border"></div>
+            <ul class="play-select">
+                <li data-mode="play" class="active"><img height="19px" src="images/svg/mode-play.svg"></li>
+                <li data-mode="pause"><img height="19px" src="images/svg/mode-pause.svg"></li>
+            </ul>
+        </div>
+        <div class="top-panel-wrapper">
+            <p>Batch Edits</p>
+            <div class = "border"></div>
+            <ul class="batch-edits">
+                <li data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
+                <li data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
+            </ul>
+        </div>
         <div class="clear"></div>
         <canvas id="grid" width="640" height="640"></canvas>
         <div class="spinner spinner-instrument">
@@ -112,9 +123,13 @@
                             <div class="dial-bg"></div>
                             <div class="connector-line"></div>
                         </div>
-                        <div class="clear"></div>
                     </div>
-                    <p class="small">(or set with piano roll)</p>
+                    <ul class="mute-solo clearfix">
+                        <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute</li>
+                        <li><span data-type="solo" data-active="false" class="solo-toggle button-trigger"></span>Solo</li>
+                    </ul>
+                    <div class="clear"></div>
+                    <p class="small">(set with piano roll)</p>
                 </div>
                 <div class="level-select">
                     <div class="dial-wrapper">
@@ -136,10 +151,6 @@
                     </div>
                     <p>Duration</p>
                     <div class="clear"></div>
-                    <ul class="mute-solo clearfix">
-                        <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute</li>
-                        <li><span data-type="solo" data-active="false" class="solo-toggle button-trigger"></span>Solo</li>
-                    </ul>
                 </div>
                 <!--  <div class = "mute-solo-select">
                     <ul>
