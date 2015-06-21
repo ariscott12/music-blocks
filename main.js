@@ -8,6 +8,7 @@ var
         gridOffsetX: 0,
         gridOffsetY: 0,
         pause: -1,
+        loading_instrument: false,
         advance: -1,
         shiftkey: 0,
         numSelected: 0,
@@ -20,7 +21,12 @@ var
         scaleArray: [],
         pianoSliderArray: [0, 10, 16, 23, 29, 39, 49, 55, 62, 68, 75, 81, 91],
         loadedInstruments: [],
-        blockSolo: false
+        block_fx_image: new Image(),
+        note_active_image: new Image(),
+        volume_active_image: new Image(),
+        velocity_active_image: new Image(),
+        duration_active_image: new Image(),
+        black_image: new Image()
     },
      
     canvas = document.getElementById("grid"),
@@ -46,13 +52,13 @@ var
     };
 blocks = [];
 midiInstruments = {
+    'xylophone': 13,
     'acoustic_grand_piano': 0,
     'overdriven_guitar': 29,
     'acoustic_bass': 32,
     'orchestral_harp': 46,
     'rock_organ': 18,
     'harpsichord': 6,
-    'xylophone': 13,
     'marimba': 12,
     'harmonica': 22,
     'accordion': 21,
@@ -123,6 +129,12 @@ midiInstruments = {
     addScale("A Major", [1, 2, 4, 6, 8, 9, 11]);
     addScale("B Major", [1, 3, 4, 6, 8, 10, 11]);
 
+    //Add images
+    config.note_active_image.src = './images/note_active.png';
+    config.volume_active_image.src = './images/volume_active.png';
+    config.velocity_active_image.src = './images/velocity_active.png';
+    config.duration_active_image.src = './images/duration_active.png';
+    config.black_image.src = './images/black.png';
 
     var sel = document.getElementById('select-note-scale');
     for (var i = 0; i < config.scaleNameArray.length; i++) {
@@ -170,6 +182,7 @@ var proto = {
     $send_blocks: $('.send-blocks'),
     timer: null,
     activeStore: null,
+    sprite: new Image(),    
 
     setGrid: function() {
         this.gridX = utilities.gridify(this.posX);
@@ -294,7 +307,6 @@ var proto = {
         this.notActive = this.colorArray[this.instrument];
     },
     playmidi: function() {
-
         var
             duration = this.duration / 120,
             $selected_instrument = $("#set-instrument option:selected");
@@ -311,6 +323,7 @@ var proto = {
                     setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
                 }
             } else {
+                console.log("playing");
                 setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
             }
 
@@ -336,7 +349,50 @@ var proto = {
             context.fillStyle = "rgb(" + (this.active.red + this.activeCount) + ", " + (this.active.green + this.activeCount) + ", " + (this.active.blue + this.activeCount) + ")";
             context.fill();
         }
-        context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+        if(this.type === "block-effect"){
+            context.drawImage(this.sprite, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+            var effect_bar_width = (this.width - (this.size * 2) - 1)-4;
+            var effect_square_width = effect_bar_width / 4;
+            if(this.configMap.note.active){
+                context.drawImage(config.note_active_image, 
+                                    3 + this.posX + this.size, 
+                                    2 + this.posY + this.size, 
+                                    effect_square_width, 
+                                    effect_square_width);
+            }
+            if(this.configMap.volume.active){
+                context.drawImage(config.volume_active_image, 
+                                    3 + this.posX + effect_bar_width - effect_square_width,                                    
+                                    2 + this.posY + this.size, 
+                                    effect_square_width, 
+                                    effect_square_width);
+            }
+            if(this.configMap.velocity.active){
+                context.drawImage(config.velocity_active_image, 
+                                    3 + this.posX + this.size, 
+                                    2 + this.posY + effect_bar_width - effect_square_width, 
+                                    effect_square_width, 
+                                    effect_square_width);
+            }
+            if(this.configMap.duration.active){
+                context.drawImage(config.duration_active_image, 
+                                    3 + this.posX + effect_bar_width - effect_square_width, 
+                                    2 + this.posY + effect_bar_width - effect_square_width, 
+                                    effect_square_width, 
+                                    effect_square_width);
+            }
+
+            //shade the block if selected
+            if(this.selected){
+                context.globalAlpha = 0.3;
+                context.drawImage(config.black_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+                context.globalAlpha = 1.0;
+            }
+            
+        }
+        else{
+            context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+        }
     }
 };
 
@@ -392,7 +448,8 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     block.posY = y;
     block.speed = s;
     block.type = t;
-
+    block.sprite.src = './images/block-fx3.png';
+    
     block.configMap = {
         note: null,
         velocity: null,
@@ -403,7 +460,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     // Effect Block Specfic Methods
     block.setInitValues = function(el) {
         var effectArray = ['note', 'volume', 'velocity', 'duration'];
-        var map = el.configMap;
+        var map = el.configMap;        
 
         for (var key in map) {
             this.configMap[key] = {
@@ -454,7 +511,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 low_octave++;
             }
         }
-        //  console.log("REBUILT " + this.configMap.note.range_valid_notes);
+        //console.log("REBUILT " + this.configMap.note.range_valid_notes);
     };
 
     block.setMidiValues = function(type, attr, value) {
@@ -484,9 +541,9 @@ function addScale(scaleName, scale) {
 }
 
 function getScale(scaleName) {
-    // console.log(scaleName + "GETTING");
-    // console.log(config.scaleNameArray);
-    // console.log(config.scaleArray);
+    //console.log(scaleName + "GETTING");
+    //console.log(config.scaleNameArray);
+    //console.log(config.scaleArray);
     return config.scaleArray[config.scaleNameArray.indexOf(scaleName)];
 }
 
@@ -619,29 +676,32 @@ collisions = function() {
                                 step_direction = -1;
                             }
 
-                            if (key == "note") {
-                                //Find the current note in the valid note array
-                                var prog_index = blocks[eblockref].configMap[key].range_valid_notes.indexOf(blocks[mblockref].note);
+                            //Default newValue to the original value
+                            var newValue = blocks[mblockref][key];
 
-                                //Advance index. If incoming note not found, prog_index will start at 0
-                                if (prog_index == -1) {
-                                    prog_index = 0;
+                            if (key == "note") {
+                                if(blocks[eblockref].configMap[key].range_valid_notes.length > 0){
+                                   //Find the current note in the valid note array
+                                    var prog_index = blocks[eblockref].configMap[key].range_valid_notes.indexOf(blocks[mblockref].note);
+
+                                    //Advance index. If incoming note not found, prog_index will start at 0
+                                    if (prog_index == -1) {
+                                        prog_index = 0;
+                                    }
+                                    //Otherwise, advance by the step amount in the step direction
+                                    else {
+                                        prog_index += step_direction * blocks[eblockref].configMap[key].step;
+                                    }
+                                    //If we are out of the range, we add or subtract the length to wrap around the range
+                                    while (prog_index >= blocks[eblockref].configMap[key].range_valid_notes.length || prog_index < 0) {
+                                        prog_index -= step_direction * blocks[eblockref].configMap[key].range_valid_notes.length;
+                                    }
+
+                                    //Set new note value to the new indexed value from the range array
+                                    newValue = blocks[eblockref].configMap[key].range_valid_notes[prog_index];                           
                                 }
-                                //Otherwise, advance by the step amount in the step direction
-                                else {
-                                    prog_index += step_direction * blocks[eblockref].configMap[key].step;
-                                }
-                                //If we are out of the range, we add or subtract the length to wrap around the range
-                                while (prog_index >= blocks[eblockref].configMap[key].range_valid_notes.length || prog_index < 0) {
-                                    prog_index -= step_direction * blocks[eblockref].configMap[key].range_valid_notes.length;
-                                }
-                                //Set new note value to the new indexed value from the range array
-                                var newValue = blocks[eblockref].configMap[key].range_valid_notes[prog_index];
                             } else {
                                 //Add step value to block key
-                                var newValue = blocks[mblockref][key];
-                                //var newValue = blocks[mblockref][key] + blocks[eblockref].configMap[key].step * step_direction;
-
                                 if (step_direction == 1) {
                                     //If the result key is lower than the low limit, then set to the low limit.
                                     if (newValue < blocks[eblockref].configMap[key].range_low) {
@@ -663,7 +723,9 @@ collisions = function() {
                             }
 
                             //Set the block value to new value
-                            blocks[mblockref][key] = newValue;
+                            if(newValue != null){
+                               blocks[mblockref][key] = newValue;
+                            }
 
                             break;
 
@@ -2434,7 +2496,6 @@ setGridEvents = function() {
             gridArray[gridX][gridY] = config.cnt;
             config.newblock = config.cnt;
             config.cnt++;
-
         }
     };
 
@@ -2488,30 +2549,24 @@ keyboardEvents = function() {
                 break;
 
             case 49: // 1
-                // for (var s = 0; s < config.cnt; s++) {
-                //     if (blocks[s].selected === true) {
-                //         blocks[s].removeBlock();
-                //         s--;
-                //     }
-                // }
-                utilities.deleteAllBlocks();
+                utilities.deleteSelectedBlocks();
                 break;
 
-            case 65: // a
-                config.advance *= -1;
-                break;
+            // case 65: // a
+            //     config.advance *= -1;
+            //     break;
 
-            case 68: // d
-                var out = "FULL GRID DUMPMONSTER";
-                for (var i = 0; i < config.gridWidth; i++) {
-                    out = out + "\n";
-                    for (var j = 0; j < config.gridHeight; j++) {
-                        if ((gridArray[j][i] + "").length === 1)
-                            out = out + " ";
-                        out = out + gridArray[j][i] + " ";
-                    }
-                }
-                break;
+            // case 68: // d
+            //     var out = "FULL GRID DUMPMONSTER";
+            //     for (var i = 0; i < config.gridWidth; i++) {
+            //         out = out + "\n";
+            //         for (var j = 0; j < config.gridHeight; j++) {
+            //             if ((gridArray[j][i] + "").length === 1)
+            //                 out = out + " ";
+            //             out = out + gridArray[j][i] + " ";
+            //         }
+            //     }
+            //     break;
 
             case 77: // m
                 if (config.mode === "select")
