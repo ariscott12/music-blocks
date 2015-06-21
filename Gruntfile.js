@@ -6,12 +6,12 @@ module.exports = function(grunt) {
             dist: {
 
                 files: {
-                    'css/main.css': 'sass/main.scss',
+                    "css/main.css": "sass/main.scss",
                 },
                 options: { // Target options
-                    includePaths: require('node-bourbon').includePaths,
-                    style: 'compact' 
-                    
+                    includePaths: require("node-bourbon").includePaths,
+                    style: "compact"
+
                 }
             }
         },
@@ -26,9 +26,9 @@ module.exports = function(grunt) {
         watch: {
             sass: {
                 files: [
-                    'sass/*.scss'
+                    "sass/*.scss"
                 ],
-                tasks: 'sass'
+                tasks: "sass"
             },
             livereload: {
                 // Here we watch the files the sass task will compile to
@@ -36,18 +36,18 @@ module.exports = function(grunt) {
                 options: {
                     livereload: true
                 },
-                files: ['css/main.css', 'index.html'],
+                files: ["css/main.css", "index.html"],
             },
         }
     });
 
     //Where we tell Grunt we plan to use this plug-in.
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-sass');
-    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks("grunt-contrib-watch");
+    grunt.loadNpmTasks("grunt-sass");
+    grunt.loadNpmTasks("grunt-contrib-connect");
 
     //Where we tell Grunt what to do when we type "grunt" into the terminal.
-    grunt.registerTask('default', ['connect', 'watch']);
+    grunt.registerTask("default", ["connect", "watch"]);
 
 
 
