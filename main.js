@@ -27,6 +27,7 @@ var
         velocity_active_image: new Image(),
         duration_active_image: new Image(),
         black_image: new Image(),
+        //white_image: new Image(),
         spriteOverlayTransparency: 0.7
     },
      
@@ -136,6 +137,7 @@ midiInstruments = {
     config.velocity_active_image.src = './images/velocity_active.png';
     config.duration_active_image.src = './images/duration_active.png';
     config.black_image.src = './images/black.png';
+    //config.white_image.src = './images/white.png';
 
     var sel = document.getElementById('select-note-scale');
     for (var i = 0; i < config.scaleNameArray.length; i++) {
@@ -336,8 +338,11 @@ var proto = {
     drawSpriteOnBlock: function(image){
         context.globalAlpha = config.spriteOverlayTransparency;
         context.drawImage(image,
-            this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-        //context.globalAlpha = 1.0;
+            this.posX + 1 + this.size, 
+            this.posY + this.size, 
+            (this.width - (this.size * 2) - 1), 
+            (this.height - (this.size * 2) - 1));
+        context.globalAlpha = 1.0;
     },
 
     render: function() {
@@ -362,6 +367,8 @@ var proto = {
 
         context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
         
+        //this.drawSpriteOnBlock(config.black_image);
+
         if (this.type === "block-effect") {            
             if (this.configMap.note.active) {
                 this.drawSpriteOnBlock(config.note_active_image);
@@ -380,8 +387,15 @@ var proto = {
             if (this.selected) {
                 context.globalAlpha = 0.3;
                 context.drawImage(config.black_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-                context.globalAlpha = config.spriteOverlayTransparency;
+                context.globalAlpha = 1.0;
             }
+
+            //Brighten the block on changes
+            /*if (this.activeCount > 0){
+                context.globalAlpha = this.activeCount/100;
+                context.drawImage(config.white_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+                context.globalAlpha = 1.0;   
+            }*/
         }    
     }
 };
@@ -439,6 +453,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     block.speed = s;
     block.type = t;
     block.sprite.src = './images/block-fx3.png';
+    block.activeCount = 0;
 
     block.configMap = {
         note: null,
