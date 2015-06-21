@@ -113,6 +113,9 @@
             left: 57px;
             top: -15px;
         }
+        .note-music {
+            left: 49px;
+        }
         .switch-wrapper {
             margin-top: 15px;
             float: left;
@@ -388,10 +391,11 @@
     }
     
     .mute-solo {
-        margin-left: 20px;
+       // margin-left: 20px;
         li {
-            float: left;
-            margin: 13px 18px 0 0;
+            font-size:12px;
+           // float: left;
+            margin-bottom:7px;
         }
         span {
             position: relative;
