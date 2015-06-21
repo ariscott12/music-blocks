@@ -14,7 +14,7 @@ var
         mode: "create",
         cnt: 0,
         newblock: -1,
-        instrumentsToLoad: 4,
+        instrumentsToLoad: 1,
         draggingBlocks: false,
         scaleNameArray: [],
         scaleArray: [],
@@ -59,7 +59,7 @@ midiInstruments = {
     'synth_strings_1': 50,
     'trumpet': 56,
     'trombone': 57,
-    //    'fretless_bass': 35,
+    // 'fretless_bass': 35,
     // 'hammond_organ': 16,
     // 'electric_jazz_guitar': 26,
     // 'alto_sax': 65,
@@ -372,7 +372,7 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
         this.mute = map.mute;
         this.solo = map.solo;
 
-       // console.log(map.solo);
+        // console.log(map.solo);
 
     };
     block.setMidiValues = function(type, value) {
@@ -425,7 +425,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 this.configMap.note.range_valid_notes = map[key].range_valid_notes;
             }
         }
-      //  console.log(this.configMap);
+        //  console.log(this.configMap);
 
     };
 
@@ -546,8 +546,14 @@ utilities = function() {
             for (var k = 0; k < config.cnt; k++) {
                 blocks[k].selectBlock();
             }
+        },
+        deselectAllBlocks: function() {
+            for (var l = 0; l < config.cnt; l++) {
+                if (blocks[l].selected === true) {
+                    blocks[l].deselectBlock();
+                }
+            }
         }
-
     };
 }();
 
@@ -979,14 +985,14 @@ setMidiParams = function() {
             soundfontUrl: "./soundfont/",
             instruments: str,
             // onprogress: function(state, progress) {
-              
+
 
             // },
             // load first 4 instruments in array
             onsuccess: function() {
                 $("#wrapper").fadeIn();
                 $(".spinner-page").fadeOut();
-              //   alert(progress);
+                //   alert(progress);
                 for (var key in midiInstruments) {
                     if (cnt < config.instrumentsToLoad) {
                         MIDI.programChange(cnt, midiInstruments[key]);
@@ -1364,7 +1370,7 @@ musicBlockPanel = function() {
         if (isloaded === 'not-loaded') {
             var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '...');
             config.pause = 1;
-           // alert('test');
+            // alert('test');
 
             $spinner.show();
 
@@ -1670,7 +1676,7 @@ effectBlockPanel = function() {
 
     // Set effect control panel values from block configMap
     setToBlock = function(num) {
-      //  console.log('test');
+        //  console.log('test');
         var
             map = blocks[num].configMap,
             open_effect = false;
@@ -1685,7 +1691,7 @@ effectBlockPanel = function() {
                 }
                 for (var key2 in map[key]) {
                     if (configMap[key][key2] !== blocks[num].configMap[key][key2] && key2 !== 'range_valid_notes') {
-                       // console.log(key + " -> " + key2 + " -> " + map[key][key2]);
+                        // console.log(key + " -> " + key2 + " -> " + map[key][key2]);
                         if (key2 !== 'method') {
                             if (key2 === 'limit_range' || key2 === 'direction' || key2 === 'active') {
                                 var data_key = key2.replace('_',  '-');
@@ -2260,6 +2266,11 @@ setGridEvents = function() {
     mouseUp = function(e) {
         // Set to null to remove dragbox in draw loop
         dragBox = {};
+       
+       if(e.which === 3) {
+        utilities.deselectAllBlocks();
+       }
+
 
         if (gridCheck === true) {
 
@@ -2452,6 +2463,11 @@ keyboardEvents = function() {
             case 32: // Space
                 if (config.draggingBlocks === false) {
                     config.pause = config.pause * -1;
+                    if (config.pause === -1) {
+                        $("li[data-mode='play']").addClass('active').siblings().removeClass('active');
+                    } else {
+                        $("li[data-mode='pause']").addClass('active').siblings().removeClass('active');
+                    }
                 }
                 break;
 
@@ -2472,12 +2488,13 @@ keyboardEvents = function() {
                 break;
 
             case 49: // 1
-                for (var s = 0; s < config.cnt; s++) {
-                    if (blocks[s].selected === true) {
-                        blocks[s].removeBlock();
-                        s--;
-                    }
-                }
+                // for (var s = 0; s < config.cnt; s++) {
+                //     if (blocks[s].selected === true) {
+                //         blocks[s].removeBlock();
+                //         s--;
+                //     }
+                // }
+                utilities.deleteAllBlocks();
                 break;
 
             case 65: // a
