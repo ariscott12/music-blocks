@@ -39,7 +39,7 @@
         <div class="rect5"></div>
     </div>
     <div id="wrapper">
-        <div class = "show-hotkeys" data-id = "hotkeys">Hotkeys</div>
+        <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
         <div class="top-panel-wrapper">
             <p>Mode Select</p>
             <div class="border"></div>
@@ -410,9 +410,8 @@
         </div>
         <div class="clear"></div>
         <div id="piano-slider-min" class="piano-roll-slider">
-           <!--  <input class="slider-value" /> -->
+            <!--  <input class="slider-value" /> -->
         </div>
-      
         <div class="piano-wrapper clearfix">
             <ul class="piano-roll">
                 <li class="whitekey"></li>
@@ -513,15 +512,17 @@
                 <li class="whitekey"></li>
             </ul>
             <div id="piano-slider-max" class="piano-roll-slider">
-             <!--    <input class="slider-value" /> -->
+                <!--    <input class="slider-value" /> -->
             </div>
             <div class="clear"></div>
             <div class="range-indicator"></div>
+            <ul class="mute-piano clearfix">
+                <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute Piano Roll</li>
+            </ul>
         </div>
     </div>
-    <div class="hotekeys" data-id = "hotkey-menu">
+    <div class="hotekeys" data-id="hotkey-menu">
         <table>
-
             <tr>
                 <td>Send Selected Blocks Left</td>
                 <td>
@@ -543,7 +544,7 @@
             </tr>
             <tr>
                 <td>Send Selected Block Right</td>
-                <td>  
+                <td>
                     <span class="key-btn"> 
                         <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" width="8px" enable-background="new 0 0 11 14" xml:space="preserve">
                             <polygon fill="#717171" points="0,0 11,7 0,14 " />
@@ -553,7 +554,7 @@
             </tr>
             <tr>
                 <td>Send Selected Block Down</td>
-                <td>  
+                <td>
                     <span class="key-btn sml"> 
                         <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" width="10px" enable-background="new 0 0 14 11" xml:space="preserve">
                             <polygon fill="#717171" points="14,0 7,11 0,0 " />
@@ -569,11 +570,11 @@
                 <td>Deselect All Blocks</td>
                 <td><span class="key-btn"> 2</span></td>
             </tr>
-             <tr>
+            <tr>
                 <td>Delete Selected Blocks</td>
                 <td><span class="key-btn"> 3</span></td>
             </tr>
-             <tr>
+            <tr>
                 <td>Delete All Blocks</td>
                 <td><span class="key-btn"> 4</span></td>
             </tr>
@@ -581,7 +582,7 @@
                 <td>Play/Pause</td>
                 <td><span class="key-btn"> Spacebar</span></td>
             </tr>
-             <tr>
+            <tr>
                 <td>Change Mode</td>
                 <td><span class="key-btn"> M</span></td>
             </tr>
