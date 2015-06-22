@@ -25,7 +25,8 @@ var
         volume_active_image: new Image(),
         velocity_active_image: new Image(),
         duration_active_image: new Image(),
-        black_image: new Image()
+        black_image: new Image(),
+        spriteOverlayTransparency: 0.7
     },
      
     canvas = document.getElementById("grid"),
@@ -204,7 +205,8 @@ var proto = {
             this.active = this.shadeColor(this.colorArray[this.instrument], -35);
             //  this.activeStore = this.active;
         } else {
-            color = '#10B529';
+            //color = '#10B529';
+            color = '#000000';
             this.notActive = this.shadeColor(color, 0);
             this.active = this.shadeColor(color, -35);
         }
@@ -328,6 +330,15 @@ var proto = {
 
         }
         //}
+    },    
+    drawSpriteOnBlock: function(image){
+        context.globalAlpha = config.spriteOverlayTransparency;
+        context.drawImage(image,
+            this.posX + 1 + this.size, 
+            this.posY + this.size, 
+            (this.width - (this.size * 2) - 1), 
+            (this.height - (this.size * 2) - 1));
+        context.globalAlpha = 1.0;
     },
     render: function() {
 
@@ -348,37 +359,21 @@ var proto = {
             context.fillStyle = "rgb(" + (this.active.red + this.activeCount) + ", " + (this.active.green + this.activeCount) + ", " + (this.active.blue + this.activeCount) + ")";
             context.fill();
         }
+
+        context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+
         if (this.type === "block-effect") {
-            context.drawImage(this.sprite, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-            var effect_bar_width = (this.width - (this.size * 2) - 1) - 4;
-            var effect_square_width = effect_bar_width / 4;
             if (this.configMap.note.active) {
-                context.drawImage(config.note_active_image,
-                    3 + this.posX + this.size,
-                    2 + this.posY + this.size,
-                    effect_square_width,
-                    effect_square_width);
+                this.drawSpriteOnBlock(config.note_active_image);
             }
             if (this.configMap.volume.active) {
-                context.drawImage(config.volume_active_image,
-                    3 + this.posX + effect_bar_width - effect_square_width,
-                    2 + this.posY + this.size,
-                    effect_square_width,
-                    effect_square_width);
+                this.drawSpriteOnBlock(config.volume_active_image);
             }
             if (this.configMap.velocity.active) {
-                context.drawImage(config.velocity_active_image,
-                    3 + this.posX + this.size,
-                    2 + this.posY + effect_bar_width - effect_square_width,
-                    effect_square_width,
-                    effect_square_width);
+                this.drawSpriteOnBlock(config.velocity_active_image);
             }
             if (this.configMap.duration.active) {
-                context.drawImage(config.duration_active_image,
-                    3 + this.posX + effect_bar_width - effect_square_width,
-                    2 + this.posY + effect_bar_width - effect_square_width,
-                    effect_square_width,
-                    effect_square_width);
+                this.drawSpriteOnBlock(config.duration_active_image);
             }
 
             //shade the block if selected
@@ -387,10 +382,7 @@ var proto = {
                 context.drawImage(config.black_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
                 context.globalAlpha = 1.0;
             }
-
-        } else {
-            context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-        }
+        }        
     }
 };
 
