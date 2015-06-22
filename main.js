@@ -545,9 +545,9 @@ function getScale(scaleName) {
     return config.scaleArray[config.scaleNameArray.indexOf(scaleName)];
 }
 
-function rangedRandom(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+// function rangedRandom(min, max) {
+//     return Math.floor(Math.random() * (max - min + 1)) + min;
+// }
 
 utilities = function() {
     var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -651,10 +651,10 @@ collisions = function() {
                             //If limit range flag, new key is random key inside specified range
                             if (blocks[eblockref].configMap[key].limit_range) {
                                 if (key == "note") {
-                                    var rndIndex = rangedRandom(0, blocks[eblockref].configMap[key].range_valid_notes.length - 1);
+                                    var rndIndex = utilities.rangedRandom(0, blocks[eblockref].configMap[key].range_valid_notes.length - 1);
                                     var newValue = blocks[eblockref].configMap[key].range_valid_notes[rndIndex];
                                 } else {
-                                    var newValue = rangedRandom(blocks[eblockref].configMap[key].range_low, blocks[eblockref].configMap[key].range_high);
+                                    var newValue = utilities.rangedRandom(blocks[eblockref].configMap[key].range_low, blocks[eblockref].configMap[key].range_high);
                                 }
                             }
 
@@ -732,11 +732,11 @@ collisions = function() {
                             break;
                     }
 
-                    if (blocks[mblockref].selected == true) {
-                        musicBlockPanel.updatePianoRoll({
-                            value: blocks[mblockref].note
-                        });
-                    }
+                    // if (blocks[mblockref].selected == true) {
+                    //     musicBlockPanel.updatePianoRoll({
+                    //         value: blocks[mblockref].note
+                    //     });
+                    // }
                 }
             }
 
@@ -1116,7 +1116,11 @@ topPanel = function() {
                 utilities.selectAllBlocks();
                 break;
             case 'clear-all':
-                utilities.deleteAllBlocks();
+                var x;
+                if (confirm("Ar you sure you want to clear the board?") === true) {
+                    utilities.deleteAllBlocks();
+                }
+
                 break;
             default:
                 config.mode = mode;
@@ -1268,12 +1272,13 @@ musicBlockPanel = function() {
             $duration: $('.duration-music'),
             $velocity: $('.velocity-music'),
             $direction: $('#select-direction'),
-            $piano_key: $('.piano-wrapper li'),
+            $piano_key: $('.piano-roll li'),
             $instrument: $('#set-instrument'),
             $send_blocks: $(".send-blocks"),
             $mute: $('.mute-toggle'),
             $solo: $('.solo-toggle'),
-            $mute_solo: $('.mute-solo')
+            $mute_solo: $('.mute-solo'),
+            $mute_piano: $('.mute-piano')
         },
         configMap = {
             note: 60,
@@ -1287,7 +1292,8 @@ musicBlockPanel = function() {
         },
         setDirection, getDirection, getPanelValues, updatePianoRoll, sendBlocks,
         setToBlock, setParams, populateInstruments,
-        multiplier = controlPanel.getMultiplier();
+        multiplier = controlPanel.getMultiplier(),
+        mutePiano = false;
 
     // Create Music Block Dials
     controlPanel.createDial({
@@ -1378,11 +1384,13 @@ musicBlockPanel = function() {
     // Sync the piano roll to the note knob when it changes (auto run on load)
     updatePianoRoll = (function update() {
         var value = null;
-        if (arguments.length >= 1) {
-            value = arguments[0].value - multiplier;
-        } else {
+        // if (arguments.length >= 1) {
+        //     value = arguments[0].value - multiplier;
+        // } else {
             value = configMap.note - multiplier;
-        }
+        // }
+        //console.log('test');
+      
         jqueryMap.$piano_key.eq(value - 1).addClass("active").siblings().removeClass('active');
         jqueryMap.$piano_key.eq(value - 1).parent().siblings().find('li').removeClass('active');
 
@@ -1413,7 +1421,7 @@ musicBlockPanel = function() {
                         jqueryMap['$' + key].val(blocks[num][key]);
                         jqueryMap['$' + key].trigger('change');
                         if (key === 'note') {
-                            updatePianoRoll(blocks[num].note);
+                            updatePianoRoll();
                         }
                         break;
 
@@ -1465,6 +1473,7 @@ musicBlockPanel = function() {
         return false;
     });
 
+    // Mute or solo music blocks
     jqueryMap.$mute_solo.find('span').click(function() {
         var val = $(this).attr('data-active'),
             type = $(this).attr('data-type');
@@ -1493,6 +1502,19 @@ musicBlockPanel = function() {
         }
     });
 
+    // Mute Piano Roll 
+    jqueryMap.$mute_piano.find('span').click(function() {
+        var val = $(this).attr('data-active');
+
+        if (val === 'true') {
+            mutePiano = false;
+            $(this).attr('data-active', 'false');
+        } else {
+            mutePiano = true;
+            $(this).attr('data-active', 'true');
+        }
+    });
+
     jqueryMap.$piano_key.mousedown(function() {
         var
             type = controlPanel.getActivePanel(),
@@ -1501,7 +1523,10 @@ musicBlockPanel = function() {
             value = (index + roll_index) + (multiplier + 1);
 
         // Play MIDI note when piano roll is clicked
-        setMidiParams.triggerMidi(70, configMap.instrument, value, 70, 0.3);
+        if(mutePiano !== true) {
+              setMidiParams.triggerMidi(70, configMap.instrument, value, 70, 0.3);
+        }
+      
 
         // If music block panel is not selected don't run this functionality
         if (type === 'block-music') {
@@ -1537,7 +1562,7 @@ effectBlockPanel = function() {
         jqueryMap = {
             $limit_range: $('.limit-range'),
             $step_switch: $('.switch'),
-            $piano_key: $('.piano-wrapper li'),
+            $piano_key: $('.piano-roll li'),
             $piano_roll: $('.piano-roll'),
             $black_key: $('.blackkey'),
             $white_key: $('.whitekey'),
@@ -1548,7 +1573,7 @@ effectBlockPanel = function() {
             $piano_slider_min: $("#piano-slider-min"),
             $piano_slider_max: $("#piano-slider-max")
         },
-        effectMap, toggleEffectMethod, getPanelValues, setParams, setPianoRoll, compareValues,
+        effectMap, toggleEffectMethod, getPanelValues, setParams, setPianoRoll, compareValues, updatePianoRoll,
         effectArray = ['note', 'volume', 'velocity', 'duration'],
         configMap = {
             note: null,
@@ -1657,6 +1682,7 @@ effectBlockPanel = function() {
             pos_high,
             pos_low,
             method = jqueryMap.note_effect_select.val();
+
 
 
         setActive = function(attr) {
