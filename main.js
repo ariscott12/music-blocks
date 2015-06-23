@@ -65,6 +65,7 @@ midiInstruments = {
     'synth_strings_1': 50,
     'trumpet': 56,
     'trombone': 57,
+    'gunshot': 127
     // 'fretless_bass': 35,
     // 'hammond_organ': 16,
     // 'electric_jazz_guitar': 26,
@@ -1323,6 +1324,9 @@ musicBlockPanel = function() {
 
         for (var key in midiInstruments) {
             key = key.replace(/_/g, ' ');
+            if(key == 'gunshot'){
+                key = 'drums';
+            }
             if (cnt > config.instrumentsToLoad - 1) {
                 key = key + ' (not loaded)';
                 el = 'not-loaded';
