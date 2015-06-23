@@ -133,8 +133,8 @@ midiInstruments = {
     addScale("Eb Major", [0, 2, 3, 5, 7, 8, 10]);
     addScale("Ab Major", [0, 1, 3, 5, 7, 8, 10]);
     addScale("Db Major", [0, 1, 3, 5, 6, 8, 10]);
-    addScale("Gb Major", [-1, 1, 3, 5, 6, 8, 10]);
-    addScale("Cb Major", [-1, 1, 3, 4, 6, 8, 10]);
+    addScale("Gb Major", [1, 3, 5, 6, 8, 10, 11]);
+    addScale("Cb Major", [1, 3, 4, 6, 8, 10, 11]);
 
 
     //Add images
