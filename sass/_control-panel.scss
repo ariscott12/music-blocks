@@ -390,7 +390,7 @@
         padding: 20px;
     }
     
-    .mute-solo {
+    .mute-solo, .mute-piano {
        // margin-left: 20px;
         li {
             font-size:12px;
@@ -406,6 +406,13 @@
             }
         }
     }
+    .mute-piano {
+        float:right;
+        margin-top:20px;
+        li {
+            color:#eee;
+        }
+    }
     
     // .note-random,
     // .note-specific,
@@ -416,6 +423,7 @@
     // }
     .piano-wrapper {
         margin-top: 10px;
+        width:640px;
         float: left;
         position: relative;
         .range-indicator {
@@ -496,13 +504,13 @@
     
     #piano-slider-min .ui-slider-handle {
         margin-top: 10px;
-        margin-left: -5px;
+        margin-left: -9px;
         background: url('../images/piano-slider-min.png') no-repeat;
     }
     
     #piano-slider-max .ui-slider-handle {
         margin-top: -5px;
-        margin-left: -15px;
+        margin-left: -9px;
         background: url('../images/piano-slider-max.png') no-repeat;
     }
     /*Added by MIKE ENDS*/

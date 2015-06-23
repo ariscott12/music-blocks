@@ -466,17 +466,24 @@ body {
   background: #edebea;
   padding: 20px; }
 
-.mute-solo li {
+.mute-solo li, .mute-piano li {
   font-size: 12px;
   margin-bottom: 7px; }
-.mute-solo span {
+.mute-solo span, .mute-piano span {
   position: relative;
   top: 2px; }
-  .mute-solo span[data-active="true"] {
+  .mute-solo span[data-active="true"], .mute-piano span[data-active="true"] {
     background: #EA1010; }
+
+.mute-piano {
+  float: right;
+  margin-top: 20px; }
+  .mute-piano li {
+    color: #eee; }
 
 .piano-wrapper {
   margin-top: 10px;
+  width: 640px;
   float: left;
   position: relative; }
   .piano-wrapper .range-indicator {
