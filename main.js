@@ -129,6 +129,13 @@ midiInstruments = {
     addScale("G Major", [0, 2, 4, 6, 7, 9, 11]);
     addScale("A Major", [1, 2, 4, 6, 8, 9, 11]);
     addScale("B Major", [1, 3, 4, 6, 8, 10, 11]);
+    addScale("Bb Major", [0, 2, 3, 5, 7, 9, 10]);
+    addScale("Eb Major", [0, 2, 3, 5, 7, 8, 10]);
+    addScale("Ab Major", [0, 1, 3, 5, 7, 8, 10]);
+    addScale("Db Major", [0, 1, 3, 5, 6, 8, 10]);
+    addScale("Gb Major", [-1, 1, 3, 5, 6, 8, 10]);
+    addScale("Cb Major", [-1, 1, 3, 4, 6, 8, 10]);
+
 
     //Add images
     config.note_active_image.src = './images/note_active.png';
