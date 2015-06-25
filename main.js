@@ -8,7 +8,7 @@ var
         gridOffsetX: 0,
         gridOffsetY: 0,
         pause: -1,
-        loading_instrument: false,
+        system_pause: false,
         advance: -1,
         shiftkey: 0,
         numSelected: 0,
@@ -250,7 +250,7 @@ var proto = {
     },
     selectBlock: function() {
         // Only select a block if it's not selected
-        if (this.selected !== true && config.newblock !== this.blocknum) {
+        if (this.selected !== true ){//&& config.newblock !== this.blocknum) {
             this.selected = true;
             config.numSelected++;
 
@@ -285,6 +285,7 @@ var proto = {
         config.numSelected--;
     },
     selectNewSingle: function() {
+        console.log("SLEECLTN");
         for (var i = 0; i < blocks.length; i++) {
             blocks[i].deselectBlock();
         }
@@ -292,6 +293,7 @@ var proto = {
             this.removeBlock();
         } else {
             this.selectBlock();
+            console.log(config.numSelected + " Selected and its " + this.blocknum);
             if (this.selected === true) {
                 if (this.type == 'block-music') {
                     musicBlockPanel.setToBlock(this.blocknum);
@@ -301,7 +303,7 @@ var proto = {
                 }
                 controlPanel.setActivePanel(this.type);
             }
-        }
+        }        
     },
     activate: function() {
         //this.notActiveCount = 35;
@@ -877,7 +879,7 @@ startSyncCounter = function() {
         context.fill();
         context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);
 
-        if ((config.pause === 1 && config.advance === 1) || config.pause === -1) {
+        if (!config.system_pause && ((config.pause === 1 && config.advance === 1) || config.pause === -1)) {
             // Clear canvas on loop and redraw blocks
 
 
@@ -1131,15 +1133,18 @@ topPanel = function() {
     jqueryMap.$play_select.find('li').click(updateMode);
     jqueryMap.$batch_edits.find('li').click(updateMode);
     jqueryMap.$hotkey_btn.click(function() {
+        config.system_pause = true;
         jqueryMap.$hotkey_menu.fadeIn(300);
     });
     jqueryMap.$hotkey_menu.click(function(event) {
         var target = $(event.target);
         if (!target.is("td")) {
-            $(this).fadeOut(300);
+            $(this).hide();
+            $(this).fadeOut(300, function() {
+                  $( "#wrapper" ).trigger( "click" );
+            });
         }
-
-
+        config.system_pause = false;
     });
 
 }();
@@ -1443,7 +1448,7 @@ musicBlockPanel = function() {
 
         if (isloaded === 'not-loaded') {
             var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '...');
-            config.pause = 1;
+            config.system_pause = true;
             // alert('test');
 
             $spinner.show();
@@ -1459,7 +1464,7 @@ musicBlockPanel = function() {
                     option.attr('class', 'loaded');
                     str = option.text().replace(/\(|\)/g, '').replace(/\.\.\./g, '');
                     option.text(str);
-                    config.pause = -1;
+                    config.system_pause = false;
                     $spinner.hide();
                 }
             });
@@ -2252,7 +2257,7 @@ setGridEvents = function() {
                 blockDragRightX,
                 blockDragRightY;
 
-            if (gridArray[mousedowngridX][mousedowngridY] != -1 && blocks[gridArray[mousedowngridX][mousedowngridY]].selected === true && config.draggingBlocks === false) {
+            if (gridArray[mousedowngridX][mousedowngridY] != -1 && blocks[gridArray[mousedowngridX][mousedowngridY]].selected === true && config.draggingBlocks === false && config.newblock === -1) {
                 config.draggingBlocks = true;
                 config.pause = 1;
 
@@ -2336,6 +2341,7 @@ setGridEvents = function() {
 
                     // Add music block to the grid 
                     addBlock(gridX, gridY, activePanel);
+                    blocks[config.cnt-1].selectNewSingle();
 
                 } else {
                     var move_x = e.pageX - config.gridOffsetX,
@@ -2397,10 +2403,13 @@ setGridEvents = function() {
 
                 //Check mouse click for single click
                 if (mouselocation === "same") {
+                    console.log("SAME");
                     //Check if block exists
                     if (blockref != -1) {
+                        console.log("EXISTS");
                         //Check if block is not selected
                         if (blocks[blockref].selected === false) {
+                            console.log("FALSE SELECT");
                             //Check if shift is off
                             if (config.shiftkey === 0) {
                                 blocks[blockref].selectNewSingle();
@@ -2425,13 +2434,17 @@ setGridEvents = function() {
                     //Clicked square is empty
                     else if (config.mode === "create") {
                         var activePanel = controlPanel.getActivePanel();
-                        addBlock(leftX, topY, activePanel);
+                        addBlock(leftX, topY, activePanel);                                                
 
                     } else if (config.mode === "select") {
                         for (var i = 0; i < config.cnt; i++) {
                             blocks[i].deselectBlock();
                         }
                     }
+                    if(config.newblock != -1){
+                        blocks[config.newblock].selectNewSingle();
+                    }
+
                 }
 
                 //Mouse button was dragged to other squares
@@ -2504,7 +2517,7 @@ setGridEvents = function() {
         mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridHeight);
 
         if (config.mode === "create") {
-            addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);
+            addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);               
         }
 
         //Add drag event on mousedown
@@ -2513,7 +2526,7 @@ setGridEvents = function() {
 
     addBlock = function(gridX, gridY, type) {
         if (gridArray[gridX][gridY] === -1) {
-
+            console.log("ADDING");
             // Make new blocks based on type selected in control panel
             if (type == "block-music") {
                 blocks[config.cnt] = makeMusicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
