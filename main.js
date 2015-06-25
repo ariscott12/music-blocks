@@ -28,6 +28,7 @@ var
         black_image: new Image(),
         spriteOverlayTransparency: 0.7,
         masterVolume: 100,
+        masterMute: -1,
     },
      
     canvas = document.getElementById("grid"),
@@ -326,8 +327,8 @@ var proto = {
             this.activate();
         }
         //if ($('#set-instrument option:selected').attr('class') === 'loaded') {
-        // check if block is muted
-        if (this.mute !== true) {
+        // check if block is muted or master is muted
+        if (config.masterMute == -1 && this.mute !== true) {
             if (config.blockSolo === true) {
                 if (this.solo === true) {
                     setMidiParams.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
