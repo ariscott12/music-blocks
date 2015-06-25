@@ -25,6 +25,10 @@ var
         volume_active_image: new Image(),
         velocity_active_image: new Image(),
         duration_active_image: new Image(),
+        mb_up_image: new Image(),
+        mb_down_image: new Image(),
+        mb_left_image: new Image(),
+        mb_right_image: new Image(),
         black_image: new Image(),
         spriteOverlayTransparency: 0.7,
         masterVolume: 100,
@@ -145,6 +149,10 @@ midiInstruments = {
     config.velocity_active_image.src = './images/velocity_active.png';
     config.duration_active_image.src = './images/duration_active.png';
     config.black_image.src = './images/black.png';
+    config.mb_up_image.src = './images/mb-up.png';
+    config.mb_down_image.src = './images/mb-down.png';
+    config.mb_right_image.src = './images/mb-right.png';
+    config.mb_left_image.src = './images/mb-left.png';
 
     var sel = document.getElementById('select-note-scale');
     for (var i = 0; i < config.scaleNameArray.length; i++) {
@@ -371,7 +379,26 @@ var proto = {
 
         context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
 
-        if (this.type === "block-effect") {
+        if(this.type === "block-music"){
+            switch(this.newDirection){
+                case "up":
+                    this.drawSpriteOnBlock(config.mb_up_image);      
+                    break;
+
+                case "down":
+                    this.drawSpriteOnBlock(config.mb_down_image);      
+                    break;                    
+
+                case "left":
+                    this.drawSpriteOnBlock(config.mb_left_image);      
+                    break;
+
+                case "right":
+                    this.drawSpriteOnBlock(config.mb_right_image);      
+                    break;
+            }
+        }
+        else if (this.type === "block-effect") {
             if (this.configMap.note.active) {
                 this.drawSpriteOnBlock(config.note_active_image);
             }
@@ -411,8 +438,7 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
     block.velocity = null;
     block.instrument = 0;
     block.solo = false;
-    block.mute = false;
-
+    block.mute = false;    
 
     // Music Block Specfic Methods
     block.setInitValues = function(el) {
