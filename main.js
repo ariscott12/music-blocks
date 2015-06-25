@@ -2645,14 +2645,24 @@ keyboardEvents = function() {
                 //     }
                 //     break;
 
-            case 107: //Numpad +
-                if(config.masterVolume < 100)
-                    config.masterVolume += 5;
+            case 83: // s
+                for (var i = 0; i < config.cnt; i++) {
+                    if(blocks[i].selected){
+                        blocks[i].newDirection = 'none';
+                    }
+                }
                 break;
 
-            case 109: //Numpad -
-                if(config.masterVolume > 0)
+            case 107: // Numpad +
+                if(config.masterVolume < 100){
+                    config.masterVolume += 5;
+                }
+                break;
+
+            case 109: // Numpad -
+                if(config.masterVolume > 0){
                     config.masterVolume -= 5;
+                }
                 break;
         }
     }, false);
