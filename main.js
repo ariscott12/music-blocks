@@ -26,7 +26,8 @@ var
         velocity_active_image: new Image(),
         duration_active_image: new Image(),
         black_image: new Image(),
-        spriteOverlayTransparency: 0.7
+        spriteOverlayTransparency: 0.7,
+        masterVolume: 100,
     },
      
     canvas = document.getElementById("grid"),
@@ -285,7 +286,6 @@ var proto = {
         config.numSelected--;
     },
     selectNewSingle: function() {
-        console.log("SLEECLTN");
         for (var i = 0; i < blocks.length; i++) {
             blocks[i].deselectBlock();
         }
@@ -293,7 +293,6 @@ var proto = {
             this.removeBlock();
         } else {
             this.selectBlock();
-            console.log(config.numSelected + " Selected and its " + this.blocknum);
             if (this.selected === true) {
                 if (this.type == 'block-music') {
                     musicBlockPanel.setToBlock(this.blocknum);
@@ -331,11 +330,10 @@ var proto = {
         if (this.mute !== true) {
             if (config.blockSolo === true) {
                 if (this.solo === true) {
-                    setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+                    setMidiParams.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
                 }
             } else {
-                console.log("playing");
-                setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+                setMidiParams.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
             }
 
         }
@@ -1089,9 +1087,22 @@ topPanel = function() {
             $play_select: $('.play-select'),
             $batch_edits: $('.batch-edits'),
             $hotkey_btn: $('[data-id = "hotkeys"]'),
-            $hotkey_menu: $('[data-id = "hotkey-menu"]')
+            $hotkey_menu: $('[data-id = "hotkey-menu"]'),
+            $master_volume: $('.master-volume-slider')
         },
         updateMode;
+
+    jqueryMap.$master_volume.slider({
+            orientation: "horizontal",
+            value: config.masterVolume,
+            min: 0,
+            max: 100,
+            step: 1,
+            slide: function(event, ui) {
+                // $(this).find("input").val(ui.value);
+                config.masterVolume = ui.value;
+            }
+        });
 
     updateMode = function() {
         var mode = $(this).attr('data-mode');
@@ -2403,13 +2414,10 @@ setGridEvents = function() {
 
                 //Check mouse click for single click
                 if (mouselocation === "same") {
-                    console.log("SAME");
                     //Check if block exists
                     if (blockref != -1) {
-                        console.log("EXISTS");
                         //Check if block is not selected
                         if (blocks[blockref].selected === false) {
-                            console.log("FALSE SELECT");
                             //Check if shift is off
                             if (config.shiftkey === 0) {
                                 blocks[blockref].selectNewSingle();
@@ -2528,7 +2536,6 @@ setGridEvents = function() {
 
     addBlock = function(gridX, gridY, type) {
         if (gridArray[gridX][gridY] === -1) {
-            console.log("ADDING");
             // Make new blocks based on type selected in control panel
             if (type == "block-music") {
                 blocks[config.cnt] = makeMusicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
@@ -2637,7 +2644,15 @@ keyboardEvents = function() {
                 //     }
                 //     break;
 
+            case 107: //Numpad +
+                if(config.masterVolume < 100)
+                    config.masterVolume += 5;
+                break;
 
+            case 109: //Numpad -
+                if(config.masterVolume > 0)
+                    config.masterVolume -= 5;
+                break;
         }
     }, false);
 
