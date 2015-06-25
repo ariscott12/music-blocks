@@ -29,6 +29,8 @@ var
         mb_down_image: new Image(),
         mb_left_image: new Image(),
         mb_right_image: new Image(),
+        mute_overlay_image: new Image(),
+        solo_overlay_image: new Image(),
         black_image: new Image(),
         spriteOverlayTransparency: 0.7,
         masterVolume: 100,
@@ -153,7 +155,9 @@ midiInstruments = {
     config.mb_down_image.src = './images/mb-down.png';
     config.mb_right_image.src = './images/mb-right.png';
     config.mb_left_image.src = './images/mb-left.png';
-
+    config.mute_overlay_image.src = './images/mute-overlay.png';
+    config.solo_overlay_image.src = './images/solo-overlay.png';
+    
     var sel = document.getElementById('select-note-scale');
     for (var i = 0; i < config.scaleNameArray.length; i++) {
         var opt = document.createElement('option');
@@ -397,6 +401,14 @@ var proto = {
                     this.drawSpriteOnBlock(config.mb_right_image);      
                     break;
             }
+
+            if(this.mute){
+                this.drawSpriteOnBlock(config.mute_overlay_image);
+            }
+            if(this.solo){
+                this.drawSpriteOnBlock(config.solo_overlay_image);
+            }
+
         }
         else if (this.type === "block-effect") {
             if (this.configMap.note.active) {
