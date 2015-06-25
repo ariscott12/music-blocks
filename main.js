@@ -129,21 +129,21 @@ midiInstruments = {
     }
     //Add scales to scale arrays
     addScale("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-    addScale("C Major", [0, 2, 4, 5, 7, 9, 11]);
-    addScale("C Minor", [0, 2, 3, 5, 7, 8, 10]);
-    addScale("D Major", [1, 2, 4, 6, 7, 9, 11]);
-    addScale("E Major", [1, 3, 4, 6, 8, 9, 11]);
-    addScale("F Major", [0, 2, 4, 5, 7, 9, 10]);
-    addScale("G Major", [0, 2, 4, 6, 7, 9, 11]);
-    addScale("A Major", [1, 2, 4, 6, 8, 9, 11]);
-    addScale("B Major", [1, 3, 4, 6, 8, 10, 11]);
-    addScale("Bb Major", [0, 2, 3, 5, 7, 9, 10]);
-    addScale("Eb Major", [0, 2, 3, 5, 7, 8, 10]);
-    addScale("Ab Major", [0, 1, 3, 5, 7, 8, 10]);
-    addScale("Db Major", [0, 1, 3, 5, 6, 8, 10]);
-    addScale("Gb Major", [1, 3, 5, 6, 8, 10, 11]);
-    addScale("Cb Major", [1, 3, 4, 6, 8, 10, 11]);
-
+    addScale("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
+    addScale("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
+    addScale("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
+    addScale("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
+    addScale("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
+    addScale("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
+    addScale("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
+    addScale("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
+    addScale("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
+    addScale("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
+    addScale("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
+    addScale("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
+    addScale("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
+    addScale("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
+    addScale("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
 
     //Add images
     config.note_active_image.src = './images/note_active.png';
