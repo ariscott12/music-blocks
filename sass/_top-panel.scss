@@ -1,4 +1,10 @@
 .top-panel-wrapper {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
     float: left;
     margin-right: 18px;
     margin-top:50px;
