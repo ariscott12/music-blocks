@@ -2502,26 +2502,28 @@ setGridEvents = function() {
 
     //Add mousedown listener, tracks positions and resets selection to 0
     mouseDown = function(e) {
-        getPos();
+        if(e.button !== 2){
+            getPos();
 
-        var
-            dragbox,
-            activePanel = controlPanel.getActivePanel();
+            var
+                dragbox,
+                activePanel = controlPanel.getActivePanel();
 
-        mouselocation = compareMouse(e);
-        e = e || window.event;
+            mouselocation = compareMouse(e);
+            e = e || window.event;
 
-        gridCheck = true;
+            gridCheck = true;
 
-        mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridWidth);
-        mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridHeight);
+            mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridWidth);
+            mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridHeight);
 
-        if (config.mode === "create") {
-            addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);               
+            if (config.mode === "create") {
+                addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);               
+            }
+
+            //Add drag event on mousedown
+            elements.section.addEventListener('mousemove', mouseDrag, false);
         }
-
-        //Add drag event on mousedown
-        elements.section.addEventListener('mousemove', mouseDrag, false);
     };
 
     addBlock = function(gridX, gridY, type) {
