@@ -2646,11 +2646,7 @@ keyboardEvents = function() {
                 //     break;
 
             case 83: // s
-                for (var i = 0; i < config.cnt; i++) {
-                    if(blocks[i].selected){
-                        blocks[i].newDirection = 'none';
-                    }
-                }
+                musicBlockPanel.sendBlocks('none');
                 break;
 
             case 107: // Numpad +
