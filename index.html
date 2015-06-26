@@ -29,7 +29,7 @@
     <script src="js/rAF.js"></script>
 </head>
 
-<body>
+<body oncontextmenu="return false;">
     <div class="spinner-page spinner">
         <p>Doing Big Things Son!</p>
         <div class="rect1"></div>
@@ -68,7 +68,12 @@
                 <li data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
                 <li data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
             </ul>
-        </div>
+        </div>  
+        <div class="top-panel-wrapper">
+            <p>Master Volume</p>
+            <div class="border"></div>
+            <ul class="master-volume-slider"></ul>
+        </div>          
         <div class="clear"></div>
         <canvas id="grid" width="640" height="640"></canvas>
         <div class="spinner spinner-instrument">

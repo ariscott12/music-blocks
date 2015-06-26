@@ -1,4 +1,10 @@
     .control-panel {
+        -moz-user-select: -moz-none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        
         .block-effect-panel {
             display: none;
         }
@@ -98,6 +104,12 @@
         .ui-spinner input,
         .dial-wrapper input,
         .dial-wrapper-range input {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+                
             background: $blue-medium;
             border: 2px solid #ccc;
             border-radius: 4px;
@@ -407,6 +419,11 @@
         }
     }
     .mute-piano {
+        -moz-user-select: -moz-none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
         float:right;
         margin-top:20px;
         li {

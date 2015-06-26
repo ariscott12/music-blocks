@@ -8,7 +8,7 @@ var
         gridOffsetX: 0,
         gridOffsetY: 0,
         pause: -1,
-        loading_instrument: false,
+        system_pause: false,
         advance: -1,
         shiftkey: 0,
         numSelected: 0,
@@ -25,8 +25,16 @@ var
         volume_active_image: new Image(),
         velocity_active_image: new Image(),
         duration_active_image: new Image(),
+        mb_up_image: new Image(),
+        mb_down_image: new Image(),
+        mb_left_image: new Image(),
+        mb_right_image: new Image(),
+        mute_overlay_image: new Image(),
+        solo_overlay_image: new Image(),
         black_image: new Image(),
-        spriteOverlayTransparency: 1
+        spriteOverlayTransparency: 0.7,
+        masterVolume: 100,
+        masterMute: -1,
     },
      
     canvas = document.getElementById("grid"),
@@ -65,6 +73,7 @@ midiInstruments = {
     'synth_strings_1': 50,
     'trumpet': 56,
     'trombone': 57,
+    'gunshot': 127
     // 'fretless_bass': 35,
     // 'hammond_organ': 16,
     // 'electric_jazz_guitar': 26,
@@ -120,14 +129,21 @@ midiInstruments = {
     }
     //Add scales to scale arrays
     addScale("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-    addScale("C Major", [0, 2, 4, 5, 7, 9, 11]);
-    addScale("C Minor", [0, 2, 3, 5, 7, 8, 10]);
-    addScale("D Major", [1, 2, 4, 6, 7, 9, 11]);
-    addScale("E Major", [1, 3, 4, 6, 8, 9, 11]);
-    addScale("F Major", [0, 2, 4, 5, 7, 9, 10]);
-    addScale("G Major", [0, 2, 4, 6, 7, 9, 11]);
-    addScale("A Major", [1, 2, 4, 6, 8, 9, 11]);
-    addScale("B Major", [1, 3, 4, 6, 8, 10, 11]);
+    addScale("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
+    addScale("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
+    addScale("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
+    addScale("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
+    addScale("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
+    addScale("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
+    addScale("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
+    addScale("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
+    addScale("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
+    addScale("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
+    addScale("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
+    addScale("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
+    addScale("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
+    addScale("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
+    addScale("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
 
     //Add images
     config.note_active_image.src = './images/note-active.png';
@@ -135,7 +151,13 @@ midiInstruments = {
     config.velocity_active_image.src = './images/velocity-active.png';
     config.duration_active_image.src = './images/duration-active.png';
     config.black_image.src = './images/black.png';
-
+    config.mb_up_image.src = './images/mb-up.png';
+    config.mb_down_image.src = './images/mb-down.png';
+    config.mb_right_image.src = './images/mb-right.png';
+    config.mb_left_image.src = './images/mb-left.png';
+    config.mute_overlay_image.src = './images/mute-overlay.png';
+    config.solo_overlay_image.src = './images/solo-overlay.png';
+    
     var sel = document.getElementById('select-note-scale');
     for (var i = 0; i < config.scaleNameArray.length; i++) {
         var opt = document.createElement('option');
@@ -241,7 +263,7 @@ var proto = {
     },
     selectBlock: function() {
         // Only select a block if it's not selected
-        if (this.selected !== true && config.newblock !== this.blocknum) {
+        if (this.selected !== true ){//&& config.newblock !== this.blocknum) {
             this.selected = true;
             config.numSelected++;
 
@@ -292,7 +314,7 @@ var proto = {
                 }
                 controlPanel.setActivePanel(this.type);
             }
-        }
+        }        
     },
     activate: function() {
         //this.notActiveCount = 35;
@@ -315,25 +337,26 @@ var proto = {
         if (this.selected === false) {
             this.activate();
         }
-        // check if block is muted
-        if (this.mute !== true) {
+        //if ($('#set-instrument option:selected').attr('class') === 'loaded') {
+        // check if block is muted or master is muted
+        if (config.masterMute == -1 && this.mute !== true) {
             if (config.blockSolo === true) {
                 if (this.solo === true) {
-                    setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+                    setMidiParams.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
                 }
             } else {
-                //console.log("playing");
-                setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
+                setMidiParams.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
             }
 
         }
     },
     drawSpriteOnBlock: function(image) {
         context.globalAlpha = config.spriteOverlayTransparency;
-        context.drawImage(
-            image,
-            this.posX + 1 + this.size,
-            this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+        context.drawImage(image,
+            this.posX + 1 + this.size, 
+            this.posY + this.size, 
+            (this.width - (this.size * 2) - 1), 
+            (this.height - (this.size * 2) - 1));
         context.globalAlpha = 1.0;
     },
     render: function() {
@@ -357,7 +380,34 @@ var proto = {
 
         context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
 
-        if (this.type === "block-effect") {
+        if(this.type === "block-music"){
+            switch(this.newDirection){
+                case "up":
+                    this.drawSpriteOnBlock(config.mb_up_image);      
+                    break;
+
+                case "down":
+                    this.drawSpriteOnBlock(config.mb_down_image);      
+                    break;                    
+
+                case "left":
+                    this.drawSpriteOnBlock(config.mb_left_image);      
+                    break;
+
+                case "right":
+                    this.drawSpriteOnBlock(config.mb_right_image);      
+                    break;
+            }
+
+            if(this.mute){
+                this.drawSpriteOnBlock(config.mute_overlay_image);
+            }
+            if(this.solo){
+                this.drawSpriteOnBlock(config.solo_overlay_image);
+            }
+
+        }
+        else if (this.type === "block-effect") {
             if (this.configMap.note.active) {
                 this.drawSpriteOnBlock(config.note_active_image);
             }
@@ -398,7 +448,6 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
     block.instrument = 0;
     block.solo = false;
     block.mute = false;
-
 
     // Music Block Specfic Methods
     block.setInitValues = function(el) {
@@ -864,7 +913,7 @@ startSyncCounter = function() {
         context.fill();
         context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);
 
-        if ((config.pause === 1 && config.advance === 1) || config.pause === -1) {
+        if (!config.system_pause && ((config.pause === 1 && config.advance === 1) || config.pause === -1)) {
             // Clear canvas on loop and redraw blocks
 
 
@@ -1074,9 +1123,22 @@ topPanel = function() {
             $play_select: $('.play-select'),
             $batch_edits: $('.batch-edits'),
             $hotkey_btn: $('[data-id = "hotkeys"]'),
-            $hotkey_menu: $('[data-id = "hotkey-menu"]')
+            $hotkey_menu: $('[data-id = "hotkey-menu"]'),
+            $master_volume: $('.master-volume-slider')
         },
         updateMode;
+
+    jqueryMap.$master_volume.slider({
+            orientation: "horizontal",
+            value: config.masterVolume,
+            min: 0,
+            max: 100,
+            step: 1,
+            slide: function(event, ui) {
+                // $(this).find("input").val(ui.value);
+                config.masterVolume = ui.value;
+            }
+        });
 
     updateMode = function() {
         var mode = $(this).attr('data-mode');
@@ -1118,15 +1180,18 @@ topPanel = function() {
     jqueryMap.$play_select.find('li').click(updateMode);
     jqueryMap.$batch_edits.find('li').click(updateMode);
     jqueryMap.$hotkey_btn.click(function() {
+        config.system_pause = true;
         jqueryMap.$hotkey_menu.fadeIn(300);
     });
     jqueryMap.$hotkey_menu.click(function(event) {
         var target = $(event.target);
         if (!target.is("td")) {
-            $(this).fadeOut(300);
+            $(this).hide();
+            $(this).fadeOut(300, function() {
+                  $( "#wrapper" ).trigger( "click" );
+            });
         }
-
-
+        config.system_pause = false;
     });
 
 }();
@@ -1324,6 +1389,9 @@ musicBlockPanel = function() {
 
         for (var key in midiInstruments) {
             key = key.replace(/_/g, ' ');
+            if(key == 'gunshot'){
+                key = 'drums';
+            }
             if (cnt > config.instrumentsToLoad - 1) {
                 key = key + ' (not loaded)';
                 el = 'not-loaded';
@@ -1427,7 +1495,7 @@ musicBlockPanel = function() {
 
         if (isloaded === 'not-loaded') {
             var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '...');
-            config.pause = 1;
+            config.system_pause = true;
             // alert('test');
 
             $spinner.show();
@@ -1443,7 +1511,7 @@ musicBlockPanel = function() {
                     option.attr('class', 'loaded');
                     str = option.text().replace(/\(|\)/g, '').replace(/\.\.\./g, '');
                     option.text(str);
-                    config.pause = -1;
+                    config.system_pause = false;
                     $spinner.hide();
                 }
             });
@@ -2235,7 +2303,7 @@ setGridEvents = function() {
                 blockDragRightX,
                 blockDragRightY;
 
-            if (gridArray[mousedowngridX][mousedowngridY] != -1 && blocks[gridArray[mousedowngridX][mousedowngridY]].selected === true && config.draggingBlocks === false) {
+            if (gridArray[mousedowngridX][mousedowngridY] != -1 && blocks[gridArray[mousedowngridX][mousedowngridY]].selected === true && config.draggingBlocks === false && config.newblock === -1) {
                 config.draggingBlocks = true;
                 config.pause = 1;
 
@@ -2319,6 +2387,7 @@ setGridEvents = function() {
 
                     // Add music block to the grid 
                     addBlock(gridX, gridY, activePanel);
+                    blocks[config.cnt-1].selectNewSingle();
 
                 } else {
                     var move_x = e.pageX - config.gridOffsetX,
@@ -2408,13 +2477,17 @@ setGridEvents = function() {
                     //Clicked square is empty
                     else if (config.mode === "create") {
                         var activePanel = controlPanel.getActivePanel();
-                        addBlock(leftX, topY, activePanel);
+                        addBlock(leftX, topY, activePanel);                                                
 
                     } else if (config.mode === "select") {
                         for (var i = 0; i < config.cnt; i++) {
                             blocks[i].deselectBlock();
                         }
                     }
+                    if(config.newblock != -1){
+                        blocks[config.newblock].selectNewSingle();
+                    }
+
                 }
 
                 //Mouse button was dragged to other squares
@@ -2472,31 +2545,32 @@ setGridEvents = function() {
 
     //Add mousedown listener, tracks positions and resets selection to 0
     mouseDown = function(e) {
-        getPos();
+        if(e.button !== 2){
+            getPos();
 
-        var
-            dragbox,
-            activePanel = controlPanel.getActivePanel();
+            var
+                dragbox,
+                activePanel = controlPanel.getActivePanel();
 
-        mouselocation = compareMouse(e);
-        e = e || window.event;
+            mouselocation = compareMouse(e);
+            e = e || window.event;
 
-        gridCheck = true;
+            gridCheck = true;
 
-        mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridWidth);
-        mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridHeight);
+            mousedownX = Math.min(e.pageX - config.gridOffsetX, config.blockSize * config.gridWidth);
+            mousedownY = Math.min(e.pageY - config.gridOffsetY, config.blockSize * config.gridHeight);
 
-        if (config.mode === "create") {
-            addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);
+            if (config.mode === "create") {
+                addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);               
+            }
+
+            //Add drag event on mousedown
+            elements.section.addEventListener('mousemove', mouseDrag, false);
         }
-
-        //Add drag event on mousedown
-        elements.section.addEventListener('mousemove', mouseDrag, false);
     };
 
     addBlock = function(gridX, gridY, type) {
         if (gridArray[gridX][gridY] === -1) {
-
             // Make new blocks based on type selected in control panel
             if (type == "block-music") {
                 blocks[config.cnt] = makeMusicBlock(config.blockSize, config.blockSize, gridX * config.blockSize, gridY * config.blockSize, 0, type);
@@ -2605,7 +2679,21 @@ keyboardEvents = function() {
                 //     }
                 //     break;
 
+            case 83: // s
+                musicBlockPanel.sendBlocks('none');
+                break;
 
+            case 107: // Numpad +
+                if(config.masterVolume < 100){
+                    config.masterVolume += 5;
+                }
+                break;
+
+            case 109: // Numpad -
+                if(config.masterVolume > 0){
+                    config.masterVolume -= 5;
+                }
+                break;
         }
     }, false);
 
