@@ -26,7 +26,7 @@ var
         velocity_active_image: new Image(),
         duration_active_image: new Image(),
         black_image: new Image(),
-        spriteOverlayTransparency: 0.7
+        spriteOverlayTransparency: 1
     },
      
     canvas = document.getElementById("grid"),
@@ -130,10 +130,10 @@ midiInstruments = {
     addScale("B Major", [1, 3, 4, 6, 8, 10, 11]);
 
     //Add images
-    config.note_active_image.src = './images/note_active.png';
-    config.volume_active_image.src = './images/volume_active.png';
-    config.velocity_active_image.src = './images/velocity_active.png';
-    config.duration_active_image.src = './images/duration_active.png';
+    config.note_active_image.src = './images/note-active.png';
+    config.volume_active_image.src = './images/volume-active.png';
+    config.velocity_active_image.src = './images/velocity-active.png';
+    config.duration_active_image.src = './images/duration-active.png';
     config.black_image.src = './images/black.png';
 
     var sel = document.getElementById('select-note-scale');
@@ -145,7 +145,7 @@ midiInstruments = {
     }
 
     //Make create icon active at start
-    $('li.create').addClass('active');
+    // $('li.create').addClass('active');
 
 })();
 
@@ -173,8 +173,8 @@ var proto = {
     gridX: 0,
     gridY: 0,
     size: 8,
-    activeCount: 35,
-    notActiveCount: 35,
+    activeCount: 0,
+    notActiveCount: 0,
     prevgridX: 0,
     prevgridy: 0,
     colorArray: ['#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc'],
@@ -205,10 +205,9 @@ var proto = {
             this.active = this.shadeColor(this.colorArray[this.instrument], -35);
             //  this.activeStore = this.active;
         } else {
-            //color = '#10B529';
-            color = '#000000';
+            color = '#2B2B2B';
             this.notActive = this.shadeColor(color, 0);
-            this.active = this.shadeColor(color, -35);
+            this.active = this.shadeColor(color, 80);
         }
     },
     shadeColor: function(color, percent) {
@@ -254,7 +253,7 @@ var proto = {
 
     deselectBlock: function() {
         //Only deselect block if it is already selected
-        if (this.selected === true) {
+        if (this.selected) {
             this.selected = false;
             config.numSelected--;
         }
@@ -284,7 +283,7 @@ var proto = {
             this.removeBlock();
         } else {
             this.selectBlock();
-            if (this.selected === true) {
+            if (this.selected) {
                 if (this.type == 'block-music') {
                     musicBlockPanel.setToBlock(this.blocknum);
                 }
@@ -297,8 +296,8 @@ var proto = {
     },
     activate: function() {
         //this.notActiveCount = 35;
-        if (this.selected === true) {
-            this.activeCount = 100;
+        if (this.selected) {
+            this.activeCount = 60;
         } else {
             this.notActiveCount = 100;
         }
@@ -316,7 +315,6 @@ var proto = {
         if (this.selected === false) {
             this.activate();
         }
-        //if ($('#set-instrument option:selected').attr('class') === 'loaded') {
         // check if block is muted
         if (this.mute !== true) {
             if (config.blockSolo === true) {
@@ -324,20 +322,18 @@ var proto = {
                     setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
                 }
             } else {
-                console.log("playing");
+                //console.log("playing");
                 setMidiParams.triggerMidi(this.volume, this.instrument, this.note, this.velocity, duration);
             }
 
         }
-        //}
-    },    
-    drawSpriteOnBlock: function(image){
+    },
+    drawSpriteOnBlock: function(image) {
         context.globalAlpha = config.spriteOverlayTransparency;
-        context.drawImage(image,
-            this.posX + 1 + this.size, 
-            this.posY + this.size, 
-            (this.width - (this.size * 2) - 1), 
-            (this.height - (this.size * 2) - 1));
+        context.drawImage(
+            image,
+            this.posX + 1 + this.size,
+            this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
         context.globalAlpha = 1.0;
     },
     render: function() {
@@ -355,7 +351,6 @@ var proto = {
             if (this.activeCount > 0) {
                 this.activeCount -= 5;
             }
-
             context.fillStyle = "rgb(" + (this.active.red + this.activeCount) + ", " + (this.active.green + this.activeCount) + ", " + (this.active.blue + this.activeCount) + ")";
             context.fill();
         }
@@ -377,12 +372,12 @@ var proto = {
             }
 
             //shade the block if selected
-            if (this.selected) {
-                context.globalAlpha = 0.3;
-                context.drawImage(config.black_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-                context.globalAlpha = 1.0;
-            }
-        }        
+            // if (this.selected) {
+            //     context.globalAlpha = 0.3;
+            //     context.drawImage(config.black_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+            //     context.globalAlpha = 1.0;
+            // }
+        }
     }
 };
 
@@ -1379,10 +1374,10 @@ musicBlockPanel = function() {
         // if (arguments.length >= 1) {
         //     value = arguments[0].value - multiplier;
         // } else {
-            value = configMap.note - multiplier;
+        value = configMap.note - multiplier;
         // }
         //console.log('test');
-      
+
         jqueryMap.$piano_key.eq(value - 1).addClass("active").siblings().removeClass('active');
         jqueryMap.$piano_key.eq(value - 1).parent().siblings().find('li').removeClass('active');
 
@@ -1515,10 +1510,10 @@ musicBlockPanel = function() {
             value = (index + roll_index) + (multiplier + 1);
 
         // Play MIDI note when piano roll is clicked
-        if(mutePiano !== true) {
-              setMidiParams.triggerMidi(70, configMap.instrument, value, 70, 0.3);
+        if (mutePiano !== true) {
+            setMidiParams.triggerMidi(70, configMap.instrument, value, 70, 0.3);
         }
-      
+
 
         // If music block panel is not selected don't run this functionality
         if (type === 'block-music') {
@@ -1582,7 +1577,6 @@ effectBlockPanel = function() {
             if (blocks[i].selected === true && blocks[i].type == 'block-effect') {
                 blocks[i].setMidiValues(type, attr, value);
                 blocks[i].activate();
-                //    console.log(type + attr + value);
                 if (attr == "scale" || attr == "range_high" || attr == "range_low") {
                     blocks[i].rebuildRangeValidNotes();
                 }
@@ -1593,7 +1587,6 @@ effectBlockPanel = function() {
     };
 
     compareDialValues = function(effect_type, param, value) {
-        //console.log("tester");
         if (param === 'range_high') {
             var val_low = 0;
             param = param.replace('high', 'low');
@@ -1784,7 +1777,6 @@ effectBlockPanel = function() {
 
     // Set effect control panel values from block configMap
     setToBlock = function(num) {
-        //  console.log('test');
         var
             map = blocks[num].configMap,
             open_effect = false;
@@ -2160,8 +2152,6 @@ effectBlockPanel = function() {
             return false;
 
         }
-
-
     });
 
     return {
@@ -2219,8 +2209,12 @@ setGridEvents = function() {
             if (el[i] !== el[0])
                 return false;
         }
-        // If all blocks the same set active panel to block type
-        controlPanel.setActivePanel(el[0]);
+        // If no blocks selected on drag leave active panel active
+        if (el[0] !== undefined) {
+            // If all blocks the same set active panel to block type
+            controlPanel.setActivePanel(el[0]);
+        }
+
     };
     getDragValues = function() {
         return dragBox;
