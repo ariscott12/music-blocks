@@ -2572,10 +2572,12 @@ setGridEvents = function() {
 
             if (config.mode === "create") {
                 addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);               
-                if(config.shiftkey === 0){
-                    blocks[config.cnt-1].selectNewSingle();
-                } else {
-                    blocks[config.cnt-1].selectBlock();
+                if(config.newblock != -1){
+                    if(config.shiftkey === 0){
+                        blocks[config.cnt-1].selectNewSingle();
+                    } else {
+                        blocks[config.cnt-1].selectBlock();
+                    }
                 }
             }
 
