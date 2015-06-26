@@ -2663,9 +2663,13 @@ keyboardEvents = function() {
                 $('[data-mode=' + config.mode + ']').addClass('active').siblings().removeClass('active');
                 break;
 
-                // case 65: // a
-                //     config.advance *= -1;
-                //     break;
+                case 65: // a
+                    utilities.selectAllBlocks();
+                break;
+
+                case 70: //f
+                    config.advance *= -1;
+                break;
 
                 // case 68: // d
                 //     var out = "FULL GRID DUMPMONSTER";
