@@ -2387,7 +2387,12 @@ setGridEvents = function() {
 
                     // Add music block to the grid 
                     addBlock(gridX, gridY, activePanel);
-                    blocks[config.cnt-1].selectNewSingle();
+                    if(config.shiftkey === 0){
+                        blocks[config.cnt-1].selectNewSingle();
+                    } else {
+                        blocks[config.cnt-1].selectBlock();
+                    }
+
 
                 } else {
                     var move_x = e.pageX - config.gridOffsetX,
@@ -2485,7 +2490,12 @@ setGridEvents = function() {
                         }
                     }
                     if(config.newblock != -1){
-                        blocks[config.newblock].selectNewSingle();
+                        if(config.shiftkey === 0){
+                            blocks[config.newblock].selectNewSingle();
+                        } else {
+                            blocks[config.newblock].selectBlock();
+                        }
+
                     }
 
                 }
@@ -2562,6 +2572,11 @@ setGridEvents = function() {
 
             if (config.mode === "create") {
                 addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);               
+                if(config.shiftkey === 0){
+                    blocks[config.cnt-1].selectNewSingle();
+                } else {
+                    blocks[config.cnt-1].selectBlock();
+                }
             }
 
             //Add drag event on mousedown
