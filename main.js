@@ -380,7 +380,7 @@ var proto = {
 
         context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
 
-        if(this.type === "block-music"){
+        if((this.type === "block-music" && this.selected && !this.waiting) || config.pause == 1){
             switch(this.newDirection){
                 case "up":
                     this.drawSpriteOnBlock(config.mb_up_image);      
