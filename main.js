@@ -397,15 +397,14 @@ var proto = {
                 case "right":
                     this.drawSpriteOnBlock(config.mb_right_image);      
                     break;
-            }
+            }        
+        }
 
-            if(this.mute){
-                this.drawSpriteOnBlock(config.mute_overlay_image);
-            }
-            if(this.solo){
-                this.drawSpriteOnBlock(config.solo_overlay_image);
-            }
-
+        if(this.mute){
+            this.drawSpriteOnBlock(config.mute_overlay_image);
+        }
+        if(this.solo){
+           this.drawSpriteOnBlock(config.solo_overlay_image);
         }
         
         if (this.type === "block-effect") {
