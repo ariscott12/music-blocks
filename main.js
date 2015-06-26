@@ -407,7 +407,8 @@ var proto = {
             }
 
         }
-        else if (this.type === "block-effect") {
+        
+        if (this.type === "block-effect") {
             if (this.configMap.note.active) {
                 this.drawSpriteOnBlock(config.note_active_image);
             }
