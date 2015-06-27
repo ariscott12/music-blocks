@@ -209,16 +209,40 @@
                 float: left;
                 height: 26px;
                 width: 31px;
+                background:$gray-light;
                 cursor: pointer;
+                &[data-active="false"] {
+                    .activator-button {
+                        background: none;
+                         border: 1px solid $gray;
+                    }
+                }
+            }
+            .note-activator {
                 &[data-active="true"] {
                     .activator-button {
                         background: $orange;
                     }
                 }
-                &[data-active="false"] {
+            }
+             .volume-activator {
+                &[data-active="true"] {
                     .activator-button {
-                        background: none;
-                        border: 1px solid $gray;
+                        background: $purple-light;
+                    }
+                }
+            }
+             .velocity-activator {
+                &[data-active="true"] {
+                    .activator-button {
+                        background: #CEAF52;
+                    }
+                }
+            }
+             .duration-activator {
+                &[data-active="true"] {
+                    .activator-button {
+                        background:$aqua;
                     }
                 }
             }
@@ -356,9 +380,8 @@
             &:hover {
                 background: $white-medium;
                 polygon {
-                     fill: $orange;
+                    fill: $orange;
                 }
-               
             }
         }
         polygon {

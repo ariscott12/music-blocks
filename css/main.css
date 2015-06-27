@@ -305,12 +305,19 @@ body {
     float: left;
     height: 26px;
     width: 31px;
+    background: #edebea;
     cursor: pointer; }
-    .block-effect-panel .header .activator[data-active="true"] .activator-button {
-      background: #e27a3f; }
     .block-effect-panel .header .activator[data-active="false"] .activator-button {
       background: none;
       border: 1px solid #a3a2a1; }
+  .block-effect-panel .header .note-activator[data-active="true"] .activator-button {
+    background: #e27a3f; }
+  .block-effect-panel .header .volume-activator[data-active="true"] .activator-button {
+    background: #907CCC; }
+  .block-effect-panel .header .velocity-activator[data-active="true"] .activator-button {
+    background: #CEAF52; }
+  .block-effect-panel .header .duration-activator[data-active="true"] .activator-button {
+    background: #45b29d; }
   .block-effect-panel .header .activator-button {
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;

@@ -32,7 +32,7 @@ var
         mute_overlay_image: new Image(),
         solo_overlay_image: new Image(),
         black_image: new Image(),
-        spriteOverlayTransparency: 0.7,
+        spriteOverlayTransparency: 1,
         masterVolume: 100,
         masterMute: -1,
     },
@@ -199,10 +199,10 @@ var proto = {
     notActiveCount: 0,
     prevgridX: 0,
     prevgridy: 0,
-    colorArray: ['#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc'],
+    colorArray: ['#d27743', '#debe4e', '#cf5a4c', '#9473f3', '#4077d5', '#37a354', '#3fc3d8'],
     section: document.getElementById('grid'),
     $send_blocks: $('.send-blocks'),
-  //  timer: null,
+    //  timer: null,
     //activeStore: null,
     sprite: new Image(),
 
@@ -218,13 +218,22 @@ var proto = {
         for (var property in propertyObject)
             elem.style[property] = propertyObject[property];
     },
+    // Set the block active and not active colors, music block type selected from static colorArray
     setColor: function() {
-        // Set the block active and not active colors, music block type selected from static colorArray
+
+        var color = '#000';
         if (this.type === 'block-music') {
-            this.notActive = this.shadeColor(this.colorArray[this.instrument], 0);
-            this.active = this.shadeColor(this.colorArray[this.instrument], -35);
+
+            if (this.colorArray[this.instrument] === undefined) {
+                console.log((this.instrument % 7));
+                color = this.colorArray[(this.instrument % 7)];
+            } else {
+                color = this.colorArray[this.instrument];
+            }
+            this.notActive = this.shadeColor(color, 0);
+            this.active = this.shadeColor(color, -35);
         } else {
-            var color = '#2B2B2B';
+            color = '#2B2B2B';
             this.notActive = this.shadeColor(color, 0);
             this.active = this.shadeColor(color, 50);
         }
@@ -378,8 +387,19 @@ var proto = {
         }
 
         context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+        if (this.type === "block-music") {
+            if (this.mute) {
+                this.drawSpriteOnBlock(config.mute_overlay_image);
+            }
+            if (this.solo) {
+                this.drawSpriteOnBlock(config.solo_overlay_image);
+            }
+        }
+
 
         if ((this.type === "block-music" && this.selected && !this.waiting) || config.pause == 1 || config.system_pause) {
+
+
             switch (this.newDirection) {
                 case "up":
                     this.drawSpriteOnBlock(config.mb_up_image);
@@ -399,12 +419,7 @@ var proto = {
             }
         }
 
-        if (this.mute) {
-            this.drawSpriteOnBlock(config.mute_overlay_image);
-        }
-        if (this.solo) {
-            this.drawSpriteOnBlock(config.solo_overlay_image);
-        }
+
 
         if (this.type === "block-effect") {
             if (this.configMap.note.active) {
@@ -1447,7 +1462,7 @@ musicBlockPanel = function() {
         };
     };
     updateBlockColors = function() {
-         for (var l = 0; l < config.cnt; l++) {
+        for (var l = 0; l < config.cnt; l++) {
             if (blocks[l].selected === true) {
                 blocks[l].setColor();
             }
