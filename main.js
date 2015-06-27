@@ -202,8 +202,8 @@ var proto = {
     colorArray: ['#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc', '#d27743', '#cf5a4c', '#debe4e', '#ccc'],
     section: document.getElementById('grid'),
     $send_blocks: $('.send-blocks'),
-    timer: null,
-    activeStore: null,
+  //  timer: null,
+    //activeStore: null,
     sprite: new Image(),
 
     setGrid: function() {
@@ -223,7 +223,6 @@ var proto = {
         if (this.type === 'block-music') {
             this.notActive = this.shadeColor(this.colorArray[this.instrument], 0);
             this.active = this.shadeColor(this.colorArray[this.instrument], -35);
-            //  this.activeStore = this.active;
         } else {
             var color = '#2B2B2B';
             this.notActive = this.shadeColor(color, 0);
@@ -610,7 +609,6 @@ utilities = function() {
             return block.note + block.octave * 12;
         },
         noteToString: function(note) {
-
             return noteArray[note % 12] + Math.floor(note / 12);
         },
         stringToNote: function(noteString) {
@@ -645,13 +643,10 @@ utilities = function() {
                 }
             }
         },
-
         sendBlocks: function(direction) {
             for (var i = 0; i < config.cnt; i++) {
                 if (blocks[i].selected === true && blocks[i].type === 'block-music') {
-
                     blocks[i].newDirection = direction;
-
                     blocks[i].speed = config.speed;
                 }
             }
@@ -1370,6 +1365,7 @@ musicBlockPanel = function() {
         //setDirection, 
         //getDirection, 
         //sendBlocks,
+        updateBlockColors,
         getPanelValues, updatePianoRoll,
         setToBlock, setParams, populateInstruments,
         multiplier = controlPanel.getMultiplier(),
@@ -1450,6 +1446,13 @@ musicBlockPanel = function() {
             configMap: configMap
         };
     };
+    updateBlockColors = function() {
+         for (var l = 0; l < config.cnt; l++) {
+            if (blocks[l].selected === true) {
+                blocks[l].setColor();
+            }
+        }
+    };
 
     // Sync the piano roll to the note knob when it changes (auto run on load)
     updatePianoRoll = (function update() {
@@ -1479,7 +1482,7 @@ musicBlockPanel = function() {
                     // Nothing to update for static_direction so break out of loop
                     // case 'static_direction':
                     //     return;
-                        //     setDirection(blocks[num].static_direction);
+                    //     setDirection(blocks[num].static_direction);
                     case 'instrument':
                         jqueryMap.$instrument.val(blocks[num].instrument);
                         break;
@@ -1530,9 +1533,8 @@ musicBlockPanel = function() {
                 }
             });
         }
-
         setParams('instrument', program);
-
+        updateBlockColors();
 
         return false;
     });
@@ -1562,11 +1564,9 @@ musicBlockPanel = function() {
             }
         }
         setParams(type, val);
-
         if (type === 'solo') {
             // set global blockSolo to false, loop through music blocks and set back to true if any of them are true
             config.blockSolo = val;
-
             for (var k = 0; k < config.cnt; k++) {
                 if (blocks[k].solo === true) {
                     config.blockSolo = true;
