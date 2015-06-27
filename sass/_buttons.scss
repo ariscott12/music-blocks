@@ -1,33 +1,33 @@
-.button-basic {
-    background: $yellow-90;
-    border: 1px solid #dbb846;
-    border-radius: 3px;
-    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.3);
-    color: #816c29;
-    height: 26px;
-    line-height: 26px;
-    padding-left: 16px;
-    position: relative;
-    text-align: left;
-    width: 137px;
-    z-index: 161;
-    cursor: pointer;
-    svg {
-        position: absolute;
-        right: 11px;
-        top: 6px;
-        width: 10px;
-        polygon {
-            fill: #816c29;
-        }
-    }
-    &.animate {
-        @include animation(changebackground .6s infinite);
-        svg {
-            @include animation(movearrow .6s infinite);
-        }
-    }
-}
+// .button-basic {
+//     background: $yellow-90;
+//     border: 1px solid #dbb846;
+//     border-radius: 3px;
+//     box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.3);
+//     color: #816c29;
+//     height: 26px;
+//     line-height: 26px;
+//     padding-left: 16px;
+//     position: relative;
+//     text-align: left;
+//     width: 137px;
+//     z-index: 161;
+//     cursor: pointer;
+//     svg {
+//         position: absolute;
+//         right: 11px;
+//         top: 6px;
+//         width: 10px;
+//         polygon {
+//             fill: #816c29;
+//         }
+//     }
+//     &.animate {
+//         @include animation(changebackground .6s infinite);
+//         svg {
+//             @include animation(movearrow .6s infinite);
+//         }
+//     }
+// }
 
 .button-trigger {
     border: 1px solid #6d1d1d;

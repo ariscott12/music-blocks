@@ -4,7 +4,6 @@
         -webkit-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        
         .block-effect-panel {
             display: none;
         }
@@ -109,7 +108,6 @@
             -webkit-user-select: none;
             -ms-user-select: none;
             user-select: none;
-                
             background: $blue-medium;
             border: 2px solid #ccc;
             border-radius: 4px;
@@ -332,7 +330,6 @@
     //         background: none;
     //     }
     // }
-    
     // Music Blocks 
     .instrument-select {
         border-left: 1px solid $gray;
@@ -356,9 +353,16 @@
             &:last-child {
                 border-right: 1px solid $gray;
             }
+            &:hover {
+                background: $white-medium;
+                polygon {
+                     fill: $orange;
+                }
+               
+            }
         }
         polygon {
-            fill: $gray;
+            fill: #777777;
         }
         .horizontal {
             width: 12px;
@@ -380,12 +384,12 @@
         .up {
             left: 18px;
         }
-        .active {
-            background: $white-medium;
-            polygon {
-                fill: $orange;
-            }
-        }
+        // .active {
+        //     background: $white-medium;
+        //     polygon {
+        //         fill: $orange;
+        //     }
+        // }
     }
     
     .note-wrapper {
@@ -402,12 +406,13 @@
         padding: 20px;
     }
     
-    .mute-solo, .mute-piano {
-       // margin-left: 20px;
+    .mute-solo,
+    .mute-piano {
+        // margin-left: 20px;
         li {
-            font-size:12px;
-           // float: left;
-            margin-bottom:7px;
+            font-size: 12px;
+            // float: left;
+            margin-bottom: 7px;
         }
         span {
             position: relative;
@@ -418,16 +423,17 @@
             }
         }
     }
+    
     .mute-piano {
         -moz-user-select: -moz-none;
         -khtml-user-select: none;
         -webkit-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        float:right;
-        margin-top:20px;
+        float: right;
+        margin-top: 20px;
         li {
-            color:#eee;
+            color: #eee;
         }
     }
     
@@ -440,7 +446,7 @@
     // }
     .piano-wrapper {
         margin-top: 10px;
-        width:640px;
+        width: 640px;
         float: left;
         position: relative;
         .range-indicator {

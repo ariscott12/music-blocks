@@ -55,36 +55,6 @@ body {
 .floatright {
   float: right; }
 
-.button-basic {
-  background: #efc94c;
-  border: 1px solid #dbb846;
-  border-radius: 3px;
-  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.3);
-  color: #816c29;
-  height: 26px;
-  line-height: 26px;
-  padding-left: 16px;
-  position: relative;
-  text-align: left;
-  width: 137px;
-  z-index: 161;
-  cursor: pointer; }
-  .button-basic svg {
-    position: absolute;
-    right: 11px;
-    top: 6px;
-    width: 10px; }
-    .button-basic svg polygon {
-      fill: #816c29; }
-  .button-basic.animate {
-    -webkit-animation: changebackground .6s infinite;
-    -moz-animation: changebackground .6s infinite;
-    animation: changebackground .6s infinite; }
-    .button-basic.animate svg {
-      -webkit-animation: movearrow .6s infinite;
-      -moz-animation: movearrow .6s infinite;
-      animation: movearrow .6s infinite; }
-
 .button-trigger {
   border: 1px solid #6d1d1d;
   border-radius: 3px;
@@ -445,8 +415,12 @@ body {
   cursor: pointer; }
   .block-direction-select li:last-child {
     border-right: 1px solid #a3a2a1; }
+  .block-direction-select li:hover {
+    background: #fffefd; }
+    .block-direction-select li:hover polygon {
+      fill: #e27a3f; }
 .block-direction-select polygon {
-  fill: #a3a2a1; }
+  fill: #777777; }
 .block-direction-select .horizontal {
   width: 12px;
   position: absolute;
@@ -461,10 +435,6 @@ body {
   left: 21px; }
 .block-direction-select .down, .block-direction-select .up {
   left: 18px; }
-.block-direction-select .active {
-  background: #fffefd; }
-  .block-direction-select .active polygon {
-    fill: #e27a3f; }
 
 .note-wrapper {
   width: 123px; }
@@ -697,6 +667,11 @@ select {
   z-index: 0; }
 
 #gridHorizontal, #gridVertical {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   margin-top: 0;
   position: absolute;
   top: 0;
@@ -895,6 +870,11 @@ select {
     padding: 2px 9px 0; }
 
 .show-hotkeys {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   font-size: .875em;
   cursor: pointer;
   border: 1px solid #8ccdc1;
