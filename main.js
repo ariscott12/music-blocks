@@ -218,19 +218,21 @@ var proto = {
         for (var property in propertyObject)
             elem.style[property] = propertyObject[property];
     },
-    addBlock: function(el) {
-        this.blocknum = el;
-        var color;
-        //var direction = elements.selectDirection.children('.active').attr("id");
+    setColor: function() {
+        // Set the block active and not active colors, music block type selected from static colorArray
         if (this.type === 'block-music') {
             this.notActive = this.shadeColor(this.colorArray[this.instrument], 0);
             this.active = this.shadeColor(this.colorArray[this.instrument], -35);
             //  this.activeStore = this.active;
         } else {
-            color = '#2B2B2B';
+            var color = '#2B2B2B';
             this.notActive = this.shadeColor(color, 0);
             this.active = this.shadeColor(color, 50);
         }
+    },
+    addBlock: function(el) {
+        this.blocknum = el;
+        this.setColor();
     },
     shadeColor: function(color, percent) {
         var
@@ -437,7 +439,7 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
     block.posY = y;
     block.speed = s;
     block.type = t;
-    block.static_direction = 'none';
+    // block.static_direction = 'none';
     block.note = null;
     block.octave = null;
     block.volume = null;
@@ -456,7 +458,7 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
         this.velocity = map.velocity;
         this.octave = map.octave;
         this.instrument = map.instrument;
-        this.static_direction = map.static_direction;
+        // this.static_direction = map.static_direction;
         this.mute = map.mute;
         this.solo = map.solo;
 
@@ -643,14 +645,13 @@ utilities = function() {
                 }
             }
         },
+
         sendBlocks: function(direction) {
             for (var i = 0; i < config.cnt; i++) {
                 if (blocks[i].selected === true && blocks[i].type === 'block-music') {
-                    if (direction === undefined) {
-                        blocks[i].newDirection = blocks[i].static_direction;
-                    } else {
-                        blocks[i].newDirection = direction;
-                    }
+
+                    blocks[i].newDirection = direction;
+
                     blocks[i].speed = config.speed;
                 }
             }
@@ -1362,14 +1363,14 @@ musicBlockPanel = function() {
             duration: 40,
             velocity: 60,
             instrument: 0,
-            static_direction: 'up',
+            // static_direction: 'up',
             mute: false,
             solo: false
         },
         //setDirection, 
         //getDirection, 
         //sendBlocks,
-        getPanelValues, updatePianoRoll, 
+        getPanelValues, updatePianoRoll,
         setToBlock, setParams, populateInstruments,
         multiplier = controlPanel.getMultiplier(),
         mutePiano = false;
@@ -1476,8 +1477,8 @@ musicBlockPanel = function() {
             if (mapkey != blocks[num][key]) {
                 switch (key) {
                     // Nothing to update for static_direction so break out of loop
-                    case 'static_direction':
-                        return;
+                    // case 'static_direction':
+                    //     return;
                         //     setDirection(blocks[num].static_direction);
                     case 'instrument':
                         jqueryMap.$instrument.val(blocks[num].instrument);
@@ -1531,6 +1532,8 @@ musicBlockPanel = function() {
         }
 
         setParams('instrument', program);
+
+
         return false;
     });
 
@@ -1538,7 +1541,7 @@ musicBlockPanel = function() {
         var direction = $(this).attr('id');
         //$(this).addClass('active').siblings().removeClass('active');
         utilities.sendBlocks(direction);
-        setParams('static_direction', direction);
+        //setParams('static_direction', direction);
 
         return false;
     });
