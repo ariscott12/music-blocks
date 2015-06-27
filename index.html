@@ -41,39 +41,40 @@
     <div id="wrapper">
         <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
         <div class="top-panel-wrapper">
-            <p>Mode Select</p>
-            <div class="border"></div>
-            <ul class="mode-select">
-                <li data-mode="create" class="create active"><img height="22px" src="images/svg/mode-create.svg"></li>
-                <li data-mode="select" class="select"><img height="23px" src="images/svg/mode-select.svg"></li>
-                <li data-mode="trash" class="trash"><img height="23px" src="images/svg/mode-delete.svg"></li>
-                <!--  <li class="pause">Pause</li>
+            <div class="top-panel-section">
+                <p>Mode Select</p>
+                <div class="border"></div>
+                <ul class="mode-select">
+                    <li data-mode="create" class="create active"><img height="22px" src="images/svg/mode-create.svg"></li>
+                    <li data-mode="select" class="select"><img height="23px" src="images/svg/mode-select.svg"></li>
+                    <li data-mode="trash" class="trash"><img height="23px" src="images/svg/mode-delete.svg"></li>
+                    <!--  <li class="pause">Pause</li>
                 <li class="advance">Advance</li>
                 <li class="select-all">Select All</li>
                 <li class="clear-all">Clear All</li> -->
-            </ul>
+                </ul>
+            </div>
+            <div class="top-panel-section">
+                <p>Play/Pause</p>
+                <div class="border"></div>
+                <ul class="play-select">
+                    <li data-mode="play" class="active"><img height="19px" src="images/svg/mode-play.svg"></li>
+                    <li data-mode="pause"><img height="19px" src="images/svg/mode-pause.svg"></li>
+                </ul>
+            </div>
+            <div class="top-panel-section">
+                <p>Batch Edits</p>
+                <div class="border"></div>
+                <ul class="batch-edits">
+                    <li data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
+                    <li data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
+                </ul>
+            </div>
+            <div class="master-volume-section">
+                <img data-id = "toggle-master-mute" data-mute = "false" src = "images/icon-volume.png" />
+                <div class="master-volume-slider"></div>
+            </div>
         </div>
-        <div class="top-panel-wrapper">
-            <p>Play/Pause</p>
-            <div class="border"></div>
-            <ul class="play-select">
-                <li data-mode="play" class="active"><img height="19px" src="images/svg/mode-play.svg"></li>
-                <li data-mode="pause"><img height="19px" src="images/svg/mode-pause.svg"></li>
-            </ul>
-        </div>
-        <div class="top-panel-wrapper">
-            <p>Batch Edits</p>
-            <div class="border"></div>
-            <ul class="batch-edits">
-                <li data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
-                <li data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
-            </ul>
-        </div>  
-        <div class="top-panel-wrapper">
-            <p>Master Volume</p>
-            <div class="border"></div>
-            <ul class="master-volume-slider"></ul>
-        </div>          
         <div class="clear"></div>
         <canvas id="grid" width="640" height="640"></canvas>
         <div class="spinner spinner-instrument">
