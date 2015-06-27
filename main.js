@@ -378,7 +378,7 @@ var proto = {
 
         context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
 
-        if (this.type === "block-music" && this.selected === true) {
+        if ((this.type === "block-music" && this.selected && !this.waiting) || config.pause == 1 || config.system_pause) {
             switch (this.newDirection) {
                 case "up":
                     this.drawSpriteOnBlock(config.mb_up_image);
@@ -396,15 +396,16 @@ var proto = {
                     this.drawSpriteOnBlock(config.mb_right_image);
                     break;
             }
+        }
 
-            if (this.mute) {
-                this.drawSpriteOnBlock(config.mute_overlay_image);
-            }
-            if (this.solo) {
-                this.drawSpriteOnBlock(config.solo_overlay_image);
-            }
+        if (this.mute) {
+            this.drawSpriteOnBlock(config.mute_overlay_image);
+        }
+        if (this.solo) {
+            this.drawSpriteOnBlock(config.solo_overlay_image);
+        }
 
-        } else if (this.type === "block-effect") {
+        if (this.type === "block-effect") {
             if (this.configMap.note.active) {
                 this.drawSpriteOnBlock(config.note_active_image);
             }
@@ -639,6 +640,18 @@ utilities = function() {
             for (var l = 0; l < config.cnt; l++) {
                 if (blocks[l].selected === true) {
                     blocks[l].deselectBlock();
+                }
+            }
+        },
+        sendBlocks: function(direction) {
+            for (var i = 0; i < config.cnt; i++) {
+                if (blocks[i].selected === true && blocks[i].type === 'block-music') {
+                    if (direction === undefined) {
+                        blocks[i].newDirection = blocks[i].static_direction;
+                    } else {
+                        blocks[i].newDirection = direction;
+                    }
+                    blocks[i].speed = config.speed;
                 }
             }
         }
@@ -1337,7 +1350,7 @@ musicBlockPanel = function() {
             $direction: $('#select-direction'),
             $piano_key: $('.piano-roll li'),
             $instrument: $('#set-instrument'),
-            $send_blocks: $(".send-blocks"),
+            // $send_blocks: $(".send-blocks"),
             $mute: $('.mute-toggle'),
             $solo: $('.solo-toggle'),
             $mute_solo: $('.mute-solo'),
@@ -1353,7 +1366,10 @@ musicBlockPanel = function() {
             mute: false,
             solo: false
         },
-        setDirection, getDirection, getPanelValues, updatePianoRoll, sendBlocks,
+        //setDirection, 
+        //getDirection, 
+        //sendBlocks,
+        getPanelValues, updatePianoRoll, 
         setToBlock, setParams, populateInstruments,
         multiplier = controlPanel.getMultiplier(),
         mutePiano = false;
@@ -1400,7 +1416,7 @@ musicBlockPanel = function() {
 
         for (var key in midiInstruments) {
             key = key.replace(/_/g, ' ');
-            if (key == 'gunshot') {
+            if (key === 'gunshot') {
                 key = 'drums';
             }
             if (cnt > config.instrumentsToLoad - 1) {
@@ -1412,12 +1428,12 @@ musicBlockPanel = function() {
         }
     })();
 
-    setDirection = function(d) {
-        jqueryMap.$direction.find('li#' + d).addClass('active').siblings().removeClass('active');
-    };
-    getDirection = function() {
-        return jqueryMap.$direction.find('li.active').attr('id');
-    };
+    // setDirection = function(d) {
+    //     jqueryMap.$direction.find('li#' + d).addClass('active').siblings().removeClass('active');
+    // };
+    // getDirection = function() {
+    //     return jqueryMap.$direction.find('li.active').attr('id');
+    // };
     setParams = function(type, value) {
         for (var i = 0; i < config.cnt; i++) {
             if (blocks[i].selected === true && blocks[i].type == 'block-music') {
@@ -1427,19 +1443,6 @@ musicBlockPanel = function() {
         }
         // update configMap anytime a value is updated on the music block panel
         configMap[type] = value;
-    };
-    sendBlocks = function(direction) {
-        for (var i = 0; i < config.cnt; i++) {
-            if (blocks[i].selected === true && blocks[i].type === 'block-music') {
-                if (direction === undefined) {
-                    blocks[i].newDirection = blocks[i].static_direction;
-                } else {
-                    blocks[i].newDirection = direction;
-                }
-                blocks[i].speed = config.speed;
-            }
-        }
-        jqueryMap.$send_blocks.removeClass('animate');
     };
     getPanelValues = function() {
         return {
@@ -1472,9 +1475,10 @@ musicBlockPanel = function() {
             configMap[key] = blocks[num][key];
             if (mapkey != blocks[num][key]) {
                 switch (key) {
+                    // Nothing to update for static_direction so break out of loop
                     case 'static_direction':
-                        setDirection(blocks[num].static_direction);
-                        break;
+                        return;
+                        //     setDirection(blocks[num].static_direction);
                     case 'instrument':
                         jqueryMap.$instrument.val(blocks[num].instrument);
                         break;
@@ -1507,8 +1511,6 @@ musicBlockPanel = function() {
         if (isloaded === 'not-loaded') {
             var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '...');
             config.system_pause = true;
-            // alert('test');
-
             $spinner.show();
 
             option.text(str);
@@ -1534,8 +1536,10 @@ musicBlockPanel = function() {
 
     jqueryMap.$direction.find('li').click(function() {
         var direction = $(this).attr('id');
-        $(this).addClass('active').siblings().removeClass('active');
+        //$(this).addClass('active').siblings().removeClass('active');
+        utilities.sendBlocks(direction);
         setParams('static_direction', direction);
+
         return false;
     });
 
@@ -1593,7 +1597,6 @@ musicBlockPanel = function() {
             setMidiParams.triggerMidi(70, configMap.instrument, value, 70, 0.3);
         }
 
-
         // If music block panel is not selected don't run this functionality
         if (type === 'block-music') {
             $(this).addClass('active').siblings().removeClass('active');
@@ -1609,16 +1612,16 @@ musicBlockPanel = function() {
     });
 
     // Send all the selected music blocks
-    jqueryMap.$send_blocks.click(function() {
-        sendBlocks();
-    });
+    // jqueryMap.$send_blocks.click(function() {
+    //     sendBlocks();
+    // });
 
     return {
         setToBlock: setToBlock,
         updatePianoRoll: updatePianoRoll,
         setParams: setParams,
         getPanelValues: getPanelValues,
-        sendBlocks: sendBlocks
+        // sendBlocks: sendBlocks
     };
 }();
 
@@ -2316,7 +2319,7 @@ setGridEvents = function() {
 
             if (gridArray[mousedowngridX][mousedowngridY] != -1 && blocks[gridArray[mousedowngridX][mousedowngridY]].selected === true && config.draggingBlocks === false && config.newblock === -1) {
                 config.draggingBlocks = true;
-                config.pause = 1;
+                config.system_pause = true;
 
                 blockDragRightX = 0;
                 blockDragRightY = 0;
@@ -2398,7 +2401,12 @@ setGridEvents = function() {
 
                     // Add music block to the grid 
                     addBlock(gridX, gridY, activePanel);
-                    blocks[config.cnt - 1].selectNewSingle();
+                    if (config.shiftkey === 0) {
+                        blocks[config.cnt - 1].selectNewSingle();
+                    } else {
+                        blocks[config.cnt - 1].selectBlock();
+                    }
+
 
                 } else {
                     var move_x = e.pageX - config.gridOffsetX,
@@ -2435,7 +2443,7 @@ setGridEvents = function() {
 
             if (config.draggingBlocks === true) {
                 config.draggingBlocks = false;
-                config.pause = -1;
+                config.system_pause = false;
                 blockDragLeftX = config.gridWidth;
                 blockDragLeftY = config.gridHeight;
                 blockDragWidth = 0;
@@ -2496,7 +2504,12 @@ setGridEvents = function() {
                         }
                     }
                     if (config.newblock != -1) {
-                        blocks[config.newblock].selectNewSingle();
+                        if (config.shiftkey === 0) {
+                            blocks[config.newblock].selectNewSingle();
+                        } else {
+                            blocks[config.newblock].selectBlock();
+                        }
+
                     }
 
                 }
@@ -2573,6 +2586,13 @@ setGridEvents = function() {
 
             if (config.mode === "create") {
                 addBlock(utilities.gridify(mousedownX), utilities.gridify(mousedownY), activePanel);
+                if (config.newblock != -1) {
+                    if (config.shiftkey === 0) {
+                        blocks[config.cnt - 1].selectNewSingle();
+                    } else {
+                        blocks[config.cnt - 1].selectBlock();
+                    }
+                }
             }
 
             //Add drag event on mousedown
@@ -2635,20 +2655,20 @@ keyboardEvents = function() {
                 break;
 
             case 37: // Left
-                musicBlockPanel.sendBlocks('left');
-                // musicBlockPanel.setParams('static_direction', 'left');
+                utilities.sendBlocks('left');
+                // utilities.setParams('static_direction', 'left');
                 break;
 
             case 38: // Up
-                musicBlockPanel.sendBlocks('up');
+                utilities.sendBlocks('up');
                 break;
 
             case 39: // Right
-                musicBlockPanel.sendBlocks('right');
+                utilities.sendBlocks('right');
                 break;
 
             case 40: // Down
-                musicBlockPanel.sendBlocks('down');
+                utilities.sendBlocks('down');
                 break;
 
             case 49: // 1
@@ -2674,9 +2694,13 @@ keyboardEvents = function() {
                 $('[data-mode=' + config.mode + ']').addClass('active').siblings().removeClass('active');
                 break;
 
-                // case 65: // a
-                //     config.advance *= -1;
-                //     break;
+            case 65: // a
+                utilities.selectAllBlocks();
+                break;
+
+            case 70: //f
+                config.advance *= -1;
+                break;
 
                 // case 68: // d
                 //     var out = "FULL GRID DUMPMONSTER";
