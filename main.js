@@ -645,6 +645,7 @@ utilities = function() {
                 blocks[j].removeBlock();
                 j--;
             }
+            config.numSelected = 0;
         },
         selectAllBlocks: function() {
             for (var k = 0; k < config.cnt; k++) {
