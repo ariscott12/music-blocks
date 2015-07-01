@@ -2657,6 +2657,11 @@ keyboardEvents = function() {
 
     //Keydown handler for keyboard input
     window.addEventListener('keydown', function(event) {
+        //Prevent space and the arrow keys from scrolling the screen if the app is not fullscreen
+        if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
+            event.preventDefault();
+        }
+        
         switch (event.keyCode) {
             case 16: // Shift
                 config.shiftkey = 1;
