@@ -19,6 +19,7 @@ var
         draggingBlocks: false,
         scaleNameArray: [],
         scaleArray: [],
+        clear_message: "Are you sure you want to clear the board?",
         loadedInstruments: [],
         block_fx_image: new Image(),
         note_active_image: new Image(),
@@ -62,6 +63,7 @@ blocks = [];
 midiInstruments = {
     'xylophone': 13,
     'acoustic_grand_piano': 0,
+    'gunshot': 127,
     'overdriven_guitar': 29,
     'acoustic_bass': 32,
     'orchestral_harp': 46,
@@ -72,15 +74,15 @@ midiInstruments = {
     'accordion': 21,
     'synth_strings_1': 50,
     'trumpet': 56,
-    'trombone': 57,
-    'gunshot': 127
-        // 'fretless_bass': 35,
-        // 'hammond_organ': 16,
-        // 'electric_jazz_guitar': 26,
-        // 'alto_sax': 65,
-        // 'tenor_sax': 66,
-        // 'flute': 73,
-        // 'sawtooth_wave_lead': 82
+    'trombone': 57
+
+    // 'fretless_bass': 35,
+    // 'hammond_organ': 16,
+    // 'electric_jazz_guitar': 26,
+    // 'alto_sax': 65,
+    // 'tenor_sax': 66,
+    // 'flute': 73,
+    // 'sawtooth_wave_lead': 82
 };
 
 
@@ -235,7 +237,7 @@ var proto = {
         } else {
             color = '#2B2B2B';
             this.notActive = this.shadeColor(color, 0);
-            this.active = this.shadeColor(color, 50);
+            this.active = this.shadeColor(color, 65);
         }
     },
     addBlock: function(el) {
@@ -663,6 +665,14 @@ utilities = function() {
                 if (blocks[i].selected === true && blocks[i].type === 'block-music') {
                     blocks[i].newDirection = direction;
                     blocks[i].speed = config.speed;
+                }
+            }
+        },
+        stopBlocks: function() {
+            for (var i = 0; i < config.cnt; i++) {
+                if (blocks[i].selected === true && blocks[i].type === 'block-music') {
+                    blocks[i].newDirection = 'none';
+                    //blocks[i].speed = 0;
                 }
             }
         }
@@ -1157,7 +1167,6 @@ topPanel = function() {
         max: 100,
         step: 1,
         slide: function(event, ui) {
-            // $(this).find("input").val(ui.value);
             config.masterVolume = ui.value;
         }
     });
@@ -1201,7 +1210,7 @@ topPanel = function() {
                 break;
             case 'clear-all':
                 var x;
-                if (confirm("Ar you sure you want to clear the board?") === true) {
+                if (confirm(config.clear_message) === true) {
                     utilities.deleteAllBlocks();
                 }
 
@@ -1238,7 +1247,8 @@ controlPanel = function() {
             $block_music: $('#block-music'),
             $block_effect: $('#block-effect'),
             $range_indicator: $('.range-indicator'),
-            $piano_roll_slider: $('.piano-roll-slider')
+            $piano_roll_slider: $('.piano-roll-slider'),
+            $drum_indicator: $('.drum-type-wrapper')
         },
         knobparams = {
             fgColor: '#6f6e6d',
@@ -1327,9 +1337,13 @@ controlPanel = function() {
             jqueryMap.$block_music.addClass('active').siblings().removeClass('active');
             jqueryMap.$range_indicator.hide();
             jqueryMap.$piano_roll_slider.hide();
+            musicBlockPanel.toggleDrumIndicator();
+
         } else {
             effectBlockPanel.updatePianoRoll();
             jqueryMap.$block_effect.addClass('active').siblings().removeClass('active');
+            jqueryMap.$drum_indicator.hide();
+            musicBlockPanel.toggleDrumIndicator(type);
         }
     };
 
@@ -1361,11 +1375,11 @@ musicBlockPanel = function() {
             $direction: $('#select-direction'),
             $piano_key: $('.piano-roll li'),
             $instrument: $('#set-instrument'),
-            // $send_blocks: $(".send-blocks"),
             $mute: $('.mute-toggle'),
             $solo: $('.solo-toggle'),
             $mute_solo: $('.mute-solo'),
-            $mute_piano: $('.mute-piano')
+            $mute_piano: $('.mute-piano'),
+            $drumkit_type: $('.drumkit-type-wrapper')
         },
         configMap = {
             note: 60,
@@ -1382,9 +1396,10 @@ musicBlockPanel = function() {
         //sendBlocks,
         updateBlockColors,
         getPanelValues, updatePianoRoll,
-        setToBlock, setParams, populateInstruments,
+        setToBlock, setParams, populateInstruments, toggleDrumIndicator,
         multiplier = controlPanel.getMultiplier(),
-        mutePiano = false;
+        mutePiano = false,
+        loadingInstrument = false;
 
     // Create Music Block Dials
     controlPanel.createDial({
@@ -1440,12 +1455,6 @@ musicBlockPanel = function() {
         }
     })();
 
-    // setDirection = function(d) {
-    //     jqueryMap.$direction.find('li#' + d).addClass('active').siblings().removeClass('active');
-    // };
-    // getDirection = function() {
-    //     return jqueryMap.$direction.find('li.active').attr('id');
-    // };
     setParams = function(type, value) {
         for (var i = 0; i < config.cnt; i++) {
             if (blocks[i].selected === true && blocks[i].type == 'block-music') {
@@ -1484,6 +1493,23 @@ musicBlockPanel = function() {
 
         return update;
     }());
+
+    // shows and hides drum kit type UI below piano roll
+    // takes optional argument for active control panel
+    toggleDrumIndicator = function(activePanel) {
+        var option = jqueryMap.$instrument.find('option:selected');
+
+        // if effect block panel is active always hide drum indicator
+        if (activePanel === 'block-effect') {
+            jqueryMap.$drumkit_type.hide();
+        } else {
+            if (option.text().indexOf('drums') >= 0) {
+                jqueryMap.$drumkit_type.show();
+            } else {
+                jqueryMap.$drumkit_type.hide();
+            }
+        }
+    };
 
 
 
@@ -1526,19 +1552,21 @@ musicBlockPanel = function() {
             isloaded = option.attr('class'),
             program = $(this).val(),
             $spinner = $('.spinner-instrument');
+        $(this).blur();
 
         if (isloaded === 'not-loaded') {
+            loadingInstrument = true;
             var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '...');
             config.system_pause = true;
             $spinner.show();
-
             option.text(str);
             MIDI.loadPlugin({
                 soundfontUrl: "./soundfont/",
                 instruments: [Object.keys(midiInstruments)[program]],
                 onsuccess: function() {
+                    loadingInstrument = false;
                     MIDI.programChange(program, midiInstruments[Object.keys(midiInstruments)[program]]);
-                    config.loadedInstruments[program] = true;
+                    //  config.loadedInstruments[program] = true;
                     console.log("loaded");
                     option.attr('class', 'loaded');
                     str = option.text().replace(/\(|\)/g, '').replace(/\.\.\./g, '');
@@ -1550,16 +1578,19 @@ musicBlockPanel = function() {
         }
         setParams('instrument', program);
         updateBlockColors();
+        toggleDrumIndicator();
 
         return false;
     });
 
     jqueryMap.$direction.find('li').click(function() {
         var direction = $(this).attr('id');
-        //$(this).addClass('active').siblings().removeClass('active');
-        utilities.sendBlocks(direction);
-        //setParams('static_direction', direction);
-
+        if(direction === 'none') {
+            utilities.stopBlocks();
+        } else {
+            utilities.sendBlocks(direction);
+        }
+      
         return false;
     });
 
@@ -1590,6 +1621,11 @@ musicBlockPanel = function() {
         }
     });
 
+    // jqueryMap.$stop_block.find('span').click(function() {
+       
+    //     return false;
+    // });
+
     // Mute Piano Roll 
     jqueryMap.$mute_piano.find('span').click(function() {
         var val = $(this).attr('data-active');
@@ -1611,7 +1647,7 @@ musicBlockPanel = function() {
             value = (index + roll_index) + (multiplier + 1);
 
         // Play MIDI note when piano roll is clicked
-        if (mutePiano !== true) {
+        if (mutePiano !== true && loadingInstrument === false) {
             setMidiParams.triggerMidi(70, configMap.instrument, value, 70, 0.3);
         }
 
@@ -1639,7 +1675,8 @@ musicBlockPanel = function() {
         updatePianoRoll: updatePianoRoll,
         setParams: setParams,
         getPanelValues: getPanelValues,
-        // sendBlocks: sendBlocks
+        toggleDrumIndicator: toggleDrumIndicator
+            // sendBlocks: sendBlocks
     };
 }();
 
@@ -2095,8 +2132,8 @@ effectBlockPanel = function() {
 
             jqueryMap[e[i] + "_step"]
                 .spinner({
-                    min: 0,
-                    max: 10,
+                    min: 1,
+                    max: 18,
                     spin: function(event, ui) {
                         var type = ($(this).data().type);
                         setParams(type, 'step', ui.value);
@@ -2699,7 +2736,9 @@ keyboardEvents = function() {
                 utilities.deleteSelectedBlocks();
                 break;
             case 52: // 4
-                utilities.deleteAllBlocks();
+                if (confirm(config.clear_message) === true) {
+                    utilities.deleteAllBlocks();
+                }
                 break;
             case 77: // m
                 if (config.mode === 'create') {
