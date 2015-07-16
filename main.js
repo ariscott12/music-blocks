@@ -1,4 +1,13 @@
 // "use strict";
+var valid_input = {
+    type: null,
+    x: null,
+    y: null,
+    keycode: null,
+    element_id: null,
+    blockref: null,
+}
+
 var
     config = {
         speed: 4,
@@ -34,12 +43,13 @@ var
         black_image: new Image(),
         spriteOverlayTransparency: 1,
         masterVolume: 100,
-        masterMute: -1,
+        masterMute: -1,        
     },
      
-    canvas = document.getElementById("grid"),
+    canvas = document.getElementById("grid"),    
     context = canvas.getContext("2d"),
     gridArray = new Array([]),
+    tutorialArray = new Array([]),
     minMaxArray = {
         note: {
             min: 24,
@@ -57,7 +67,7 @@ var
             min: 0,
             max: 120
         }
-    };
+    };    
 blocks = [];
 midiInstruments = {
     'xylophone': 13,
@@ -82,6 +92,7 @@ midiInstruments = {
         // 'flute': 73,
         // 'sawtooth_wave_lead': 82
 };
+
 
 
 // Make the grid on load using blockSize, gridWidth and gridHeight from config object 
@@ -167,8 +178,7 @@ midiInstruments = {
     }
 
     //Make create icon active at start
-    // $('li.create').addClass('active');
-
+    // $('li.create').addClass('active');    
 })();
 
 // Music block object and methods
@@ -1202,7 +1212,7 @@ topPanel = function() {
                 break;
             case 'clear-all':
                 var x;
-                if (confirm("Ar you sure you want to clear the board?") === true) {
+                if (tutorial.getTutorialIndex() != -1 || confirm("Ar you sure you want to clear the board?") === true) {
                     utilities.deleteAllBlocks();
                 }
 
@@ -1228,8 +1238,7 @@ topPanel = function() {
             });
         }
         config.system_pause = false;
-    });
-
+    });    
 }();
 
 controlPanel = function() {
@@ -1456,6 +1465,7 @@ musicBlockPanel = function() {
         }
         // update configMap anytime a value is updated on the music block panel
         configMap[type] = value;
+        console.log(configMap[type] + " is note value");
     };
     getPanelValues = function() {
         return {
@@ -1472,6 +1482,7 @@ musicBlockPanel = function() {
 
     // Sync the piano roll to the note knob when it changes (auto run on load)
     updatePianoRoll = (function update() {
+        console.log("updatePianoRoll called");
         var value = null;
         // if (arguments.length >= 1) {
         //     value = arguments[0].value - multiplier;
@@ -1609,7 +1620,7 @@ musicBlockPanel = function() {
             type = controlPanel.getActivePanel(),
             index = $(this).index(),
             roll_index = ($(this).parent().index()) * 12,
-            value = (index + roll_index) + (multiplier + 1);
+            value = (index + roll_index) + (multiplier + 1);        
 
         // Play MIDI note when piano roll is clicked
         if (mutePiano !== true) {
@@ -2450,6 +2461,23 @@ setGridEvents = function() {
 
     // Compares mouseup location with mousedown, calls old click function if same, drag select if not
     mouseUp = function(e) {
+        /////////
+        //Tutorial related BEGIN
+        if(valid_input.type == "gridUp"){
+            if(tutorial.checkValidInput(e)){
+                tutorial.advanceTutorial();
+                $('.tutorial-overlay').show();
+            }
+            else{
+                tutorial.setTutorialIndex(tutorial.getTutorialIndex() - 2);
+                $('.tutorial-overlay').show();
+                tutorial.advanceTutorial();
+                return;
+            }
+        }
+        //Tutorial related END
+        /////////
+
         // Set to null to remove dragbox in draw loop
         dragBox = {};
 
@@ -2588,6 +2616,7 @@ setGridEvents = function() {
 
     //Add mousedown listener, tracks positions and resets selection to 0
     mouseDown = function(e) {
+        console.log(e);
         if (e.button !== 2) {
             getPos();
 
@@ -2644,13 +2673,14 @@ setGridEvents = function() {
     elements.section.addEventListener("mousedown", mouseDown, false);
 
     return {
-        getDragValues: getDragValues
+        getDragValues: getDragValues,
+        getPos: getPos,
+        mouseDown: mouseDown,
+        mouseUp: mouseUp
     };
 
 
 }();
-
-
 
 keyboardEvents = function() {
     // var stopArrow = document.getElementById("stop");
@@ -2660,99 +2690,113 @@ keyboardEvents = function() {
         //Prevent space and the arrow keys from scrolling the screen if the app is not fullscreen
         if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
             event.preventDefault();
-        }
-        
-        switch (event.keyCode) {
-            case 16: // Shift
-                config.shiftkey = 1;
-                break;
+        }        
 
-            case 32: // Space
-                if (config.draggingBlocks === false) {
-                    config.pause = config.pause * -1;
-                    if (config.pause === -1) {
-                        $("[data-mode='play']").addClass('active').siblings().removeClass('active');
-                    } else {
-                        $("[data-mode='pause']").addClass('active').siblings().removeClass('active');
+        //console.log("CHECKING VALID FROM KEYBOARD FUNCTION");
+        if(tutorial.getTutorialIndex() == -1 || event.keyCode == 84 || event.keyCode == 16){
+            switch (event.keyCode) {
+                case 16: // Shift
+                    config.shiftkey = 1;
+                    break;
+
+                case 32: // Space
+                    if (config.draggingBlocks === false) {
+                        config.pause = config.pause * -1;
+                        if (config.pause === -1) {
+                            $("[data-mode='play']").addClass('active').siblings().removeClass('active');
+                        } else {
+                            $("[data-mode='pause']").addClass('active').siblings().removeClass('active');
+                        }
                     }
-                }
-                break;
+                    break;
 
-            case 37: // Left
-                utilities.sendBlocks('left');
-                // utilities.setParams('static_direction', 'left');
-                break;
+                case 37: // Left
+                    utilities.sendBlocks('left');
+                    // utilities.setParams('static_direction', 'left');
+                    break;
 
-            case 38: // Up
-                utilities.sendBlocks('up');
-                break;
+                case 38: // Up
+                    utilities.sendBlocks('up');
+                    break;
 
-            case 39: // Right
-                utilities.sendBlocks('right');
-                break;
+                case 39: // Right
+                    utilities.sendBlocks('right');
+                    break;
 
-            case 40: // Down
-                utilities.sendBlocks('down');
-                break;
+                case 40: // Down
+                    utilities.sendBlocks('down');
+                    break;
 
-            case 49: // 1
-                utilities.selectAllBlocks();
-                break;
-            case 50: // 2
-                utilities.deselectAllBlocks();
-                break;
-            case 51: // 3
-                utilities.deleteSelectedBlocks();
-                break;
-            case 52: // 4
-                utilities.deleteAllBlocks();
-                break;
-            case 77: // m
-                if (config.mode === 'create') {
-                    config.mode = 'select';
-                } else if (config.mode === 'select') {
-                    config.mode = 'trash';
-                } else {
-                    config.mode = 'create';
-                }
-                $('[data-mode=' + config.mode + ']').addClass('active').siblings().removeClass('active');
-                break;
+                case 49: // 1
+                    utilities.selectAllBlocks();
+                    break;
+                case 50: // 2
+                    utilities.deselectAllBlocks();
+                    break;
+                case 51: // 3
+                    utilities.deleteSelectedBlocks();
+                    break;
+                case 52: // 4
+                    utilities.deleteAllBlocks();
+                    break;
+                
+                case 65: // a
+                    utilities.selectAllBlocks();
+                    break;
 
-            case 65: // a
-                utilities.selectAllBlocks();
-                break;
+                case 70: //f
+                    config.advance *= -1;
+                    break;
 
-            case 70: //f
-                config.advance *= -1;
-                break;
+                    // case 68: // d
+                    //     var out = "FULL GRID DUMPMONSTER";
+                    //     for (var i = 0; i < config.gridWidth; i++) {
+                    //         out = out + "\n";
+                    //         for (var j = 0; j < config.gridHeight; j++) {
+                    //             if ((gridArray[j][i] + "").length === 1)
+                    //                 out = out + " ";
+                    //             out = out + gridArray[j][i] + " ";
+                    //         }
+                    //     }
+                    //     break;
 
-                // case 68: // d
-                //     var out = "FULL GRID DUMPMONSTER";
-                //     for (var i = 0; i < config.gridWidth; i++) {
-                //         out = out + "\n";
-                //         for (var j = 0; j < config.gridHeight; j++) {
-                //             if ((gridArray[j][i] + "").length === 1)
-                //                 out = out + " ";
-                //             out = out + gridArray[j][i] + " ";
-                //         }
-                //     }
-                //     break;
+                case 77: // m
+                    if (config.mode === 'create') {
+                        config.mode = 'select';
+                    } else if (config.mode === 'select') {
+                        config.mode = 'trash';
+                    } else {
+                        config.mode = 'create';
+                    }
+                    $('[data-mode=' + config.mode + ']').addClass('active').siblings().removeClass('active');
+                    break;
 
-            case 83: // s
-                musicBlockPanel.sendBlocks('none');
-                break;
+                case 83: // s
+                    musicBlockPanel.sendBlocks('none');
+                    break;
 
-            case 107: // Numpad +
-                if (config.masterVolume < 100) {
-                    config.masterVolume += 5;
-                }
-                break;
+                case 84: // t
+                    $('.tutorial-overlay').show();
+                    console.log(tutorial.getTutorialIndex());
+                    if(tutorial.getTutorialIndex() == -1){
+                        tutorial.setTutorialIndex(0);
+                    }
+                    console.log("ADVANCING TUTOR FOR INDEX: "+ tutorial.tutorial_index);
+                    tutorial.advanceTutorial();
+                    break;
 
-            case 109: // Numpad -
-                if (config.masterVolume > 0) {
-                    config.masterVolume -= 5;
-                }
-                break;
+                case 107: // Numpad +
+                    if (config.masterVolume < 100) {
+                        config.masterVolume += 5;
+                    }
+                    break;
+
+                case 109: // Numpad -
+                    if (config.masterVolume > 0) {
+                        config.masterVolume -= 5;
+                    }
+                    break;
+            }
         }
     }, false);
 

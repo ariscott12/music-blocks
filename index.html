@@ -26,7 +26,7 @@
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/jquery-ui.js" type="text/javascript"></script>
     <script src="js/jquery.knob.js"></script>
-    <script src="js/rAF.js"></script>
+    <script src="js/rAF.js"></script>    
 </head>
 
 <body oncontextmenu="return false;">
@@ -39,15 +39,20 @@
         <div class="rect5"></div>
     </div>
     <div id="wrapper">
+        <div class = "tutorial-text-wrapper" style="display: none;">
+            <div class="tutorial-text"></div>            
+            <div class="tutorial-next">Next Button</div>
+            <!--<div class="next-hider"> </div>-->
+        </div>
         <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
         <div class="top-panel-wrapper">
             <div class="top-panel-section">
                 <p>Mode Select</p>
                 <div class="border"></div>
                 <ul class="mode-select">
-                    <li data-mode="create" class="create active"><img height="22px" src="images/svg/mode-create.svg"></li>
-                    <li data-mode="select" class="select"><img height="23px" src="images/svg/mode-select.svg"></li>
-                    <li data-mode="trash" class="trash"><img height="23px" src="images/svg/mode-delete.svg"></li>
+                    <li data-tutorial-id="create-icon" data-mode="create" class="create active"><img id="create-icon" height="22px" src="images/svg/mode-create.svg"></li>
+                    <li id="select-icon" data-mode="select" class="select"><img id="select-icon" height="23px" src="images/svg/mode-select.svg"></li>
+                    <li id="trash-icon" data-mode="trash" class="trash"><img id="trash-icon" height="23px" src="images/svg/mode-delete.svg"></li>
                     <!--  <li class="pause">Pause</li>
                 <li class="advance">Advance</li>
                 <li class="select-all">Select All</li>
@@ -58,16 +63,16 @@
                 <p>Play/Pause</p>
                 <div class="border"></div>
                 <ul class="play-select">
-                    <li data-mode="play" class="active"><img height="19px" src="images/svg/mode-play.svg"></li>
-                    <li data-mode="pause"><img height="19px" src="images/svg/mode-pause.svg"></li>
+                    <li id="play-icon" data-mode="play" class="active"><img id="play-icon" height="19px" src="images/svg/mode-play.svg"></li>
+                    <li id="pause-icon" data-mode="pause"><img id="pause-icon" height="19px" src="images/svg/mode-pause.svg"></li>
                 </ul>
             </div>
             <div class="top-panel-section">
                 <p>Batch Edits</p>
                 <div class="border"></div>
                 <ul class="batch-edits">
-                    <li data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
-                    <li data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
+                    <li id="clear-all-icon" data-mode="clear-all"><img height="19px" src="images/svg/batch-delete.svg"></li>
+                    <li id="select-all-icon"data-mode="select-all"><img height="24px" src="images/svg/batch-select.svg"></li>
                 </ul>
             </div>
             <div class="master-volume-section">
@@ -132,8 +137,8 @@
                         </div>
                     </div>
                     <ul class="mute-solo clearfix">
-                        <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute</li>
-                        <li><span data-type="solo" data-active="false" class="solo-toggle button-trigger"></span>Solo</li>
+                        <li><span id="mute-toggle" data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute</li>
+                        <li><span id="solo-toggle" data-type="solo" data-active="false" class="solo-toggle button-trigger"></span>Solo</li>
                     </ul>
                     <div class="clear"></div>
                     <p class="small">(set with piano roll)</p>
@@ -464,7 +469,7 @@
             <ul class="piano-roll">
                 <li class="whitekey"></li>
                 <li class="blackkey"></li>
-                <li class="whitekey"></li>
+                <li class="whitekey" id="D5"></li>
                 <li class="blackkey"></li>
                 <li class="whitekey"></li>
                 <li class="whitekey"></li>
@@ -527,6 +532,7 @@
             </ul>
         </div>
     </div>
+    <div class="tutorial-overlay"></div>
     <div class="hotekeys" data-id="hotkey-menu">
         <table>
             <tr>
@@ -534,7 +540,7 @@
                 <td>
                     <span class="key-btn"> 
                         <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" width="8px" enable-background="new 0 0 11 14" xml:space="preserve">
-                            <polygon fill="#717171" points="11,14 0,7 11,0 " />
+                            <polygon id="left" fill="#717171" points="11,14 0,7 11,0 " />
                         </svg>
                     </span>
                 </td>
@@ -544,7 +550,7 @@
                 <td>
                     <span class="key-btn sml"> 
                          <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" width="10px" enable-background="new 0 0 14 11" xml:space="preserve">
-                            <polygon fill="#717171" points="0,11 7,0 14,11 " />
+                            <polygon id="up" fill="#717171" points="0,11 7,0 14,11 " />
                         </svg>
                     </span></td>
             </tr>
@@ -594,7 +600,11 @@
             </tr>
         </table>
     </div>
+
+
+
     <script src="main.js"></script>
+    <script src="tutorial.js"></script>
     <!--  <script src="//localhost:35729/livereload.js"></script>-->
 </body>
 
