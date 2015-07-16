@@ -1,7 +1,7 @@
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
-    background: url('../images/block-arrow.png') no-repeat #bdbcba;;
+    background: url('../images/block-arrow.png') no-repeat #bdbcba;
     background-position: 145px 8px;
     text-indent: 0.01px;
     text-overflow: "";
@@ -9,5 +9,10 @@ select {
     color: $gray-font;
     border: none;
     width: 164px;
-    cursor:pointer;
+    cursor: pointer;
+    @include border-top-radius(0px);
+    @include border-right-radius(0px);
+    @include border-bottom-radius(0px);
+    @include border-left-radius(0px);
+    height:23px;
 }

@@ -146,7 +146,7 @@ body {
   .control-panel .dial-wrapper {
     margin-bottom: 10px;
     position: relative;
-    width: 116px;
+    width: 115px;
     float: left;
     cursor: pointer; }
   .control-panel .range-wrapper {
@@ -407,41 +407,58 @@ body {
 .instrument-select {
   border-left: 1px solid #a3a2a1;
   border-right: 1px solid #a3a2a1;
-  background: #edebea; }
-  .instrument-select select {
-    margin: 25px 0; }
+  background: #edebea;
+  padding: 20px; }
+
+.direction-select {
+  padding: 20px;
+  background: #edebea;
+  border-right: 1px solid #a3a2a1;
+  border-left: 1px solid #a3a2a1;
+  border-top: 1px solid #a3a2a1; }
 
 .block-direction-select li {
-  width: 25%;
-  height: 28px;
+  width: 18.4%;
+  height: 27px;
   float: left;
-  background: #edebea;
-  border-left: 1px solid #a3a2a1;
-  border-top: 1px solid #a3a2a1;
+  border: 1px solid #bbb;
+  margin-right: 3px;
+  border-radius: 2px;
+  background: #dbd9d9;
   position: relative;
   cursor: pointer; }
   .block-direction-select li:last-child {
-    border-right: 1px solid #a3a2a1; }
+    margin-right: 0; }
   .block-direction-select li:hover {
     background: #fffefd; }
     .block-direction-select li:hover polygon {
       fill: #e27a3f; }
+.block-direction-select .stop-square {
+  background: #334d5c;
+  border-radius: 2px;
+  height: 9px;
+  margin: 8px 0 0 10px;
+  width: 9px; }
 .block-direction-select polygon {
-  fill: #777777; }
+  fill: #334d5c; }
 .block-direction-select .horizontal {
-  width: 12px;
-  position: absolute;
-  top: 5px; }
+  width: 9px;
+  position: absolute; }
 .block-direction-select .vertical {
-  height: 12px;
-  position: absolute;
-  top: 7px; }
+  height: 9px;
+  position: absolute; }
 .block-direction-select .left {
-  left: 16px; }
+  left: 9px;
+  top: 7px; }
 .block-direction-select .right {
-  left: 21px; }
-.block-direction-select .down, .block-direction-select .up {
-  left: 18px; }
+  left: 10px;
+  top: 7px; }
+.block-direction-select .down {
+  left: 9px;
+  top: 9px; }
+.block-direction-select .up {
+  left: 8px;
+  top: 8px; }
 
 .note-wrapper {
   width: 123px; }
@@ -546,7 +563,31 @@ body {
   margin-left: -9px;
   background: url('../images/piano-slider-max.png') no-repeat; }
 
-/*Added by MIKE ENDS*/
+.drumkit-type-wrapper {
+  display: none;
+  margin: 3px 0 0 3px;
+  width: 178px;
+  float: left; }
+  .drumkit-type-wrapper.drum-aux {
+    width: 88px; }
+  .drumkit-type-wrapper p {
+    color: #eee;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 4px; }
+
+.drumkit-type {
+  border-bottom: 1px solid #8ccdc1;
+  border-left: 1px solid #8ccdc1;
+  border-right: 1px solid #8ccdc1;
+  height: 10px; }
+
+.border {
+  background: #8ccdc1;
+  height: 7px;
+  margin: 0 auto;
+  width: 1px; }
+
 .level-select p {
   float: left;
   position: relative;
@@ -564,7 +605,16 @@ select {
   color: #4b4b4b;
   border: none;
   width: 164px;
-  cursor: pointer; }
+  cursor: pointer;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  height: 23px; }
 
 .shadow {
   box-shadow: 0 5px 0 1px rgba(0, 0, 0, 0.09) inset; }
@@ -772,9 +822,14 @@ select {
   position: absolute;
   z-index: 30000; }
   .spinner-page p {
-    font-size: 12px;
-    margin-bottom: 12px;
+    font-size: 1.35em;
+    margin-bottom: 16px;
     color: #fff; }
+
+.spinner-instrument p {
+  color: #fff;
+  font-size: 1.25em;
+  margin-bottom: 12px; }
 
 .spinner {
   margin: 0 auto;

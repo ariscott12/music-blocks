@@ -31,7 +31,7 @@
 
 <body oncontextmenu="return false;">
     <div class="spinner-page spinner">
-        <p>Doing Big Things Son!</p>
+        <p>Loading Sound Fonts</p>
         <div class="rect1"></div>
         <div class="rect2"></div>
         <div class="rect3"></div>
@@ -48,10 +48,6 @@
                     <li data-mode="create" class="create active"><img height="22px" src="images/svg/mode-create.svg"></li>
                     <li data-mode="select" class="select"><img height="23px" src="images/svg/mode-select.svg"></li>
                     <li data-mode="trash" class="trash"><img height="23px" src="images/svg/mode-delete.svg"></li>
-                    <!--  <li class="pause">Pause</li>
-                <li class="advance">Advance</li>
-                <li class="select-all">Select All</li>
-                <li class="clear-all">Clear All</li> -->
                 </ul>
             </div>
             <div class="top-panel-section">
@@ -71,13 +67,14 @@
                 </ul>
             </div>
             <div class="master-volume-section">
-                <img data-id = "toggle-master-mute" data-mute = "false" src = "images/icon-volume.png" />
+                <img data-id="toggle-master-mute" data-mute="false" src="images/icon-volume.png" />
                 <div class="master-volume-slider"></div>
             </div>
         </div>
         <div class="clear"></div>
         <canvas id="grid" width="640" height="640"></canvas>
         <div class="spinner spinner-instrument">
+            <p>Loading Sound Font</p>
             <div class="rect1"></div>
             <div class="rect2"></div>
             <div class="rect3"></div>
@@ -95,33 +92,41 @@
             </ul>
             <div class="block-music-panel">
                 <div class="instrument-select">
+                  <!--   <p>Select Instrument</p> -->
                     <center>
                         <select id="set-instrument">
                         </select>
                     </center>
                 </div>
-                <ul class="block-direction-select clearfix" id="select-direction">
-                    <li id="left">
-                        <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                            <polygon fill="#717171" points="11,14 0,7 11,0 " />
-                        </svg>
-                    </li>
-                    <li class="active" id="up">
-                        <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
-                            <polygon fill="#717171" points="0,11 7,0 14,11 " />
-                        </svg>
-                    </li>
-                    <li id="right">
-                        <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                            <polygon fill="#717171" points="0,0 11,7 0,14 " />
-                        </svg>
-                    </li>
-                    <li id="down">
-                        <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
-                            <polygon fill="#717171" points="14,0 7,11 0,0 " />
-                        </svg>
-                    </li>
-                </ul>
+                <div class="direction-select">
+                     <p>Set Block Direction</p>
+                    <ul class="block-direction-select clearfix" id="select-direction">
+                        <li id="left">
+                            <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                                <polygon fill="#717171" points="11,14 0,7 11,0 " />
+                            </svg>
+                        </li>
+                        <li class="active" id="up">
+                            <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
+                                <polygon fill="#717171" points="0,11 7,0 14,11 " />
+                            </svg>
+                        </li>
+                        <li id="right">
+                            <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
+                                <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                            </svg>
+                        </li>
+                        <li id="down">
+                            <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
+                                <polygon fill="#717171" points="14,0 7,11 0,0 " />
+                            </svg>
+                        </li>
+                        <li id="none"><div class = "stop-square"></div></li>
+                    </ul>
+                   <!--  <ul class="stop-block clearfix">
+                        <li><span data-type="stop"  class="button-trigger"></span>Stop Block</li>
+                    </ul> -->
+                </div>
                 <div class="note-select clearfix">
                     <div class="note-wrapper">
                         <p>Note Selection</p>
@@ -522,6 +527,26 @@
             </div>
             <div class="clear"></div>
             <div class="range-indicator"></div>
+            <div class="drumkit-type-wrapper">
+                <div class="drumkit-type"></div>
+                <div class="border"></div>
+                <p>Electronic Kit</p>
+            </div>
+            <div class="drumkit-type-wrapper">
+                <div class="drumkit-type"></div>
+                <div class="border"></div>
+                <p>Acoustic Kit</p>
+            </div>
+            <div class="drumkit-type-wrapper">
+                <div class="drumkit-type"></div>
+                <div class="border"></div>
+                <p>Acoustic Kit 2</p>
+            </div>
+            <div class="drumkit-type-wrapper drum-aux">
+                <div class="drumkit-type"></div>
+                <div class="border"></div>
+                <p>Auxillary Percussion</p>
+            </div>
             <ul class="mute-piano clearfix">
                 <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute Piano Roll</li>
             </ul>

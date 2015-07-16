@@ -21,7 +21,7 @@
         .dial-wrapper {
             margin-bottom: 10px;
             position: relative;
-            width: 116px;
+            width: 115px;
             float: left;
             cursor: pointer;
         }
@@ -209,12 +209,12 @@
                 float: left;
                 height: 26px;
                 width: 31px;
-                background:$gray-light;
+                background: $gray-light;
                 cursor: pointer;
                 &[data-active="false"] {
                     .activator-button {
                         background: none;
-                         border: 1px solid $gray;
+                        border: 1px solid $gray;
                     }
                 }
             }
@@ -225,24 +225,24 @@
                     }
                 }
             }
-             .volume-activator {
+            .volume-activator {
                 &[data-active="true"] {
                     .activator-button {
                         background: $purple-light;
                     }
                 }
             }
-             .velocity-activator {
+            .velocity-activator {
                 &[data-active="true"] {
                     .activator-button {
                         background: #CEAF52;
                     }
                 }
             }
-             .duration-activator {
+            .duration-activator {
                 &[data-active="true"] {
                     .activator-button {
-                        background:$aqua;
+                        background: $aqua;
                     }
                 }
             }
@@ -359,23 +359,48 @@
         border-left: 1px solid $gray;
         border-right: 1px solid $gray;
         background: $gray-light;
-        select {
-            margin: 25px 0;
-        }
+        padding: 20px;
+        // select {
+        //     margin: 25px 0;
+        // }
+    }
+    
+    .direction-select {
+        padding: 20px;
+        background: $gray-light;
+        border-right: 1px solid $gray;
+        border-left: 1px solid $gray;
+        border-top: 1px solid $gray;
+        // .stop-block {
+        //     margin-top: 9px;
+        //     font-size: 12px;
+        //     span {
+        //         position: relative;
+        //         top: 2px;
+        //         &:hover {
+        //             background:#ea1010;
+        //         }
+        //     }
+        // }
     }
     
     .block-direction-select {
         li {
-            width: 25%;
-            height: 28px;
+            width: 18.4%;
+            height: 27px;
             float: left;
-            background: $gray-light;
-            border-left: 1px solid $gray;
-            border-top: 1px solid $gray;
+            border: 1px solid #bbb;
+            margin-right: 3px;
+            border-radius: 2px;
+            background: #dbd9d9;
+            // background: $gray-light;
+            // border-left: 1px solid $gray;
+            // border-top: 1px solid $gray;
             position: relative;
             cursor: pointer;
             &:last-child {
-                border-right: 1px solid $gray;
+                // border-right: 1px solid $gray;
+                margin-right: 0;
             }
             &:hover {
                 background: $white-medium;
@@ -384,28 +409,39 @@
                 }
             }
         }
+        .stop-square {
+            background: $blue-dark;
+            border-radius: 2px;
+            height: 9px;
+            margin: 8px 0 0 10px;
+            width: 9px;
+        }
         polygon {
-            fill: #777777;
+            fill: $blue-dark;
         }
         .horizontal {
-            width: 12px;
+            width: 9px;
             position: absolute;
-            top: 5px;
         }
         .vertical {
-            height: 12px;
+            height: 9px;
             position: absolute;
-            top: 7px;
         }
         .left {
-            left: 16px;
+            left: 9px;
+            top: 7px;
         }
         .right {
-            left: 21px;
+            left: 10px;
+            top: 7px;
         }
-        .down,
+        .down {
+            left: 9px;
+            top: 9px;
+        }
         .up {
-            left: 18px;
+            left: 8px;
+            top: 8px;
         }
         // .active {
         //     background: $white-medium;
@@ -460,13 +496,6 @@
         }
     }
     
-    // .note-random,
-    // .note-specific,
-    // .volume-specific,
-    // .volume-random,
-    // {
-    //     display: none;
-    // }
     .piano-wrapper {
         margin-top: 10px;
         width: 640px;
@@ -559,7 +588,36 @@
         margin-left: -9px;
         background: url('../images/piano-slider-max.png') no-repeat;
     }
-    /*Added by MIKE ENDS*/
+    
+    .drumkit-type-wrapper {
+        display: none;
+        margin: 3px 0 0 3px;
+        width: 178px;
+        float: left;
+        &.drum-aux {
+            width: 88px;
+        }
+        p {
+            color: #eee;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 4px;
+        }
+    }
+    
+    .drumkit-type {
+        border-bottom: 1px solid #8ccdc1;
+        border-left: 1px solid #8ccdc1;
+        border-right: 1px solid #8ccdc1;
+        height: 10px;
+    }
+    
+    .border {
+        background: #8ccdc1;
+        height: 7px;
+        margin: 0 auto;
+        width: 1px;
+    }
     
     .level-select {
         p {
