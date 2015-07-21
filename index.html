@@ -27,6 +27,7 @@
     <script src="js/jquery-ui.js" type="text/javascript"></script>
     <script src="js/jquery.knob.js"></script>
     <script src="js/rAF.js"></script>
+    <script src="js/browser-detect.js"></script>
 </head>
 
 <body oncontextmenu="return false;">
@@ -37,6 +38,10 @@
         <div class="rect3"></div>
         <div class="rect4"></div>
         <div class="rect5"></div>
+    </div>
+    <div class="browser-message" data-message="browser-prompt">
+        <p>Thanks for viewing our App. This is an experimental project, for optimal performance we highlighly recommend Chrome.</p>
+        <img data-id = "close-message" class = "close-browser-message" width="15px" src="images/svg/close-content.svg" />
     </div>
     <div id="wrapper">
         <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
@@ -92,14 +97,14 @@
             </ul>
             <div class="block-music-panel">
                 <div class="instrument-select">
-                  <!--   <p>Select Instrument</p> -->
+                    <!--   <p>Select Instrument</p> -->
                     <center>
                         <select id="set-instrument">
                         </select>
                     </center>
                 </div>
                 <div class="direction-select">
-                     <p>Set Block Direction</p>
+                    <p>Set Block Direction</p>
                     <ul class="block-direction-select clearfix" id="select-direction">
                         <li id="left">
                             <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
@@ -121,9 +126,11 @@
                                 <polygon fill="#717171" points="14,0 7,11 0,0 " />
                             </svg>
                         </li>
-                        <li id="none"><div class = "stop-square"></div></li>
+                        <li id="none">
+                            <div class="stop-square"></div>
+                        </li>
                     </ul>
-                   <!--  <ul class="stop-block clearfix">
+                    <!--  <ul class="stop-block clearfix">
                         <li><span data-type="stop"  class="button-trigger"></span>Stop Block</li>
                     </ul> -->
                 </div>

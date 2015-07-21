@@ -815,6 +815,21 @@ select {
   width: 856px;
   display: none; }
 
+.browser-message {
+  display: none;
+  background: #edebea;
+  border-bottom: 1px solid #999;
+  margin-bottom: 10px;
+  padding: 20px 0;
+  text-align: center; }
+
+.close-browser-message {
+  float: right;
+  position: relative;
+  right: 20px;
+  top: -20px;
+  cursor: pointer; }
+
 .spinner-page {
   width: 100%;
   top: 40%;

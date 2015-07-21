@@ -2,5 +2,22 @@
     margin: 0 auto;
     position: relative;
     width: 856px;
-    display:none;
+    display: none;
+}
+
+.browser-message {
+    display: none;
+    background: $gray-light;
+    border-bottom: 1px solid #999;
+    margin-bottom: 10px;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.close-browser-message {
+    float: right;
+    position: relative;
+    right: 20px;
+    top: -20px;
+    cursor: pointer;
 }
