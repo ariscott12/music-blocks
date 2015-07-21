@@ -1127,6 +1127,10 @@ setMidiParams = function() {
                         cnt++;
                     }
                 }
+                // Check what browser user is in, if not in chrome display browser prompt
+                if (browser() != "Chrome") {
+                    $('[data-message="browser-prompt"]').show();
+                }
                 console.log("loaded");
             }
         });
@@ -1136,6 +1140,10 @@ setMidiParams = function() {
         MIDI.noteOn(pro, note, vel, 0);
         MIDI.noteOff(pro, note, dur);
     };
+    $('[data-id="close-message"]').click(function() {
+        $('[data-message="browser-prompt"]').hide();
+    });
+
 
     // getNote = function(val) {
     //     var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -1585,12 +1593,12 @@ musicBlockPanel = function() {
 
     jqueryMap.$direction.find('li').click(function() {
         var direction = $(this).attr('id');
-        if(direction === 'none') {
+        if (direction === 'none') {
             utilities.stopBlocks();
         } else {
             utilities.sendBlocks(direction);
         }
-      
+
         return false;
     });
 
@@ -1622,7 +1630,7 @@ musicBlockPanel = function() {
     });
 
     // jqueryMap.$stop_block.find('span').click(function() {
-       
+
     //     return false;
     // });
 
