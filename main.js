@@ -2781,7 +2781,7 @@ keyboardEvents = function() {
                     if(tutorial.getTutorialIndex() == -1){
                         tutorial.setTutorialIndex(0);
                     }
-                    console.log("ADVANCING TUTOR FOR INDEX: "+ tutorial.tutorial_index);
+                    console.log("ADVANCING TUTOR FOR INDEX: "+ tutorial.getTutorialIndex());
                     tutorial.advanceTutorial();
                     break;
 

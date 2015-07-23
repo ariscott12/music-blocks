@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html ondragstart="return false;" ondrop="return false;">
 
@@ -39,7 +40,11 @@
         <div class="rect5"></div>
     </div>
     <div id="wrapper">
-        <div class = "tutorial-text-wrapper" style="display: none;">
+        <div id="tutorial-up-arrow" class="tutorial-arrow tutorial-up-arrow"></div>
+        <div id="tutorial-down-arrow" class="tutorial-arrow tutorial-down-arrow"></div>
+        <div id="tutorial-right-arrow" class="tutorial-arrow tutorial-right-arrow"></div>
+        <div id="tutorial-left-arrow" class="tutorial-arrow tutorial-left-arrow"></div>
+        <div class="tutorial-text-wrapper" style="display: none;">
             <div class="tutorial-text"></div>            
             <div class="tutorial-next">Next Button</div>
             <!--<div class="next-hider"> </div>-->
@@ -50,9 +55,9 @@
                 <p>Mode Select</p>
                 <div class="border"></div>
                 <ul class="mode-select">
-                    <li id="create-icon" data-mode="create" class="create active"><img id="create-icon" height="22px" src="images/svg/mode-create.svg"></li>
-                    <li id="select-icon" data-mode="select" class="select"><img id="select-icon" height="23px" src="images/svg/mode-select.svg"></li>
-                    <li id="trash-icon" data-mode="trash" class="trash"><img id="trash-icon" height="23px" src="images/svg/mode-delete.svg"></li>
+                    <li id="create-ico-top" data-mode="create" class="create active"><img id="create-icon" height="22px" src="images/svg/mode-create.svg"></li>
+                    <li id="select-icon-top" data-mode="select" class="select"><img id="select-icon" height="23px" src="images/svg/mode-select.svg"></li>
+                    <li id="trash-icon-top" data-mode="trash" class="trash"><img id="trash-icon" height="23px" src="images/svg/mode-delete.svg"></li>
                     <!--  <li class="pause">Pause</li>
                 <li class="advance">Advance</li>
                 <li class="select-all">Select All</li>
@@ -63,16 +68,16 @@
                 <p>Play/Pause</p>
                 <div class="border"></div>
                 <ul class="play-select">
-                    <li id="play-icon" data-mode="play" class="active"><img id="play-icon" height="19px" src="images/svg/mode-play.svg"></li>
-                    <li id="pause-icon" data-mode="pause"><img id="pause-icon" height="19px" src="images/svg/mode-pause.svg"></li>
+                    <li id="play-icon-top" data-mode="play" class="active"><img id="play-icon" height="19px" src="images/svg/mode-play.svg"></li>
+                    <li id="pause-icon-top" data-mode="pause"><img id="pause-icon" height="19px" src="images/svg/mode-pause.svg"></li>
                 </ul>
             </div>
             <div class="top-panel-section">
                 <p>Batch Edits</p>
                 <div class="border"></div>
                 <ul class="batch-edits">
-                    <li id="clear-all-icon" data-mode="clear-all"><img id="clear-all-icon" height="19px" src="images/svg/batch-delete.svg"></li>
-                    <li id="select-all-icon"data-mode="select-all"><img id="select-all-icon" height="24px" src="images/svg/batch-select.svg"></li>
+                    <li id="clear-all-icon-top" data-mode="clear-all"><img id="clear-all-icon" height="19px" src="images/svg/batch-delete.svg"></li>
+                    <li id="select-all-icon-top"data-mode="select-all"><img id="select-all-icon" height="24px" src="images/svg/batch-select.svg"></li>
                 </ul>
             </div>
             <div class="master-volume-section">
@@ -180,11 +185,11 @@
             <div class="block-effect-panel">
                 <div class="effect-wrapper">
                     <div class="header clearfix">
-                        <div class="activator note-activator" data-active="true" data-type="note">
-                            <span class='activator-button'></span>
+                        <div id="note-activator-div" class="activator note-activator" data-active="true" data-type="note">
+                            <span id="note-activator" class='activator-button'></span>
                         </div>
                         <div class="toggle-drop active">
-                            <h3>Note Effect</h3>
+                            <h3 id="note-effect-dropdown">Note Effect</h3>
                             <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
                                 <polygon points="0,0 11,7 0,14 " fill="#717171">
                             </svg>
@@ -240,11 +245,11 @@
                         <select id="select-note-scale"></select>
                     </div>
                     <div class="header clearfix">
-                        <div class="activator volume-activator" data-active="false" data-type="volume">
-                            <span class='activator-button'></span>
+                        <div id='volume-activator' class="activator volume-activator" data-active="false" data-type="volume">
+                            <span id='volume-activator' class='activator-button'></span>
                         </div>
-                        <div class="toggle-drop">
-                            <h3>Volume Effect</h3>
+                        <div id="volume-effect-dropdown-div" class="toggle-drop">
+                            <h3 id="volume-effect-dropdown">Volume Effect</h3>
                             <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
                                 <polygon points="0,0 11,7 0,14 " fill="#717171">
                             </svg>
@@ -303,7 +308,7 @@
                             <span class='activator-button'></span>
                         </div>
                         <div class="toggle-drop">
-                            <h3>Velocity Effect</h3>
+                            <h3 id="velocity-effect-dropdown">Velocity Effect</h3>
                             <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
                                 <polygon points="0,0 11,7 0,14 " fill="#717171">
                             </svg>
@@ -362,7 +367,7 @@
                             <span class='activator-button'></span>
                         </div>
                         <div class="toggle-drop">
-                            <h3>Duration Effect</h3>
+                            <h3 id="duration-effect-dropdown">Duration Effect</h3>
                             <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
                                 <polygon points="0,0 11,7 0,14 " fill="#717171">
                             </svg>
@@ -467,7 +472,7 @@
                 <li class="whitekey"></li>
             </ul>
             <ul class="piano-roll">
-                <li class="whitekey"></li>
+                <li class="whitekey" id="C5"></li>
                 <li class="blackkey"></li>
                 <li class="whitekey" id="D5"></li>
                 <li class="blackkey"></li>
