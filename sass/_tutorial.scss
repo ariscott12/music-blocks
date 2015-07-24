@@ -59,7 +59,7 @@
   background-size: cover;
   height: 40px;
   width: 30px;  
-  opacity: 0.8; 
+  opacity: 0.9; 
 }
 
 
@@ -90,4 +90,73 @@
   -ms-transform: rotate(270deg);
   -o-transform: rotate(270deg);
   transform: rotate(270deg);
+}
+
+.tutorial-arrow.tutorial-down-arrow-purple{
+  background: url('../images/down-purple-arrow.png') no-repeat; 
+  background-size: cover;
+}
+
+.tutorial-arrow.tutorial-left-arrow-purple{
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg); 
+  background: url('../images/down-purple-arrow.png') no-repeat;
+  background-size: cover; 
+}
+
+.tutorial-arrow.tutorial-up-arrow-purple{
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+  background: url('../images/down-purple-arrow.png') no-repeat; 
+  background-size: cover;
+}
+
+.tutorial-arrow.tutorial-right-arrow-purple{
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+  background: url('../images/down-purple-arrow.png') no-repeat; 
+  background-size: cover;
+}
+
+.tutorial-arrow.tutorial-down-arrow-blue{
+  background: url('../images/down-blue-arrow.png') no-repeat; 
+  background-size: cover;
+}
+
+.tutorial-arrow.tutorial-left-arrow-blue{
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg); 
+  background: url('../images/down-blue-arrow.png') no-repeat; 
+}
+
+.tutorial-arrow.tutorial-up-arrow-blue{
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+  background: url('../images/down-blue-arrow.png') no-repeat; 
+  background-size: cover;
+}
+
+.tutorial-arrow.tutorial-right-arrow-blue{
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+  background: url('../images/down-blue-arrow.png') no-repeat; 
+  background-size: cover;
 }

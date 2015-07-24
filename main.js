@@ -1465,7 +1465,7 @@ musicBlockPanel = function() {
         }
         // update configMap anytime a value is updated on the music block panel
         configMap[type] = value;
-        console.log(configMap[type] + " is note value");
+        // console.log(configMap[type] + " is note value");
     };
     getPanelValues = function() {
         return {
@@ -1482,7 +1482,7 @@ musicBlockPanel = function() {
 
     // Sync the piano roll to the note knob when it changes (auto run on load)
     updatePianoRoll = (function update() {
-        console.log("updatePianoRoll called");
+        console.log("musicblock updatePianoRoll called");
         var value = null;
         // if (arguments.length >= 1) {
         //     value = arguments[0].value - multiplier;
@@ -1770,6 +1770,7 @@ effectBlockPanel = function() {
         setParams('note', 'scale', scale);
     };
     updatePianoRoll = function() {
+        console.log("effectblock updatePianoRoll called");
         var
             valueMap = {},
             attr = null,
@@ -2616,7 +2617,7 @@ setGridEvents = function() {
 
     //Add mousedown listener, tracks positions and resets selection to 0
     mouseDown = function(e) {
-        console.log(e);
+        // console.log(e);
         if (e.button !== 2) {
             getPos();
 
@@ -2772,16 +2773,19 @@ keyboardEvents = function() {
                     break;
 
                 case 83: // s
-                    musicBlockPanel.sendBlocks('none');
+                    $('.tutorial-overlay').show();
+                    if(tutorial.getTutorialIndex() == -1){
+                        tutorial.setTutorialIndex(0);
+                    }
+                    tutorial.setTutorialIndex(38);
+                    tutorial.advanceTutorial();
                     break;
 
                 case 84: // t
                     $('.tutorial-overlay').show();
-                    console.log(tutorial.getTutorialIndex());
                     if(tutorial.getTutorialIndex() == -1){
                         tutorial.setTutorialIndex(0);
                     }
-                    console.log("ADVANCING TUTOR FOR INDEX: "+ tutorial.getTutorialIndex());
                     tutorial.advanceTutorial();
                     break;
 
