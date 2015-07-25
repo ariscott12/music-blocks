@@ -21,12 +21,11 @@ var
         mode: "create",
         block_count: 0,
         new_block: -1,
-        instrumentsToLoad: 1,
+        instruments_to_load: 1,
         is_blocks_dragged: false,
         scaleNameArray: [],
         scaleArray: [],
         clear_message: "Are you sure you want to clear the board?",
-        loadedInstruments: [],
         block_fx_image: new Image(),
         note_active_image: new Image(),
         volume_active_image: new Image(),
@@ -102,66 +101,98 @@ midiInstruments = {
 };
 
 
-
-// Load MIDI library and set params 
-var loadSountFonts = function() {
-    var
-        setParams,
-        tiggerMidi;
-
-    //LOAD MIDI SOUNDFONTS
-    window.onload = function() {
-        var cnt = 0,
-            str = [];
-        for (var i = 0; i < config.instrumentsToLoad; i++) {
-            str[i] = Object.keys(midiInstruments)[i];
-        }
-      
-        MIDI.loadPlugin({
-            soundfontUrl: "./soundfont/",
-            instruments: str,
-            // onprogress: function(state, progress) {
+// This is called from load sound fonts
+var initializeApp = function() {
+    buildTheGrid.initMod();
 
 
-            // },
-            // load first 4 instruments in array
-            onsuccess: function() {
-                $("#wrapper").fadeIn();
-                $(".spinner-page").fadeOut();
-                //   alert(progress);
-                for (var key in midiInstruments) {
-                    if (cnt < config.instrumentsToLoad) {
-                        MIDI.programChange(cnt, midiInstruments[key]);
-                        config.loadedInstruments[cnt] = true;
-                        cnt++;
-                    }
-                }
-                // Check what browser user is in, if not in chrome display browser prompt
-                if (browser() != "Chrome") {
-                    $('[data-message="browser-prompt"]').show();
-                }
-                console.log("loaded");
-            }
-        });
-    };
-    triggerMidi = function(vol, pro, note, vel, dur) {
-        MIDI.setVolume(0, vol);
-        MIDI.noteOn(pro, note, vel, 0);
-        MIDI.noteOff(pro, note, dur);
-    };
+    // Show the app and hide the page loader
+    $("#wrapper").fadeIn();
+    $(".spinner-page").fadeOut();
+
+    
+    // Check what browser user is in, if user is not in Chrome display browser prompt
+    if (browser() != "Chrome") {
+        $('[data-message="browser-prompt"]').show();
+    }
+    // Click function to hide browser prompt
     $('[data-id="close-message"]').click(function() {
         $('[data-message="browser-prompt"]').hide();
     });
 
+    // Add scales to scale array
+    addScale("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    addScale("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
+    addScale("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
+    addScale("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
+    addScale("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
+    addScale("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
+    addScale("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
+    addScale("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
+    addScale("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
+    addScale("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
+    addScale("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
+    addScale("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
+    addScale("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
+    addScale("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
+    addScale("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
+    addScale("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
 
-    // getNote = function(val) {
-    //     var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    //     return noteArray[val];
-    // };
-    return {
-        // getNote: getNote,
-        setParams: setParams,
-        triggerMidi: triggerMidi
+    //Add images
+    config.note_active_image.src = './images/note-active.png';
+    config.volume_active_image.src = './images/volume-active.png';
+    config.velocity_active_image.src = './images/velocity-active.png';
+    config.duration_active_image.src = './images/duration-active.png';
+    config.black_image.src = './images/black.png';
+    config.mb_up_image.src = './images/mb-up.png';
+    config.mb_down_image.src = './images/mb-down.png';
+    config.mb_right_image.src = './images/mb-right.png';
+    config.mb_left_image.src = './images/mb-left.png';
+    config.mute_overlay_image.src = './images/mute-overlay.png';
+    config.solo_overlay_image.src = './images/solo-overlay.png';
+
+    var sel = document.getElementById('select-note-scale');
+    for (var i = 0; i < config.scaleNameArray.length; i++) {
+        var opt = document.createElement('option');
+        opt.innerHTML = config.scaleNameArray[i];
+        opt.value = config.scaleNameArray[i];
+        sel.appendChild(opt);
+    }
+
+};
+
+
+
+/* Here we load the MIDI sound fonts and populate our MIDI Programs
+ * Once the Sound Fonts have loaded we run the initialize App function
+ */
+var loadSountFonts = function() {
+    // This checks the config object to see how many instruments we want to load on page load
+    var setMidiPrograms = function() {
+        var count = 0;
+        for (var key in midiInstruments) {
+            if (count < config.instruments_to_load) {
+                MIDI.programChange(count, midiInstruments[key]);
+                count++;
+            }
+        }
+    };
+
+    window.onload = function() {
+        var instrumentNames = [];
+
+        for (var i = 0; i < config.instruments_to_load; i++) {
+            instrumentNames[i] = Object.keys(midiInstruments)[i];
+        }
+
+        MIDI.loadPlugin({
+            soundfontUrl: "./soundfont/",
+            instruments: instrumentNames,
+            onsuccess: function() {
+                setMidiPrograms();
+                initializeApp();
+            }
+        });
     };
 }();
 
@@ -193,7 +224,7 @@ var buildTheGrid = (function() {
     };
     createHorizontalGridElements = function() {
         console.log(gridPixelWidth);
-        
+
         for (var q = 0; q < config.grid_height; q++) {
             var node = document.createElement('LI');
             elements.grid_horizontal.appendChild(node);
@@ -203,7 +234,7 @@ var buildTheGrid = (function() {
     };
     createVerticalGridElements = function() {
         for (var i = 0; i < config.grid_width; i++) {
-             var node = document.createElement('LI');
+            var node = document.createElement('LI');
             elements.grid_vertical.appendChild(node);
             node.style.height = (gridPixelHeight) + 'px';
             node.style.marginRight = (config.block_size - 1) + 'px';
@@ -249,114 +280,11 @@ var buildTheGrid = (function() {
     };
 
     return {
-        initMod:initMod
+        initMod: initMod
     };
 })();
 
 
-var initializeApp = (function() {
-    buildTheGrid.initMod();
-})();
-
-// Make the grid on load using block_size, grid_width and grid_height from config object 
-(function makeGrid() {
-    // var
-    //     section,
-    //     section2,
-    //     node,
-    //     gridH,
-    //     gridV,
-    //     width,
-    //     height,
-    //     windowHeight = $(window).height(),
-
-    //     elements = {
-    //         grid: document.getElementById('grid_lines'),
-    //         gridH: document.getElementById('gridHorizontal'),
-    //         gridV: document.getElementById('gridVertical')
-    //     };
-
-
-    // Adjust grid height based on browser window eight
-    // if (windowHeight <= 740 && windowHeight > 700) {
-    //     config.grid_height = 17;
-    // } else if (windowHeight <= 700 && windowHeight > 670) {
-    //     config.grid_height = 16;
-    // } else if (windowHeight <= 670) {
-    //     config.grid_height = 15;
-    // }
-    // width = config.block_size * config.grid_width;
-    // height = config.block_size * config.grid_height;
-    // elements.grid.style.width = width + 'px';
-    // elements.grid.style.height = height + 'px';
-
-    // canvas.width = width;
-    // canvas.height = height;
-
-
-
-    // for (var q = 0; q < config.grid_height; q++) {
-    //     node = document.createElement('LI');
-    //     elements.gridH.appendChild(node);
-    //     node.style.width = (config.block_size * config.grid_width) + 'px';
-    //     node.style.marginTop = (config.block_size - 1) + 'px';
-    // }
-
-    // for (var i = 0; i < config.grid_width; i++) {
-    //     elements.gridV = document.getElementById('gridVertical');
-    //     node = document.createElement('LI');
-    //     elements.gridV.appendChild(node);
-    //     node.style.height = (config.block_size * config.grid_height) + 'px';
-    //     node.style.marginRight = (config.block_size - 1) + 'px';
-
-    //     ////create empty grid array
-    //     gridArray.push([]);
-    //     for (var j = 0; j < config.grid_height; j++) {
-    //         gridArray[i][j] = -1;
-    //     }
-    // }
-    //Add scales to scale arrays
-    addScale("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-    addScale("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
-    addScale("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
-    addScale("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
-    addScale("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
-    addScale("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
-    addScale("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
-    addScale("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
-    addScale("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
-    addScale("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
-    addScale("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
-    addScale("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
-    addScale("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
-    addScale("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
-    addScale("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
-    addScale("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
-
-    //Add images
-    config.note_active_image.src = './images/note-active.png';
-    config.volume_active_image.src = './images/volume-active.png';
-    config.velocity_active_image.src = './images/velocity-active.png';
-    config.duration_active_image.src = './images/duration-active.png';
-    config.black_image.src = './images/black.png';
-    config.mb_up_image.src = './images/mb-up.png';
-    config.mb_down_image.src = './images/mb-down.png';
-    config.mb_right_image.src = './images/mb-right.png';
-    config.mb_left_image.src = './images/mb-left.png';
-    config.mute_overlay_image.src = './images/mute-overlay.png';
-    config.solo_overlay_image.src = './images/solo-overlay.png';
-
-    var sel = document.getElementById('select-note-scale');
-    for (var i = 0; i < config.scaleNameArray.length; i++) {
-        var opt = document.createElement('option');
-        opt.innerHTML = config.scaleNameArray[i];
-        opt.value = config.scaleNameArray[i];
-        sel.appendChild(opt);
-    }
-
-    //Make create icon active at start
-    // $('li.create').addClass('active');    
-})();
 
 // Music block object and methods
 var proto = {
@@ -539,10 +467,10 @@ var proto = {
         if (config.masterMute == -1 && this.mute !== true) {
             if (config.blockSolo === true) {
                 if (this.solo === true) {
-                    setMidiParams.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
+                    utilities.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
                 }
             } else {
-                setMidiParams.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
+                utilities.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
             }
 
         }
@@ -861,6 +789,11 @@ utilities = function() {
                     //blocks[i].block_speed = 0;
                 }
             }
+        },
+        triggerMidi: function(vol, pro, note, vel, dur) {
+            MIDI.setVolume(0, vol);
+            MIDI.noteOn(pro, note, vel, 0);
+            MIDI.noteOff(pro, note, dur);
         }
     };
 }();
@@ -1577,7 +1510,7 @@ musicBlockPanel = function() {
             if (key === 'gunshot') {
                 key = 'drums';
             }
-            if (cnt > config.instrumentsToLoad - 1) {
+            if (cnt > config.instruments_to_load - 1) {
                 key = key + ' (not loaded)';
                 el = 'not-loaded';
             }
@@ -1697,7 +1630,6 @@ musicBlockPanel = function() {
                 onsuccess: function() {
                     loadingInstrument = false;
                     MIDI.programChange(program, midiInstruments[Object.keys(midiInstruments)[program]]);
-                    //  config.loadedInstruments[program] = true;
                     console.log("loaded");
                     option.attr('class', 'loaded');
                     str = option.text().replace(/\(|\)/g, '').replace(/\.\.\./g, '');
@@ -1779,7 +1711,7 @@ musicBlockPanel = function() {
 
         // Play MIDI note when piano roll is clicked
         if (mutePiano !== true && loadingInstrument === false) {
-            setMidiParams.triggerMidi(70, configMap.instrument, value, 70, 0.3);
+            utilities.triggerMidi(70, configMap.instrument, value, 70, 0.3);
         }
 
         // If music block panel is not selected don't run this functionality
