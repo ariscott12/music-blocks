@@ -1,4 +1,10 @@
 // "use strict";
+
+$('#grid').on('mousedown', function(event){
+   
+  event.preventDefault();
+  // your code to handle the clicks
+});
 var
     config = {
         speed: 4,
@@ -94,8 +100,9 @@ midiInstruments = {
         node,
         gridH,
         gridV,
-        width = config.blockSize * config.gridWidth,
-        height = config.blockSize * config.gridHeight,
+        width,
+        height,
+        windowHeight = $(window).height(),
 
         elements = {
             grid: document.getElementById('grid_lines'),
@@ -103,11 +110,24 @@ midiInstruments = {
             gridV: document.getElementById('gridVertical')
         };
 
+    
+    // Adjust grid height based on browser window eight
+    if (windowHeight <= 740 && windowHeight > 700) {
+        config.gridHeight = 17;
+    } else if (windowHeight <= 700 &&  windowHeight > 670) {
+        config.gridHeight = 16;
+    } else if (windowHeight <= 670) {
+        config.gridHeight = 15;
+    }
+    width = config.blockSize * config.gridWidth;
+    height = config.blockSize * config.gridHeight;
     elements.grid.style.width = width + 'px';
     elements.grid.style.height = height + 'px';
 
     canvas.width = width;
     canvas.height = height;
+
+
 
     for (var q = 0; q < config.gridHeight; q++) {
         node = document.createElement('LI');
@@ -2811,5 +2831,7 @@ keyboardEvents = function() {
     // });
 
 }();
+
+
 
 startSyncCounter();
