@@ -24,21 +24,8 @@ var
         instruments_to_load: 1,
         is_blocks_dragged: false,
         clear_message: 'Are you sure you want to clear the board?',
-        block_fx_image: new Image(),
-        note_active_image: new Image(),
-        volume_active_image: new Image(),
-        velocity_active_image: new Image(),
-        duration_active_image: new Image(),
-        mb_up_image: new Image(),
-        mb_down_image: new Image(),
-        mb_left_image: new Image(),
-        mb_right_image: new Image(),
-        mute_overlay_image: new Image(),
-        solo_overlay_image: new Image(),
-        black_image: new Image(),
-        spriteOverlayTransparency: 1,
-        masterVolume: 100,
-        masterMute: -1,
+        master_volume: 100,
+        is_app_muted: -1,
     },
 
     valid_input = {
@@ -101,7 +88,7 @@ midiInstruments = {
 
 // This is called from loadSoundFonts Module
 var initializeApp = function() {
-    buildTheGrid.initMod();
+  
 
     // Show the app and hide the page loader
     $('#wrapper').fadeIn();
@@ -116,39 +103,11 @@ var initializeApp = function() {
         $('[data-message="browser-prompt"]').hide();
     });
 
-    // Populate scale array
-    musicScales.populateScaleArray("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-    musicScales.populateScaleArray("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
-    musicScales.populateScaleArray("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
-    musicScales.populateScaleArray("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
-    musicScales.populateScaleArray("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
-    musicScales.populateScaleArray("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
-    musicScales.populateScaleArray("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
-    musicScales.populateScaleArray("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
-    musicScales.populateScaleArray("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
-    musicScales.populateScaleArray("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
-    musicScales.populateScaleArray("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
-    musicScales.populateScaleArray("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
-    musicScales.populateScaleArray("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
-    musicScales.populateScaleArray("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
-    musicScales.populateScaleArray("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
-    musicScales.populateScaleArray("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
-
-    // Populate the scale select dropdown in the effect panel
-    musicScales.populateScaleSelect();
-
-    //Add images
-    config.note_active_image.src = './images/note-active.png';
-    config.volume_active_image.src = './images/volume-active.png';
-    config.velocity_active_image.src = './images/velocity-active.png';
-    config.duration_active_image.src = './images/duration-active.png';
-    config.black_image.src = './images/black.png';
-    config.mb_up_image.src = './images/mb-up.png';
-    config.mb_down_image.src = './images/mb-down.png';
-    config.mb_right_image.src = './images/mb-right.png';
-    config.mb_left_image.src = './images/mb-left.png';
-    config.mute_overlay_image.src = './images/mute-overlay.png';
-    config.solo_overlay_image.src = './images/solo-overlay.png';
+  
+    // Initialize the Modules
+    buildTheGrid.initMod();
+    musicScales.initMod();
+    spriteImages.initMod();
 
 };
 
@@ -196,7 +155,7 @@ var buildTheGrid = (function() {
         gridPixelWidth,
         elements = {},
 
-        //Private methods
+        //Private Methods
         resizeGridConfigHeight, createHorizontalGridElements, createVerticalGridElements,
         setGridDimensions, getDOMELements,
 
@@ -280,9 +239,15 @@ var buildTheGrid = (function() {
 var musicScales = function() {
     var
         scaleNames = [],
-        scaleNumbers = [];
+        scaleNumbers = [],
 
-    var populateScaleSelect = function() {
+        // Private Methods
+        populateScaleArray,
+        
+        // Public Methods
+        populateScaleSelect, getScaleNumbers, getScaleName;
+
+    populateScaleSelect = function() {
         var select = document.getElementById('select-note-scale');
         for (var i = 0; i < scaleNames.length; i++) {
             var opt = document.createElement('option');
@@ -291,74 +256,162 @@ var musicScales = function() {
             select.appendChild(opt);
         }
     };
-    var populateScaleArray = function(scale_name, scale_numbers) {
+    populateScaleArray = function(scale_name, scale_numbers) {
         scaleNames.push(scale_name);
         scaleNumbers.push(scale_numbers);
     };
 
-    var getScaleNumbers = function(scale_name) {
+    getScaleNumbers = function(scale_name) {
         if (scaleNames.indexOf(scale_name) in scaleNumbers) {
             return scaleNumbers[scaleNames.indexOf(scale_name)];
         } else {
-            throw new Error("getScaleNumbers(): Array key does not exist, array may need to be populated");
+            throw new Error('getScaleNumbers(): Array key does not exist, array may need to be populated');
         }
     };
 
-    var getScaleName = function(array_key) {
+    getScaleName = function(array_key) {
         if (array_key in scaleNames) {
             return scaleNames[array_key];
         } else {
-            throw new Error("getScaleName(): Array key does not exist, array may need to be populated");
+            throw new Error('getScaleName(): Array key does not exist, array may need to be populated');
         }
 
+    };
+
+    initMod = function() {
+
+        // Populate the scale Arrays
+        populateScaleArray("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+        populateScaleArray("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
+        populateScaleArray("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
+        populateScaleArray("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
+        populateScaleArray("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
+        populateScaleArray("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
+        populateScaleArray("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
+        populateScaleArray("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
+        populateScaleArray("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
+        populateScaleArray("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
+        populateScaleArray("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
+        populateScaleArray("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
+        populateScaleArray("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
+        populateScaleArray("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
+        populateScaleArray("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
+        populateScaleArray("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
+
+        // Populate the scale select dropdown in the effects panel
+        populateScaleSelect();
     };
     return {
         getScaleName: getScaleName,
         getScaleNumbers: getScaleNumbers,
-        populateScaleArray: populateScaleArray,
-        populateScaleSelect: populateScaleSelect
+        populateScaleSelect: populateScaleSelect,
+        initMod:initMod
+    };
+}();
+
+var spriteImages = function() {
+    var spriteMap = {},
+
+        // Public Methods
+        getSpriteMap,
+        makeSprite;
+
+    getSpriteMap = function() {
+        return spriteMap;
+    };
+    makeSprite = function() {
+        var
+            arg = arguments[0],
+            image = arg.image || 'note-active.png',
+            key = arg.key || 'note_active_image';
+
+        spriteMap[key] = new Image();
+        spriteMap[key].src = './images/' + image;
+    };
+
+    initMod = function() {
+        makeSprite({
+            key: 'note_active',
+            image: 'note-active.png'
+        });
+        makeSprite({
+            key: 'volume_active',
+            image: 'volume-active.png'
+        });
+        makeSprite({
+            key: 'velocity_active',
+            image: 'velocity-active.png'
+        });
+        makeSprite({
+            key: 'duration_active',
+            image: 'duration-active.png'
+        });
+        makeSprite({
+            key: 'mb_arrow_up',
+            image: 'mb-up.png'
+        });
+        makeSprite({
+            key: 'mb_arrow_down',
+            image: 'mb-down.png'
+        });
+        makeSprite({
+            key: 'mb_arrow_right',
+            image: 'mb-right.png'
+        });
+        makeSprite({
+            key: 'mb_arrow_left',
+            image: 'mb-left.png'
+        });
+        makeSprite({
+            key: 'mute_overlay',
+            image: 'mute-overlay.png'
+        });
+        makeSprite({
+            key: 'solo_overlay',
+            image: 'solo-overlay.png'
+        });
+    };
+
+    return {
+        initMod: initMod,
+        makeSprite: makeSprite,
+        getSpriteMap: getSpriteMap
     };
 }();
 
 
 
-// Temporary initalize app here
+//// Temporary initalize app here ////
 initializeApp();
 
 
-// Music block object and methods
-var proto = {
-    // id: '',
+/* 
+ * Music block object and Methods
+ * Serves as parent object for Effect Blocks and Music Blocks
+*/
+var blockProto = {
     block_num: 0,
     old_direction: 'none',
     new_direction: 'none',
     direction: 'none',
-   // isMoving: 'false',
     queued: 1,
     selected: false,
-    active: '#ccc',
-    notActive: '#ccc',
+    selected_color: null,
+    not_selected_color: null,
     halfpoint: -1,
-    snd: null,
-    waiting: 'false',
-    numCollisions: 0,
+    is_waiting: false,
+    num_collisions: 0,
     dragOffsetX: 0,
     dragOffsetY: 0,
-    rngMin: 0,
-    rngMax: 0,
     gridX: 0,
     gridY: 0,
     size: 8,
-    activeCount: 0,
-    notActiveCount: 0,
+    highligh_counter: 0,
     prevgridX: 0,
     prevgridy: 0,
-    colorArray: ['#d27743', '#debe4e', '#cf5a4c', '#9473f3', '#4077d5', '#37a354', '#3fc3d8'],
-    section: document.getElementById('grid'),
-    $send_blocks: $('.send-blocks'),
-    //  timer: null,
-    //activeStore: null,
-    sprite: new Image(),
+    block_hex_colors: ['#d27743', '#debe4e', '#cf5a4c', '#9473f3', '#4077d5', '#37a354', '#3fc3d8'],
+    // section: document.getElementById('grid'),
+    sprite_map: spriteImages.getSpriteMap(),
 
     setGrid: function() {
         this.gridX = utilities.gridify(this.posX);
@@ -366,37 +419,10 @@ var proto = {
         this.prevgridX = this.gridX;
         this.prevgridY = this.gridY;
     },
-
-    // setStyle: function(propertyObject) {
-    //     var elem = document.getElementById(this.id);
-    //     for (var property in propertyObject)
-    //         elem.style[property] = propertyObject[property];
-    // },
-    // Set the block active and not active colors, music block type selected from static colorArray
-    setColor: function() {
-        var color = '#000';
-        if (this.type === 'block-music') {
-            if (this.colorArray[this.instrument] === undefined) {
-                console.log((this.instrument % 7));
-                color = this.colorArray[(this.instrument % 7)];
-            } else {
-                color = this.colorArray[this.instrument];
-            }
-            this.notActive = this.shadeColor(color, 0);
-            this.active = this.shadeColor(color, -35);
-        } else {
-            color = '#2B2B2B';
-            this.notActive = this.shadeColor(color, 0);
-            this.active = this.shadeColor(color, 65);
-        }
-    },
-    addBlock: function(el) {
-        this.block_num = el;
-        this.setColor();
-    },
     shadeColor: function(color, percent) {
         var
             val = {},
+            RR, GG, BB,
             R = parseInt(color.substring(1, 3), 16),
             G = parseInt(color.substring(3, 5), 16),
             B = parseInt(color.substring(5, 7), 16);
@@ -414,38 +440,62 @@ var proto = {
             green: G,
             blue: B
         };
-        var
-            RR = ((R.toString(16).length == 1) ? '0' + R.toString(16) : R.toString(16)),
-            GG = ((G.toString(16).length == 1) ? '0' + G.toString(16) : G.toString(16)),
-            BB = ((B.toString(16).length == 1) ? '0' + B.toString(16) : B.toString(16));
 
-        //  return "#" + RR + GG + BB;
+        RR = ((R.toString(16).length == 1) ? '0' + R.toString(16) : R.toString(16));
+        GG = ((G.toString(16).length == 1) ? '0' + G.toString(16) : G.toString(16));
+        BB = ((B.toString(16).length == 1) ? '0' + B.toString(16) : B.toString(16));
+
+        //  Returns "#" + RR + GG + BB;
         return val;
+    },
 
+    /*
+     * Set hex color of the block using the block_hex_color array
+     * Set the active and not active shade colors 
+     */
+    setBlockColors: function() {
+        var
+            musicBlockShade = -35,
+            effectBlockShade = 65,
+            baseColor = '#2B2B2B';
+
+        if (this.type === 'block-music') {
+            // Check if the instrument number is in the hex array
+            if (this.block_hex_colors[this.instrument] === undefined) {
+                baseColor = this.block_hex_colors[(this.instrument % this.block_hex_colors.length)];
+            } else {
+                baseColor = this.block_hex_colors[this.instrument];
+            }
+            this.not_selected_color = this.shadeColor(baseColor, 0);
+            this.selected_color = this.shadeColor(baseColor, musicBlockShade);
+        } else {
+            this.not_selected_color = this.shadeColor(baseColor, 0);
+            this.selected_color = this.shadeColor(baseColor, effectBlockShade);
+        }
+    },
+    addBlock: function(count) {
+        this.block_num = count;
+        this.setBlockColors();
     },
     selectBlock: function() {
         // Only select a block if it's not selected
-        if (this.selected !== true) { //&& config.new_block !== this.block_num) {
+        if (this.selected !== true) {
             this.selected = true;
             config.selected_block_count++;
-
-            if (this.type == 'block-music') {
-                this.$send_blocks.addClass('animate');
-            }
         }
     },
-
     deselectBlock: function() {
-        //Only deselect block if it is already selected
+        // Only deselect block if it is already selected
         if (this.selected) {
             this.selected = false;
             config.selected_block_count--;
         }
-        this.$send_blocks.removeClass('animate');
     },
     removeBlock: function() {
         blocks.splice(this.block_num, 1);
-        for (var v = this.block_num; v < blocks.length; v++) {
+        var length = blocks.length;
+
+        for (var v = this.block_num; v < length; v++) {
             blocks[v].block_num = v;
         }
         for (var t = 0; t < config.grid_width; t++) {
@@ -468,7 +518,7 @@ var proto = {
         } else {
             this.selectBlock();
             if (this.selected) {
-                if (this.type == 'block-music') {
+                if (this.type === 'block-music') {
                     musicBlockPanel.setToBlock(this.block_num);
                 }
                 if (this.type == 'block-effect') {
@@ -478,134 +528,99 @@ var proto = {
             }
         }
     },
-    activate: function() {
-        //this.notActiveCount = 35;
-        if (this.selected) {
-            this.activeCount = 60;
-        } else {
-            this.notActiveCount = 100;
-        }
-
-    },
-    resetColor: function(selected) {
-        this.notActive = this.colorArray[this.instrument];
+    highlightBlock: function() {
+        this.highligh_counter = 70;
     },
     playmidi: function() {
         var
-            duration = this.duration / 120,
-            $selected_instrument = $("#set-instrument option:selected");
+            duration = this.duration / 120;
 
         // If music block is note selected create 'light effect' on collision
         if (this.selected === false) {
-            this.activate();
+            this.highlightBlock();
         }
-        //if ($('#set-instrument option:selected').attr('class') === 'loaded') {
         // check if block is muted or master is muted
-        if (config.masterMute == -1 && this.mute !== true) {
+        if (config.is_app_muted === -1 && this.mute !== true) {
             if (config.blockSolo === true) {
                 if (this.solo === true) {
-                    utilities.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
+                    utilities.triggerMidi(Math.floor(this.volume * config.master_volume / 100), this.instrument, this.note, this.velocity, (this.duration / 120));
                 }
             } else {
-                utilities.triggerMidi(Math.floor(this.volume * config.masterVolume / 100), this.instrument, this.note, this.velocity, duration);
+                utilities.triggerMidi(Math.floor(this.volume * config.master_volume / 100), this.instrument, this.note, this.velocity, (this.duration / 120));
             }
-
         }
     },
     drawSpriteOnBlock: function(image) {
-        context.globalAlpha = config.spriteOverlayTransparency;
+        context.globalAlpha = 1;
         context.drawImage(image,
             this.posX + 1 + this.size,
             this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
         context.globalAlpha = 1.0;
     },
+    selectDirectionSprite: function() {
+        if (this.new_direction !== 'none') {
+            this.drawSpriteOnBlock(this.sprite_map['mb_arrow_' + this.new_direction]);
+        }
+    },
+    selectBlockMuteSprite: function() {
+        if (this.mute) {
+            this.drawSpriteOnBlock(this.sprite_map.mute_overlay);
+        }
+        if (this.solo) {
+            this.drawSpriteOnBlock(this.sprite_map.solo_overlay);
+        }
+    },
+    selectEffectSprite: function() {
+        if (this.configMap.note.active) {
+            this.drawSpriteOnBlock(this.sprite_map.note_active);
+        }
+        if (this.configMap.volume.active) {
+            this.drawSpriteOnBlock(this.sprite_map.volume_active);
+        }
+        if (this.configMap.velocity.active) {
+            this.drawSpriteOnBlock(this.sprite_map.velocity_active);
+        }
+        if (this.configMap.duration.active) {
+            this.drawSpriteOnBlock(this.sprite_map.duration_active);
+        }
+    },
+    // Draws the block on the canvas
     render: function() {
-
         if (this.size > 0) {
             this.size--;
         }
-        if (this.selected === false) {
-            if (this.notActiveCount > 0) {
-                this.notActiveCount -= 6;
-            }
-            context.fillStyle = "rgb(" + (this.notActive.red + (this.notActiveCount * 2)) + ", " + (this.notActive.green + this.notActiveCount) + ", " + (this.notActive.blue + (this.notActiveCount * 3)) + ")";
+        if (this.highligh_counter > 0) {
+            this.highligh_counter -= 4;
+        }
+        if (!this.selected) {
+            context.fillStyle = "rgb(" + (this.not_selected_color.red + (this.highligh_counter * 2)) + ", " + (this.not_selected_color.green + this.highligh_counter) + ", " + (this.not_selected_color.blue + (this.highligh_counter * 3)) + ")";
             context.fill();
         } else {
-            if (this.activeCount > 0) {
-                this.activeCount -= 5;
-            }
-            context.fillStyle = "rgb(" + (this.active.red + this.activeCount) + ", " + (this.active.green + this.activeCount) + ", " + (this.active.blue + this.activeCount) + ")";
+            context.fillStyle = "rgb(" + (this.selected_color.red + this.highligh_counter) + ", " + (this.selected_color.green + this.highligh_counter) + ", " + (this.selected_color.blue + this.highligh_counter) + ")";
             context.fill();
         }
 
         context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-        if (this.type === "block-music") {
-            if (this.mute) {
-                this.drawSpriteOnBlock(config.mute_overlay_image);
-            }
-            if (this.solo) {
-                this.drawSpriteOnBlock(config.solo_overlay_image);
-            }
+        if (this.type === 'block-music') {
+            this.selectBlockMuteSprite();
         }
-
-
-        if ((this.type === "block-music" && this.selected && !this.waiting) || config.is_paused == 1 || config.is_system_paused) {
-
-
-            switch (this.new_direction) {
-                case "up":
-                    this.drawSpriteOnBlock(config.mb_up_image);
-                    break;
-
-                case "down":
-                    this.drawSpriteOnBlock(config.mb_down_image);
-                    break;
-
-                case "left":
-                    this.drawSpriteOnBlock(config.mb_left_image);
-                    break;
-
-                case "right":
-                    this.drawSpriteOnBlock(config.mb_right_image);
-                    break;
-            }
+        if ((this.type === 'block-music' && this.selected && !this.is_waiting) || config.is_paused === 1 || config.is_system_paused) {
+            this.selectDirectionSprite();
         }
-
-
-
-        if (this.type === "block-effect") {
-            if (this.configMap.note.active) {
-                this.drawSpriteOnBlock(config.note_active_image);
-            }
-            if (this.configMap.volume.active) {
-                this.drawSpriteOnBlock(config.volume_active_image);
-            }
-            if (this.configMap.velocity.active) {
-                this.drawSpriteOnBlock(config.velocity_active_image);
-            }
-            if (this.configMap.duration.active) {
-                this.drawSpriteOnBlock(config.duration_active_image);
-            }
-
-            //shade the block if selected
-            // if (this.selected) {
-            //     context.globalAlpha = 0.3;
-            //     context.drawImage(config.black_image, this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
-            //     context.globalAlpha = 1.0;
-            // }
+        if (this.type === 'block-effect') {
+            this.selectEffectSprite();
         }
     }
 };
 
 var makeMusicBlock = function(w, h, x, y, s, t) {
-    var block = Object.create(proto);
+    var block = Object.create(blockProto);
     block.width = w;
     block.height = h;
     block.posX = x;
     block.posY = y;
     block.block_speed = s;
     block.type = t;
-    // block.static_direction = 'none';
     block.note = null;
     block.octave = null;
     block.volume = null;
@@ -624,12 +639,8 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
         this.velocity = map.velocity;
         this.octave = map.octave;
         this.instrument = map.instrument;
-        // this.static_direction = map.static_direction;
         this.mute = map.mute;
         this.solo = map.solo;
-
-        // console.log(map.solo);
-
     };
     block.setMidiValues = function(type, value) {
         this[type] = value;
@@ -640,7 +651,7 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
 
 
 var makeEffectBlock = function(w, h, x, y, s, t) {
-    var block = Object.create(proto);
+    var block = Object.create(blockProto);
 
     block.width = w;
     block.height = h;
@@ -648,8 +659,6 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     block.posY = y;
     block.block_speed = s;
     block.type = t;
-    block.sprite.src = './images/block-fx3.png';
-
     block.configMap = {
         note: null,
         velocity: null,
@@ -667,11 +676,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 active: map[key].active,
                 method: map[key].method,
                 specific: map[key].specific,
-                // range_low: map[key].range_low,
-                // range_high: map[key].range_high,
                 limit_range: map[key].limit_range,
-                // range_high: map[key].range_high,
-                // range_low: map[key].range_low,
                 range_low: map[key].range_low,
                 range_high: map[key].range_high,
                 step: map[key].step,
@@ -682,8 +687,6 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 this.configMap.note.range_valid_notes = map[key].range_valid_notes;
             }
         }
-        //  console.log(this.configMap);
-
     };
 
     block.rebuildRangeValidNotes = function() {
@@ -711,7 +714,6 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
                 low_octave++;
             }
         }
-        //console.log("REBUILT " + this.configMap.note.range_valid_notes);
     };
 
     block.setMidiValues = function(type, attr, value) {
@@ -731,7 +733,7 @@ function displayBlockInfo(blockref) {
         ' prevGridX: ' + blocks[blockref].prevgridX +
         ' prevGridY: ' + blocks[blockref].prevgridY +
         ' Direction: ' + blocks[blockref].direction +
-        ' Waiting: ' + blocks[blockref].waiting);
+        ' is_Waiting: ' + blocks[blockref].is_waiting);
 }
 
 
@@ -769,7 +771,7 @@ utilities = function() {
             return noteArray[note % 12] + Math.floor(note / 12);
         },
         stringToNote: function(noteString) {
-            var octave = + noteString.charAt(noteString.length - 1);
+            var octave = +noteString.charAt(noteString.length - 1);
             noteStr = noteString.substring(0, noteString.length - 1);
             note = noteArray.indexOf(noteStr);
             return octave * 12 + note;
@@ -1039,28 +1041,28 @@ collisions = function() {
 
         //Check for boundary collision
         if ((direction === "up" && gridY === minGridY) || (direction === "down" && gridY === maxGridY) || (direction === "left" && gridX === minGridX) || (direction === "right" && gridX === maxGridX)) {
-            blocks[blockref].numCollisions++;
+            blocks[blockref].num_collisions++;
             return oppositeDirection(direction);
         }
 
         //Check for collision with object directly in path
         else if (gridArray[directGridX][directGridY] !== -1) {
             processEffects(blockref, gridArray[directGridX][directGridY]);
-            blocks[blockref].numCollisions++;
+            blocks[blockref].num_collisions++;
             return oppositeDirection(direction);
         }
 
         //Check for diagonal 1 collision
-        else if (diag1GridX >= minGridX && diag1GridY >= minGridY && diag1GridX <= maxGridX && diag1GridY <= maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].old_direction === diag1Direction) {
+        else if (diag1GridX >= minGridX && diag1GridY >= minGridY && diag1GridX <= maxGridX && diag1GridY <= maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].is_waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].num_collisions <= blocks[blockref].num_collisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].old_direction === diag1Direction) {
             processEffects(blockref, gridArray[diag1GridX][diag1GridY]);
-            blocks[blockref].numCollisions++;
+            blocks[blockref].num_collisions++;
             return oppositeDirection(direction);
         }
 
         //Check for diagonal 2 collision
-        else if (diag2GridX >= minGridX && diag2GridY >= minGridY && diag2GridX <= maxGridX && diag2GridY <= maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].old_direction === diag2Direction) {
+        else if (diag2GridX >= minGridX && diag2GridY >= minGridY && diag2GridX <= maxGridX && diag2GridY <= maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].is_waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].num_collisions <= blocks[blockref].num_collisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].old_direction === diag2Direction) {
             processEffects(blockref, gridArray[diag2GridX][diag2GridY]);
-            blocks[blockref].numCollisions++;
+            blocks[blockref].num_collisions++;
             return oppositeDirection(direction);
         } else
             return direction;
@@ -1104,10 +1106,10 @@ startSyncCounter = function() {
                         }
                         blocks[n].prevgridX = blocks[n].gridX;
                         blocks[n].prevgridY = blocks[n].gridY;
-                        blocks[n].waiting = false;
+                        blocks[n].is_waiting = false;
 
-                        //reset numcollisions
-                        blocks[n].numCollisions = 0;
+                        //reset num_collisions
+                        blocks[n].num_collisions = 0;
                     }
 
                     //first collision check
@@ -1127,28 +1129,28 @@ startSyncCounter = function() {
                         blocks[o].direction = dir;
 
                         //If block collided twice, wait
-                        if (blocks[o].numCollisions >= 2) {
-                            blocks[o].waiting = true;
+                        if (blocks[o].num_collisions >= 2) {
+                            blocks[o].is_waiting = true;
                         }
 
                         //Check if block was moving and had a collision
-                        if (blocks[o].numCollisions >= 1 && blocks[o].waiting === false) {
+                        if (blocks[o].num_collisions >= 1 && blocks[o].is_waiting === false) {
                             blocks[o].playmidi();
                         }
                     }
 
                     //mid-square collision detection
                     for (var m = 0; m < config.block_count; m++) {
-                        if (blocks[m].direction == "up" && blocks[m].waiting === false && blocks[m].gridY > 1 && gridArray[blocks[m].gridX][blocks[m].gridY - 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY - 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].direction === "down") {
+                        if (blocks[m].direction == "up" && blocks[m].is_waiting === false && blocks[m].gridY > 1 && gridArray[blocks[m].gridX][blocks[m].gridY - 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY - 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].is_waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY - 2]].direction === "down") {
                             blocks[m].halfpoint = blocks[m].posY - (config.block_size / 2);
                         }
-                        if (blocks[m].direction == "down" && blocks[m].waiting === false && blocks[m].gridY < config.grid_height - 2 && gridArray[blocks[m].gridX][blocks[m].gridY + 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY + 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].direction === "up") {
+                        if (blocks[m].direction == "down" && blocks[m].is_waiting === false && blocks[m].gridY < config.grid_height - 2 && gridArray[blocks[m].gridX][blocks[m].gridY + 1] === -1 && gridArray[blocks[m].gridX][blocks[m].gridY + 2] !== -1 && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].is_waiting === false && blocks[gridArray[blocks[m].gridX][blocks[m].gridY + 2]].direction === "up") {
                             blocks[m].halfpoint = blocks[m].posY + (config.block_size / 2);
                         }
-                        if (blocks[m].direction == "left" && blocks[m].waiting === false && blocks[m].gridX > 1 && gridArray[blocks[m].gridX - 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX - 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX - 2][blocks[m].gridY]].waiting === false && blocks[gridArray[blocks[m].gridX - 2][blocks[m].gridY]].direction === "right") {
+                        if (blocks[m].direction == "left" && blocks[m].is_waiting === false && blocks[m].gridX > 1 && gridArray[blocks[m].gridX - 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX - 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX - 2][blocks[m].gridY]].is_waiting === false && blocks[gridArray[blocks[m].gridX - 2][blocks[m].gridY]].direction === "right") {
                             blocks[m].halfpoint = blocks[m].posX - (config.block_size / 2);
                         }
-                        if (blocks[m].direction == "right" && blocks[m].waiting === false && blocks[m].gridX < config.grid_width - 2 && gridArray[blocks[m].gridX + 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX + 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].waiting === false && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].direction === "left") {
+                        if (blocks[m].direction == "right" && blocks[m].is_waiting === false && blocks[m].gridX < config.grid_width - 2 && gridArray[blocks[m].gridX + 1][blocks[m].gridY] === -1 && gridArray[blocks[m].gridX + 2][blocks[m].gridY] !== -1 && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].is_waiting === false && blocks[gridArray[blocks[m].gridX + 2][blocks[m].gridY]].direction === "left") {
                             blocks[m].halfpoint = blocks[m].posX + (config.block_size / 2);
                         }
                     }
@@ -1158,7 +1160,7 @@ startSyncCounter = function() {
 
             /////set block direction play note on collision
             for (var i = 0; i < config.block_count; i++) {
-                if (blocks[i].waiting === false) {
+                if (blocks[i].is_waiting === false) {
                     if (blocks[i].direction == "up") {
                         if (blocks[i].queued === 0) {
                             if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posY - blocks[i].block_speed) {
@@ -1253,19 +1255,19 @@ topPanel = function() {
 
     jqueryMap.$master_volume.slider({
         orientation: "horizontal",
-        value: config.masterVolume,
+        value: config.master_volume,
         min: 0,
         max: 100,
         step: 1,
         slide: function(event, ui) {
-            config.masterVolume = ui.value;
+            config.master_volume = ui.value;
         }
     });
 
     //  Toggle master mute on and off
     jqueryMap.$master_mute.click(function() {
         $(this).attr('data-mute', $(this).attr('data-mute') === 'true' ? 'false' : 'true');
-        config.masterMute = config.masterMute * -1;
+        config.is_app_muted = config.is_app_muted * -1;
         if ($(this).attr('data-mute') === 'false') {
             $(this).attr('src', 'images/icon-volume.png');
         } else {
@@ -1549,7 +1551,7 @@ musicBlockPanel = function() {
         for (var i = 0; i < config.block_count; i++) {
             if (blocks[i].selected === true && blocks[i].type == 'block-music') {
                 blocks[i].setMidiValues(type, value);
-                blocks[i].activate();
+                blocks[i].highlightBlock();
             }
         }
         // update configMap anytime a value is updated on the music block panel
@@ -1563,7 +1565,7 @@ musicBlockPanel = function() {
     updateBlockColors = function() {
         for (var l = 0; l < config.block_count; l++) {
             if (blocks[l].selected === true) {
-                blocks[l].setColor();
+                blocks[l].setBlockColors();
             }
         }
     };
@@ -1802,7 +1804,7 @@ effectBlockPanel = function() {
         for (var i = 0; i < config.block_count; i++) {
             if (blocks[i].selected === true && blocks[i].type == 'block-effect') {
                 blocks[i].setMidiValues(type, attr, value);
-                blocks[i].activate();
+                blocks[i].highlightBlock();
                 if (attr == "scale" || attr == "range_high" || attr == "range_low") {
                     blocks[i].rebuildRangeValidNotes();
                 }
@@ -2903,14 +2905,14 @@ keyboardEvents = function() {
                     break;
 
                 case 107: // Numpad +
-                    if (config.masterVolume < 100) {
-                        config.masterVolume += 5;
+                    if (config.master_volume < 100) {
+                        config.master_volume += 5;
                     }
                     break;
 
                 case 109: // Numpad -
-                    if (config.masterVolume > 0) {
-                        config.masterVolume -= 5;
+                    if (config.master_volume > 0) {
+                        config.master_volume -= 5;
                     }
                     break;
             }
