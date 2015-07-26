@@ -88,7 +88,7 @@ midiInstruments = {
 
 // This is called from loadSoundFonts Module
 var initializeApp = function() {
-  
+
 
     // Show the app and hide the page loader
     $('#wrapper').fadeIn();
@@ -103,7 +103,7 @@ var initializeApp = function() {
         $('[data-message="browser-prompt"]').hide();
     });
 
-  
+
     // Initialize the Modules
     buildTheGrid.initMod();
     musicScales.initMod();
@@ -243,7 +243,7 @@ var musicScales = function() {
 
         // Private Methods
         populateScaleArray,
-        
+
         // Public Methods
         populateScaleSelect, getScaleNumbers, getScaleName;
 
@@ -305,7 +305,7 @@ var musicScales = function() {
         getScaleName: getScaleName,
         getScaleNumbers: getScaleNumbers,
         populateScaleSelect: populateScaleSelect,
-        initMod:initMod
+        initMod: initMod
     };
 }();
 
@@ -388,7 +388,7 @@ initializeApp();
 /* 
  * Music block object and Methods
  * Serves as parent object for Effect Blocks and Music Blocks
-*/
+ */
 var blockProto = {
     block_num: 0,
     old_direction: 'none',
@@ -619,7 +619,7 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
     block.height = h;
     block.posX = x;
     block.posY = y;
-    block.block_speed = s;
+    block.blockSpeed = s;
     block.type = t;
     block.note = null;
     block.octave = null;
@@ -645,7 +645,6 @@ var makeMusicBlock = function(w, h, x, y, s, t) {
     block.setMidiValues = function(type, value) {
         this[type] = value;
     };
-
     return block;
 };
 
@@ -668,8 +667,8 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
 
     // Effect Block Specfic Methods
     block.setInitValues = function(el) {
-        var effectArray = ['note', 'volume', 'velocity', 'duration'];
-        var map = el.configMap;
+        var effectArray = ['note', 'volume', 'velocity', 'duration'],
+            map = el.configMap;
 
         for (var key in map) {
             this.configMap[key] = {
@@ -690,12 +689,14 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     };
 
     block.rebuildRangeValidNotes = function() {
-        //Create the random valid notes array based on scale and range_low and range_high
+        var valid_notes = musicScales.getScaleNumbers(this.configMap.note.scale),
+            low_octave = Math.floor(this.configMap.note.range_low / 12),
+            i = 0;
+
+        // Create the random valid notes array based on scale and range_low and range_high
         this.configMap.note.range_valid_notes = [];
-        var valid_notes = musicScales.getScaleNumbers(this.configMap.note.scale);
-        var low_octave = Math.floor(this.configMap.note.range_low / 12);
-        var i = 0;
-        //If range_low is greater than the largest value in valid_notes, then the value we want to start is one octave higher
+
+        // If range_low is greater than the largest value in valid_notes, then the value we want to start is one octave higher
         if (this.configMap.note.range_low > valid_notes[valid_notes.length - 1] + low_octave * 12) {
             low_octave++;
         } else {
@@ -705,7 +706,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
             }
         }
 
-        //Add values to the array until we exceed the range limit
+        // Add values to the array until we exceed the range limit
         while (this.configMap.note.range_high >= valid_notes[i] + low_octave * 12) {
             this.configMap.note.range_valid_notes.push(valid_notes[i] + low_octave * 12);
             i++;
@@ -724,54 +725,35 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
 };
 
 
-
-//Display block info
-function displayBlockInfo(blockref) {
-    console.log('Block ' + blockref +
-        ' GridX: ' + blocks[blockref].gridX +
-        ' GridY: ' + blocks[blockref].gridY +
-        ' prevGridX: ' + blocks[blockref].prevgridX +
-        ' prevGridY: ' + blocks[blockref].prevgridY +
-        ' Direction: ' + blocks[blockref].direction +
-        ' is_Waiting: ' + blocks[blockref].is_waiting);
-}
-
-
-
-
-// function rangedRandom(min, max) {
-//     return Math.floor(Math.random() * (max - min + 1)) + min;
-// }
-
-utilities = function() {
+// Helper functions that are used throughout the App
+var utilities = function() {
     var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
     return {
-        //Gridify translates an amount of pixels to an amount of blocks
+
+        // Gridify translates an amount of pixels to an amount of blocks
         gridify: function(pixels) {
             var minX = 0;
             return Math.floor((pixels - minX) / config.block_size);
         },
 
-        rangedRandom: function(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+        // Gives a random value between a min and max number
+        getRandomNumber: function(min, max) {
+            if(typeof min === 'number' && typeof max === 'number') {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            } else {
+                throw new Error("getRandomNumber() min and max must be numbers");
+            }
         },
 
-        //Sets the block's note and octave based on octaveNote value
-        setBlockToOctaveNote: function(block, octaveNote) {
-            block.note = octaveNote % 12;
-            block.octave = Math.floor(octaveNote / 12);
-        },
-
-        //Retrieve octaveNote value from the block
-        convertBlockToOctaveNote: function(block) {
-            return block.note + block.octave * 12;
-        },
+        // Converts a note number to a note string value using noteArray
         noteToString: function(note) {
             return noteArray[note % 12] + Math.floor(note / 12);
         },
+
+        // Converts a note string to a note number
         stringToNote: function(noteString) {
-            var octave = +noteString.charAt(noteString.length - 1);
+            var octave = noteString.charAt(noteString.length - 1);
             noteStr = noteString.substring(0, noteString.length - 1);
             note = noteArray.indexOf(noteStr);
             return octave * 12 + note;
@@ -791,6 +773,7 @@ utilities = function() {
             }
             config.selected_block_count = 0;
         },
+
         selectAllBlocks: function() {
             for (var k = 0; k < config.block_count; k++) {
                 blocks[k].selectBlock();
@@ -803,19 +786,20 @@ utilities = function() {
                 }
             }
         },
+        // Only runs on block music type
         sendBlocks: function(direction) {
             for (var i = 0; i < config.block_count; i++) {
                 if (blocks[i].selected === true && blocks[i].type === 'block-music') {
                     blocks[i].new_direction = direction;
-                    blocks[i].block_speed = config.block_speed;
+                    blocks[i].blockSpeed = config.block_speed;
                 }
             }
         },
+        // Only runs on block music type
         stopBlocks: function() {
             for (var i = 0; i < config.block_count; i++) {
                 if (blocks[i].selected === true && blocks[i].type === 'block-music') {
                     blocks[i].new_direction = 'none';
-                    //blocks[i].block_speed = 0;
                 }
             }
         },
@@ -823,9 +807,19 @@ utilities = function() {
             MIDI.setVolume(0, vol);
             MIDI.noteOn(pro, note, vel, 0);
             MIDI.noteOff(pro, note, dur);
+        },
+        displayBLockInfo: function(blockref) {
+            console.log('Block ' + blockref +
+                ' GridX: ' + blocks[blockref].gridX +
+                ' GridY: ' + blocks[blockref].gridY +
+                ' prevGridX: ' + blocks[blockref].prevgridX +
+                ' prevGridY: ' + blocks[blockref].prevgridY +
+                ' Direction: ' + blocks[blockref].direction +
+                ' is_Waiting: ' + blocks[blockref].is_waiting);
         }
     };
 }();
+
 
 
 collisions = function() {
@@ -836,23 +830,23 @@ collisions = function() {
 
     oppositeDirection = function(direction) {
         switch (direction) {
-            case "up":
-                return "down";
-            case "down":
-                return "up";
-            case "left":
-                return "right";
-            case "right":
-                return "left";
+            case 'up':
+                return 'down';
+            case 'down':
+                return 'up';
+            case 'left':
+                return 'right';
+            case 'right':
+                return 'left';
             default:
-                return "none";
+                return 'none';
         }
     };
 
     processEffects = function(mblockref, eblockref) {
         // Do effect processing here
 
-        if (blocks[eblockref].type == "block-effect") {
+        if (blocks[eblockref].type === "block-effect") {
             //Effects loop
             for (var key in blocks[eblockref].configMap) {
                 if (blocks[eblockref].configMap[key].active) {
@@ -866,16 +860,16 @@ collisions = function() {
                             //If limit range flag, new key is random key inside specified range
                             if (blocks[eblockref].configMap[key].limit_range) {
                                 if (key == "note") {
-                                    var rndIndex = utilities.rangedRandom(0, blocks[eblockref].configMap[key].range_valid_notes.length - 1);
+                                    var rndIndex = utilities.getRandomNumber(0, blocks[eblockref].configMap[key].range_valid_notes.length - 1);
                                     var newValue = blocks[eblockref].configMap[key].range_valid_notes[rndIndex];
                                 } else {
-                                    var newValue = utilities.rangedRandom(blocks[eblockref].configMap[key].range_low, blocks[eblockref].configMap[key].range_high);
+                                    var newValue = utilities.getRandomNumber(blocks[eblockref].configMap[key].range_low, blocks[eblockref].configMap[key].range_high);
                                 }
                             }
 
                             //If not limit range flag, new key is random key in MIDI acceptable range
                             else {
-                                var newValue = utilities.rangedRandom(minMaxArray[key].min, minMaxArray[key].max);
+                                var newValue = utilities.getRandomNumber(minMaxArray[key].min, minMaxArray[key].max);
                             }
 
                             //Set blocks key to new key
@@ -946,24 +940,8 @@ collisions = function() {
                             //This would be an error
                             break;
                     }
-
-                    // if (blocks[mblockref].selected == true) {
-                    //     musicBlockPanel.updatePianoRoll({
-                    //         value: blocks[mblockref].note
-                    //     });
-                    // }
                 }
             }
-
-
-            // configMap has all attributes for effect blocks use dote notation to access values for example: blocks[eblockref].configMap.note.active
-
-            //prints entire configMap in console.  Click on the object in the console to see all the attributes
-            // console.log(blocks[eblockref].configMap);
-
-            //blocks[mblockref].note = blocks[eblockref].configMap.note.specific;
-
-
         }
 
         if (config.selected_block_count === 1 && blocks[mblockref].selected === true && eblockref.type !== 'block-music') {
@@ -987,10 +965,12 @@ collisions = function() {
 
         maxGridX = config.grid_width - 1;
         maxGridY = config.grid_height - 1;
-        // Based on the direction passed to the function, determine which grid locations to check
-        // 1st check the grid square directly in the path of the block
-        // 2nd check the grid square clockwise to that square
-        // 3rd check the grid square counter-clockwise to that square
+
+        /* Based on the direction passed to the function, determine which grid locations to check
+         * 1st check the grid square directly in the path of the block
+         * 2nd check the grid square clockwise to that square
+         * 3rd check the grid square counter-clockwise to that square
+        */
         switch (direction) {
             case "up":
                 directGridX = gridX;
@@ -1163,48 +1143,48 @@ startSyncCounter = function() {
                 if (blocks[i].is_waiting === false) {
                     if (blocks[i].direction == "up") {
                         if (blocks[i].queued === 0) {
-                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posY - blocks[i].block_speed) {
+                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posY - blocks[i].blockSpeed) {
                                 blocks[i].posY = 2 * blocks[i].halfpoint + config.block_speed - blocks[i].posY;
                                 blocks[i].direction = blocks[i].new_direction = "down";
                                 blocks[i].halfpoint = -1;
                                 blocks[i].prevgridY = blocks[i].gridY;
                                 blocks[i].playmidi();
 
-                            } else blocks[i].posY += -1 * blocks[i].block_speed;
+                            } else blocks[i].posY += -1 * blocks[i].blockSpeed;
                         }
                     } else if (blocks[i].direction == "down") {
                         if (blocks[i].queued === 0) {
-                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint < blocks[i].posY + blocks[i].block_speed) {
+                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint < blocks[i].posY + blocks[i].blockSpeed) {
                                 blocks[i].posY = 2 * blocks[i].halfpoint - config.block_speed - blocks[i].posY;
                                 blocks[i].direction = blocks[i].new_direction = "up";
                                 blocks[i].halfpoint = -1;
                                 blocks[i].prevgridY = blocks[i].gridY;
                                 blocks[i].playmidi();
 
-                            } else blocks[i].posY += 1 * blocks[i].block_speed;
+                            } else blocks[i].posY += 1 * blocks[i].blockSpeed;
                         }
                     }
                     if (blocks[i].direction == "left") {
                         if (blocks[i].queued === 0) {
-                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posX - blocks[i].block_speed) {
+                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posX - blocks[i].blockSpeed) {
                                 blocks[i].posX = 2 * blocks[i].halfpoint + config.block_speed - blocks[i].posX;
                                 blocks[i].direction = blocks[i].new_direction = "right";
                                 blocks[i].halfpoint = -1;
                                 blocks[i].prevgridX = blocks[i].gridX;
                                 blocks[i].playmidi();
 
-                            } else blocks[i].posX += -1 * blocks[i].block_speed;
+                            } else blocks[i].posX += -1 * blocks[i].blockSpeed;
                         }
                     } else if (blocks[i].direction == "right") {
                         if (blocks[i].queued === 0) {
-                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint < blocks[i].posX + blocks[i].block_speed) {
+                            if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint < blocks[i].posX + blocks[i].blockSpeed) {
                                 blocks[i].posX = 2 * blocks[i].halfpoint - config.block_speed - blocks[i].posX;
                                 blocks[i].direction = blocks[i].new_direction = "left";
                                 blocks[i].halfpoint = -1;
                                 blocks[i].prevgridX = blocks[i].gridX;
                                 blocks[i].playmidi();
 
-                            } else blocks[i].posX += 1 * blocks[i].block_speed;
+                            } else blocks[i].posX += 1 * blocks[i].blockSpeed;
                         }
                     }
                     // blocks[i].updatePosition();
@@ -1232,7 +1212,6 @@ startSyncCounter = function() {
 
             syncounter += config.block_speed;
             config.advance = -1;
-
         }
         requestAnimationFrame(syncCounter);
     })();
