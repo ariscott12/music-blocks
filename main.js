@@ -1262,8 +1262,19 @@ var syncCounter = function() {
 }();
 
 
-topPanel = function() {
-    var jqueryMap = {
+var topPanel = function() {
+    var
+        jqueryMap = {},
+
+        // Private Methods
+        changeMode, setJqueryMap, toggleMasterMute,
+        showHotKeys, hideHotKeys, createVolumeSlider,
+
+    // Public Methods
+    initMod;
+
+    setJqueryMap = function() {
+        jqueryMap = {
             $mode_select: $('.mode-select'),
             $play_select: $('.play-select'),
             $batch_edits: $('.batch-edits'),
@@ -1271,34 +1282,14 @@ topPanel = function() {
             $hotkey_menu: $('[data-id = "hotkey-menu"]'),
             $master_volume: $('.master-volume-slider'),
             $master_mute: $('[data-id = "toggle-master-mute"]'),
-        },
-        updateMode;
+            $app_wrapper: $('#wrapper')
+        };
+    };
 
-    jqueryMap.$master_volume.slider({
-        orientation: "horizontal",
-        value: config.master_volume,
-        min: 0,
-        max: 100,
-        step: 1,
-        slide: function(event, ui) {
-            config.master_volume = ui.value;
-        }
-    });
-
-    //  Toggle master mute on and off
-    jqueryMap.$master_mute.click(function() {
-        $(this).attr('data-mute', $(this).attr('data-mute') === 'true' ? 'false' : 'true');
-        config.is_app_muted = config.is_app_muted * -1;
-        if ($(this).attr('data-mute') === 'false') {
-            $(this).attr('src', 'images/icon-volume.png');
-        } else {
-            $(this).attr('src', 'images/icon-volume-mute.png');
-        }
-    });
-
-
-    updateMode = function() {
+    changeMode = function() {
         var mode = $(this).attr('data-mode');
+
+        // Batch edits do not stay active, add active class to all other data modes
         if ($(this).parent().attr('class') !== 'batch-edits') {
             $(this).addClass('active').siblings().removeClass('active');
         }
@@ -1322,36 +1313,81 @@ topPanel = function() {
                 utilities.selectAllBlocks();
                 break;
             case 'clear-all':
-                var x;
                 if (confirm(config.clear_message) === true) {
                     utilities.deleteAllBlocks();
                 }
-
                 break;
             default:
-                config.mode = mode;
-                break;
+                throw new Error('changeMode() this is an unrecognized mode');
         }
     };
-    jqueryMap.$mode_select.find('li').click(updateMode);
-    jqueryMap.$play_select.find('li').click(updateMode);
-    jqueryMap.$batch_edits.find('li').click(updateMode);
-    jqueryMap.$hotkey_btn.click(function() {
+    toggleMasterMute = function() {
+        config.is_app_muted = config.is_app_muted * -1;
+
+        // Switch the volume icon to show if app is muted or not
+        if (config.is_app_muted === -1) {
+            $(this).attr('src', 'images/icon-volume.png');
+        } else {
+            $(this).attr('src', 'images/icon-volume-mute.png');
+        }
+
+        return false;
+    };
+    showHotKeys = function() {
         config.is_system_paused = true;
         jqueryMap.$hotkey_menu.fadeIn(300);
-    });
-    jqueryMap.$hotkey_menu.click(function(event) {
+
+        return false;
+    };
+    hideHotKeys = function(event) {
         var target = $(event.target);
         if (!target.is("td")) {
             $(this).hide();
             $(this).fadeOut(300, function() {
-                $("#wrapper").trigger("click");
+                $jqueryMap.$wrapper.trigger('click');
             });
         }
         config.is_system_paused = false;
-    });
+
+        return false;
+    };
+    createVolumeSlider = function() {
+        jqueryMap.$master_volume.slider({
+            orientation: 'horizontal',
+            value: config.master_volume,
+            min: 0,
+            max: 100,
+            step: 1,
+            slide: function(event, ui) {
+                config.master_volume = ui.value;
+            }
+        });
+    };
+
+    initMod = function() {
+        setJqueryMap();
+
+        // Create click handlers
+        jqueryMap.$mode_select.find('li').click(changeMode);
+        jqueryMap.$play_select.find('li').click(changeMode);
+        jqueryMap.$batch_edits.find('li').click(changeMode);
+        jqueryMap.$master_mute.click(toggleMasterMute);
+        jqueryMap.$hotkey_btn.click(showHotKeys);
+        jqueryMap.$hotkey_menu.click(hideHotKeys);
+
+        // Create master volume slider
+        createVolumeSlider();
+    };
+
+    return {
+        initMod: initMod
+    };
 
 }();
+
+topPanel.initMod();
+
+
 
 controlPanel = function() {
     var
