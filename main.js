@@ -18,14 +18,12 @@ var
         advance: -1,
         is_shiftkey_enabled: 0,
         selected_block_count: 0,
-        mode: "create",
+        mode: 'create',
         block_count: 0,
         new_block: -1,
         instruments_to_load: 1,
         is_blocks_dragged: false,
-        scaleNameArray: [],
-        scaleArray: [],
-        clear_message: "Are you sure you want to clear the board?",
+        clear_message: 'Are you sure you want to clear the board?',
         block_fx_image: new Image(),
         note_active_image: new Image(),
         volume_active_image: new Image(),
@@ -52,8 +50,8 @@ var
         blockref: null,
     },
      
-    canvas = document.getElementById("grid"),
-    context = canvas.getContext("2d"),
+    canvas = document.getElementById('grid'),
+    context = canvas.getContext('2d'),
     gridArray = new Array([]),
     tutorialArray = new Array([]),
     minMaxArray = {
@@ -101,18 +99,16 @@ midiInstruments = {
 };
 
 
-// This is called from load sound fonts
+// This is called from loadSoundFonts Module
 var initializeApp = function() {
     buildTheGrid.initMod();
 
-
     // Show the app and hide the page loader
-    $("#wrapper").fadeIn();
-    $(".spinner-page").fadeOut();
+    $('#wrapper').fadeIn();
+    $('.spinner-page').fadeOut();
 
-    
     // Check what browser user is in, if user is not in Chrome display browser prompt
-    if (browser() != "Chrome") {
+    if (browser() != 'Chrome') {
         $('[data-message="browser-prompt"]').show();
     }
     // Click function to hide browser prompt
@@ -120,23 +116,26 @@ var initializeApp = function() {
         $('[data-message="browser-prompt"]').hide();
     });
 
-    // Add scales to scale array
-    addScale("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-    addScale("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
-    addScale("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
-    addScale("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
-    addScale("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
-    addScale("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
-    addScale("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
-    addScale("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
-    addScale("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
-    addScale("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
-    addScale("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
-    addScale("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
-    addScale("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
-    addScale("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
-    addScale("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
-    addScale("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
+    // Populate scale array
+    musicScales.populateScaleArray("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    musicScales.populateScaleArray("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
+    musicScales.populateScaleArray("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
+    musicScales.populateScaleArray("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
+    musicScales.populateScaleArray("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
+    musicScales.populateScaleArray("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
+    musicScales.populateScaleArray("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
+    musicScales.populateScaleArray("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
+    musicScales.populateScaleArray("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
+    musicScales.populateScaleArray("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
+    musicScales.populateScaleArray("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
+    musicScales.populateScaleArray("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
+    musicScales.populateScaleArray("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
+    musicScales.populateScaleArray("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
+    musicScales.populateScaleArray("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
+    musicScales.populateScaleArray("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
+
+    // Populate the scale select dropdown in the effect panel
+    musicScales.populateScaleSelect();
 
     //Add images
     config.note_active_image.src = './images/note-active.png';
@@ -150,14 +149,6 @@ var initializeApp = function() {
     config.mb_left_image.src = './images/mb-left.png';
     config.mute_overlay_image.src = './images/mute-overlay.png';
     config.solo_overlay_image.src = './images/solo-overlay.png';
-
-    var sel = document.getElementById('select-note-scale');
-    for (var i = 0; i < config.scaleNameArray.length; i++) {
-        var opt = document.createElement('option');
-        opt.innerHTML = config.scaleNameArray[i];
-        opt.value = config.scaleNameArray[i];
-        sel.appendChild(opt);
-    }
 
 };
 
@@ -190,7 +181,6 @@ var loadSountFonts = function() {
             instruments: instrumentNames,
             onsuccess: function() {
                 setMidiPrograms();
-                initializeApp();
             }
         });
     };
@@ -207,24 +197,26 @@ var buildTheGrid = (function() {
         elements = {},
 
         //Private methods
-        _getDOMELements, _resizeGridHeight;
+        resizeGridConfigHeight, createHorizontalGridElements, createVerticalGridElements,
+        setGridDimensions, getDOMELements,
+
+        //Public Methods
+        initMod;
 
 
     resizeGridConfigHeight = function() {
         var
-            windowHeight = $(window).height();
+            window_height = $(window).height();
 
-        if (windowHeight <= 740 && windowHeight > 700) {
+        if (window_height <= 740 && window_height > 700) {
             config.grid_height = 17;
-        } else if (windowHeight <= 700 && windowHeight > 670) {
+        } else if (window_height <= 700 && window_height > 670) {
             config.grid_height = 16;
-        } else if (windowHeight <= 670) {
+        } else if (window_height <= 670) {
             config.grid_height = 15;
         }
     };
     createHorizontalGridElements = function() {
-        console.log(gridPixelWidth);
-
         for (var q = 0; q < config.grid_height; q++) {
             var node = document.createElement('LI');
             elements.grid_horizontal.appendChild(node);
@@ -285,16 +277,63 @@ var buildTheGrid = (function() {
 })();
 
 
+var musicScales = function() {
+    var
+        scaleNames = [],
+        scaleNumbers = [];
+
+    var populateScaleSelect = function() {
+        var select = document.getElementById('select-note-scale');
+        for (var i = 0; i < scaleNames.length; i++) {
+            var opt = document.createElement('option');
+            opt.innerHTML = scaleNames[i];
+            opt.value = scaleNames[i];
+            select.appendChild(opt);
+        }
+    };
+    var populateScaleArray = function(scale_name, scale_numbers) {
+        scaleNames.push(scale_name);
+        scaleNumbers.push(scale_numbers);
+    };
+
+    var getScaleNumbers = function(scale_name) {
+        if (scaleNames.indexOf(scale_name) in scaleNumbers) {
+            return scaleNumbers[scaleNames.indexOf(scale_name)];
+        } else {
+            throw new Error("getScaleNumbers(): Array key does not exist, array may need to be populated");
+        }
+    };
+
+    var getScaleName = function(array_key) {
+        if (array_key in scaleNames) {
+            return scaleNames[array_key];
+        } else {
+            throw new Error("getScaleName(): Array key does not exist, array may need to be populated");
+        }
+
+    };
+    return {
+        getScaleName: getScaleName,
+        getScaleNumbers: getScaleNumbers,
+        populateScaleArray: populateScaleArray,
+        populateScaleSelect: populateScaleSelect
+    };
+}();
+
+
+
+// Temporary initalize app here
+initializeApp();
+
 
 // Music block object and methods
 var proto = {
-    id: '',
-    blocknum: 0,
-    oldDirection: 'none',
-    newDirection: 'none',
+    // id: '',
+    block_num: 0,
+    old_direction: 'none',
+    new_direction: 'none',
     direction: 'none',
-    //staticDirection: 'none',
-    isMoving: 'false',
+   // isMoving: 'false',
     queued: 1,
     selected: false,
     active: '#ccc',
@@ -328,17 +367,15 @@ var proto = {
         this.prevgridY = this.gridY;
     },
 
-    setStyle: function(propertyObject) {
-        var elem = document.getElementById(this.id);
-        for (var property in propertyObject)
-            elem.style[property] = propertyObject[property];
-    },
+    // setStyle: function(propertyObject) {
+    //     var elem = document.getElementById(this.id);
+    //     for (var property in propertyObject)
+    //         elem.style[property] = propertyObject[property];
+    // },
     // Set the block active and not active colors, music block type selected from static colorArray
     setColor: function() {
-
         var color = '#000';
         if (this.type === 'block-music') {
-
             if (this.colorArray[this.instrument] === undefined) {
                 console.log((this.instrument % 7));
                 color = this.colorArray[(this.instrument % 7)];
@@ -354,7 +391,7 @@ var proto = {
         }
     },
     addBlock: function(el) {
-        this.blocknum = el;
+        this.block_num = el;
         this.setColor();
     },
     shadeColor: function(color, percent) {
@@ -388,7 +425,7 @@ var proto = {
     },
     selectBlock: function() {
         // Only select a block if it's not selected
-        if (this.selected !== true) { //&& config.new_block !== this.blocknum) {
+        if (this.selected !== true) { //&& config.new_block !== this.block_num) {
             this.selected = true;
             config.selected_block_count++;
 
@@ -407,15 +444,15 @@ var proto = {
         this.$send_blocks.removeClass('animate');
     },
     removeBlock: function() {
-        blocks.splice(this.blocknum, 1);
-        for (var v = this.blocknum; v < blocks.length; v++) {
-            blocks[v].blocknum = v;
+        blocks.splice(this.block_num, 1);
+        for (var v = this.block_num; v < blocks.length; v++) {
+            blocks[v].block_num = v;
         }
         for (var t = 0; t < config.grid_width; t++) {
             for (var u = 0; u < config.grid_height; u++) {
-                if (gridArray[t][u] == this.blocknum)
+                if (gridArray[t][u] == this.block_num)
                     gridArray[t][u] = -1;
-                if (gridArray[t][u] >= this.blocknum)
+                if (gridArray[t][u] >= this.block_num)
                     gridArray[t][u]--;
             }
         }
@@ -432,10 +469,10 @@ var proto = {
             this.selectBlock();
             if (this.selected) {
                 if (this.type == 'block-music') {
-                    musicBlockPanel.setToBlock(this.blocknum);
+                    musicBlockPanel.setToBlock(this.block_num);
                 }
                 if (this.type == 'block-effect') {
-                    effectBlockPanel.setToBlock(this.blocknum);
+                    effectBlockPanel.setToBlock(this.block_num);
                 }
                 controlPanel.setActivePanel(this.type);
             }
@@ -515,7 +552,7 @@ var proto = {
         if ((this.type === "block-music" && this.selected && !this.waiting) || config.is_paused == 1 || config.is_system_paused) {
 
 
-            switch (this.newDirection) {
+            switch (this.new_direction) {
                 case "up":
                     this.drawSpriteOnBlock(config.mb_up_image);
                     break;
@@ -652,7 +689,7 @@ var makeEffectBlock = function(w, h, x, y, s, t) {
     block.rebuildRangeValidNotes = function() {
         //Create the random valid notes array based on scale and range_low and range_high
         this.configMap.note.range_valid_notes = [];
-        var valid_notes = getScale(this.configMap.note.scale);
+        var valid_notes = musicScales.getScaleNumbers(this.configMap.note.scale);
         var low_octave = Math.floor(this.configMap.note.range_low / 12);
         var i = 0;
         //If range_low is greater than the largest value in valid_notes, then the value we want to start is one octave higher
@@ -698,17 +735,7 @@ function displayBlockInfo(blockref) {
 }
 
 
-function addScale(scaleName, scale) {
-    config.scaleNameArray.push(scaleName);
-    config.scaleArray.push(scale);
-}
 
-function getScale(scaleName) {
-    //console.log(scaleName + "GETTING");
-    //console.log(config.scaleNameArray);
-    //console.log(config.scaleArray);
-    return config.scaleArray[config.scaleNameArray.indexOf(scaleName)];
-}
 
 // function rangedRandom(min, max) {
 //     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -742,7 +769,7 @@ utilities = function() {
             return noteArray[note % 12] + Math.floor(note / 12);
         },
         stringToNote: function(noteString) {
-            var octave = +noteString.charAt(noteString.length - 1);
+            var octave = + noteString.charAt(noteString.length - 1);
             noteStr = noteString.substring(0, noteString.length - 1);
             note = noteArray.indexOf(noteStr);
             return octave * 12 + note;
@@ -777,7 +804,7 @@ utilities = function() {
         sendBlocks: function(direction) {
             for (var i = 0; i < config.block_count; i++) {
                 if (blocks[i].selected === true && blocks[i].type === 'block-music') {
-                    blocks[i].newDirection = direction;
+                    blocks[i].new_direction = direction;
                     blocks[i].block_speed = config.block_speed;
                 }
             }
@@ -785,7 +812,7 @@ utilities = function() {
         stopBlocks: function() {
             for (var i = 0; i < config.block_count; i++) {
                 if (blocks[i].selected === true && blocks[i].type === 'block-music') {
-                    blocks[i].newDirection = 'none';
+                    blocks[i].new_direction = 'none';
                     //blocks[i].block_speed = 0;
                 }
             }
@@ -1024,14 +1051,14 @@ collisions = function() {
         }
 
         //Check for diagonal 1 collision
-        else if (diag1GridX >= minGridX && diag1GridY >= minGridY && diag1GridX <= maxGridX && diag1GridY <= maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].oldDirection === diag1Direction) {
+        else if (diag1GridX >= minGridX && diag1GridY >= minGridY && diag1GridX <= maxGridX && diag1GridY <= maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].old_direction === diag1Direction) {
             processEffects(blockref, gridArray[diag1GridX][diag1GridY]);
             blocks[blockref].numCollisions++;
             return oppositeDirection(direction);
         }
 
         //Check for diagonal 2 collision
-        else if (diag2GridX >= minGridX && diag2GridY >= minGridY && diag2GridX <= maxGridX && diag2GridY <= maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].oldDirection === diag2Direction) {
+        else if (diag2GridX >= minGridX && diag2GridY >= minGridY && diag2GridX <= maxGridX && diag2GridY <= maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].numCollisions <= blocks[blockref].numCollisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].old_direction === diag2Direction) {
             processEffects(blockref, gridArray[diag2GridX][diag2GridY]);
             blocks[blockref].numCollisions++;
             return oppositeDirection(direction);
@@ -1069,9 +1096,9 @@ startSyncCounter = function() {
 
             if (syncounter == config.block_size) {
                 if (config.block_count !== 0) {
-                    //update oldDirection, direction and queue flag
+                    //update old_direction, direction and queue flag
                     for (var n = 0; n < config.block_count; n++) {
-                        blocks[n].oldDirection = blocks[n].direction = blocks[n].newDirection;
+                        blocks[n].old_direction = blocks[n].direction = blocks[n].new_direction;
                         if (blocks[n].queued == 1) {
                             blocks[n].queued = 0;
                         }
@@ -1086,12 +1113,12 @@ startSyncCounter = function() {
                     //first collision check
                     for (var l = 0; l < config.block_count; l++) {
                         dir = collisions.process(blocks[l].direction, blocks[l].gridX, blocks[l].gridY, l, true);
-                        blocks[l].direction = blocks[l].newDirection = dir;
+                        blocks[l].direction = blocks[l].new_direction = dir;
                     }
 
-                    //Update oldDirection for second collision
+                    //Update old_direction for second collision
                     for (var k = 0; k < config.block_count; k++) {
-                        blocks[k].oldDirection = blocks[k].direction;
+                        blocks[k].old_direction = blocks[k].direction;
                     }
 
                     //second collision check
@@ -1136,7 +1163,7 @@ startSyncCounter = function() {
                         if (blocks[i].queued === 0) {
                             if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posY - blocks[i].block_speed) {
                                 blocks[i].posY = 2 * blocks[i].halfpoint + config.block_speed - blocks[i].posY;
-                                blocks[i].direction = blocks[i].newDirection = "down";
+                                blocks[i].direction = blocks[i].new_direction = "down";
                                 blocks[i].halfpoint = -1;
                                 blocks[i].prevgridY = blocks[i].gridY;
                                 blocks[i].playmidi();
@@ -1147,7 +1174,7 @@ startSyncCounter = function() {
                         if (blocks[i].queued === 0) {
                             if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint < blocks[i].posY + blocks[i].block_speed) {
                                 blocks[i].posY = 2 * blocks[i].halfpoint - config.block_speed - blocks[i].posY;
-                                blocks[i].direction = blocks[i].newDirection = "up";
+                                blocks[i].direction = blocks[i].new_direction = "up";
                                 blocks[i].halfpoint = -1;
                                 blocks[i].prevgridY = blocks[i].gridY;
                                 blocks[i].playmidi();
@@ -1159,7 +1186,7 @@ startSyncCounter = function() {
                         if (blocks[i].queued === 0) {
                             if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint > blocks[i].posX - blocks[i].block_speed) {
                                 blocks[i].posX = 2 * blocks[i].halfpoint + config.block_speed - blocks[i].posX;
-                                blocks[i].direction = blocks[i].newDirection = "right";
+                                blocks[i].direction = blocks[i].new_direction = "right";
                                 blocks[i].halfpoint = -1;
                                 blocks[i].prevgridX = blocks[i].gridX;
                                 blocks[i].playmidi();
@@ -1170,7 +1197,7 @@ startSyncCounter = function() {
                         if (blocks[i].queued === 0) {
                             if (blocks[i].halfpoint !== -1 && blocks[i].halfpoint < blocks[i].posX + blocks[i].block_speed) {
                                 blocks[i].posX = 2 * blocks[i].halfpoint - config.block_speed - blocks[i].posX;
-                                blocks[i].direction = blocks[i].newDirection = "left";
+                                blocks[i].direction = blocks[i].new_direction = "left";
                                 blocks[i].halfpoint = -1;
                                 blocks[i].prevgridX = blocks[i].gridX;
                                 blocks[i].playmidi();
@@ -1245,7 +1272,6 @@ topPanel = function() {
             $(this).attr('src', 'images/icon-volume-mute.png');
         }
     });
-
 
 
     updateMode = function() {
@@ -2148,7 +2174,7 @@ effectBlockPanel = function() {
                 limit_range: true,
                 step: 5,
                 direction: 'up',
-                scale: config.scaleNameArray[0],
+                scale: musicScales.getScaleName(0),
                 range_valid_notes: []
             };
 
