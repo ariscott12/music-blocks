@@ -739,7 +739,7 @@ var utilities = function() {
 
         // Gives a random value between a min and max number
         getRandomNumber: function(min, max) {
-            if(typeof min === 'number' && typeof max === 'number') {
+            if (typeof min === 'number' && typeof max === 'number') {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             } else {
                 throw new Error("getRandomNumber() min and max must be numbers");
@@ -821,14 +821,150 @@ var utilities = function() {
 }();
 
 
-
-collisions = function() {
+/*  
+ * This module performance various functions based on the collision type
+ * Effect processing is done here and setting new block directions
+ */
+var processCollisions = function() {
     var
-        processEffects,
-        process,
-        oppositeDirection;
+    // Public Methods
+        processEffectType,
+        processCollisionDirection,
 
-    oppositeDirection = function(direction) {
+
+        // Private Methods
+        processSpecificEffect, processRandomEffect, processProgressionEffect, getOppositeDirection;
+
+
+    processSpecificEffect = function(mblockref, eblockref, key) {
+        // Set the mblock configMap key value to eblock specific
+        blocks[mblockref][key] = blocks[eblockref].configMap[key].specific;
+    };
+
+    processRandomEffect = function(mblockref, eblockref, key) {
+        var
+            random_index,
+            new_random_value;
+
+        // If limit range flag is true, new key is a random key inside specified range
+        if (blocks[eblockref].configMap[key].limit_range) {
+            if (key === 'note') {
+                random_index = utilities.getRandomNumber(0, blocks[eblockref].configMap[key].range_valid_notes.length - 1);
+                new_random_value = blocks[eblockref].configMap[key].range_valid_notes[random_index];
+            } else {
+                new_random_value = utilities.getRandomNumber(blocks[eblockref].configMap[key].range_low, blocks[eblockref].configMap[key].range_high);
+            }
+        }
+
+        // If limit range flag is false, new key is random key in MIDI acceptable range
+        else {
+            new_random_value = utilities.getRandomNumber(minMaxArray[key].min, minMaxArray[key].max);
+        }
+
+        // Set blocks configMap key value to the new random value
+        blocks[mblockref][key] = new_random_value;
+    };
+
+    processProgressionEffect = function(mblockref, eblockref, key) {
+        var
+            step_direction,
+            new_prog_value,
+            prog_index;
+
+        // Step step direction
+        if (blocks[eblockref].configMap[key].direction === 'down') {
+            step_direction = -1;
+        } else {
+            step_direction = 1;
+        }
+
+        // Default new_prog_value to the original value
+        new_prog_value = blocks[mblockref][key];
+
+        if (key === 'note') {
+            if (blocks[eblockref].configMap[key].range_valid_notes.length > 0) {
+
+                //Find the current note in the valid note array
+                prog_index = blocks[eblockref].configMap[key].range_valid_notes.indexOf(blocks[mblockref].note);
+
+                //Advance index. If incoming note not found, prog_index will start at 0
+                if (prog_index === -1) {
+                    prog_index = 0;
+                }
+                //Otherwise, advance by the step amount in the step direction
+                else {
+                    prog_index += step_direction * blocks[eblockref].configMap[key].step;
+                }
+                //If we are out of the range, we add or subtract the length to wrap around the range
+                while (prog_index >= blocks[eblockref].configMap[key].range_valid_notes.length || prog_index < 0) {
+                    prog_index -= step_direction * blocks[eblockref].configMap[key].range_valid_notes.length;
+                }
+
+                //Set new note value to the new indexed value from the range array
+                new_prog_value = blocks[eblockref].configMap[key].range_valid_notes[prog_index];
+            }
+        } else {
+            // Add step value to block key
+            if (step_direction === 1) {
+
+                //If the result key is lower than the low limit, then set to the low limit.
+                if (new_prog_value < blocks[eblockref].configMap[key].range_low) {
+                    new_prog_value = blocks[eblockref].configMap[key].range_low;
+                }
+                //If the result key is higher than the high limit, then set to key - high limit.
+                else if (new_prog_value > blocks[eblockref].configMap[key].range_high) {
+                    new_prog_value = blocks[eblockref].configMap[key].range_high;
+                }
+                //If the result key is inside the range, then advance it.
+                else {
+                    new_prog_value += blocks[eblockref].configMap[key].step * step_direction;
+                }
+                //If we are out of the range, we add or subtract the size of the range to wrap around the range
+                while (new_prog_value > blocks[eblockref].configMap[key].range_high || new_prog_value < blocks[eblockref].configMap[key].range_low) {
+                    new_prog_value -= step_direction * (blocks[eblockref].configMap[key].range_high - blocks[eblockref].configMap[key].range_low + 1);
+                }
+            }
+        }
+
+        //Set the block configMap key value to new prog value
+        if (new_prog_value !== null) {
+            blocks[mblockref][key] = new_prog_value;
+        }
+    };
+
+    processEffectType = function(mblockref, eblockref) {
+
+        if (blocks[eblockref].type === 'block-effect') {
+            //Effects loop
+            for (var key in blocks[eblockref].configMap) {
+                if (blocks[eblockref].configMap[key].active) {
+                    switch (blocks[eblockref].configMap[key].method) {
+                        case 'specific':
+                            processSpecificEffect(mblockref, eblockref, key);
+                            break;
+
+                        case 'random':
+                            processRandomEffect(mblockref, eblockref, key);
+                            break;
+
+                        case 'progression':
+                            processProgressionEffect(mblockref, eblockref, key);
+                            break;
+
+                        default:
+                            throw new Error('processEffectType() This is an undefined effect type');
+                    }
+                }
+            }
+        }
+
+        if (config.selected_block_count === 1 && blocks[mblockref].selected === true && eblockref.type !== 'block-music') {
+            musicBlockPanel.setToBlock(mblockref);
+        }
+    };
+
+    // Takes a direction as an argument and returns the opposize direction
+    getOppositeDirection = function(direction) {
         switch (direction) {
             case 'up':
                 return 'down';
@@ -843,112 +979,7 @@ collisions = function() {
         }
     };
 
-    processEffects = function(mblockref, eblockref) {
-        // Do effect processing here
-
-        if (blocks[eblockref].type === "block-effect") {
-            //Effects loop
-            for (var key in blocks[eblockref].configMap) {
-                if (blocks[eblockref].configMap[key].active) {
-                    switch (blocks[eblockref].configMap[key].method) {
-                        case "specific":
-                            //Set the mblock key to eblock specific
-                            blocks[mblockref][key] = blocks[eblockref].configMap[key].specific;
-                            break;
-
-                        case "random":
-                            //If limit range flag, new key is random key inside specified range
-                            if (blocks[eblockref].configMap[key].limit_range) {
-                                if (key == "note") {
-                                    var rndIndex = utilities.getRandomNumber(0, blocks[eblockref].configMap[key].range_valid_notes.length - 1);
-                                    var newValue = blocks[eblockref].configMap[key].range_valid_notes[rndIndex];
-                                } else {
-                                    var newValue = utilities.getRandomNumber(blocks[eblockref].configMap[key].range_low, blocks[eblockref].configMap[key].range_high);
-                                }
-                            }
-
-                            //If not limit range flag, new key is random key in MIDI acceptable range
-                            else {
-                                var newValue = utilities.getRandomNumber(minMaxArray[key].min, minMaxArray[key].max);
-                            }
-
-                            //Set blocks key to new key
-                            blocks[mblockref][key] = newValue;
-
-                            break;
-
-                        case "progression":
-                            var step_direction = 1;
-                            if (blocks[eblockref].configMap[key].direction == "down") {
-                                step_direction = -1;
-                            }
-
-                            //Default newValue to the original value
-                            var newValue = blocks[mblockref][key];
-
-                            if (key == "note") {
-                                if (blocks[eblockref].configMap[key].range_valid_notes.length > 0) {
-                                    //Find the current note in the valid note array
-                                    var prog_index = blocks[eblockref].configMap[key].range_valid_notes.indexOf(blocks[mblockref].note);
-
-                                    //Advance index. If incoming note not found, prog_index will start at 0
-                                    if (prog_index == -1) {
-                                        prog_index = 0;
-                                    }
-                                    //Otherwise, advance by the step amount in the step direction
-                                    else {
-                                        prog_index += step_direction * blocks[eblockref].configMap[key].step;
-                                    }
-                                    //If we are out of the range, we add or subtract the length to wrap around the range
-                                    while (prog_index >= blocks[eblockref].configMap[key].range_valid_notes.length || prog_index < 0) {
-                                        prog_index -= step_direction * blocks[eblockref].configMap[key].range_valid_notes.length;
-                                    }
-
-                                    //Set new note value to the new indexed value from the range array
-                                    newValue = blocks[eblockref].configMap[key].range_valid_notes[prog_index];
-                                }
-                            } else {
-                                //Add step value to block key
-                                if (step_direction == 1) {
-                                    //If the result key is lower than the low limit, then set to the low limit.
-                                    if (newValue < blocks[eblockref].configMap[key].range_low) {
-                                        newValue = blocks[eblockref].configMap[key].range_low;
-                                    }
-                                    //If the result key is higher than the high limit, then set to key - high limit.
-                                    else if (newValue > blocks[eblockref].configMap[key].range_high) {
-                                        newValue = blocks[eblockref].configMap[key].range_high;
-                                    }
-                                    //If the result key is inside the range, then advance it.
-                                    else {
-                                        newValue += blocks[eblockref].configMap[key].step * step_direction;
-                                    }
-                                    //If we are out of the range, we add or subtract the size of the range to wrap around the range
-                                    while (newValue > blocks[eblockref].configMap[key].range_high || newValue < blocks[eblockref].configMap[key].range_low) {
-                                        newValue -= step_direction * (blocks[eblockref].configMap[key].range_high - blocks[eblockref].configMap[key].range_low + 1);
-                                    }
-                                }
-                            }
-
-                            //Set the block value to new value
-                            if (newValue != null) {
-                                blocks[mblockref][key] = newValue;
-                            }
-
-                            break;
-
-                        default:
-                            //This would be an error
-                            break;
-                    }
-                }
-            }
-        }
-
-        if (config.selected_block_count === 1 && blocks[mblockref].selected === true && eblockref.type !== 'block-music') {
-            musicBlockPanel.setToBlock(mblockref);
-        }
-    };
-    process = function(direction, gridX, gridY, blockref, skipcheck) {
+    processCollisionDirection = function(direction, gridX, gridY, blockref, skipcheck) {
         var
             directGridX,
             directGridY,
@@ -970,7 +1001,7 @@ collisions = function() {
          * 1st check the grid square directly in the path of the block
          * 2nd check the grid square clockwise to that square
          * 3rd check the grid square counter-clockwise to that square
-        */
+         */
         switch (direction) {
             case "up":
                 directGridX = gridX;
@@ -1022,47 +1053,52 @@ collisions = function() {
         //Check for boundary collision
         if ((direction === "up" && gridY === minGridY) || (direction === "down" && gridY === maxGridY) || (direction === "left" && gridX === minGridX) || (direction === "right" && gridX === maxGridX)) {
             blocks[blockref].num_collisions++;
-            return oppositeDirection(direction);
+            return getOppositeDirection(direction);
         }
 
         //Check for collision with object directly in path
         else if (gridArray[directGridX][directGridY] !== -1) {
-            processEffects(blockref, gridArray[directGridX][directGridY]);
+            processEffectType(blockref, gridArray[directGridX][directGridY]);
             blocks[blockref].num_collisions++;
-            return oppositeDirection(direction);
+            return getOppositeDirection(direction);
         }
 
         //Check for diagonal 1 collision
         else if (diag1GridX >= minGridX && diag1GridY >= minGridY && diag1GridX <= maxGridX && diag1GridY <= maxGridY && gridArray[diag1GridX][diag1GridY] !== -1 && blocks[gridArray[diag1GridX][diag1GridY]].is_waiting === false && (blocks[gridArray[diag1GridX][diag1GridY]].num_collisions <= blocks[blockref].num_collisions || skipcheck) && blocks[gridArray[diag1GridX][diag1GridY]].old_direction === diag1Direction) {
-            processEffects(blockref, gridArray[diag1GridX][diag1GridY]);
+            processEffectType(blockref, gridArray[diag1GridX][diag1GridY]);
             blocks[blockref].num_collisions++;
-            return oppositeDirection(direction);
+            return getOppositeDirection(direction);
         }
 
         //Check for diagonal 2 collision
         else if (diag2GridX >= minGridX && diag2GridY >= minGridY && diag2GridX <= maxGridX && diag2GridY <= maxGridY && gridArray[diag2GridX][diag2GridY] !== -1 && blocks[gridArray[diag2GridX][diag2GridY]].is_waiting === false && (blocks[gridArray[diag2GridX][diag2GridY]].num_collisions <= blocks[blockref].num_collisions || skipcheck) && blocks[gridArray[diag2GridX][diag2GridY]].old_direction === diag2Direction) {
-            processEffects(blockref, gridArray[diag2GridX][diag2GridY]);
+            processEffectType(blockref, gridArray[diag2GridX][diag2GridY]);
             blocks[blockref].num_collisions++;
-            return oppositeDirection(direction);
+            return getOppositeDirection(direction);
         } else
             return direction;
     };
 
     return {
-        process: process,
-        processEffects: processEffects
+        processCollisionDirection: processCollisionDirection,
+        processEffectType: processEffectType
     };
 
 }();
 
-startSyncCounter = function() {
-    var dir,
-        running = true,
-        draw,
+var syncCounter = function() {
+    var
+        dir,
         syncounter = -config.block_size,
-        drag_map = {};
+        drag_map = {},
 
-    (function syncCounter() {
+        // Private Methods
+        animationLoop,
+
+        // Public Methods
+        initAppLoop;
+
+    animationLoop = function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         for (var z = 0; z < config.block_count; z++) {
             block = blocks[z].render();
@@ -1094,7 +1130,7 @@ startSyncCounter = function() {
 
                     //first collision check
                     for (var l = 0; l < config.block_count; l++) {
-                        dir = collisions.process(blocks[l].direction, blocks[l].gridX, blocks[l].gridY, l, true);
+                        dir = processCollisions.processCollisionDirection(blocks[l].direction, blocks[l].gridX, blocks[l].gridY, l, true);
                         blocks[l].direction = blocks[l].new_direction = dir;
                     }
 
@@ -1105,7 +1141,7 @@ startSyncCounter = function() {
 
                     //second collision check
                     for (var o = 0; o < config.block_count; o++) {
-                        dir = collisions.process(blocks[o].direction, blocks[o].gridX, blocks[o].gridY, o, false);
+                        dir = processCollisions.processCollisionDirection(blocks[o].direction, blocks[o].gridX, blocks[o].gridY, o, false);
                         blocks[o].direction = dir;
 
                         //If block collided twice, wait
@@ -1187,17 +1223,16 @@ startSyncCounter = function() {
                             } else blocks[i].posX += 1 * blocks[i].blockSpeed;
                         }
                     }
-                    // blocks[i].updatePosition();
                 }
             }
 
-            //After moving, update all block positions
+            // After moving, update all block positions
             for (var q = 0; q < config.block_count; q++) {
-                //calculate new grid positions, floor handles blocks moving left and up
+                // Calculate new grid positions, floor handles blocks moving left and up
                 blocks[q].gridX = utilities.gridify(blocks[q].posX);
                 blocks[q].gridY = utilities.gridify(blocks[q].posY);
 
-                //if blocks are moving into a new block, move block reference 1 right or down if needed
+                // If blocks are moving into a new block, move block reference 1 right or down if needed
                 if (blocks[q].direction === "right" && (blocks[q].posX / config.block_size) % 1 !== 0)
                     blocks[q].gridX++;
                 if (blocks[q].direction === "down" && (blocks[q].posY / config.block_size) % 1 !== 0)
@@ -1213,11 +1248,18 @@ startSyncCounter = function() {
             syncounter += config.block_speed;
             config.advance = -1;
         }
-        requestAnimationFrame(syncCounter);
-    })();
-};
+        requestAnimationFrame(animationLoop);
+    };
 
+    initAppLoop = function() {
+        animationLoop();
+    };
 
+    return {
+        initAppLoop: initAppLoop
+    };
+
+}();
 
 
 topPanel = function() {
@@ -2914,5 +2956,4 @@ keyboardEvents = function() {
 }();
 
 
-
-startSyncCounter();
+syncCounter.initAppLoop();
