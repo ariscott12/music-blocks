@@ -1270,8 +1270,8 @@ var topPanel = function() {
         changeMode, setJqueryMap, toggleMasterMute,
         showHotKeys, hideHotKeys, createVolumeSlider,
 
-    // Public Methods
-    initMod;
+        // Public Methods
+        initMod;
 
     setJqueryMap = function() {
         jqueryMap = {
@@ -1388,50 +1388,66 @@ var topPanel = function() {
 topPanel.initMod();
 
 
-
+/* 
+ * This is a base module used for the effect panel and music panel
+ * has common functions that are shared by the effect panel and music panel
+ */
 controlPanel = function() {
     var
-        jqueryMap = {
-            $select: $('.block-type-select'),
-            $block_music: $('#block-music'),
-            $block_effect: $('#block-effect'),
-            $range_indicator: $('.range-indicator'),
-            $piano_roll_slider: $('.piano-roll-slider'),
-            $drum_indicator: $('.drum-type-wrapper')
-        },
-        knobparams = {
-            fgColor: '#6f6e6d',
-            bgColor: '#adacaa',
+        jqueryMap = {},
+        dialParams = {
+            fg_color: '#6f6e6d',
+            bg_color: '#adacaa',
             width: '27',
             thickness: '.55',
             cursor: 11,
             height: '27 '
         },
-        valprev = "",
-        setParams, getActivePanel, createDial, getMultiplier, setActivePanel,
-        start_octave = 2,
-        multiplier = (start_octave * 12) - 1;
+        octaveStart,
+        pianoRollMultiplier,
 
-    createDial = function(arg_map) {
+        // Private Methods
+        setMultipier, setJqueryMap,
+
+        // Public Methods
+        getActivePanel, createDial, getMultiplier,
+        setActivePanel, initModule;
+
+
+    setJqueryMap = function() {
+        jqueryMap = {
+            $panel_select: $('.panel-type-select'),
+            $block_music: $('#block-music'),
+            $block_effect: $('#block-effect'),
+            $range_indicator: $('.range-indicator'),
+            $piano_roll_slider: $('.piano-roll-slider'),
+            $drum_indicator: $('.drum-type-wrapper')
+        };
+    };
+
+    // This is factory function that creates a new jquery dial using the passed in parameters
+    createDial = function() {
         var
+            arg_map = arguments[0],
             obj = arg_map.obj,
-            min = arg_map.min,
-            max = arg_map.max,
-            start_val = arg_map.start_val,
-            type = arg_map.type,
-            params = arg_map.params,
+            min = arg_map.min || 1,
+            max = arg_map.max || 120,
+            start_val = arg_map.start_val || 40,
+            type = arg_map.type || 'music-block',
+            params = arg_map.params || null,
             effect_type = arg_map.effect_type || null;
 
+        // Create the dial
         obj.val(start_val)
             .knob({
                 'min': min,
                 'max': max,
-                'fgColor': knobparams.fgColor,
-                'bgColor': knobparams.bgColor,
-                'width': knobparams.width,
-                'thickness': knobparams.thickness,
-                'cursor': knobparams.cursor,
-                'height': knobparams.height,
+                'fgColor': dialParams.fg_color,
+                'bgColor': dialParams.bg_color,
+                'width': dialParams.width,
+                'thickness': dialParams.thickness,
+                'cursor': dialParams.cursor,
+                'height': dialParams.height,
                 'change': function(v) {
                     var value = v;
                     if ((v % 1) >= 0.5) {
@@ -1448,8 +1464,6 @@ controlPanel = function() {
                         }
                         musicBlockPanel.setParams(params, value);
                     } else {
-
-
                         // Must update the configMap values before updating the piano roll
                         effectBlockPanel.setParams(effect_type, params, value);
                         effectBlockPanel.compareDialValues(effect_type, params, value);
@@ -1471,17 +1485,31 @@ controlPanel = function() {
 
             });
     };
+
+    // pianoRollMultiplier is used in the piano roll for setting starting value of keyboard
     getMultiplier = function() {
-        return multiplier;
+        return pianoRollMultiplier;
+    };
+    setMultipier = function(arg) {
+        var octave = arg.octave || 2;
+        if (typeof octave !== 'string' && typeof octave !== 'boolean') {
+            pianoRollMultiplier = (arg.octave * 12) - 1;
+        } else {
+            throw new Error('setMultipier() octave value must be an integer');
+        }
     };
     getActivePanel = function() {
-        var active = jqueryMap.$select.find("li.active").attr("id");
-        return active;
+        return jqueryMap.$panel_select.find('li.active').attr('id');
     };
     setActivePanel = function(type) {
         $('div.' + type + '-panel').show().siblings('div').hide();
 
-        if (type == 'block-music') {
+
+        /* 
+         * Checks what panel is selected
+         * Update the piano roll values and hide/show piano roll slider and drum indicator
+         */
+        if (type === 'block-music') {
             musicBlockPanel.updatePianoRoll();
             jqueryMap.$block_music.addClass('active').siblings().removeClass('active');
             jqueryMap.$range_indicator.hide();
@@ -1495,27 +1523,63 @@ controlPanel = function() {
             musicBlockPanel.toggleDrumIndicator(type);
         }
     };
-
-    // Select block type from control panel
-    jqueryMap.$select.find('li').click(function() {
+    toggleSelectedPanel = function() {
         var type = $(this).attr('id');
         setActivePanel(type);
-    });
+    };
+
+    initModule = function() {
+        setJqueryMap();
+        setMultipier({
+            octave: 2
+        });
+
+
+        // Set event listeners, toggles between effect and music block panels
+        jqueryMap.$panel_select.find('li').click(toggleSelectedPanel);
+    };
 
     return {
         createDial: createDial,
         getActivePanel: getActivePanel,
         setActivePanel: setActivePanel,
-        getMultiplier: getMultiplier
+        getMultiplier: getMultiplier,
+        initModule: initModule
     };
 }();
 
+// Initialize Module
+controlPanel.initModule();
 
 
 
 musicBlockPanel = function() {
     var
     // Cache jquery selectors for better performance
+        jqueryMap = {},
+        configMap = {
+            note: 60,
+            volume: 60,
+            duration: 40,
+            velocity: 60,
+            instrument: 0,
+            mute: false,
+            solo: false
+        },
+
+        // Private Methods
+        setJqueryMap,
+
+        // Public Methods
+
+        updateBlockColors,
+        getPanelValues, updatePianoRoll,
+        setToBlock, setParams, populateInstruments, toggleDrumIndicator,
+        multiplier = controlPanel.getMultiplier(),
+        mutePiano = false,
+        loadingInstrument = false;
+
+    setJqueryMap = function() {
         jqueryMap = {
             $note: $('.note-music'),
             $volume: $('.volume-music'),
@@ -1529,26 +1593,8 @@ musicBlockPanel = function() {
             $mute_solo: $('.mute-solo'),
             $mute_piano: $('.mute-piano'),
             $drumkit_type: $('.drumkit-type-wrapper')
-        },
-        configMap = {
-            note: 60,
-            volume: 60,
-            duration: 40,
-            velocity: 60,
-            instrument: 0,
-            // static_direction: 'up',
-            mute: false,
-            solo: false
-        },
-        //setDirection, 
-        //getDirection, 
-        //sendBlocks,
-        updateBlockColors,
-        getPanelValues, updatePianoRoll,
-        setToBlock, setParams, populateInstruments, toggleDrumIndicator,
-        multiplier = controlPanel.getMultiplier(),
-        mutePiano = false,
-        loadingInstrument = false;
+        };
+    };
 
     // Create Music Block Dials
     controlPanel.createDial({
@@ -1669,10 +1715,6 @@ musicBlockPanel = function() {
             configMap[key] = blocks[num][key];
             if (mapkey != blocks[num][key]) {
                 switch (key) {
-                    // Nothing to update for static_direction so break out of loop
-                    // case 'static_direction':
-                    //     return;
-                    //     setDirection(blocks[num].static_direction);
                     case 'instrument':
                         jqueryMap.$instrument.val(blocks[num].instrument);
                         break;
