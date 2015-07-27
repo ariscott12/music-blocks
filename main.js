@@ -26,6 +26,7 @@ var
         clear_message: 'Are you sure you want to clear the board?',
         master_volume: 100,
         is_app_muted: -1,
+        is_block_soloed: false
     },
 
     valid_input = {
@@ -541,7 +542,7 @@ var blockProto = {
         }
         // check if block is muted or master is muted
         if (config.is_app_muted === -1 && this.mute !== true) {
-            if (config.blockSolo === true) {
+            if (config.is_block_soloed === true) {
                 if (this.solo === true) {
                     utilities.triggerMidi(Math.floor(this.volume * config.master_volume / 100), this.instrument, this.note, this.velocity, (this.duration / 120));
                 }
@@ -1405,6 +1406,7 @@ controlPanel = function() {
         },
         octaveStart,
         pianoRollMultiplier,
+        activePanel,
 
         // Private Methods
         setMultipier, setJqueryMap,
@@ -1457,12 +1459,13 @@ controlPanel = function() {
                     }
 
                     if (type === 'music-block') {
+                        musicBlockPanel.setParams(params, value);
                         if (params === 'note') {
                             musicBlockPanel.updatePianoRoll({
                                 value: value
                             });
                         }
-                        musicBlockPanel.setParams(params, value);
+
                     } else {
                         // Must update the configMap values before updating the piano roll
                         effectBlockPanel.setParams(effect_type, params, value);
@@ -1502,26 +1505,31 @@ controlPanel = function() {
         return jqueryMap.$panel_select.find('li.active').attr('id');
     };
     setActivePanel = function(type) {
-        $('div.' + type + '-panel').show().siblings('div').hide();
 
-
+        var updatePanel = function() {
+            $('div.' + type + '-panel').show().siblings('div').hide();
+            activePanel = type;
+        };
         /* 
          * Checks what panel is selected
          * Update the piano roll values and hide/show piano roll slider and drum indicator
          */
-        if (type === 'block-music') {
+        if (type === 'block-music' && activePanel !== 'block-music') {
             musicBlockPanel.updatePianoRoll();
             jqueryMap.$block_music.addClass('active').siblings().removeClass('active');
             jqueryMap.$range_indicator.hide();
             jqueryMap.$piano_roll_slider.hide();
             musicBlockPanel.toggleDrumIndicator();
-
-        } else {
+            updatePanel();
+        }
+        if (type === 'block-effect' && activePanel !== 'block-effect') {
             effectBlockPanel.updatePianoRoll();
             jqueryMap.$block_effect.addClass('active').siblings().removeClass('active');
             jqueryMap.$drum_indicator.hide();
             musicBlockPanel.toggleDrumIndicator(type);
+            updatePanel();
         }
+        
     };
     toggleSelectedPanel = function() {
         var type = $(this).attr('id');
@@ -1537,6 +1545,9 @@ controlPanel = function() {
 
         // Set event listeners, toggles between effect and music block panels
         jqueryMap.$panel_select.find('li').click(toggleSelectedPanel);
+
+        // Set the active panel
+        activePanel = jqueryMap.$panel_select.find('.active').attr('id');
     };
 
     return {
@@ -1555,29 +1566,29 @@ controlPanel.initModule();
 
 musicBlockPanel = function() {
     var
-    // Cache jquery selectors for better performance
         jqueryMap = {},
         configMap = {
             note: 60,
             volume: 60,
-            duration: 40,
+            duration: 60,
             velocity: 60,
             instrument: 0,
             mute: false,
             solo: false
         },
-
-        // Private Methods
-        setJqueryMap,
-
-        // Public Methods
-
-        updateBlockColors,
-        getPanelValues, updatePianoRoll,
-        setToBlock, setParams, populateInstruments, toggleDrumIndicator,
         multiplier = controlPanel.getMultiplier(),
         mutePiano = false,
-        loadingInstrument = false;
+        isloadingInstrument = false,
+
+        // Private Methods
+        setJqueryMap, createPanelDials, populateInstrumentSelect,
+        selectNewInstrument, setNewDirection, toggleMuteSolo,
+        toggleDrumIndicator, mutePianoRol, processPianoRollClicks,
+        updateBlockColors, initMod,
+
+        // Public Methods
+        getPanelValues, updatePianoRoll, setToBlock,
+        setParams;
 
     setJqueryMap = function() {
         jqueryMap = {
@@ -1596,70 +1607,88 @@ musicBlockPanel = function() {
         };
     };
 
-    // Create Music Block Dials
-    controlPanel.createDial({
-        obj: jqueryMap.$note,
-        start_val: configMap.note,
-        type: 'music-block',
-        params: 'note',
-        min: 24,
-        max: 107
-    });
-    controlPanel.createDial({
-        obj: jqueryMap.$volume,
-        start_val: configMap.volume,
-        type: 'music-block',
-        params: 'volume',
-        min: 1,
-        max: 120
-    });
-    controlPanel.createDial({
-        obj: jqueryMap.$velocity,
-        start_val: configMap.velocity,
-        type: 'music-block',
-        params: 'velocity',
-        min: 1,
-        max: 120
-    });
-    controlPanel.createDial({
-        obj: jqueryMap.$duration,
-        start_val: configMap.duration,
-        type: 'music-block',
-        params: 'duration',
-        min: 1,
-        max: 120
-    });
+    createPanelDials = function() {
+        // Note Dial      
+        controlPanel.createDial({
+            obj: jqueryMap.$note,
+            start_val: configMap.note,
+            type: 'music-block',
+            params: 'note',
+            min: 24,
+            max: 107
+        });
 
-    populateInstruments = (function() {
+        // Volume Dial
+        controlPanel.createDial({
+            obj: jqueryMap.$volume,
+            start_val: configMap.volume,
+            type: 'music-block',
+            params: 'volume',
+            min: 1,
+            max: 120
+        });
+
+        // Velocity Dial
+        controlPanel.createDial({
+            obj: jqueryMap.$velocity,
+            start_val: configMap.velocity,
+            type: 'music-block',
+            params: 'velocity',
+            min: 1,
+            max: 120
+        });
+
+        // Duration Dial
+        controlPanel.createDial({
+            obj: jqueryMap.$duration,
+            start_val: configMap.duration,
+            type: 'music-block',
+            params: 'duration',
+            min: 1,
+            max: 1000
+        });
+    };
+
+    setParams = function(type, value) {
+        for (var i = 0; i < config.block_count; i++) {
+            if (blocks[i].selected === true && blocks[i].type === 'block-music') {
+
+                // Update the MIDI values of the selected blocks
+                blocks[i].setMidiValues(type, value);
+
+                // When we update a block value we highlight the block for visual indiciation
+                blocks[i].highlightBlock();
+            }
+        }
+
+        // update the local configMap anytime a value is updated on the music block panel
+        configMap[type] = value;
+    };
+
+
+    // Populates the instrument select dropdown using the global midiInstrument object
+    populateInstrumentSelect = function() {
         var
             length = Object.keys(midiInstruments).length,
-            cnt = 0,
-            el = 'loaded';
+            count = 0,
+            css_class = 'loaded';
 
+        // Loop through the object and create select list
         for (var key in midiInstruments) {
             key = key.replace(/_/g, ' ');
             if (key === 'gunshot') {
                 key = 'drums';
             }
-            if (cnt > config.instruments_to_load - 1) {
-                key = key + ' (not loaded)';
-                el = 'not-loaded';
+            if (count > config.instruments_to_load - 1) {
+                key = key + ' (click to load)';
+                css_class = 'not-loaded';
             }
-            jqueryMap.$instrument.append('<span>test</span><option class = \"' + el + '\" value="' + cnt + '">' + key + '</option>');
-            cnt++;
+            jqueryMap.$instrument.append('<option class = \"' + css_class + '\" value="' + count + '">' + key + '</option>');
+            count++;
         }
-    })();
-
-    setParams = function(type, value) {
-        for (var i = 0; i < config.block_count; i++) {
-            if (blocks[i].selected === true && blocks[i].type == 'block-music') {
-                blocks[i].setMidiValues(type, value);
-                blocks[i].highlightBlock();
-            }
-        }
-        // update configMap anytime a value is updated on the music block panel
-        configMap[type] = value;
     };
+
+    // configMap should is always up to date with current panel values
     getPanelValues = function() {
         return {
             configMap: configMap
@@ -1673,31 +1702,18 @@ musicBlockPanel = function() {
         }
     };
 
-    // Sync the piano roll to the note knob when it changes (auto run on load)
-    updatePianoRoll = (function update() {
-        var value = null;
-        // if (arguments.length >= 1) {
-        //     value = arguments[0].value - multiplier;
-        // } else {
-        value = configMap.note - multiplier;
-        // }
-        //console.log('test');
-
-        jqueryMap.$piano_key.eq(value - 1).addClass("active").siblings().removeClass('active');
-        jqueryMap.$piano_key.eq(value - 1).parent().siblings().find('li').removeClass('active');
-
-        return update;
-    }());
-
-    // shows and hides drum kit type UI below piano roll
-    // takes optional argument for active control panel
-    toggleDrumIndicator = function(activePanel) {
+    /* 
+     * Shows and hides drum kit type UI below piano roll
+     * Takes optional argument for active control panel
+     */
+    toggleDrumIndicator = function(active_panel) {
         var option = jqueryMap.$instrument.find('option:selected');
 
         // if effect block panel is active always hide drum indicator
-        if (activePanel === 'block-effect') {
+        if (active_panel === 'block-effect') {
             jqueryMap.$drumkit_type.hide();
         } else {
+            // Check if selection is drums 
             if (option.text().indexOf('drums') >= 0) {
                 jqueryMap.$drumkit_type.show();
             } else {
@@ -1706,14 +1722,28 @@ musicBlockPanel = function() {
         }
     };
 
+    // Updates the pianoRoll based on the note configMap note attribute
+    updatePianoRoll = function() {
+        var value = configMap.note - multiplier;
 
+        jqueryMap.$piano_key.eq(value - 1).addClass('active').siblings().removeClass('active');
+        jqueryMap.$piano_key.eq(value - 1).parent().siblings().find('li').removeClass('active');
 
-    // Update music block panel UI to selected music block values
+        //console.log('updated')
+    };
+
+    /* 
+     * Updates music block panel UI to selected music block values
+     * Only runs if 1 block selected
+     * compares selected block values to configMap values, only updates when difference is found
+     */
     setToBlock = function(num) {
+        var map_key;
+
         for (var key in configMap) {
-            var mapkey = configMap[key];
+            map_key = configMap[key];
             configMap[key] = blocks[num][key];
-            if (mapkey != blocks[num][key]) {
+            if (map_key != blocks[num][key]) {
                 switch (key) {
                     case 'instrument':
                         jqueryMap.$instrument.val(blocks[num].instrument);
@@ -1730,50 +1760,68 @@ musicBlockPanel = function() {
                             updatePianoRoll();
                         }
                         break;
-
                 }
             }
         }
     };
 
-    //  Click Events
-    jqueryMap.$instrument.change(function() {
-        var
-            option = $(this).find('option:selected'),
-            isloaded = option.attr('class'),
-            program = $(this).val(),
-            $spinner = $('.spinner-instrument');
-        $(this).blur();
 
-        if (isloaded === 'not-loaded') {
-            loadingInstrument = true;
-            var str = option.text().replace(/\(|\)/g, '').replace(/not loaded/g, '...');
-            config.is_system_paused = true;
-            $spinner.show();
-            option.text(str);
-            MIDI.loadPlugin({
-                soundfontUrl: "./soundfont/",
-                instruments: [Object.keys(midiInstruments)[program]],
-                onsuccess: function() {
-                    loadingInstrument = false;
-                    MIDI.programChange(program, midiInstruments[Object.keys(midiInstruments)[program]]);
-                    console.log("loaded");
-                    option.attr('class', 'loaded');
-                    str = option.text().replace(/\(|\)/g, '').replace(/\.\.\./g, '');
-                    option.text(str);
-                    config.is_system_paused = false;
-                    $spinner.hide();
-                }
-            });
+    /*** Click Handlers ***/
+
+    processPianoRollClicks = function() {
+        var
+            active_panel = controlPanel.getActivePanel(),
+            index = $(this).index(),
+            roll_index = ($(this).parent().index()) * 12,
+            piano_key_value = (index + roll_index) + (multiplier + 1);
+
+        // Play MIDI note when piano roll is clicked unless it's muted or instrument is loading
+        if (mutePiano !== true && isloadingInstrument === false) {
+            utilities.triggerMidi(70, configMap.instrument, piano_key_value, 70, 0.3);
         }
-        setParams('instrument', program);
-        updateBlockColors();
-        toggleDrumIndicator();
+
+        // If music block panel is not selected don't run this functionality
+        if (active_panel === 'block-music') {
+            $(this).addClass('active').siblings().removeClass('active');
+            $(this).parent().siblings().find('li').removeClass('active');
+            setParams('note', piano_key_value);
+
+            // Update the note dial with the piano value
+            jqueryMap.$note.val(piano_key_value);
+            jqueryMap.$note.trigger('change');
+
+        }
+        return false;
+    };
+    toggleMuteSolo = function() {
+        var is_data_active = $(this).attr('data-active'),
+            type = $(this).attr('data-type');
+
+        if (is_data_active === 'true') {
+            $(this).attr('data-active', 'false');
+            is_data_active = false;
+        } else {
+            $(this).attr('data-active', 'true');
+            is_data_active = true;
+            if (type === 'solo') {
+                config.is_block_soloed = true;
+            }
+        }
+        setParams(type, is_data_active);
+
+        if (type === 'solo') {
+            // set global is_block_soloed to false, loop through music blocks and set back to true if any of them are true
+            config.is_block_soloed = is_data_active;
+            for (var k = 0; k < config.block_count; k++) {
+                if (blocks[k].solo === true) {
+                    config.is_block_soloed = true;
+                }
+            }
+        }
 
         return false;
-    });
-
-    jqueryMap.$direction.find('li').click(function() {
+    };
+    setNewDirection = function() {
         var direction = $(this).attr('id');
         if (direction === 'none') {
             utilities.stopBlocks();
@@ -1782,93 +1830,87 @@ musicBlockPanel = function() {
         }
 
         return false;
-    });
+    };
+    mutePianoRoll = function() {
+        var is_data_active = $(this).attr('data-active');
 
-    // Mute or solo music blocks
-    jqueryMap.$mute_solo.find('span').click(function() {
-        var val = $(this).attr('data-active'),
-            type = $(this).attr('data-type');
-
-        if (val === 'true') {
-            $(this).attr('data-active', 'false');
-            val = false;
-        } else {
-            $(this).attr('data-active', 'true');
-            val = true;
-            if (type === 'solo') {
-                config.blockSolo = true;
-            }
-        }
-        setParams(type, val);
-        if (type === 'solo') {
-            // set global blockSolo to false, loop through music blocks and set back to true if any of them are true
-            config.blockSolo = val;
-            for (var k = 0; k < config.block_count; k++) {
-                if (blocks[k].solo === true) {
-                    config.blockSolo = true;
-                }
-            }
-        }
-    });
-
-    // jqueryMap.$stop_block.find('span').click(function() {
-
-    //     return false;
-    // });
-
-    // Mute Piano Roll 
-    jqueryMap.$mute_piano.find('span').click(function() {
-        var val = $(this).attr('data-active');
-
-        if (val === 'true') {
+        if (is_data_active === 'true') {
             mutePiano = false;
             $(this).attr('data-active', 'false');
         } else {
             mutePiano = true;
             $(this).attr('data-active', 'true');
         }
-    });
 
-    jqueryMap.$piano_key.mousedown(function() {
+        return false;
+    };
+    selectNewInstrument = function() {
         var
-            type = controlPanel.getActivePanel(),
-            index = $(this).index(),
-            roll_index = ($(this).parent().index()) * 12,
-            value = (index + roll_index) + (multiplier + 1);
+            option = $(this).find('option:selected'),
+            is_loaded = option.attr('class'),
+            program = $(this).val(),
+            $spinner = $('.spinner-instrument');
 
-        // Play MIDI note when piano roll is clicked
-        if (mutePiano !== true && loadingInstrument === false) {
-            utilities.triggerMidi(70, configMap.instrument, value, 70, 0.3);
+        // remove focus after selected
+        $(this).blur();
+
+        if (is_loaded === 'not-loaded') {
+            isloadingInstrument = true;
+            var str = option.text().replace(/\(|\)/g, '').replace(/click to load/g, '...');
+            config.is_system_paused = true;
+            $spinner.show();
+            option.text(str);
+
+            MIDI.loadPlugin({
+                soundfontUrl: "./soundfont/",
+                instruments: [Object.keys(midiInstruments)[program]],
+                onsuccess: function() {
+                    isloadingInstrument = false;
+                    MIDI.programChange(program, midiInstruments[Object.keys(midiInstruments)[program]]);
+                    option.attr('class', 'loaded');
+                    str = option.text().replace(/\(|\)/g, '').replace(/\.\.\./g, '');
+                    option.text(str);
+                    config.is_system_paused = false;
+                    $spinner.hide();
+                }
+            });
         }
 
-        // If music block panel is not selected don't run this functionality
-        if (type === 'block-music') {
-            $(this).addClass('active').siblings().removeClass('active');
-            $(this).parent().siblings().find('li').removeClass('active');
-            setParams('note', value);
+        setParams('instrument', program);
+        updateBlockColors();
+        toggleDrumIndicator();
 
-            // Update note knob values
-            jqueryMap.$note.val(value);
-            jqueryMap.$note.trigger('change');
+        return false;
+    };
 
-            return false;
-        }
-    });
+    initMod = function() {
+        // Set jqueryMap
+        setJqueryMap();
 
-    // Send all the selected music blocks
-    // jqueryMap.$send_blocks.click(function() {
-    //     sendBlocks();
-    // });
+        populateInstrumentSelect();
+        createPanelDials();
+        updatePianoRoll();
+
+        // Click Events
+        jqueryMap.$instrument.change(selectNewInstrument);
+        jqueryMap.$direction.find('li').click(setNewDirection);
+        jqueryMap.$mute_solo.find('span').click(toggleMuteSolo);
+        jqueryMap.$mute_piano.find('span').click(mutePianoRoll);
+        jqueryMap.$piano_key.mousedown(processPianoRollClicks);
+
+    };
 
     return {
         setToBlock: setToBlock,
         updatePianoRoll: updatePianoRoll,
         setParams: setParams,
         getPanelValues: getPanelValues,
-        toggleDrumIndicator: toggleDrumIndicator
-            // sendBlocks: sendBlocks
+        toggleDrumIndicator: toggleDrumIndicator,
+        initMod: initMod
     };
 }();
+
+musicBlockPanel.initMod();
 
 
 effectBlockPanel = function() {
