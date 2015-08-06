@@ -1242,11 +1242,12 @@ topPanel = function() {
                 utilities.selectAllBlocks();
                 break;
             case 'clear-all':
-                var x;
-                if (confirm(config.clear_message) === true) {
+                if(tutorial.getTutorialIndex() !== -1 ){
                     utilities.deleteAllBlocks();
                 }
-
+                else if (confirm(config.clear_message) === true) {
+                    utilities.deleteAllBlocks();
+                }
                 break;
             default:
                 config.mode = mode;
