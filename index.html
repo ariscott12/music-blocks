@@ -60,7 +60,6 @@
         <div class="tutorial-text-wrapper" style="display: none;">
             <div class="tutorial-text"></div>            
             <div class="tutorial-next">Next Button</div>
-            <!--<div class="next-hider"> </div>-->
         </div>
         <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
         <div class="top-panel-wrapper">
@@ -71,10 +70,6 @@
                     <li id="create-ico-top" data-mode="create" class="create active"><img id="create-icon" height="22px" src="images/svg/mode-create.svg"></li>
                     <li id="select-icon-top" data-mode="select" class="select"><img id="select-icon" height="23px" src="images/svg/mode-select.svg"></li>
                     <li id="trash-icon-top" data-mode="trash" class="trash"><img id="trash-icon" height="23px" src="images/svg/mode-delete.svg"></li>
-                    <!--  <li class="pause">Pause</li>
-                <li class="advance">Advance</li>
-                <li class="select-all">Select All</li>
-                <li class="clear-all">Clear All</li> -->
                 </ul>
             </div>
             <div class="top-panel-section">
@@ -113,7 +108,7 @@
             <ul id="gridHorizontal"></ul>
         </div>
         <div class="control-panel">
-            <ul class="block-type-select clearfix">
+            <ul class="panel-type-select clearfix">
                 <li id="block-music" class="active">Music Block</li>
                 <li id="block-effect">Effect Block</li>
             </ul>
@@ -193,18 +188,6 @@
                     <p>Duration</p>
                     <div class="clear"></div>
                 </div>
-                <!--  <div class = "mute-solo-select">
-                    <ul>
-                </div> -->
-                <!-- <div class="activate-blocks">
-                    <center>
-                        <div class="send-blocks button-basic">Send Blocks
-                            <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                                <polygon fill="#717171" points="0,0 11,7 0,14 " />
-                            </svg>
-                        </div>
-                    </center>
-                </div> -->
             </div>
             <div class="block-effect-panel">
                 <div class="effect-wrapper">
@@ -220,11 +203,10 @@
                         </div>
                     </div>
                     <div class="effect-note effect-box clearfix">
-                        <select id="select-note-effect">
-                            <option value="note-progression">Step Progression</option>
-                            <option value="note-random">Random Value</option>
-                            <option value="note-specific">Specific Value</option>
-                            <!-- <option value="3">Audi</option> -->
+                        <select id="select-note-effect" autocomplete="off" data-type = "note">
+                            <option value="note-progression" data-method = "progression">Step Progression</option>
+                            <option value="note-random" data-method = "random">Random Value</option>
+                            <option value="note-specific" data-method = "specific">Specific Value</option>
                         </select>
                         <div class="note-specific clearfix">
                             <div class="dial-wrapper">
@@ -281,10 +263,10 @@
                     </div>
                     <div class="effect-volume effect-box clearfix">
                         <center>
-                            <select id="select-volume-effect">
-                                <option value="volume-progression">Step Progression</option>
-                                <option value="volume-random">Random Value</option>
-                                <option value="volume-specific">Specific Value</option>
+                            <select id="select-volume-effect" autocomplete="off" data-type = "volume">
+                                <option value="volume-progression" data-method = "progression">Step Progression</option>
+                                <option value="volume-random" data-method = "random">Random Value</option>
+                                <option value="volume-specific" data-method = "specific">Specific Value</option>
                             </select>
                         </center>
                         <div class="volume-specific clearfix">
@@ -340,10 +322,10 @@
                     </div>
                     <div class="effect-velocity effect-box  clearfix">
                         <center>
-                            <select id="select-velocity-effect">
-                                <option value="velocity-progression">Step Progression</option>
-                                <option value="velocity-random">Random Value</option>
-                                <option value="velocity-specific">Specific Value</option>
+                            <select id="select-velocity-effect" autocomplete="off" data-type = "velocity">
+                                <option value="velocity-progression" data-method = "progression">Step Progression</option>
+                                <option value="velocity-random" data-method = "random">Random Value</option>
+                                <option value="velocity-specific" data-method = "specific">Specific Value</option>
                             </select>
                         </center>
                         <div class="velocity-specific clearfix">
@@ -399,10 +381,10 @@
                     </div>
                     <div class="effect-duration effect-box  clearfix">
                         <center>
-                            <select id="select-duration-effect">
-                                <option value="duration-progression">Step Progression</option>
-                                <option value="duration-random">Random Value</option>
-                                <option value="duration-specific">Specific Value</option>
+                            <select id="select-duration-effect" autocomplete="off" data-type = "duration">
+                                <option value="duration-progression" data-method = "progression">Step Progression</option>
+                                <option value="duration-random" data-method = "random">Random Value</option>
+                                <option value="duration-specific" data-method = "specific">Specific Value</option>
                             </select>
                         </center>
                         <div class="duration-specific clearfix">
