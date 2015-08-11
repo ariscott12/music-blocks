@@ -2744,14 +2744,14 @@ keyboardEvents = function() {
     // var stopArrow = document.getElementById("stop");
 
     //Keydown handler for keyboard input
-    window.addEventListener('keydown', function(event) {        
+    window.addEventListener('keydown', function(event) {
         //Prevent space and the arrow keys from scrolling the screen if the app is not fullscreen
         if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {
             event.preventDefault();
         }        
 
         //console.log("CHECKING VALID FROM KEYBOARD FUNCTION");
-        if(tutorial.getTutorialIndex() == -1 || event.keyCode == 84 || event.keyCode == 16 || tutorial.checkValidInput(event)){
+        if(tutorial.getTutorialIndex() == -1 || event.keyCode == 84 || event.keyCode == 16){
             switch (event.keyCode) {
                 case 16: // Shift
                     config.shiftkey = 1;
