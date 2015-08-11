@@ -2562,7 +2562,7 @@ setGridEvents = function() {
                     blockref;
 
 
-                leftX = utilities.gridify(Math.max(0,leftX));
+                leftX = utilities.gridify(leftX);
                 rightX = Math.ceil(rightX / config.blockSize);
                 topY = utilities.gridify(topY);
                 bottomY = Math.ceil(bottomY / config.blockSize);
