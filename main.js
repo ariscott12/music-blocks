@@ -1953,7 +1953,7 @@ effectBlockPanel = function() {
 
         for (var key in map) {
             if (map.hasOwnProperty(key)) {
-                if (map[key].active === true && open_effect === false && $("#block-music").hasClass('active')) {
+                if (map[key].active === true && open_effect === false) {
                     $('.effect-' + key).show().siblings('.effect-box').hide();
                     $('.effect-' + key).siblings('.header').find('.toggle-drop').removeClass('active');
                     $('.effect-' + key).prev().find('.toggle-drop').addClass('active');
