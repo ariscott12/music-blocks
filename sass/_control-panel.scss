@@ -167,7 +167,7 @@
         }
     }
     
-    .block-type-select {
+    .panel-type-select {
         li {
             float: left;
             background: $gray-medium;
@@ -288,6 +288,21 @@
         }
     }
     
+    .note-random,
+    .note-specific,
+    .volume-random,
+    .volume-specific,
+    .velocity-random,
+    .velocity-specific,
+    .duration-random,
+    .duration-specific {
+        display: none;
+    }
+    
+    .note-specific {
+        display: none;
+    }
+    
     .effect-select {
         border-left: 1px solid $gray;
         border-right: 1px solid $gray;
@@ -297,7 +312,9 @@
             font-size: .75rem;
             display: inline-block;
             margin-bottom: 4px;
-            &:nth-child(1), &:nth-child(3), &:nth-child(5) {
+            &:nth-child(1),
+            &:nth-child(3),
+            &:nth-child(5) {
                 width: 95px;
             }
         }

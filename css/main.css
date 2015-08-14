@@ -272,7 +272,7 @@ body {
   .control-panel [data-direction="down"] .toggle {
     top: 15px; }
 
-.block-type-select li {
+.panel-type-select li {
   float: left;
   background: #d2d1ce;
   padding: 12px 0px;
@@ -280,10 +280,10 @@ body {
   text-align: center;
   opacity: .6;
   cursor: pointer; }
-  .block-type-select li:first-child {
+  .panel-type-select li:first-child {
     margin-right: 2px;
     width: 102px; }
-.block-type-select .active {
+.panel-type-select .active {
   background: #edebea;
   border-top: 1px solid #a3a2a1;
   border-left: 1px solid #a3a2a1;
@@ -359,6 +359,12 @@ body {
   position: relative;
   top: 2px;
   width: 124px; }
+
+.note-random, .note-specific, .volume-random, .volume-specific, .velocity-random, .velocity-specific, .duration-random, .duration-specific {
+  display: none; }
+
+.note-specific {
+  display: none; }
 
 .effect-select {
   border-left: 1px solid #a3a2a1;
@@ -960,3 +966,145 @@ select {
   right: 0;
   padding: 10px 10px 8px 10px;
   color: #eee; }
+
+.tutorial-text-wrapper {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /*height:60px;*/
+  cursor: pointer;
+  position: absolute;
+  width: 240px;
+  z-index: 31000;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  background: #FFFFFF none repeat scroll 0 0;
+  border: 1px solid #999;
+  border-radius: 2px;
+  font-size: 0.875em;
+  padding: 2px 10px 0;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.4); }
+
+.tutorial-next {
+  /*position: absolute;*/
+  /*height: 30px;*/
+  /*width: 240px;*/
+  /*z-index: 31000;*/
+  /*display: table-cell;*/
+  /*text-align: center;*/
+  /*vertical-align: middle;  */
+  background: #a3a2a1 none repeat scroll 0 0;
+  /*border: 1px solid #999;*/
+  /*border-radius: 2px;*/
+  /*font-size: 0.875em;*/
+  /*padding: 2px 10px 0;*/
+  /*box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.4); */ }
+
+.tutorial-overlay {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: none;
+  background: rgba(0, 0, 0, 0.1) none repeat scroll 0 0;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 20000;
+  padding-top: 130px; }
+
+.tutorial-arrow {
+  position: absolute;
+  z-index: 31000;
+  background: url('../images/down-red-arrow.png') no-repeat;
+  background-size: cover;
+  height: 40px;
+  width: 30px;
+  opacity: 0.9; }
+
+.tutorial-arrow.tutorial-left-arrow {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg); }
+
+.tutorial-arrow.tutorial-up-arrow {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg); }
+
+.tutorial-arrow.tutorial-right-arrow {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg); }
+
+.tutorial-arrow.tutorial-down-arrow-purple {
+  background: url('../images/down-purple-arrow.png') no-repeat;
+  background-size: cover; }
+
+.tutorial-arrow.tutorial-left-arrow-purple {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  background: url('../images/down-purple-arrow.png') no-repeat;
+  background-size: cover; }
+
+.tutorial-arrow.tutorial-up-arrow-purple {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+  background: url('../images/down-purple-arrow.png') no-repeat;
+  background-size: cover; }
+
+.tutorial-arrow.tutorial-right-arrow-purple {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+  background: url('../images/down-purple-arrow.png') no-repeat;
+  background-size: cover; }
+
+.tutorial-arrow.tutorial-down-arrow-blue {
+  background: url('../images/down-blue-arrow.png') no-repeat;
+  background-size: cover; }
+
+.tutorial-arrow.tutorial-left-arrow-blue {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  background: url('../images/down-blue-arrow.png') no-repeat; }
+
+.tutorial-arrow.tutorial-up-arrow-blue {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+  background: url('../images/down-blue-arrow.png') no-repeat;
+  background-size: cover; }
+
+.tutorial-arrow.tutorial-right-arrow-blue {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+  background: url('../images/down-blue-arrow.png') no-repeat;
+  background-size: cover; }
