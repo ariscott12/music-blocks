@@ -1,4 +1,4 @@
-var app = (function() {
+var musicApp = (function() {
 
     "use strict";
 
@@ -33,7 +33,7 @@ var app = (function() {
             is_instrument_loading: false
         },
 
-        valid_input = {
+        validInput = {
             type: null,
             x: null,
             y: null,
@@ -2834,7 +2834,7 @@ var app = (function() {
         mouseUp = function(e) {
             /////////
             // Tutorial related BEGIN
-            if (valid_input.type == 'gridUp') {
+            if (validInput.type == 'gridUp') {
                 if (tutorial.checkValidInput(e)) {
                     tutorial.advanceTutorial();
                     $('.tutorial-overlay').show();
@@ -3044,6 +3044,8 @@ var app = (function() {
 
         return {
             getDragValues: getDragValues,
+            mouseDown: mouseDown,
+            mouseUp: mouseUp,
             initMod: initMod
         };
     }();
@@ -3165,11 +3167,25 @@ var app = (function() {
         }, false);
 
     }();
+ 
 
-
-
+    // musicApp public API for tutorial.js
     return {
-        tutorialArray: tutorialArray
+        tutorialArray: tutorialArray,
+        config:config,
+        gridify: utilities.gridify,
+        deleteAllBlocks: utilities.deleteAllBlocks,
+        setMusicBlockParams: musicBlockPanel.setParams,
+        setEffectBlockParams: effectBlockPanel.setParams,
+        setToEffectBlock: effectBlockPanel.setToBlock,
+        // This might not be needed
+        updatePianoRoll: pianoRoll.updatePianoRoll,
+        validInput: validInput,
+        gridMouseDown: gridEvents.mouseDown,
+        gridMouseUp: gridEvents.mouseUp,
+        blocks: blocks,
+        gridArray: gridArray
+
     };
 
 }());
