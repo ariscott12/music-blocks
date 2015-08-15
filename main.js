@@ -1315,7 +1315,10 @@ var musicApp = (function() {
                     utilities.selectAllBlocks();
                     break;
                 case 'clear-all':
-                    if (confirm(config.clear_message) === true) {
+                    if(tutorial.getTutorialIndex() !== -1 ){
+                        utilities.deleteAllBlocks();
+                    }
+                    else if (confirm(config.clear_message) === true) {
                         utilities.deleteAllBlocks();
                     }
                     break;
@@ -2062,7 +2065,7 @@ var musicApp = (function() {
                 if (map.hasOwnProperty(key)) {
 
                     // Loop through and set open effect panel to first active panel
-                    if (map[key].active === true && open_effect === false) {
+                    if (map[key].active === true && open_effect === false && $("#block-music").hasClass('active')) {
                         $('.effect-' + key).show().siblings('.effect-box').hide();
                         $('.effect-' + key).siblings('.header').find('.toggle-drop').removeClass('active');
                         $('.effect-' + key).prev().find('.toggle-drop').addClass('active');
@@ -2719,6 +2722,7 @@ var musicApp = (function() {
                 mouse_down_grid_x = utilities.gridify(mousedownX);
                 mouse_down_grid_y = utilities.gridify(mousedownY);
 
+                //If we have just started dragging blocks, we need to identify a rectangle that encapsulates all the blocks and use it to move them.
                 if (gridArray[mouse_down_grid_x][mouse_down_grid_y] != -1 && blocks[gridArray[mouse_down_grid_x][mouse_down_grid_y]].selected === true && config.is_blocks_dragged === false && config.new_block === -1) {
                     config.is_blocks_dragged = true;
                     config.is_system_paused = true;
@@ -2750,7 +2754,7 @@ var musicApp = (function() {
                 }
 
                 if (config.is_blocks_dragged === true) {
-
+                    
                     //Check for new blockDrag positions being outside the grid
                     grid_pos = utilities.gridify(e.pageX - config.grid_offset_x) - block_drag_offset_x;
                     valid_move = true;
@@ -3058,7 +3062,7 @@ var musicApp = (function() {
                 event.preventDefault();
             }
 
-            if (tutorial.getTutorialIndex() == -1 || event.keyCode == 84 || event.keyCode == 16) {
+            if (tutorial.getTutorialIndex() == -1 || event.keyCode == 84 || event.keyCode == 16 || tutorial.checkValidInput(event)) {
                 switch (event.keyCode) {
                     case 16: // Shift
                         config.is_shiftkey_enabled = 1;
@@ -3085,6 +3089,9 @@ var musicApp = (function() {
 
                     case 39: // Right
                         utilities.sendBlocks('right');
+                        if(tutorial.getTutorialIndex() !== -1){
+                            tutorial.advanceTutorial();
+                        }
                         break;
 
                     case 40: // Down

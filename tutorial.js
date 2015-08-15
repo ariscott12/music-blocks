@@ -138,7 +138,7 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "up");
         addTutorialCommand("change_element_text", ".tutorial-text", "OK, let's get this block moving! Click the up arrow on the panel.");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", ".block-direction-select", 0, 30);
+        addTutorialCommand("move_near", ".tutorial-text-wrapper", ".block-direction-select", -37, 30);
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#up");
 
         musicApp.tutorialArray.push([]);
@@ -155,7 +155,7 @@ tutorial = (function() {
         addTutorialCommand("set_input", "next");
         addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 5);
         addTutorialCommand("change_element_text", ".tutorial-text", "You can tell exactly which note the block will play by checking the display in the panel, or looking at the piano roll.");
-        addTutorialCommand("move_near", "#tutorial-right-arrow-purple", "#block-music", 50, 180);
+        addTutorialCommand("move_near", "#tutorial-right-arrow-purple", "#block-music", 50, 232);
         addTutorialCommand("move_near", "#tutorial-down-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 15 - ($("#tutorial-down-arrow").height()));
         //addTutorialCommand("position_element", "#tutorial-right-arrow", "left_of", "point", 682,322);
 
@@ -182,7 +182,7 @@ tutorial = (function() {
         addTutorialCommand("set_input", "next");
         addTutorialCommand("change_element_text", ".tutorial-text", "See how C5 is selected on the piano roll again? Clicking a block updates the panel with all the selected blocks information.");
         addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 5);
-        addTutorialCommand("move_near", "#tutorial-right-arrow-purple", "#block-music", 50, 180);
+        addTutorialCommand("move_near", "#tutorial-right-arrow-purple", "#block-music", 50, 232);
         addTutorialCommand("move_near", "#tutorial-down-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 15 - ($("#tutorial-down-arrow").height()));
 
         musicApp.tutorialArray.push([]);
@@ -198,7 +198,7 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "left");
         addTutorialCommand("change_element_text", ".tutorial-text", "Click the left arrow to start this one moving left.");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", ".block-direction-select", 0, 30);
+        addTutorialCommand("move_near", ".tutorial-text-wrapper", ".block-direction-select", -37, 30);
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#left");
 
         musicApp.tutorialArray.push([]);
@@ -352,11 +352,13 @@ tutorial = (function() {
         addTutorialCommand("change_element_text", ".tutorial-text", "Notice the panel switches back to Music Block when we select it.");*/
 
         musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "element_clicked", "right");
+        addTutorialCommand("set_input", "keyDown", 39);
+        addTutorialCommand("change_element_text", ".tutorial-text", "There are some keyboard shortcuts that will make everything easier. Instead of clicking the right arrow, press the right arrow key on your keyboard. Much easier!");    
+        /*addTutorialCommand("set_input", "element_clicked", "right");
         addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 142);
         addTutorialCommand("change_element_text", ".tutorial-text", "Click the right arrow.");
         // Since we are switching to the music panel, direction select is not targetable. Must be positioned manually.
-        addTutorialCommand("move_near", "#tutorial-down-arrow", "#block-music", 113, 72);
+        addTutorialCommand("move_near", "#tutorial-down-arrow", "#block-music", 113, 72);*/
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
@@ -369,7 +371,7 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 220);
+        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", -15, 220);
         addTutorialCommand("change_element_text", ".tutorial-text", "OK. Step progression is a kind of note effect where each time a music block collides, it will increase the note by whatever amount we choose.");
 
         musicApp.tutorialArray.push([]);
@@ -644,8 +646,8 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 320);
-        addTutorialCommand("move_near", "#tutorial-down-arrow-purple", "#block-music", 85, 245);
+        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 370);
+        addTutorialCommand("move_near", "#tutorial-down-arrow-purple", "#block-music", 85, 300);
         addTutorialCommand("change_element_text", ".tutorial-text", "See how the volume is increasing by 5? It's controlled by the step size we set in the Volume Effect.");
 
         musicApp.tutorialArray.push([]);
