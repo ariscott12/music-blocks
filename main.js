@@ -2629,6 +2629,8 @@ var musicApp = (function() {
             blockDragHeight = 0,
             blockDragRightX,
             blockDragRightY,
+            block_drag_offset_x = 0,
+            block_drag_offset_y = 0,
             gridCheck = false,
             createDragBox = false,
             jqueryMap = {},
@@ -2704,8 +2706,6 @@ var musicApp = (function() {
                 blockDragRightY,
                 grid_pos,
                 valid_move,
-                block_drag_offset_x = 0,
-                block_drag_offset_y = 0,
                 grid_x,
                 grid_y,
                 move_x,
@@ -2754,7 +2754,7 @@ var musicApp = (function() {
                 }
 
                 if (config.is_blocks_dragged === true) {
-                    
+
                     //Check for new blockDrag positions being outside the grid
                     grid_pos = utilities.gridify(e.pageX - config.grid_offset_x) - block_drag_offset_x;
                     valid_move = true;
@@ -2797,7 +2797,7 @@ var musicApp = (function() {
                                 blocks[l].direction = 'none';
                             }
                         }
-                    }
+                    }                    
                 }
 
                 if (config.is_blocks_dragged === false) {
