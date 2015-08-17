@@ -17,6 +17,7 @@ var musicApp = (function() {
             grid_offset_y: 0,
             is_paused: -1,
             is_system_paused: false,
+            is_pause_toggled: false,
             advance: -1,
             is_shiftkey_enabled: 0,
             selected_block_count: 0,
@@ -30,6 +31,7 @@ var musicApp = (function() {
             is_app_muted: -1,
             is_block_soloed: false,
             active_panel: 'block-music',
+            is_dragbox_active: false,
             is_instrument_loading: false
         },
 
@@ -494,6 +496,7 @@ var musicApp = (function() {
         direction: 'none',
         queued: 1,
         selected: false,
+        is_select_toggled: false,
         selected_color: null,
         not_selected_color: null,
         halfpoint: -1,
@@ -504,7 +507,7 @@ var musicApp = (function() {
         gridX: 0,
         gridY: 0,
         size: 8,
-        highligh_counter: 0,
+        highlight_counter: 0,
         prevgridX: 0,
         prevgridy: 0,
         block_hex_colors: ['#d27743', '#debe4e', '#cf5a4c', '#9473f3', '#4077d5', '#37a354', '#3fc3d8'],
@@ -578,6 +581,7 @@ var musicApp = (function() {
             // Only select a block if it's not selected
             if (this.selected !== true) {
                 this.selected = true;
+                this.is_select_toggled = true;
                 config.selected_block_count++;
             }
         },
@@ -585,10 +589,12 @@ var musicApp = (function() {
             // Only deselect block if it is already selected
             if (this.selected) {
                 this.selected = false;
+                this.is_select_toggled = true;
                 config.selected_block_count--;
             }
         },
         removeBlock: function() {
+            this.undraw();
             blocks.splice(this.block_num, 1);
             var length = blocks.length;
 
@@ -626,7 +632,7 @@ var musicApp = (function() {
             }
         },
         highlightBlock: function() {
-            this.highligh_counter = 70;
+            this.highlight_counter = 70;
         },
         playmidi: function() {
             var
@@ -653,6 +659,9 @@ var musicApp = (function() {
                 this.posX + 1 + this.size,
                 this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
             context.globalAlpha = 1.0;
+        },
+        undraw: function() {
+            context.clearRect(this.posX, this.posY, config.block_size, config.block_size);
         },
         selectDirectionSprite: function() {
             if (this.new_direction !== 'none') {
@@ -686,14 +695,14 @@ var musicApp = (function() {
             if (this.size > 0) {
                 this.size--;
             }
-            if (this.highligh_counter > 0) {
-                this.highligh_counter -= 4;
+            if (this.highlight_counter > 0) {
+                this.highlight_counter -= 4;
             }
             if (!this.selected) {
-                context.fillStyle = "rgb(" + (this.not_selected_color.red + (this.highligh_counter * 2)) + ", " + (this.not_selected_color.green + this.highligh_counter) + ", " + (this.not_selected_color.blue + (this.highligh_counter * 3)) + ")";
+                context.fillStyle = "rgb(" + (this.not_selected_color.red + (this.highlight_counter * 2)) + ", " + (this.not_selected_color.green + this.highlight_counter) + ", " + (this.not_selected_color.blue + (this.highlight_counter * 3)) + ")";
                 context.fill();
             } else {
-                context.fillStyle = "rgb(" + (this.selected_color.red + this.highligh_counter) + ", " + (this.selected_color.green + this.highligh_counter) + ", " + (this.selected_color.blue + this.highligh_counter) + ")";
+                context.fillStyle = "rgb(" + (this.selected_color.red + this.highlight_counter) + ", " + (this.selected_color.green + this.highlight_counter) + ", " + (this.selected_color.blue + this.highlight_counter) + ")";
                 context.fill();
             }
 
@@ -1102,14 +1111,38 @@ var musicApp = (function() {
             initAppLoop;
 
         animationLoop = function() {
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            var blocks_to_draw = new Array();
+            if(config.is_blocks_dragged || config.is_dragbox_active || config.is_pause_toggled) {
+                context.clearRect(0, 0, canvas.width, canvas.height);    
+                console.log("REDRAWING ALL");
+            } 
+
+            for (var y = 0; y < config.block_count; y++){
+                if (config.is_pause_toggled
+                || blocks[y].is_select_toggled
+                || (blocks[y].new_direction !== 'none' //&& blocks[y].waiting == false
+                    && (!config.is_system_paused && ((config.is_paused === 1 && config.advance === 1) || config.is_paused === -1)))
+                || blocks[y].highlight_counter > 0 || blocks[y].size > 0
+                || config.is_blocks_dragged
+                || config.is_dragbox_active){
+                    if(!config.is_blocks_dragged && !config.is_dragbox_active && !config.is_pause_toggled){
+                        blocks[y].undraw();
+                    }
+                    blocks[y].is_select_toggled = false;
+                    blocks_to_draw.push(y);
+                }            
+            }
+
+            config.is_pause_toggled = false;
+            
+            /*context.clearRect(0, 0, canvas.width, canvas.height);
             for (var z = 0; z < config.block_count; z++) {
                 block = blocks[z].render();
             }
             drag_map = gridEvents.getDragValues();
             context.fillStyle = 'rgba(225,225,225,0.5)';
             context.fill();
-            context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);
+            context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);*/
 
             if (!config.is_system_paused && ((config.is_paused === 1 && config.advance === 1) || config.is_paused === -1)) {
                 // Clear canvas on loop and redraw blocks
@@ -1251,6 +1284,18 @@ var musicApp = (function() {
                 syncounter += config.block_speed;
                 config.advance = -1;
             }
+
+            for (var z = 0; z < blocks_to_draw.length; z++) {
+                block = blocks[blocks_to_draw[z]].render();
+            }  
+
+            if(config.is_dragbox_active){
+                drag_map = gridEvents.getDragValues();
+                context.fillStyle = 'rgba(225,225,225,0.5)';
+                context.fill();
+                context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);
+            }
+
             requestAnimationFrame(animationLoop);
         };
 
@@ -1276,7 +1321,7 @@ var musicApp = (function() {
             // Public Methods
             initMod;
 
-        setJqueryMap = function() {
+       setJqueryMap = function() {
             jqueryMap = {
                 $mode_select: $('.mode-select'),
                 $play_select: $('.play-select'),
@@ -1306,9 +1351,15 @@ var musicApp = (function() {
                     utilities.deleteSelectedBlocks();
                     break;
                 case 'pause':
-                    config.is_paused = 1;
+                    if(config.is_paused !== 1){
+                        config.is_pause_toggled = true;
+                    }
+                    config.is_paused = 1;                    
                     break;
                 case 'play':
+                    if(config.is_paused !== -1){
+                        config.is_pause_toggled = true;
+                    }
                     config.is_paused = -1;
                     break;
                 case 'select-all':
@@ -2816,6 +2867,8 @@ var musicApp = (function() {
                         }
 
                     } else {
+                        config.is_dragbox_active = true;
+                        config.is_system_paused = true;
                         move_x = e.pageX - config.grid_offset_x;
                         move_y = e.pageY - config.grid_offset_y;
                         width = Math.abs(move_x - mousedownX);
@@ -2853,7 +2906,12 @@ var musicApp = (function() {
             /////////
 
             // Set to null to remove dragbox in draw loop
-            dragBox = {};
+            if(config.is_dragbox_active){
+                config.is_system_paused = false;
+                config.is_dragbox_active = false;
+                dragBox = {};
+                config.is_pause_toggled = true;                
+            }
 
             if (e.which === 3) {
                 utilities.deselectAllBlocks();
@@ -3071,6 +3129,7 @@ var musicApp = (function() {
                     case 32: // Space
                         if (config.is_blocks_dragged === false) {
                             config.is_paused = config.is_paused * -1;
+                            config.is_pause_toggled = true;
                             if (config.is_paused === -1) {
                                 $("[data-mode='play']").addClass('active').siblings().removeClass('active');
                             } else {
