@@ -2680,8 +2680,8 @@ var musicApp = (function() {
             blockDragHeight = 0,
             blockDragRightX,
             blockDragRightY,
-            block_drag_offset_x = 0,
-            block_drag_offset_y = 0,
+            blockDragOffsetX = 0,
+            blockDragOffsetY = 0,
             gridCheck = false,
             createDragBox = false,
             jqueryMap = {},
@@ -2792,8 +2792,8 @@ var musicApp = (function() {
                     }
                     blockDragWidth = blockDragRightX - blockDragLeftX;
                     blockDragHeight = blockDragRightY - blockDragLeftY;
-                    block_drag_offset_x = utilities.gridify(mousedownX) - blockDragLeftX;
-                    block_drag_offset_y = utilities.gridify(mousedownY) - blockDragLeftY;
+                    blockDragOffsetX = utilities.gridify(mousedownX) - blockDragLeftX;
+                    blockDragOffsetY = utilities.gridify(mousedownY) - blockDragLeftY;
 
                     //Set each block's drag offset from the drag corner
                     for (var j = 0; j < config.block_count; j++) {
@@ -2807,14 +2807,14 @@ var musicApp = (function() {
                 if (config.is_blocks_dragged === true) {
 
                     //Check for new blockDrag positions being outside the grid
-                    grid_pos = utilities.gridify(e.pageX - config.grid_offset_x) - block_drag_offset_x;
+                    grid_pos = utilities.gridify(e.pageX - config.grid_offset_x) - blockDragOffsetX;
                     valid_move = true;
 
                     if (grid_pos + blockDragWidth < config.grid_width && grid_pos >= 0) {
                         blockDragLeftX = grid_pos;
                     }
 
-                    grid_pos = utilities.gridify(e.pageY - config.grid_offset_y) - block_drag_offset_y;
+                    grid_pos = utilities.gridify(e.pageY - config.grid_offset_y) - blockDragOffsetY;
 
                     if (grid_pos + blockDragHeight < config.grid_height && grid_pos >= 0) {
                         blockDragLeftY = grid_pos;
