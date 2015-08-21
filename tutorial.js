@@ -30,7 +30,7 @@
 // End the tutorial
 // addTutorialCommand("end_tutorial");
 tutorial = (function() {
-    tutorial_index = -1;
+    var tutorial_index = -1;
     var spacer = 5;
 
     function addTutorialCommand(comm, elem, l, t, w, h, near, text) {
@@ -95,7 +95,7 @@ tutorial = (function() {
         addTutorialCommand("show", ".tutorial-text-wrapper");
         addTutorialCommand("set_input", "next");
         addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 4);
-        addTutorialCommand("change_element_text", ".tutorial-text", "Welcome to Musical, a web-based visual music sequencer. This is an interactive tutorial that will teach you how to add and manage blocks on a grid that will (hopefully) produce music. Let's get started!");
+        addTutorialCommand("change_element_text", ".tutorial-text", "Welcome to Music Blocks, a web-based visual music sequencer. This is an interactive tutorial that will teach you how to add and manage blocks on a grid that will (hopefully) produce music. Let's get started!");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 5, 4);
@@ -1052,13 +1052,10 @@ tutorial = (function() {
         musicApp.validInput.type = null;
         $('.tutorial-text-wrapper').hide();
         $('.tutorial-overlay').hide();
-        //$('.html').click();
     }
 
     surround = function(current_step) {
         $("#tutorial-down-arrow").show();
-        $("#tutorial-left-arrow").show();
-        $("#tutorial-right-arrow").show();
         var gridPos, posLeft, posTop;
         gridpos = $('#grid').offset();
         if (current_step.element == "gridDown" || current_step.element == "gridUp") {
@@ -1070,13 +1067,7 @@ tutorial = (function() {
         }
 
         positionElementRelative($("#tutorial-down-arrow"), "above", "grid",
-            posLeft, posTop, musicApp.config.block_size, musicApp.config.block_size);
-
-        positionElementRelative($("#tutorial-left-arrow"), "right_of", "grid",
-            posLeft, posTop, musicApp.config.block_size, musicApp.config.block_size);
-
-        positionElementRelative($("#tutorial-right-arrow"), "left_of", "grid",
-            posLeft, posTop, musicApp.config.block_size, musicApp.config.block_size);
+            posLeft, posTop + 10, musicApp.config.block_size, musicApp.config.block_size);
 
         positionElementRelative($(".tutorial-text-wrapper"), "below", "grid",
             posLeft, posTop, musicApp.config.block_size, musicApp.config.block_size);
@@ -1085,14 +1076,12 @@ tutorial = (function() {
     simulateEventAtPoint = function(event) {
         var elemAtPnt = $(document.elementFromPoint(event.pageX, event.pageY));
         if (elemAtPnt[0].tagName == "IMG") {
-            //var stopArrow = document.getElementById("stop");
             elemAtPnt[0].click(event);
         } else if (elemAtPnt[0].tagName == "polygon") {
             elemAtPnt[0].parentElement.parentElement.click();
         } else if (elemAtPnt[0].id == "Layer_1") {
             elemAtPnt[0].parentElement.click();
         } else if (elemAtPnt[0].id == "grid") {
-
             if (event.type == "mousedown") {
                 musicApp.gridMouseDown(event);
             } else
@@ -1104,7 +1093,7 @@ tutorial = (function() {
             musicApp.setMusicBlockParams('note', 62);
 
             // This call might not be needed anymore, setToBlock calls updatePianoRoll
-            musicApp.updatePianoRoll();
+            //musicApp.updatePianoRoll();
         } else if (elemAtPnt[0].id == "C5") {
             musicApp.blocks[1].configMap.note.range_low = 60;
             musicApp.blocks[1].rebuildRangeValidNotes();
@@ -1113,7 +1102,7 @@ tutorial = (function() {
             musicApp.setToEffectBlock(1);
 
             // This call might not be needed anymore
-            musicApp.updatePianoRoll();
+            //musicApp.updatePianoRoll();
         } else if (elemAtPnt[0].id == "E6") {
             musicApp.blocks[1].configMap.note.range_high = 76;
             musicApp.blocks[1].rebuildRangeValidNotes();
@@ -1122,7 +1111,7 @@ tutorial = (function() {
             musicApp.setToEffectBlock(1);
 
             // This call might not be needed anymore
-            musicApp.updatePianoRoll();
+            //musicApp.updatePianoRoll();
         } else if (elemAtPnt[0].innerText == "▼") {
             $(".note-step-size").spinner("stepDown");
         } else if (event.type == "mousedown" || event.type == "mouseup") {
