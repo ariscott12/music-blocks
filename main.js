@@ -2890,7 +2890,7 @@ var musicApp = (function() {
         // Compares mouseup location with mousedown, calls old click function if same, drag select if not
         mouseUp = function(e) {
             //Remove drag event on mouseup
-                elements.section.removeEventListener('mousemove', mouseDrag);
+            elements.section.removeEventListener('mousemove', mouseDrag);
             /////////
             // Tutorial related BEGIN
             if (validInput.type == 'gridUp') {
