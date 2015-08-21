@@ -67,10 +67,10 @@ var musicApp = (function() {
         };
     var blocks = [];
     var midiInstruments = {
+        'xylophone': 13,
         'acoustic_grand_piano': 0,
         'acoustic_bass': 32,
-        'gunshot': 127,
-        'xylophone': 13,
+        'gunshot': 127,        
         'marimba': 12,
         'rock_organ': 18,
         'orchestral_harp': 46,
