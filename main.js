@@ -26,7 +26,6 @@ var musicApp = (function() {
             new_block: -1,
             instruments_to_load: 1,
             is_blocks_dragged: false,
-            clear_message: 'Are you sure you want to clear the board?',
             master_volume: 100,
             is_app_muted: -1,
             is_block_soloed: false,
@@ -292,22 +291,22 @@ var musicApp = (function() {
         initMod = function() {
 
             // Populate the scale Arrays
-            populateScaleArray("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-            populateScaleArray("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
-            populateScaleArray("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
-            populateScaleArray("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
-            populateScaleArray("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
-            populateScaleArray("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
-            populateScaleArray("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
-            populateScaleArray("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
-            populateScaleArray("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
-            populateScaleArray("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
-            populateScaleArray("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
-            populateScaleArray("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
-            populateScaleArray("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
-            populateScaleArray("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
-            populateScaleArray("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
-            populateScaleArray("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
+            populateScaleArray('Chromatic (None)', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+            populateScaleArray('C Major / A Minor', [0, 2, 4, 5, 7, 9, 11]);
+            populateScaleArray('D Major / B Minor', [1, 2, 4, 6, 7, 9, 11]);
+            populateScaleArray('E Major / C# Minor', [1, 3, 4, 6, 8, 9, 11]);
+            populateScaleArray('F Major / D Minor', [0, 2, 4, 5, 7, 9, 10]);
+            populateScaleArray('G Major / E Minor', [0, 2, 4, 6, 7, 9, 11]);
+            populateScaleArray('A Major / F# Minor', [1, 2, 4, 6, 8, 9, 11]);
+            populateScaleArray('B Major / G# Minor', [1, 3, 4, 6, 8, 10, 11]);
+            populateScaleArray('Bb Major / G minor', [0, 2, 3, 5, 7, 9, 10]);
+            populateScaleArray('Eb Major / C Minor', [0, 2, 3, 5, 7, 8, 10]);
+            populateScaleArray('Ab Major / F Minor', [0, 1, 3, 5, 7, 8, 10]);
+            populateScaleArray('Db Major / Bb Minor', [0, 1, 3, 5, 6, 8, 10]);
+            populateScaleArray('Gb Major / Eb Minor', [1, 3, 5, 6, 8, 10, 11]);
+            populateScaleArray('Cb Major / Ab Minor', [1, 3, 4, 6, 8, 10, 11]);
+            populateScaleArray('F# Major / D# Minor', [1, 3, 5, 6, 8, 10, 11]);
+            populateScaleArray('C# Major / A# Minor', [0, 1, 3, 5, 6, 8, 10]);
 
             // Populate the scale select dropdown in the effects panel
             populateScaleSelect();
@@ -391,7 +390,7 @@ var musicApp = (function() {
 
     // Helper functions that are used throughout the App
     var utilities = function() {
-        var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        var noteArray = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
         return {
 
@@ -423,21 +422,24 @@ var musicApp = (function() {
                 return octave * 12 + note;
             },
             deleteSelectedBlocks: function() {
-                for (var i = 0; i < config.block_count; i++) {
-                    if (blocks[i].selected === true) {
-                        blocks[i].removeBlock();
-                        i--;
+                if(tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to delete the selected blocks?')){
+                    for (var i = 0; i < config.block_count; i++) {
+                        if (blocks[i].selected === true) {
+                            blocks[i].removeBlock();
+                            i--;
+                        }
                     }
                 }
             },
             deleteAllBlocks: function() {
-                for (var j = 0; j < config.block_count; j++) {
-                    blocks[j].removeBlock();
-                    j--;
+                if(tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to clear the board?')){
+                    for (var j = 0; j < config.block_count; j++) {
+                        blocks[j].removeBlock();
+                        j--;
+                    }
+                    config.selected_block_count = 0;
                 }
-                config.selected_block_count = 0;
             },
-
             selectAllBlocks: function() {
                 for (var k = 0; k < config.block_count; k++) {
                     blocks[k].selectBlock();
@@ -1348,7 +1350,7 @@ var musicApp = (function() {
                     break;
                 case 'trash':
                     config.mode = mode;
-                    utilities.deleteSelectedBlocks();
+                    utilities.deselectAllBlocks();
                     break;
                 case 'pause':
                     if(config.is_paused !== 1){
@@ -1366,12 +1368,10 @@ var musicApp = (function() {
                     utilities.selectAllBlocks();
                     break;
                 case 'clear-all':
-                    if(tutorial.getTutorialIndex() !== -1 ){
-                        utilities.deleteAllBlocks();
-                    }
-                    else if (confirm(config.clear_message) === true) {
-                        utilities.deleteAllBlocks();
-                    }
+                    utilities.deleteAllBlocks();
+                    break;
+                case 'delete-selected':
+                    utilities.deleteSelectedBlocks();
                     break;
                 default:
                     throw new Error('changeMode() this is an unrecognized mode');
@@ -2889,6 +2889,8 @@ var musicApp = (function() {
 
         // Compares mouseup location with mousedown, calls old click function if same, drag select if not
         mouseUp = function(e) {
+            //Remove drag event on mouseup
+                elements.section.removeEventListener('mousemove', mouseDrag);
             /////////
             // Tutorial related BEGIN
             if (validInput.type == 'gridUp') {
@@ -2907,6 +2909,7 @@ var musicApp = (function() {
 
             // Set to null to remove dragbox in draw loop
             if(config.is_dragbox_active){
+                console.log("DRAGBOX ACTIVE");
                 config.is_system_paused = false;
                 config.is_dragbox_active = false;
                 dragBox = {};
@@ -3041,9 +3044,7 @@ var musicApp = (function() {
                 mousedownX = -1;
                 mousedownY = -1;
 
-                gridCheck = false;
-                //Remove drag event on mouseup
-                elements.section.removeEventListener('mousemove', mouseDrag);
+                gridCheck = false;                
             }
         };
 
@@ -3167,9 +3168,7 @@ var musicApp = (function() {
                         utilities.deleteSelectedBlocks();
                         break;
                     case 52: // 4
-                        if (confirm(config.clear_message) === true) {
-                            utilities.deleteAllBlocks();
-                        }
+                        utilities.deleteAllBlocks();
                         break;
 
                     case 65: // a
