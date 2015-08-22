@@ -1,33 +1,3 @@
-// .button-basic {
-//     background: $yellow-90;
-//     border: 1px solid #dbb846;
-//     border-radius: 3px;
-//     box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.3);
-//     color: #816c29;
-//     height: 26px;
-//     line-height: 26px;
-//     padding-left: 16px;
-//     position: relative;
-//     text-align: left;
-//     width: 137px;
-//     z-index: 161;
-//     cursor: pointer;
-//     svg {
-//         position: absolute;
-//         right: 11px;
-//         top: 6px;
-//         width: 10px;
-//         polygon {
-//             fill: #816c29;
-//         }
-//     }
-//     &.animate {
-//         @include animation(changebackground .6s infinite);
-//         svg {
-//             @include animation(movearrow .6s infinite);
-//         }
-//     }
-// }
 
 .button-trigger {
     border: 1px solid #6d1d1d;
@@ -41,35 +11,29 @@
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.5) inset, 0 1px 1px rgba(255, 255, 255, 0.66) inset;
 }
 
-.button-select {
-  // border: 1px solid #2e7466;
-   // border-radius: 2px;
-   // display: inline-block;
-    &.active {
-       //background-color: $aqua;
-    }
+
+.left-button-wrapper {
+    left:10px;
+    position:absolute;
+    top:107px;
+    z-index:25000;
+    display:none;
 }
 
-@include keyframes(movearrow) {
-    0% {
-        right: 11px;
-    }
-    50% {
-        right: 18px;
-    }
-    100% {
-        right: 11px;
-    }
-}
 
-@include keyframes(changebackground) {
-    0% {
-        background: $yellow-90;
-    }
-    50% {
-        background: #FFD651;
-    }
-    100% {
-        background: $yellow-90;
-    }
+.show-hotkeys, .toggle-tutorial {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: .875em;
+    cursor: pointer;
+    border: 1px solid #8ccdc1;
+    padding:10px;
+    width:125px;
+    text-align:center;
+    color:#eee;
+    margin-bottom:10px;
+    background:#399381;
 }

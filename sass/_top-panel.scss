@@ -32,17 +32,15 @@
         padding: 0 5px;
         li {
             margin: 0 1px 1px 0;
-            // padding: 7px 0;
-            // width: 68px;
             display: inline-block;
             text-align: center;
             opacity: .45;
             padding: 0 5px;
             height: 38px;
             line-height: 50px;
-            &.active, &:hover {
+            &.active,
+            &:hover {
                 opacity: 1;
-                // background: #3FA38F;
             }
         }
     }
@@ -56,7 +54,7 @@
         left: -14px;
         position: relative;
         top: -2px;
-        cursor:pointer;
+        cursor: pointer;
     }
 }
 
@@ -65,9 +63,7 @@
     height: 10px;
     background: #8ccdc1;
     border-radius: 10px;
-    // border: 1px solid #3D9E8A;
     float: right;
-    // margin: 100px 10px 0 0;
     .ui-slider-handle {
         background: #F7F7F7;
         border-radius: 10px;

@@ -10,7 +10,7 @@
     position: absolute;
     top: 0;
     width: 100%;
-    z-index: 20000;
+    z-index: 25000;
     padding-top:130px;
     table {
         border-collapse: collapse;
@@ -51,18 +51,18 @@
     }
 }
 
-.show-hotkeys {
-    -moz-user-select: -moz-none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    font-size: .875em;
-    cursor: pointer;
-    border: 1px solid #8ccdc1;
-    position:absolute;
-    top:10px;
-    right:0;
-    padding:10px 10px 8px 10px;
-    color:#eee;
-}
+// .show-hotkeys {
+//     -moz-user-select: -moz-none;
+//     -khtml-user-select: none;
+//     -webkit-user-select: none;
+//     -ms-user-select: none;
+//     user-select: none;
+//     font-size: .875em;
+//     cursor: pointer;
+//     border: 1px solid #8ccdc1;
+//     position:absolute;
+//     top:10px;
+//     right:0;
+//     padding:10px 10px 8px 10px;
+//     color:#eee;
+// }
