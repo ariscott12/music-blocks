@@ -44,49 +44,36 @@
         <p>Thanks for viewing our App. This is an experimental project, for optimal performance we highlighly recommend Chrome.</p>
         <img data-id = "close-message" class = "close-browser-message" width="15px" src="images/svg/close-content.svg" />
     </div>
-    <div id="wrapper">
-        <div id="tutorial-up-arrow" class="tutorial-arrow tutorial-up-arrow"></div>
-        <div id="tutorial-down-arrow" class="tutorial-arrow tutorial-down-arrow"></div>
-        <div id="tutorial-right-arrow" class="tutorial-arrow tutorial-right-arrow"></div>
-        <div id="tutorial-left-arrow" class="tutorial-arrow tutorial-left-arrow"></div>
-        <div id="tutorial-up-arrow-purple" class="tutorial-arrow tutorial-up-arrow-purple"></div>
-        <div id="tutorial-down-arrow-purple" class="tutorial-arrow tutorial-down-arrow-purple"></div>
-        <div id="tutorial-right-arrow-purple" class="tutorial-arrow tutorial-right-arrow-purple"></div>
-        <div id="tutorial-left-arrow-purple" class="tutorial-arrow tutorial-left-arrow-purple"></div>
-        <div id="tutorial-up-arrow-blue" class="tutorial-arrow tutorial-up-arrow-blue"></div>
-        <div id="tutorial-down-arrow-blue" class="tutorial-arrow tutorial-down-arrow-blue"></div>
-        <div id="tutorial-right-arrow-blue" class="tutorial-arrow tutorial-right-arrow-blue"></div>
-        <div id="tutorial-left-arrow-blue" class="tutorial-arrow tutorial-left-arrow-blue"></div>
-        <div class="tutorial-text-wrapper" style="display: none;">
-            <div class="tutorial-text"></div>            
-            <div class="tutorial-next">Next Button</div>
-        </div>
+    <div class = "left-button-wrapper">
         <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
+        <div class="toggle-tutorial" data-id="tutorial" data-state = "not-active">Tutorial</div>
+    </div>
+    <div id="wrapper">
         <div class="top-panel-wrapper">
             <div class="top-panel-section">
                 <p>Mode Select</p>
                 <div class="border"></div>
                 <ul class="mode-select">
-                    <li id="create-ico-top" data-mode="create" class="create active"><img id="create-icon" height="22px" src="images/svg/mode-create.svg"></li>
-                    <li id="select-icon-top" data-mode="select" class="select"><img id="select-icon" height="23px" src="images/svg/mode-select.svg"></li>
-                    <li id="trash-icon-top" data-mode="trash" class="trash"><img id="trash-icon" height="23px" src="images/svg/mode-delete.svg"></li>
+                    <li data-mode="create" class="active"><img id="create-icon" height="22px" src="images/svg/mode-create.svg"></li>
+                    <li data-mode="select"p><img id="select-icon" height="23px" src="images/svg/mode-select.svg"></li>
+                    <li data-mode="trash"><img id="trash-icon" height="23px" src="images/svg/mode-delete.svg"></li>
                 </ul>
             </div>
             <div class="top-panel-section">
                 <p>Play/Pause</p>
                 <div class="border"></div>
                 <ul class="play-select">
-                    <li id="play-icon-top" data-mode="play" class="active"><img id="play-icon" height="19px" src="images/svg/mode-play.svg"></li>
-                    <li id="pause-icon-top" data-mode="pause"><img id="pause-icon" height="19px" src="images/svg/mode-pause.svg"></li>
+                    <li data-mode="play" class="active"><img id="play-icon" height="19px" src="images/svg/mode-play.svg"></li>
+                    <li data-mode="pause"><img id="pause-icon" height="19px" src="images/svg/mode-pause.svg"></li>
                 </ul>
             </div>
             <div class="top-panel-section">
                 <p>Batch Edits</p>
                 <div class="border"></div>
                 <ul class="batch-edits">
-                    <li id="clear-all-icon-top" data-mode="clear-all"><img id="clear-all-icon" height="19px" src="images/svg/batch-delete.svg"></li>
-                    <li id="select-all-icon-top"data-mode="select-all"><img id="select-all-icon" height="24px" src="images/svg/batch-select.svg"></li>
-                    <li id="delete-selected-icon-top"data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/delete-selected.svg"></li>
+                    <li data-mode="delete-selected"><img id="clear-all-icon" height="19px" src="images/svg/batch-delete.svg"></li>
+                    <li data-mode="select-all"><img id="select-all-icon" height="24px" src="images/svg/batch-select.svg"></li>
+                <!--     <li id="delete-selected-icon-top"data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/delete-selected.svg"></li> -->
                 </ul>
             </div>
             <div class="master-volume-section">
@@ -563,7 +550,25 @@
                 <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute Piano Roll</li>
             </ul>
         </div>
+
+        <!--   <div id="tutorial-up-arrow" class="tutorial-arrow tutorial-up-arrow"></div> -->
+        <div id="tutorial-down-arrow" class="tutorial-arrow tutorial-down-arrow"></div>
+        <!-- <div id="tutorial-right-arrow" class="tutorial-arrow tutorial-right-arrow"></div>
+        <div id="tutorial-left-arrow" class="tutorial-arrow tutorial-left-arrow"></div> -->
+        <div id="tutorial-up-arrow-noaction" class="tutorial-arrow tutorial-up-arrow-noaction"></div>
+        <div id="tutorial-down-arrow-noaction" class="tutorial-arrow tutorial-down-arrow-noaction"></div>
+        <div id="tutorial-right-arrow-noaction" class="tutorial-arrow tutorial-right-arrow-noaction"></div>
+        <div id="tutorial-left-arrow-noaction" class="tutorial-arrow tutorial-left-arrow-noaction"></div>
+        <!--   <div id="tutorial-up-arrow-noactionlue" class="tutorial-arrow tutorial-up-arrow-blue"></div>
+        <div id="tutorial-down-arrow-blue" class="tutorial-arrow tutorial-down-arrow-blue"></div>
+        <div id="tutorial-right-arrow-blue" class="tutorial-arrow tutorial-right-arrow-blue"></div>
+        <div id="tutorial-left-arrow-blue" class="tutorial-arrow tutorial-left-arrow-blue"></div> -->
+        <div class="tutorial-text-wrapper" style="display: none;">
+            <p class = "tutorial-text"></p>            
+            <div class="tutorial-next">Next</div>
+        </div>
     </div>
+
     <div class="tutorial-overlay"></div>
     <div class="hotekeys" data-id="hotkey-menu">
         <table>
