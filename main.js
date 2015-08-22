@@ -70,7 +70,7 @@ var musicApp = (function() {
         'xylophone': 13,
         'acoustic_grand_piano': 0,
         'acoustic_bass': 32,
-        'gunshot': 127,        
+        'gunshot': 127,
         'marimba': 12,
         'rock_organ': 18,
         'orchestral_harp': 46,
@@ -92,6 +92,7 @@ var musicApp = (function() {
         // Show the app and hide the page loader
         $('#wrapper').fadeIn();
         $('.spinner-page').fadeOut();
+        $('.left-button-wrapper').fadeIn();
 
         // Check what browser user is in, if user is not in Chrome display browser prompt
         if (browser() != 'Chrome') {
@@ -422,17 +423,17 @@ var musicApp = (function() {
                 return octave * 12 + note;
             },
             deleteSelectedBlocks: function() {
-                if(tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to delete the selected blocks?')){
-                    for (var i = 0; i < config.block_count; i++) {
-                        if (blocks[i].selected === true) {
-                            blocks[i].removeBlock();
-                            i--;
-                        }
+                // if (tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to delete the selected blocks?')) {
+                for (var i = 0; i < config.block_count; i++) {
+                    if (blocks[i].selected === true) {
+                        blocks[i].removeBlock();
+                        i--;
                     }
                 }
+                //}
             },
             deleteAllBlocks: function() {
-                if(tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to clear the board?')){
+                if (tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to clear the board?')) {
                     for (var j = 0; j < config.block_count; j++) {
                         blocks[j].removeBlock();
                         j--;
@@ -1114,29 +1115,24 @@ var musicApp = (function() {
 
         animationLoop = function() {
             var blocks_to_draw = new Array();
-            if(config.is_blocks_dragged || config.is_dragbox_active || config.is_pause_toggled) {
-                context.clearRect(0, 0, canvas.width, canvas.height);    
+            if (config.is_blocks_dragged || config.is_dragbox_active || config.is_pause_toggled) {
+                context.clearRect(0, 0, canvas.width, canvas.height);
                 console.log("REDRAWING ALL");
-            } 
+            }
 
-            for (var y = 0; y < config.block_count; y++){
-                if (config.is_pause_toggled
-                || blocks[y].is_select_toggled
-                || (blocks[y].new_direction !== 'none' //&& blocks[y].waiting == false
-                    && (!config.is_system_paused && ((config.is_paused === 1 && config.advance === 1) || config.is_paused === -1)))
-                || blocks[y].highlight_counter > 0 || blocks[y].size > 0
-                || config.is_blocks_dragged
-                || config.is_dragbox_active){
-                    if(!config.is_blocks_dragged && !config.is_dragbox_active && !config.is_pause_toggled){
+            for (var y = 0; y < config.block_count; y++) {
+                if (config.is_pause_toggled || blocks[y].is_select_toggled || (blocks[y].new_direction !== 'none' //&& blocks[y].waiting == false
+                        && (!config.is_system_paused && ((config.is_paused === 1 && config.advance === 1) || config.is_paused === -1))) || blocks[y].highlight_counter > 0 || blocks[y].size > 0 || config.is_blocks_dragged || config.is_dragbox_active) {
+                    if (!config.is_blocks_dragged && !config.is_dragbox_active && !config.is_pause_toggled) {
                         blocks[y].undraw();
                     }
                     blocks[y].is_select_toggled = false;
                     blocks_to_draw.push(y);
-                }            
+                }
             }
 
             config.is_pause_toggled = false;
-            
+
             /*context.clearRect(0, 0, canvas.width, canvas.height);
             for (var z = 0; z < config.block_count; z++) {
                 block = blocks[z].render();
@@ -1289,9 +1285,9 @@ var musicApp = (function() {
 
             for (var z = 0; z < blocks_to_draw.length; z++) {
                 block = blocks[blocks_to_draw[z]].render();
-            }  
+            }
 
-            if(config.is_dragbox_active){
+            if (config.is_dragbox_active) {
                 drag_map = gridEvents.getDragValues();
                 context.fillStyle = 'rgba(225,225,225,0.5)';
                 context.fill();
@@ -1319,19 +1315,22 @@ var musicApp = (function() {
             // Private Methods
             changeMode, setJqueryMap, toggleMasterMute,
             showHotKeys, hideHotKeys, createVolumeSlider,
+            toggleTutorial,
 
             // Public Methods
             initMod;
 
-       setJqueryMap = function() {
+        setJqueryMap = function() {
             jqueryMap = {
                 $mode_select: $('.mode-select'),
                 $play_select: $('.play-select'),
                 $batch_edits: $('.batch-edits'),
                 $hotkey_btn: $('[data-id = "hotkeys"]'),
+                $tutorial_btn: $('[data-id = "tutorial"]'),
                 $hotkey_menu: $('[data-id = "hotkey-menu"]'),
                 $master_volume: $('.master-volume-slider'),
                 $master_mute: $('[data-id = "toggle-master-mute"]'),
+                $browser_message: $('.browser-message')
             };
         };
 
@@ -1353,13 +1352,13 @@ var musicApp = (function() {
                     utilities.deselectAllBlocks();
                     break;
                 case 'pause':
-                    if(config.is_paused !== 1){
+                    if (config.is_paused !== 1) {
                         config.is_pause_toggled = true;
                     }
-                    config.is_paused = 1;                    
+                    config.is_paused = 1;
                     break;
                 case 'play':
-                    if(config.is_paused !== -1){
+                    if (config.is_paused !== -1) {
                         config.is_pause_toggled = true;
                     }
                     config.is_paused = -1;
@@ -1377,6 +1376,30 @@ var musicApp = (function() {
                     throw new Error('changeMode() this is an unrecognized mode');
             }
         };
+        toggleTutorial = function() {
+            var state = $(this).attr('data-state');
+            if (state === 'not-active') {
+
+                $('.tutorial-overlay').show();
+                if (tutorial.getTutorialIndex() == -1) {
+                    if (jqueryMap.$browser_message.is(":visible")) {
+                        jqueryMap.$browser_message.hide();
+                    }
+                    tutorial.setTutorialIndex(0);
+                    $(this).text('Quit Tutorial');
+                }
+                tutorial.advanceTutorial();
+                $(this).attr('data-state', 'active');
+            } else {
+                $(this).text('Tutorial');
+                $(this).attr('data-state', 'not-active');
+                tutorial.endTutorial();
+            }
+
+
+            return false;
+        };
+
         toggleMasterMute = function() {
             config.is_app_muted = config.is_app_muted * -1;
 
@@ -1400,7 +1423,7 @@ var musicApp = (function() {
             if (!target.is("td")) {
                 $(this).hide();
                 $(this).fadeOut(300, function() {
-                    $jqueryMap.$wrapper.trigger('click');
+                 //   $jqueryMap.$wrapper.trigger('click');
                 });
             }
             config.is_system_paused = false;
@@ -1430,6 +1453,7 @@ var musicApp = (function() {
             jqueryMap.$master_mute.click(toggleMasterMute);
             jqueryMap.$hotkey_btn.click(showHotKeys);
             jqueryMap.$hotkey_menu.click(hideHotKeys);
+            jqueryMap.$tutorial_btn.click(toggleTutorial);
 
             // Create master volume slider
             createVolumeSlider();
@@ -2848,7 +2872,7 @@ var musicApp = (function() {
                                 blocks[l].direction = 'none';
                             }
                         }
-                    }                    
+                    }
                 }
 
                 if (config.is_blocks_dragged === false) {
@@ -2908,12 +2932,12 @@ var musicApp = (function() {
             /////////
 
             // Set to null to remove dragbox in draw loop
-            if(config.is_dragbox_active){
+            if (config.is_dragbox_active) {
                 console.log("DRAGBOX ACTIVE");
                 config.is_system_paused = false;
                 config.is_dragbox_active = false;
                 dragBox = {};
-                config.is_pause_toggled = true;                
+                config.is_pause_toggled = true;
             }
 
             if (e.which === 3) {
@@ -3044,7 +3068,7 @@ var musicApp = (function() {
                 mousedownX = -1;
                 mousedownY = -1;
 
-                gridCheck = false;                
+                gridCheck = false;
             }
         };
 
@@ -3149,7 +3173,7 @@ var musicApp = (function() {
 
                     case 39: // Right
                         utilities.sendBlocks('right');
-                        if(tutorial.getTutorialIndex() !== -1){
+                        if (tutorial.getTutorialIndex() !== -1) {
                             tutorial.advanceTutorial();
                         }
                         break;
@@ -3232,12 +3256,12 @@ var musicApp = (function() {
         }, false);
 
     }();
- 
+
 
     // musicApp public API for tutorial.js
     return {
         tutorialArray: tutorialArray,
-        config:config,
+        config: config,
         gridify: utilities.gridify,
         deleteAllBlocks: utilities.deleteAllBlocks,
         setMusicBlockParams: musicBlockPanel.setParams,
