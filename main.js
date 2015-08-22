@@ -17,6 +17,7 @@ var musicApp = (function() {
             grid_offset_y: 0,
             is_paused: -1,
             is_system_paused: false,
+            is_pause_toggled: false,
             advance: -1,
             is_shiftkey_enabled: 0,
             selected_block_count: 0,
@@ -25,11 +26,11 @@ var musicApp = (function() {
             new_block: -1,
             instruments_to_load: 1,
             is_blocks_dragged: false,
-            clear_message: 'Are you sure you want to clear the board?',
             master_volume: 100,
             is_app_muted: -1,
             is_block_soloed: false,
             active_panel: 'block-music',
+            is_dragbox_active: false,
             is_instrument_loading: false
         },
 
@@ -66,10 +67,10 @@ var musicApp = (function() {
         };
     var blocks = [];
     var midiInstruments = {
+        'xylophone': 13,
         'acoustic_grand_piano': 0,
         'acoustic_bass': 32,
-        'gunshot': 127,
-        'xylophone': 13,
+        'gunshot': 127,        
         'marimba': 12,
         'rock_organ': 18,
         'orchestral_harp': 46,
@@ -290,22 +291,22 @@ var musicApp = (function() {
         initMod = function() {
 
             // Populate the scale Arrays
-            populateScaleArray("Chromatic (None)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
-            populateScaleArray("C Major / A Minor", [0, 2, 4, 5, 7, 9, 11]);
-            populateScaleArray("D Major / B Minor", [1, 2, 4, 6, 7, 9, 11]);
-            populateScaleArray("E Major / C# Minor", [1, 3, 4, 6, 8, 9, 11]);
-            populateScaleArray("F Major / D Minor", [0, 2, 4, 5, 7, 9, 10]);
-            populateScaleArray("G Major / E Minor", [0, 2, 4, 6, 7, 9, 11]);
-            populateScaleArray("A Major / F# Minor", [1, 2, 4, 6, 8, 9, 11]);
-            populateScaleArray("B Major / G# Minor", [1, 3, 4, 6, 8, 10, 11]);
-            populateScaleArray("Bb Major / G minor", [0, 2, 3, 5, 7, 9, 10]);
-            populateScaleArray("Eb Major / C Minor", [0, 2, 3, 5, 7, 8, 10]);
-            populateScaleArray("Ab Major / F Minor", [0, 1, 3, 5, 7, 8, 10]);
-            populateScaleArray("Db Major / Bb Minor", [0, 1, 3, 5, 6, 8, 10]);
-            populateScaleArray("Gb Major / Eb Minor", [1, 3, 5, 6, 8, 10, 11]);
-            populateScaleArray("Cb Major / Ab Minor", [1, 3, 4, 6, 8, 10, 11]);
-            populateScaleArray("F# Major / D# Minor", [1, 3, 5, 6, 8, 10, 11]);
-            populateScaleArray("C# Major / A# Minor", [0, 1, 3, 5, 6, 8, 10]);
+            populateScaleArray('Chromatic (None)', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+            populateScaleArray('C Major / A Minor', [0, 2, 4, 5, 7, 9, 11]);
+            populateScaleArray('D Major / B Minor', [1, 2, 4, 6, 7, 9, 11]);
+            populateScaleArray('E Major / C# Minor', [1, 3, 4, 6, 8, 9, 11]);
+            populateScaleArray('F Major / D Minor', [0, 2, 4, 5, 7, 9, 10]);
+            populateScaleArray('G Major / E Minor', [0, 2, 4, 6, 7, 9, 11]);
+            populateScaleArray('A Major / F# Minor', [1, 2, 4, 6, 8, 9, 11]);
+            populateScaleArray('B Major / G# Minor', [1, 3, 4, 6, 8, 10, 11]);
+            populateScaleArray('Bb Major / G minor', [0, 2, 3, 5, 7, 9, 10]);
+            populateScaleArray('Eb Major / C Minor', [0, 2, 3, 5, 7, 8, 10]);
+            populateScaleArray('Ab Major / F Minor', [0, 1, 3, 5, 7, 8, 10]);
+            populateScaleArray('Db Major / Bb Minor', [0, 1, 3, 5, 6, 8, 10]);
+            populateScaleArray('Gb Major / Eb Minor', [1, 3, 5, 6, 8, 10, 11]);
+            populateScaleArray('Cb Major / Ab Minor', [1, 3, 4, 6, 8, 10, 11]);
+            populateScaleArray('F# Major / D# Minor', [1, 3, 5, 6, 8, 10, 11]);
+            populateScaleArray('C# Major / A# Minor', [0, 1, 3, 5, 6, 8, 10]);
 
             // Populate the scale select dropdown in the effects panel
             populateScaleSelect();
@@ -389,7 +390,7 @@ var musicApp = (function() {
 
     // Helper functions that are used throughout the App
     var utilities = function() {
-        var noteArray = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        var noteArray = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
         return {
 
@@ -421,21 +422,24 @@ var musicApp = (function() {
                 return octave * 12 + note;
             },
             deleteSelectedBlocks: function() {
-                for (var i = 0; i < config.block_count; i++) {
-                    if (blocks[i].selected === true) {
-                        blocks[i].removeBlock();
-                        i--;
+                if(tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to delete the selected blocks?')){
+                    for (var i = 0; i < config.block_count; i++) {
+                        if (blocks[i].selected === true) {
+                            blocks[i].removeBlock();
+                            i--;
+                        }
                     }
                 }
             },
             deleteAllBlocks: function() {
-                for (var j = 0; j < config.block_count; j++) {
-                    blocks[j].removeBlock();
-                    j--;
+                if(tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to clear the board?')){
+                    for (var j = 0; j < config.block_count; j++) {
+                        blocks[j].removeBlock();
+                        j--;
+                    }
+                    config.selected_block_count = 0;
                 }
-                config.selected_block_count = 0;
             },
-
             selectAllBlocks: function() {
                 for (var k = 0; k < config.block_count; k++) {
                     blocks[k].selectBlock();
@@ -494,6 +498,7 @@ var musicApp = (function() {
         direction: 'none',
         queued: 1,
         selected: false,
+        is_select_toggled: false,
         selected_color: null,
         not_selected_color: null,
         halfpoint: -1,
@@ -504,7 +509,7 @@ var musicApp = (function() {
         gridX: 0,
         gridY: 0,
         size: 8,
-        highligh_counter: 0,
+        highlight_counter: 0,
         prevgridX: 0,
         prevgridy: 0,
         block_hex_colors: ['#d27743', '#debe4e', '#cf5a4c', '#9473f3', '#4077d5', '#37a354', '#3fc3d8'],
@@ -578,6 +583,7 @@ var musicApp = (function() {
             // Only select a block if it's not selected
             if (this.selected !== true) {
                 this.selected = true;
+                this.is_select_toggled = true;
                 config.selected_block_count++;
             }
         },
@@ -585,10 +591,12 @@ var musicApp = (function() {
             // Only deselect block if it is already selected
             if (this.selected) {
                 this.selected = false;
+                this.is_select_toggled = true;
                 config.selected_block_count--;
             }
         },
         removeBlock: function() {
+            this.undraw();
             blocks.splice(this.block_num, 1);
             var length = blocks.length;
 
@@ -626,7 +634,7 @@ var musicApp = (function() {
             }
         },
         highlightBlock: function() {
-            this.highligh_counter = 70;
+            this.highlight_counter = 70;
         },
         playmidi: function() {
             var
@@ -653,6 +661,9 @@ var musicApp = (function() {
                 this.posX + 1 + this.size,
                 this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
             context.globalAlpha = 1.0;
+        },
+        undraw: function() {
+            context.clearRect(this.posX, this.posY, config.block_size, config.block_size);
         },
         selectDirectionSprite: function() {
             if (this.new_direction !== 'none') {
@@ -686,14 +697,14 @@ var musicApp = (function() {
             if (this.size > 0) {
                 this.size--;
             }
-            if (this.highligh_counter > 0) {
-                this.highligh_counter -= 4;
+            if (this.highlight_counter > 0) {
+                this.highlight_counter -= 4;
             }
             if (!this.selected) {
-                context.fillStyle = "rgb(" + (this.not_selected_color.red + (this.highligh_counter * 2)) + ", " + (this.not_selected_color.green + this.highligh_counter) + ", " + (this.not_selected_color.blue + (this.highligh_counter * 3)) + ")";
+                context.fillStyle = "rgb(" + (this.not_selected_color.red + (this.highlight_counter * 2)) + ", " + (this.not_selected_color.green + this.highlight_counter) + ", " + (this.not_selected_color.blue + (this.highlight_counter * 3)) + ")";
                 context.fill();
             } else {
-                context.fillStyle = "rgb(" + (this.selected_color.red + this.highligh_counter) + ", " + (this.selected_color.green + this.highligh_counter) + ", " + (this.selected_color.blue + this.highligh_counter) + ")";
+                context.fillStyle = "rgb(" + (this.selected_color.red + this.highlight_counter) + ", " + (this.selected_color.green + this.highlight_counter) + ", " + (this.selected_color.blue + this.highlight_counter) + ")";
                 context.fill();
             }
 
@@ -1102,14 +1113,38 @@ var musicApp = (function() {
             initAppLoop;
 
         animationLoop = function() {
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            var blocks_to_draw = new Array();
+            if(config.is_blocks_dragged || config.is_dragbox_active || config.is_pause_toggled) {
+                context.clearRect(0, 0, canvas.width, canvas.height);    
+                console.log("REDRAWING ALL");
+            } 
+
+            for (var y = 0; y < config.block_count; y++){
+                if (config.is_pause_toggled
+                || blocks[y].is_select_toggled
+                || (blocks[y].new_direction !== 'none' //&& blocks[y].waiting == false
+                    && (!config.is_system_paused && ((config.is_paused === 1 && config.advance === 1) || config.is_paused === -1)))
+                || blocks[y].highlight_counter > 0 || blocks[y].size > 0
+                || config.is_blocks_dragged
+                || config.is_dragbox_active){
+                    if(!config.is_blocks_dragged && !config.is_dragbox_active && !config.is_pause_toggled){
+                        blocks[y].undraw();
+                    }
+                    blocks[y].is_select_toggled = false;
+                    blocks_to_draw.push(y);
+                }            
+            }
+
+            config.is_pause_toggled = false;
+            
+            /*context.clearRect(0, 0, canvas.width, canvas.height);
             for (var z = 0; z < config.block_count; z++) {
                 block = blocks[z].render();
             }
             drag_map = gridEvents.getDragValues();
             context.fillStyle = 'rgba(225,225,225,0.5)';
             context.fill();
-            context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);
+            context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);*/
 
             if (!config.is_system_paused && ((config.is_paused === 1 && config.advance === 1) || config.is_paused === -1)) {
                 // Clear canvas on loop and redraw blocks
@@ -1251,6 +1286,18 @@ var musicApp = (function() {
                 syncounter += config.block_speed;
                 config.advance = -1;
             }
+
+            for (var z = 0; z < blocks_to_draw.length; z++) {
+                block = blocks[blocks_to_draw[z]].render();
+            }  
+
+            if(config.is_dragbox_active){
+                drag_map = gridEvents.getDragValues();
+                context.fillStyle = 'rgba(225,225,225,0.5)';
+                context.fill();
+                context.fillRect(drag_map.xpos, drag_map.ypos, drag_map.width, drag_map.height);
+            }
+
             requestAnimationFrame(animationLoop);
         };
 
@@ -1276,7 +1323,7 @@ var musicApp = (function() {
             // Public Methods
             initMod;
 
-        setJqueryMap = function() {
+       setJqueryMap = function() {
             jqueryMap = {
                 $mode_select: $('.mode-select'),
                 $play_select: $('.play-select'),
@@ -1303,21 +1350,28 @@ var musicApp = (function() {
                     break;
                 case 'trash':
                     config.mode = mode;
-                    utilities.deleteSelectedBlocks();
+                    utilities.deselectAllBlocks();
                     break;
                 case 'pause':
-                    config.is_paused = 1;
+                    if(config.is_paused !== 1){
+                        config.is_pause_toggled = true;
+                    }
+                    config.is_paused = 1;                    
                     break;
                 case 'play':
+                    if(config.is_paused !== -1){
+                        config.is_pause_toggled = true;
+                    }
                     config.is_paused = -1;
                     break;
                 case 'select-all':
                     utilities.selectAllBlocks();
                     break;
                 case 'clear-all':
-                    if (confirm(config.clear_message) === true) {
-                        utilities.deleteAllBlocks();
-                    }
+                    utilities.deleteAllBlocks();
+                    break;
+                case 'delete-selected':
+                    utilities.deleteSelectedBlocks();
                     break;
                 default:
                     throw new Error('changeMode() this is an unrecognized mode');
@@ -2062,7 +2116,7 @@ var musicApp = (function() {
                 if (map.hasOwnProperty(key)) {
 
                     // Loop through and set open effect panel to first active panel
-                    if (map[key].active === true && open_effect === false) {
+                    if (map[key].active === true && open_effect === false && $("#block-music").hasClass('active')) {
                         $('.effect-' + key).show().siblings('.effect-box').hide();
                         $('.effect-' + key).siblings('.header').find('.toggle-drop').removeClass('active');
                         $('.effect-' + key).prev().find('.toggle-drop').addClass('active');
@@ -2626,6 +2680,8 @@ var musicApp = (function() {
             blockDragHeight = 0,
             blockDragRightX,
             blockDragRightY,
+            blockDragOffsetX = 0,
+            blockDragOffsetY = 0,
             gridCheck = false,
             createDragBox = false,
             jqueryMap = {},
@@ -2701,8 +2757,6 @@ var musicApp = (function() {
                 blockDragRightY,
                 grid_pos,
                 valid_move,
-                block_drag_offset_x = 0,
-                block_drag_offset_y = 0,
                 grid_x,
                 grid_y,
                 move_x,
@@ -2719,6 +2773,7 @@ var musicApp = (function() {
                 mouse_down_grid_x = utilities.gridify(mousedownX);
                 mouse_down_grid_y = utilities.gridify(mousedownY);
 
+                //If we have just started dragging blocks, we need to identify a rectangle that encapsulates all the blocks and use it to move them.
                 if (gridArray[mouse_down_grid_x][mouse_down_grid_y] != -1 && blocks[gridArray[mouse_down_grid_x][mouse_down_grid_y]].selected === true && config.is_blocks_dragged === false && config.new_block === -1) {
                     config.is_blocks_dragged = true;
                     config.is_system_paused = true;
@@ -2737,8 +2792,8 @@ var musicApp = (function() {
                     }
                     blockDragWidth = blockDragRightX - blockDragLeftX;
                     blockDragHeight = blockDragRightY - blockDragLeftY;
-                    block_drag_offset_x = utilities.gridify(mousedownX) - blockDragLeftX;
-                    block_drag_offset_y = utilities.gridify(mousedownY) - blockDragLeftY;
+                    blockDragOffsetX = utilities.gridify(mousedownX) - blockDragLeftX;
+                    blockDragOffsetY = utilities.gridify(mousedownY) - blockDragLeftY;
 
                     //Set each block's drag offset from the drag corner
                     for (var j = 0; j < config.block_count; j++) {
@@ -2752,14 +2807,14 @@ var musicApp = (function() {
                 if (config.is_blocks_dragged === true) {
 
                     //Check for new blockDrag positions being outside the grid
-                    grid_pos = utilities.gridify(e.pageX - config.grid_offset_x) - block_drag_offset_x;
+                    grid_pos = utilities.gridify(e.pageX - config.grid_offset_x) - blockDragOffsetX;
                     valid_move = true;
 
                     if (grid_pos + blockDragWidth < config.grid_width && grid_pos >= 0) {
                         blockDragLeftX = grid_pos;
                     }
 
-                    grid_pos = utilities.gridify(e.pageY - config.grid_offset_y) - block_drag_offset_y;
+                    grid_pos = utilities.gridify(e.pageY - config.grid_offset_y) - blockDragOffsetY;
 
                     if (grid_pos + blockDragHeight < config.grid_height && grid_pos >= 0) {
                         blockDragLeftY = grid_pos;
@@ -2793,7 +2848,7 @@ var musicApp = (function() {
                                 blocks[l].direction = 'none';
                             }
                         }
-                    }
+                    }                    
                 }
 
                 if (config.is_blocks_dragged === false) {
@@ -2812,6 +2867,8 @@ var musicApp = (function() {
                         }
 
                     } else {
+                        config.is_dragbox_active = true;
+                        config.is_system_paused = true;
                         move_x = e.pageX - config.grid_offset_x;
                         move_y = e.pageY - config.grid_offset_y;
                         width = Math.abs(move_x - mousedownX);
@@ -2832,6 +2889,8 @@ var musicApp = (function() {
 
         // Compares mouseup location with mousedown, calls old click function if same, drag select if not
         mouseUp = function(e) {
+            //Remove drag event on mouseup
+            elements.section.removeEventListener('mousemove', mouseDrag);
             /////////
             // Tutorial related BEGIN
             if (validInput.type == 'gridUp') {
@@ -2849,7 +2908,13 @@ var musicApp = (function() {
             /////////
 
             // Set to null to remove dragbox in draw loop
-            dragBox = {};
+            if(config.is_dragbox_active){
+                console.log("DRAGBOX ACTIVE");
+                config.is_system_paused = false;
+                config.is_dragbox_active = false;
+                dragBox = {};
+                config.is_pause_toggled = true;                
+            }
 
             if (e.which === 3) {
                 utilities.deselectAllBlocks();
@@ -2979,9 +3044,7 @@ var musicApp = (function() {
                 mousedownX = -1;
                 mousedownY = -1;
 
-                gridCheck = false;
-                //Remove drag event on mouseup
-                elements.section.removeEventListener('mousemove', mouseDrag);
+                gridCheck = false;                
             }
         };
 
@@ -3058,7 +3121,7 @@ var musicApp = (function() {
                 event.preventDefault();
             }
 
-            if (tutorial.getTutorialIndex() == -1 || event.keyCode == 84 || event.keyCode == 16) {
+            if (tutorial.getTutorialIndex() == -1 || event.keyCode == 84 || event.keyCode == 16 || tutorial.checkValidInput(event)) {
                 switch (event.keyCode) {
                     case 16: // Shift
                         config.is_shiftkey_enabled = 1;
@@ -3067,6 +3130,7 @@ var musicApp = (function() {
                     case 32: // Space
                         if (config.is_blocks_dragged === false) {
                             config.is_paused = config.is_paused * -1;
+                            config.is_pause_toggled = true;
                             if (config.is_paused === -1) {
                                 $("[data-mode='play']").addClass('active').siblings().removeClass('active');
                             } else {
@@ -3085,6 +3149,9 @@ var musicApp = (function() {
 
                     case 39: // Right
                         utilities.sendBlocks('right');
+                        if(tutorial.getTutorialIndex() !== -1){
+                            tutorial.advanceTutorial();
+                        }
                         break;
 
                     case 40: // Down
@@ -3101,9 +3168,7 @@ var musicApp = (function() {
                         utilities.deleteSelectedBlocks();
                         break;
                     case 52: // 4
-                        if (confirm(config.clear_message) === true) {
-                            utilities.deleteAllBlocks();
-                        }
+                        utilities.deleteAllBlocks();
                         break;
 
                     case 65: // a
