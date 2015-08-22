@@ -659,14 +659,21 @@ tutorial = (function() {
 
                 case "element_clicked":
                     $('.tutorial-overlay').hide();
+                   console.log($(document.elementFromPoint(event.pageX, event.pageY)));
+
                     var id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].id;
                     if ($(document.elementFromPoint(event.pageX, event.pageY))[0].tagName == "polygon") {
                         id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].parentElement.parentElement.id;
                     } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].id == "Layer_1") {
                         id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].parentElement.id;
-                    } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].innerText == "▼") {
+                    } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].className == "ui-icon ui-icon-triangle-1-s") {
+                        console.log("test");
                         id_to_check = "step-size-down";
                     }
+
+
+
+
                     $('.tutorial-overlay').show();
 
                     return (id_to_check == musicApp.validInput.element_id);
@@ -971,7 +978,7 @@ tutorial = (function() {
             musicApp.blocks[2].configMap.note.range_high = 76;
             musicApp.blocks[2].rebuildRangeValidNotes();
             musicApp.setToEffectBlock(1);
-        } else if (elemAtPnt[0].innerText == "▼") {
+        } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].className == "ui-icon ui-icon-triangle-1-s") {
             $(".note-step-size").spinner("stepDown");
         } else if (event.type == "mousedown" || event.type == "mouseup") {
             elemAtPnt[0].click(event);
