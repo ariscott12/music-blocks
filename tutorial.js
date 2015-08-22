@@ -97,16 +97,12 @@ tutorial = (function() {
         addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 4);
         addTutorialCommand("change_element_text", ".tutorial-text", "Welcome to Music Blocks, a web-based visual music sequencer. This is an interactive tutorial that will teach you how to add and manage blocks on a grid that will (hopefully) produce music. Let's get started!");
 
-        musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "gridDown", 5, 4);
-        //addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 5, 5);            
-        addTutorialCommand("change_element_text", ".tutorial-text", "First off, let's add a music block. Click the grid here.");
-        /*addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "grid", 5, 4);    
-        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "grid", 5, 4);    */
-        //addTutorialCommand("surround", "grid", 5, 4);    
-
         // To add a new tutorial step, push a new array onto tutorialArray.
         // Subsequent calls to addTutorialCommand add the command to this step.
+        musicApp.tutorialArray.push([]);
+        addTutorialCommand("set_input", "gridDown", 5, 4);
+        addTutorialCommand("change_element_text", ".tutorial-text", "First off, let's add a music block. Click the grid here.");
+        
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("show", ".tutorial-text-wrapper");
@@ -114,11 +110,7 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 5, 5);
-        //addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 5, 6);
         addTutorialCommand("change_element_text", ".tutorial-text", "Click here to create another music block.");
-        /*addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "grid", 5, 5);    
-        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "grid", 5, 5);    */
-        //addTutorialCommand("surround", "grid", 5, 5);    
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
@@ -126,9 +118,7 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 0);
-        //addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 0);  
         addTutorialCommand("change_element_text", ".tutorial-text", "Click here to select the first music block again.");
-        //addTutorialCommand("surround", "block", 0);    
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
@@ -143,7 +133,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        // addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 5, 6);
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "grid", 5, 5);
         addTutorialCommand("change_element_text", ".tutorial-text", "Great, notice that the unselected block isn't moving... changing an attribute in the panel or piano roll only effects selected blocks.");
 
@@ -157,12 +146,10 @@ tutorial = (function() {
         addTutorialCommand("change_element_text", ".tutorial-text", "You can tell exactly which note the block will play by checking the display in the panel, or looking at the piano roll.");
         addTutorialCommand("move_near", "#tutorial-right-arrow-purple", "#block-music", 50, 232);
         addTutorialCommand("move_near", "#tutorial-down-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 15 - ($("#tutorial-down-arrow").height()));
-        //addTutorialCommand("position_element", "#tutorial-right-arrow", "left_of", "point", 682,322);
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "D5");
         addTutorialCommand("change_element_text", ".tutorial-text", "Let's change the note... click the D5 on the piano roll.");
-        //addTutorialCommand("move_near", ".tutorial-text-wrapper", ".piano-wrapper", 0, -30); 
         addTutorialCommand("show", "#tutorial-down-arrow");
         addTutorialCommand("move_near", "#tutorial-down-arrow", ".piano-wrapper", $("#D5").outerWidth() * 22.5 - $("#tutorial-down-arrow").width() / 2, 15 - ($("#tutorial-down-arrow").height()));
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "above", "#tutorial-down-arrow");
@@ -174,9 +161,7 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("set_input", "blockDown", 1);
-        //addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);
         addTutorialCommand("change_element_text", ".tutorial-text", "Let's copy a block... click on the block that isn't moving.");
-        //addTutorialCommand("surround", "block", 1);
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
@@ -187,9 +172,7 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 4, 5);
-        //addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 4, 6);
         addTutorialCommand("change_element_text", ".tutorial-text", "Click here to create another music block.");
-        //addTutorialCommand("surround", "grid", 4, 5);
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
@@ -208,7 +191,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "pause-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#pause-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "It can be tricky to select blocks while they are moving... so click on the pause button.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#pause-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#pause-icon");
@@ -221,20 +203,16 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 0);
-        //addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 0);  
         addTutorialCommand("change_element_text", ".tutorial-text", "Select the first block. It's the one that is moving vertically.");
-        //addTutorialCommand("surround", "block", 0);  
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "mute-toggle");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#mute-toggle", 0, 30);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Click mute to mute the block.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#mute-toggle");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#solo-toggle");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "play-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#play-icon", 0, 50);   
         addTutorialCommand("change_element_text", ".tutorial-text", "Now click play.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#play-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#play-icon");
@@ -246,21 +224,18 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "solo-toggle");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#solo-toggle", 0, 30);    
         addTutorialCommand("change_element_text", ".tutorial-text", "When one or more blocks have solo enabled, every other block is muted. Click the solo toggle.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#solo-toggle");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#solo-toggle");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "mute-toggle");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#mute-toggle", 0, 30);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Why don't we hear anything now? Solo mutes the other block, and mute is still enabled on this one. Toggle mute off.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#mute-toggle");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#solo-toggle");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "solo-toggle");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#solo-toggle", 0, 30);    
         addTutorialCommand("change_element_text", ".tutorial-text", "There we go. Now that we know how mute and solo work, toggle solo off.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#solo-toggle");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#solo-toggle");
@@ -272,12 +247,10 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 1);
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);
         addTutorialCommand("change_element_text", ".tutorial-text", "First select the block that isn't moving.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 1);
-        //addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);
         addTutorialCommand("change_element_text", ".tutorial-text", "Great, now click on it again and hold the button down.");
 
         musicApp.tutorialArray.push([]);
@@ -304,21 +277,18 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "clear-all-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#clear-all-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "This X up here will delete every block on the board. Normally there is a warning when you click this, but it is disabled for the tutorial. Click the X.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#clear-all-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#clear-all-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#select-all-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "The other batch edit is Select All... clicking this will select everything.");
         addTutorialCommand("position_element", "#tutorial-down-arrow-purple", "above", "#select-all-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 2, 4);
-        //addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 5, 5);    
         addTutorialCommand("change_element_text", ".tutorial-text", "So fresh and so clean! Let's add a music block here before we bring out the effect blocks.");
 
         musicApp.tutorialArray.push([]);
@@ -343,22 +313,11 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 0);
-        //addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 0);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Let's send the music block toward the effect block. Select the music block.");
-
-        /*musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "next");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 40);    
-        addTutorialCommand("change_element_text", ".tutorial-text", "Notice the panel switches back to Music Block when we select it.");*/
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "keyDown", 39);
         addTutorialCommand("change_element_text", ".tutorial-text", "There are some keyboard shortcuts that will make everything easier. Instead of clicking the right arrow, press the right arrow key on your keyboard. Much easier!");    
-        /*addTutorialCommand("set_input", "element_clicked", "right");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 142);
-        addTutorialCommand("change_element_text", ".tutorial-text", "Click the right arrow.");
-        // Since we are switching to the music panel, direction select is not targetable. Must be positioned manually.
-        addTutorialCommand("move_near", "#tutorial-down-arrow", "#block-music", 113, 72);*/
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
@@ -366,7 +325,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 1);
-        //addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Click the effect block to see how you can control this behavior.");
 
         musicApp.tutorialArray.push([]);
@@ -384,24 +342,20 @@ tutorial = (function() {
             addTutorialCommand("set_input", "element_clicked", "step-size-down");
             addTutorialCommand("change_element_text", ".tutorial-text", "Let's change this to illustrate what it does, click the down arrow until the step size is 1.");
             addTutorialCommand("move_near", "#tutorial-down-arrow", "#block-music", 161, 105);
-            //addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#step-size-down");
         }
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "pause-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#pause-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "You can probably hear the difference, but let's see it. Click pause.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#pause-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#pause-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 0);
-        //addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 0);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Now select the music block again.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "play-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#play-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Now click play.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#play-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#play-icon");
@@ -412,14 +366,12 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "pause-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#pause-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Let's add another effect block, but first let's move these blocks over to make room. Click pause.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#pause-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#pause-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 1, 'shift');
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "We could move these one at a time, but let's select them both instead. Hold the shift key on your keyboard and click the effect block.");
 
         musicApp.tutorialArray.push([]);
@@ -428,7 +380,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "select-all-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#select-all-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Another way to select the blocks is by using the Select All batch edit. Clicking this will select ALL blocks. Do it now.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#select-all-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
@@ -439,14 +390,12 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "select-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#select-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "This whole time we've been using Create Mode to create blocks. Let's switch to Select Mode. Click the icon here.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#select-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 0, 0);
-        //addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 0, 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "While in Select Mode, no new blocks can be created. You can use it to select blocks. Shock. Click this grid location.");
 
         musicApp.tutorialArray.push([]);
@@ -455,7 +404,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 0, 0);
-        //addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 0, 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Click here again but this time, hold the button down.");
 
         musicApp.tutorialArray.push([]);
@@ -469,17 +417,14 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 1);
-        //addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "To move multiple selected blocks, you just move one and they will all follow. Click on the effect block and hold the button down.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridUp", 6, 7);
-        // addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 9, 8);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Drag those blocks around to get a feel for it, then move the mouse here and let go.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#trash-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Perfect. That's it for select mode. Switching to Erase Mode works just like Select Mode, but now every block you 'select' is deleted. You can play around with that after the tutorial.");
         addTutorialCommand("position_element", "#tutorial-down-arrow-purple", "above", "#trash-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#trash-icon");
@@ -487,29 +432,24 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 1);
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Onward! Now let's copy the effect block. Click on it... this will deselect all other blocks and switch to the Effect Panel.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "create-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#create-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "We are trying to make a block, so switch back to Create Mode.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#create-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#create-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 1, 7);
-        //addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 1, 8);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Click here to add a copy of the effect block.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 0);
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 0);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Now select the music block again so we can watch the note change.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "play-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#play-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Now click play.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#play-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#play-icon");
@@ -521,7 +461,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "pause-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#pause-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Just a couple more things and we'll be done with the 'Note' Effect. Click pause.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#pause-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#pause-icon");
@@ -534,12 +473,10 @@ tutorial = (function() {
         addTutorialCommand("set_block_volume", 1, "max", 100);
         addTutorialCommand("set_block_volume", 2, "max", 100);
         addTutorialCommand("set_input", "blockDown", 1);
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Now click this effect block.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 2, 'shift');
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 2);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Hold shift and click the other one so both are selected.");
 
         musicApp.tutorialArray.push([]);
@@ -551,12 +488,10 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 0);
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 0);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Click the music block so we can watch it walk up the scale.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "play-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#play-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Click play and let's see what this did.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#play-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#play-icon");
@@ -568,17 +503,14 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#select-note-scale", -30, 40);  
         addTutorialCommand("change_element_text", ".tutorial-text", "Play around with the different scales and the step size after the tutorial, you can make some pretty cool stuff that way!");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 1);
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "We're almost done, back to the effect blocks... click here.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 2, 'shift');
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 2);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Hold shift and click the other one so both are selected.");
 
         musicApp.tutorialArray.push([]);
@@ -595,7 +527,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#select-note-scale", -30, 40);  
         addTutorialCommand("change_element_text", ".tutorial-text", "There you go. You can also use these sliders or the knobs on the panel to edit these ranges. So many options!");
         addTutorialCommand("move_near", "#tutorial-down-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 10 - ($("#tutorial-down-arrow").height()));
         addTutorialCommand("move_near", "#tutorial-up-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 30.5 - $("#tutorial-down-arrow").width() / 2, 15 + $("#D5").outerHeight());
@@ -610,7 +541,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "volume-activator");
-        //addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 100);    
         addTutorialCommand("change_element_text", ".tutorial-text", "The Volume effect is similar to the Note Effect, but instead of changing the note, it changes how loud the note plays. Click on the toggle next to Volume effect to turn it on.");
         addTutorialCommand("move_near", "#tutorial-down-arrow", "#block-music", 0, 33);
 
@@ -622,24 +552,20 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        //addTutorialCommand("move_near_block", "#volume-activator", 1);   
         addTutorialCommand("change_element_text", ".tutorial-text", "See how the colors correspond to the color on the Effect Panel? We did that on purpose. High Five!");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "pause-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#pause-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Hear that? The block gets progressively louder until it hits the maximum we defined on the panel. Let's see it. Click Pause.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#pause-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#pause-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 0);
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 0);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Now select the music block again.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "play-icon");
-        // addTutorialCommand("move_near", ".tutorial-text-wrapper", "#play-icon", 0, 50);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Now click play.");
         addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#play-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#play-icon");
@@ -652,7 +578,6 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "blockDown", 1);
-        // addTutorialCommand("move_near_block", ".tutorial-text-wrapper", 1);    
         addTutorialCommand("change_element_text", ".tutorial-text", "Click the effect block one more time.");
 
         musicApp.tutorialArray.push([]);
@@ -667,12 +592,7 @@ tutorial = (function() {
         addTutorialCommand("move_near", "#tutorial-down-arrow-purple", "#block-music", 85, 295);
         addTutorialCommand("change_element_text", ".tutorial-text", "Duration is just how long the note is held for. These Effects are controlled identically to Volume, feel free to play with them after the tutorial!");
 
-        /*musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "next");*/
-
-
         musicApp.tutorialArray.push([]);
-        //addTutorialCommand("clear_all");
         addTutorialCommand("end_tutorial");
     })();
 
@@ -705,7 +625,6 @@ tutorial = (function() {
                 case "next":
                     //Eventually this case should do nothing, for now forwarding to keyDown T
                     return (event.type == "keydown" && event.keyCode == 84);
-                    break;
 
                 case "gridUp":
 
@@ -713,7 +632,6 @@ tutorial = (function() {
                         gridX = musicApp.gridify(event.pageX - musicApp.config.grid_offset_x),
                         gridY = musicApp.gridify(event.pageY - musicApp.config.grid_offset_y);
                     return ((event.type == "mouseup" || event.type == "click") && gridX == musicApp.validInput.x && gridY == musicApp.validInput.y);
-                    break;
 
                 case "gridDown":
 
@@ -724,7 +642,6 @@ tutorial = (function() {
 
                     var shiftcheck = ((musicApp.validInput.keycode == 'shift' && musicApp.config.is_shiftkey_enabled == 1) || (musicApp.config.is_shiftkey_enabled == 0 && musicApp.validInput.keycode != 'shift'));
                     return ((event.type == "mousedown" || event.type == "click") && shiftcheck && gridX == musicApp.validInput.x && gridY == musicApp.validInput.y);
-                    break;
 
                 case "blockDown":
                     var
@@ -733,15 +650,12 @@ tutorial = (function() {
                     var shiftcheck = ((musicApp.validInput.y == 'shift' && musicApp.config.is_shiftkey_enabled == 1) || (musicApp.config.is_shiftkey_enabled == 0 && musicApp.validInput.y != 'shift'));
                     //musicApp.validInput.x is used to store the blockref we want
                     return ((event.type == "mousedown" || event.type == "click") && shiftcheck && musicApp.gridArray[gridX][gridY] == musicApp.validInput.x);
-                    break;
 
                 case "keyDown":
                     return (event.type == "keydown" && event.keyCode == musicApp.validInput.keycode);
-                    break;
 
                 case "rightMouse":
                     return (event.type == "mousedown" && event.which === 3);
-                    break;
 
                 case "element_clicked":
                     $('.tutorial-overlay').hide();
@@ -757,11 +671,8 @@ tutorial = (function() {
 
                     return (id_to_check == musicApp.validInput.element_id);
 
-                    break;
-
                 default:
                     return false;
-                    break;
             }
         }
     }
@@ -879,11 +790,9 @@ tutorial = (function() {
                     // Move the element to the x,y position in left, top
                 case "move":
                     $(current_step.element).css({
-                        //position:'absolute',
                         top: current_step.top,
                         left: current_step.left,
                     });
-                    // $(current_step.element).html("Moved to " + current_step.left + ", " +  current_step.top);
                     break;
 
                 case "move_to_grid":
@@ -891,35 +800,28 @@ tutorial = (function() {
                     var
                         moveX = current_step.left * musicApp.config.block_size, // + gridpos.left,
                         moveY = gridpos.top + current_step.top * musicApp.config.block_size;
-                    //($(current_step.element));
                     $(current_step.element).css({
-                        //position:'absolute',
                         left: moveX,
                         top: moveY,
                     });
                     break;
 
                 case "move_near_block":
-                    /*var moveX = musicApp.blocks[current_step.left].gridX * musicApp.config.block_size,
-                    moveY = (musicApp.blocks[current_step.left].gridY + 1) * musicApp.config.block_size;*/
                     var gridpos = $('#grid').offset();
                     var moveX = musicApp.blocks[current_step.left].posX - $(current_step.element).width() / 2 + musicApp.config.block_size / 2,
                         moveY = gridpos.top + musicApp.blocks[current_step.left].posY + musicApp.config.block_size;
                     $(current_step.element).css({
-                        //position:'absolute',
                         left: moveX,
                         top: moveY,
                     });
                     break;
 
-                    // Resize the element to width, height
                 case "resize":
                     $(current_step.element).css({
                         position: 'absolute',
                         width: current_step.width + "px",
                         height: current_step.height + "px",
                     });
-                    // $(current_step.element).html("Resized to " + current_step.width + " by " +  current_step.height);
                     break;
 
                     // Position the element near the element targeted in the "near" attribute
@@ -927,12 +829,9 @@ tutorial = (function() {
                     $(current_step.element).show();
                     var near_element_pos = $(current_step.near).position();
                     $(current_step.element).css({
-                        //position:'absolute',                
                         left: (near_element_pos.left + current_step.left) + "px",
                         top: (near_element_pos.top + current_step.top) + "px",
                     });
-                    /*$("#tutorial-down-arrow").show();
-                    positionElementRelative($("#tutorial-down-arrow"), "above", $(current_step.near));*/
                     break;
 
                 case "position_element":
@@ -951,37 +850,6 @@ tutorial = (function() {
                         positionElementRelative($(current_step.element), current_step.left, $(current_step.near));
                     }
                     break;
-
-                    /*case "surround":
-                        surround(current_step);
-                        // $("#tutorial-down-arrow").show();
-                        // $("#tutorial-left-arrow").show();
-                        // $("#tutorial-right-arrow").show();
-                        // var gridPos, posLeft, posTop;
-                        // gridpos = $('#grid').offset();
-                        // if(current_step.element == "grid"){                                            
-                        //     posLeft = current_step.left * musicApp.config.block_size;
-                        //     posTop = gridpos.top + current_step.top * musicApp.config.block_size;
-                        // }
-                        // else if(current_step.element == "block"){
-                        //     posLeft = musicApp.blocks[current_step.left].posX;
-                        //     posTop = gridpos.top + musicApp.blocks[current_step.left].posY;
-                        // }
-
-                        //     positionElementRelative($("#tutorial-down-arrow"), "above", "grid", 
-                        //         posLeft, posTop, musicApp.config.block_size, musicApp.config.block_size);
-
-                        //     positionElementRelative($("#tutorial-left-arrow"), "right_of", "grid", 
-                        //         posLeft, posTop, musicApp.config.block_size, musicApp.config.block_size);
-
-                        //     positionElementRelative($("#tutorial-right-arrow"), "left_of", "grid", 
-                        //         posLeft, posTop, musicApp.config.block_size, musicApp.config.block_size);
-                            
-                        //     positionElementRelative($(".tutorial-text-wrapper"), "below", "grid", 
-                        //         posLeft, posTop, musicApp.config.block_size, musicApp.config.block_size);
-                        //}
-                        // else if(current_step.element == "block")
-                        break;*/
 
                 case "set_input":
                     //using element as type
@@ -1091,27 +959,18 @@ tutorial = (function() {
         } else if (elemAtPnt[0].id == "D5") {
             musicApp.blocks[0].note = 62;
             musicApp.setMusicBlockParams('note', 62);
-
-            // This call might not be needed anymore, setToBlock calls updatePianoRoll
-            //musicApp.updatePianoRoll();
         } else if (elemAtPnt[0].id == "C5") {
             musicApp.blocks[1].configMap.note.range_low = 60;
             musicApp.blocks[1].rebuildRangeValidNotes();
             musicApp.blocks[2].configMap.note.range_low = 60;
             musicApp.blocks[2].rebuildRangeValidNotes();
             musicApp.setToEffectBlock(1);
-
-            // This call might not be needed anymore
-            //musicApp.updatePianoRoll();
         } else if (elemAtPnt[0].id == "E6") {
             musicApp.blocks[1].configMap.note.range_high = 76;
             musicApp.blocks[1].rebuildRangeValidNotes();
             musicApp.blocks[2].configMap.note.range_high = 76;
             musicApp.blocks[2].rebuildRangeValidNotes();
             musicApp.setToEffectBlock(1);
-
-            // This call might not be needed anymore
-            //musicApp.updatePianoRoll();
         } else if (elemAtPnt[0].innerText == "▼") {
             $(".note-step-size").spinner("stepDown");
         } else if (event.type == "mousedown" || event.type == "mouseup") {
@@ -1120,40 +979,8 @@ tutorial = (function() {
 
     };
 
-    spawnTutorialArrow = function(direction, element) {
-        /*var elem = document.createElement("img");
-        elem.setAttribute("class", "tutorial-"+direction+"-arrow");
-        /*elem.setAttribute("src", "./images/red-bouncing-arrow.gif");
-        elem.setAttribute("height", "50");
-        elem.setAttribute("width", "30");
-        elem.setAttribute("id", "tutorial-down-arrow");
-
-        //elem.src = "../images/red-bouncing-arrow.png"
-        document.getElementById("wrapper").appendChild(elem);*/
-        /*$('.tutorial-up-arrow').css ({
-            left: '600px',
-            top: '600px',
-        });*/
-        //$('.tutorial-up-arrow').hide();
-    };
-
-    /*$('.tutorial-overlay').click(function(event){
-            if(checkValidInput(event)){
-                advanceTutorial();            
-            }
-            $('.tutorial-overlay').hide();
-                 simulateEventAtPoint(event);
-                $('.tutorial-overlay').show();
-                
-            
-        });*/
-    spawnTutorialArrow("up");
-
     $('.tutorial-overlay').mousedown(function(event) {
         if (checkValidInput(event)) {
-            // $('.tutorial-overlay').hide();
-            // simulateEventAtPoint(event);
-            // $('.tutorial-overlay').show();
             $('.tutorial-overlay').hide();
             simulateEventAtPoint(event);
             advanceTutorial();
@@ -1161,7 +988,6 @@ tutorial = (function() {
         if (musicApp.validInput.type != "gridUp") {
             $('.tutorial-overlay').show();
         }
-        //$(document.elementFromPoint(1000,1000)).click();
     });
 
     $('.tutorial-next').mousedown(function(event) {
