@@ -66,65 +66,28 @@ body {
   cursor: pointer;
   box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.5) inset, 0 1px 1px rgba(255, 255, 255, 0.66) inset; }
 
-@-webkit-keyframes movearrow {
-  0% {
-    right: 11px; }
+.left-button-wrapper {
+  left: 10px;
+  position: absolute;
+  top: 107px;
+  z-index: 25000;
+  display: none; }
 
-  50% {
-    right: 18px; }
-
-  100% {
-    right: 11px; } }
-
-@-moz-keyframes movearrow {
-  0% {
-    right: 11px; }
-
-  50% {
-    right: 18px; }
-
-  100% {
-    right: 11px; } }
-
-@keyframes movearrow {
-  0% {
-    right: 11px; }
-
-  50% {
-    right: 18px; }
-
-  100% {
-    right: 11px; } }
-
-@-webkit-keyframes changebackground {
-  0% {
-    background: #efc94c; }
-
-  50% {
-    background: #FFD651; }
-
-  100% {
-    background: #efc94c; } }
-
-@-moz-keyframes changebackground {
-  0% {
-    background: #efc94c; }
-
-  50% {
-    background: #FFD651; }
-
-  100% {
-    background: #efc94c; } }
-
-@keyframes changebackground {
-  0% {
-    background: #efc94c; }
-
-  50% {
-    background: #FFD651; }
-
-  100% {
-    background: #efc94c; } }
+.show-hotkeys, .toggle-tutorial {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: .875em;
+  cursor: pointer;
+  border: 1px solid #8ccdc1;
+  padding: 10px;
+  width: 125px;
+  text-align: center;
+  color: #eee;
+  margin-bottom: 10px;
+  background: #399381; }
 
 .control-panel {
   -moz-user-select: -moz-none;
@@ -919,7 +882,7 @@ select {
   position: absolute;
   top: 0;
   width: 100%;
-  z-index: 20000;
+  z-index: 25000;
   padding-top: 130px; }
   .hotekeys table {
     border-collapse: collapse;
@@ -952,56 +915,31 @@ select {
   .key-btn.sml {
     padding: 2px 9px 0; }
 
-.show-hotkeys {
-  -moz-user-select: -moz-none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  font-size: .875em;
-  cursor: pointer;
-  border: 1px solid #8ccdc1;
-  position: absolute;
-  top: 10px;
-  right: 0;
-  padding: 10px 10px 8px 10px;
-  color: #eee; }
-
 .tutorial-text-wrapper {
-  -moz-user-select: -moz-none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  /*height:60px;*/
-  cursor: pointer;
   position: absolute;
-  width: 240px;
-  z-index: 31000;
-  display: table-cell;
+  z-index: 31000; }
+
+.tutorial-text {
+  line-height: 16px;
+  width: 250px;
   text-align: center;
-  vertical-align: middle;
-  background: #FFFFFF none repeat scroll 0 0;
-  border: 1px solid #999;
-  border-radius: 2px;
+  background: #FFFFFF;
+  border-radius: 5px;
   font-size: 0.875em;
-  padding: 2px 10px 0;
-  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.4); }
+  padding: 12px 15px;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.4); }
 
 .tutorial-next {
-  /*position: absolute;*/
-  /*height: 30px;*/
-  /*width: 240px;*/
-  /*z-index: 31000;*/
-  /*display: table-cell;*/
-  /*text-align: center;*/
-  /*vertical-align: middle;  */
-  background: #a3a2a1 none repeat scroll 0 0;
-  /*border: 1px solid #999;*/
-  /*border-radius: 2px;*/
-  /*font-size: 0.875em;*/
-  /*padding: 2px 10px 0;*/
-  /*box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.4); */ }
+  display: none;
+  background: #A9A8A7;
+  color: #4b4b4b;
+  border-radius: 3px;
+  float: right;
+  padding: 6px 0 5px 0;
+  text-align: center;
+  margin-top: 10px;
+  width: 110px;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.4); }
 
 .tutorial-overlay {
   -moz-user-select: -moz-none;
@@ -1021,69 +959,38 @@ select {
 .tutorial-arrow {
   position: absolute;
   z-index: 31000;
-  background: url('../images/down-red-arrow.png') no-repeat;
-  background-size: cover;
   height: 40px;
-  width: 30px;
-  opacity: 0.9; }
+  width: 30px; }
 
-.tutorial-arrow.tutorial-left-arrow {
+.tutorial-down-arrow {
+  background: url('../images/down-yellow-arrow.png') no-repeat; }
+
+.tutorial-left-arrow {
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   -o-transform: rotate(90deg);
   transform: rotate(90deg); }
 
-.tutorial-arrow.tutorial-up-arrow {
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg); }
+.tutorial-up-arrow {
+  -webkit-transform: rotate(80deg);
+  -moz-transform: rotate(80deg);
+  -ms-transform: rotate(80deg);
+  -o-transform: rotate(80deg);
+  transform: rotate(80deg); }
 
-.tutorial-arrow.tutorial-right-arrow {
+.tutorial-right-arrow {
   -webkit-transform: rotate(270deg);
   -moz-transform: rotate(270deg);
   -ms-transform: rotate(270deg);
   -o-transform: rotate(270deg);
   transform: rotate(270deg); }
 
-.tutorial-arrow.tutorial-down-arrow-purple {
-  background: url('../images/down-purple-arrow.png') no-repeat;
-  background-size: cover; }
-
-.tutorial-arrow.tutorial-left-arrow-purple {
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  transform: rotate(90deg);
-  background: url('../images/down-purple-arrow.png') no-repeat;
-  background-size: cover; }
-
-.tutorial-arrow.tutorial-up-arrow-purple {
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
-  background: url('../images/down-purple-arrow.png') no-repeat;
-  background-size: cover; }
-
-.tutorial-arrow.tutorial-right-arrow-purple {
-  -webkit-transform: rotate(270deg);
-  -moz-transform: rotate(270deg);
-  -ms-transform: rotate(270deg);
-  -o-transform: rotate(270deg);
-  transform: rotate(270deg);
-  background: url('../images/down-purple-arrow.png') no-repeat;
-  background-size: cover; }
-
-.tutorial-arrow.tutorial-down-arrow-blue {
+.tutorial-down-arrow-noaction {
   background: url('../images/down-blue-arrow.png') no-repeat;
   background-size: cover; }
 
-.tutorial-arrow.tutorial-left-arrow-blue {
+.tutorial-left-arrow-noaction {
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
@@ -1091,20 +998,18 @@ select {
   transform: rotate(90deg);
   background: url('../images/down-blue-arrow.png') no-repeat; }
 
-.tutorial-arrow.tutorial-up-arrow-blue {
+.tutorial-up-arrow-noaction {
   -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   -o-transform: rotate(180deg);
   transform: rotate(180deg);
-  background: url('../images/down-blue-arrow.png') no-repeat;
-  background-size: cover; }
+  background: url('../images/down-blue-arrow.png') no-repeat; }
 
-.tutorial-arrow.tutorial-right-arrow-blue {
+.tutorial-right-arrow-noaction {
   -webkit-transform: rotate(270deg);
   -moz-transform: rotate(270deg);
   -ms-transform: rotate(270deg);
   -o-transform: rotate(270deg);
   transform: rotate(270deg);
-  background: url('../images/down-blue-arrow.png') no-repeat;
-  background-size: cover; }
+  background: url('../images/down-blue-arrow.png') no-repeat; }
