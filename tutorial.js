@@ -144,8 +144,8 @@ tutorial = (function() {
         addTutorialCommand("set_input", "next");
         addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 5);
         addTutorialCommand("change_element_text", ".tutorial-text", "You can tell exactly which note the block will play by checking the display in the panel, or looking at the piano roll.");
-        addTutorialCommand("move_near", "#tutorial-right-arrow-purple", "#block-music", 50, 232);
-        addTutorialCommand("move_near", "#tutorial-down-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 15 - ($("#tutorial-down-arrow").height()));
+        addTutorialCommand("move_near", "#tutorial-right-arrow-noaction", "#block-music", 50, 232);
+        addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 15 - ($("#tutorial-down-arrow").height()));
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "D5");
@@ -167,8 +167,8 @@ tutorial = (function() {
         addTutorialCommand("set_input", "next");
         addTutorialCommand("change_element_text", ".tutorial-text", "See how C5 is selected on the piano roll again? Clicking a block updates the panel with all the selected blocks information.");
         addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 5);
-        addTutorialCommand("move_near", "#tutorial-right-arrow-purple", "#block-music", 50, 232);
-        addTutorialCommand("move_near", "#tutorial-down-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 15 - ($("#tutorial-down-arrow").height()));
+        addTutorialCommand("move_near", "#tutorial-right-arrow-noaction", "#block-music", 50, 232);
+        addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 15 - ($("#tutorial-down-arrow").height()));
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 4, 5);
@@ -284,7 +284,7 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("change_element_text", ".tutorial-text", "The other batch edit is Select All... clicking this will select everything.");
-        addTutorialCommand("position_element", "#tutorial-down-arrow-purple", "above", "#select-all-icon");
+        addTutorialCommand("position_element", "#tutorial-down-arrow-noaction", "above", "#select-all-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
 
         musicApp.tutorialArray.push([]);
@@ -426,7 +426,7 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("change_element_text", ".tutorial-text", "Perfect. That's it for select mode. Switching to Erase Mode works just like Select Mode, but now every block you 'select' is deleted. You can play around with that after the tutorial.");
-        addTutorialCommand("position_element", "#tutorial-down-arrow-purple", "above", "#trash-icon");
+        addTutorialCommand("position_element", "#tutorial-down-arrow-noaction", "above", "#trash-icon");
         addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#trash-icon");
 
 
@@ -528,10 +528,10 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("change_element_text", ".tutorial-text", "There you go. You can also use these sliders or the knobs on the panel to edit these ranges. So many options!");
-        addTutorialCommand("move_near", "#tutorial-down-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 10 - ($("#tutorial-down-arrow").height()));
-        addTutorialCommand("move_near", "#tutorial-up-arrow-purple", ".piano-wrapper", $("#D5").outerWidth() * 30.5 - $("#tutorial-down-arrow").width() / 2, 15 + $("#D5").outerHeight());
-        addTutorialCommand("move_near", "#tutorial-right-arrow-purple", "#block-music", -9, 126);
-        addTutorialCommand("move_near", "#tutorial-left-arrow-purple", "#block-music", 114, 126);
+        addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", ".piano-wrapper", $("#D5").outerWidth() * 21.5 - $("#tutorial-down-arrow").width() / 2, 10 - ($("#tutorial-down-arrow").height()));
+        addTutorialCommand("move_near", "#tutorial-up-arrow-noaction", ".piano-wrapper", $("#D5").outerWidth() * 30.5 - $("#tutorial-down-arrow").width() / 2, 15 + $("#D5").outerHeight());
+        addTutorialCommand("move_near", "#tutorial-right-arrow-noaction", "#block-music", -9, 126);
+        addTutorialCommand("move_near", "#tutorial-left-arrow-noaction", "#block-music", 114, 126);
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "volume-effect-dropdown");
@@ -573,7 +573,7 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 370);
-        addTutorialCommand("move_near", "#tutorial-down-arrow-purple", "#block-music", 85, 300);
+        addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", "#block-music", 85, 300);
         addTutorialCommand("change_element_text", ".tutorial-text", "See how the volume is increasing by 5? It's controlled by the step size we set in the Volume Effect.");
 
         musicApp.tutorialArray.push([]);
@@ -583,13 +583,13 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 340);
-        addTutorialCommand("move_near", "#tutorial-down-arrow-purple", "#block-music", 85, 270);
+        addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", "#block-music", 85, 270);
         addTutorialCommand("change_element_text", ".tutorial-text", "Velocity is an attribute of instrument sound that describes how hard you press a key on a piano, or how hard you blow on a flute.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 365);
-        addTutorialCommand("move_near", "#tutorial-down-arrow-purple", "#block-music", 85, 295);
+        addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", "#block-music", 85, 295);
         addTutorialCommand("change_element_text", ".tutorial-text", "Duration is just how long the note is held for. These Effects are controlled identically to Volume, feel free to play with them after the tutorial!");
 
         musicApp.tutorialArray.push([]);
@@ -999,5 +999,6 @@ tutorial = (function() {
         setTutorialIndex: setTutorialIndex,
         getTutorialIndex: getTutorialIndex,
         checkValidInput: checkValidInput,
+        endTutorial:endTutorial
     };
 })();
