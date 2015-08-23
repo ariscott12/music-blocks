@@ -100,6 +100,10 @@ tutorial = (function() {
         // To add a new tutorial step, push a new array onto tutorialArray.
         // Subsequent calls to addTutorialCommand add the command to this step.
         musicApp.tutorialArray.push([]);
+        addTutorialCommand("set_input", "next");
+        addTutorialCommand("change_element_text", ".tutorial-text", "You can exit the tutorial at any time by clicking the Quit Tutorial on the left panel, but click Next to continue.");
+        
+        musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 5, 4);
         addTutorialCommand("change_element_text", ".tutorial-text", "First off, let's add a music block. Click the grid here.");
         
@@ -276,16 +280,16 @@ tutorial = (function() {
         addTutorialCommand("change_element_text", ".tutorial-text", "Cool. Now that you're a bit familiar with creating and editing music blocks, let's try the fun stuff: effect blocks. First let's clean up this mess!");
 
         musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "element_clicked", "clear-all-icon");
-        addTutorialCommand("change_element_text", ".tutorial-text", "This X up here will delete every block on the board. Normally there is a warning when you click this, but it is disabled for the tutorial. Click the X.");
-        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#clear-all-icon");
-        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#clear-all-icon");
+        addTutorialCommand("set_input", "element_clicked", "select-all-icon");
+        addTutorialCommand("change_element_text", ".tutorial-text", "Let's select every block using the Select All batch edit. Click it now.");
+        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#select-all-icon");
+        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
 
         musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "next");
-        addTutorialCommand("change_element_text", ".tutorial-text", "The other batch edit is Select All... clicking this will select everything.");
-        addTutorialCommand("position_element", "#tutorial-down-arrow-noaction", "above", "#select-all-icon");
-        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
+        addTutorialCommand("set_input", "element_clicked", "delete-selected-icon");
+        addTutorialCommand("change_element_text", ".tutorial-text", "Good. The other batch edit deletes all selected blocks. Now that they are all selected, click the X to clear the board.");
+        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#delete-selected-icon");
+        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#delete-selected-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 2, 4);
@@ -376,17 +380,7 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "rightMouse");
-        addTutorialCommand("change_element_text", ".tutorial-text", "Nicely done, now they are both selected. Let's see another method to do that. Right-clicking anywhere will deselect all blocks. Click your right mouse button now.");
-
-        musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "element_clicked", "select-all-icon");
-        addTutorialCommand("change_element_text", ".tutorial-text", "Another way to select the blocks is by using the Select All batch edit. Clicking this will select ALL blocks. Do it now.");
-        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#select-all-icon");
-        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
-
-        musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "rightMouse");
-        addTutorialCommand("change_element_text", ".tutorial-text", "Good, click your right mouse to deselect everything and we'll see one more way to select blocks.");
+        addTutorialCommand("change_element_text", ".tutorial-text", "Nicely done, now they are both selected. We've already used the Select All batch edit to select blocks, so let's see another method to do that. Right-clicking anywhere will deselect all blocks. Click your right mouse button now.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "select-icon");
@@ -591,6 +585,11 @@ tutorial = (function() {
         addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 365);
         addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", "#block-music", 85, 295);
         addTutorialCommand("change_element_text", ".tutorial-text", "Duration is just how long the note is held for. These Effects are controlled identically to Volume, feel free to play with them after the tutorial!");
+
+        musicApp.tutorialArray.push([]);
+        addTutorialCommand("set_input", "next");
+        addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 4);
+        addTutorialCommand("change_element_text", ".tutorial-text", "Well that's it for the tutorial! If you have any questions or suggestions, feel free to email us using the contact links. We hope you enjoy using Music Blocks and if you do, feel free to share it with your friends! Click Next to end the tutorial and have a great day.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("end_tutorial");
