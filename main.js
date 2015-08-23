@@ -919,25 +919,22 @@ var musicApp = (function() {
                 }
             } else {
                 // Add step value to block key
-                if (step_direction === 1) {
-
-                    //If the result key is lower than the low limit, then set to the low limit.
-                    if (new_prog_value < blocks[eblockref].configMap[key].range_low) {
-                        new_prog_value = blocks[eblockref].configMap[key].range_low;
-                    }
-                    //If the result key is higher than the high limit, then set to key - high limit.
-                    else if (new_prog_value > blocks[eblockref].configMap[key].range_high) {
-                        new_prog_value = blocks[eblockref].configMap[key].range_high;
-                    }
-                    //If the result key is inside the range, then advance it.
-                    else {
-                        new_prog_value += blocks[eblockref].configMap[key].step * step_direction;
-                    }
-                    //If we are out of the range, we add or subtract the size of the range to wrap around the range
-                    while (new_prog_value > blocks[eblockref].configMap[key].range_high || new_prog_value < blocks[eblockref].configMap[key].range_low) {
-                        new_prog_value -= step_direction * (blocks[eblockref].configMap[key].range_high - blocks[eblockref].configMap[key].range_low + 1);
-                    }
+                //If the result key is lower than the low limit, then set to the low limit.
+                if (new_prog_value < blocks[eblockref].configMap[key].range_low) {
+                    new_prog_value = blocks[eblockref].configMap[key].range_low;
                 }
+                //If the result key is higher than the high limit, then set to key - high limit.
+                else if (new_prog_value > blocks[eblockref].configMap[key].range_high) {
+                    new_prog_value = blocks[eblockref].configMap[key].range_high;
+                }
+                //If the result key is inside the range, then advance it.
+                else {
+                    new_prog_value += blocks[eblockref].configMap[key].step * step_direction;
+                }
+                //If we are out of the range, we add or subtract the size of the range to wrap around the range
+                while (new_prog_value > blocks[eblockref].configMap[key].range_high || new_prog_value < blocks[eblockref].configMap[key].range_low) {
+                    new_prog_value -= step_direction * (blocks[eblockref].configMap[key].range_high - blocks[eblockref].configMap[key].range_low + 1);
+                }            
             }
 
             //Set the block configMap key value to new prog value
@@ -1117,7 +1114,6 @@ var musicApp = (function() {
             var blocks_to_draw = new Array();
             if (config.is_blocks_dragged || config.is_dragbox_active || config.is_pause_toggled) {
                 context.clearRect(0, 0, canvas.width, canvas.height);
-                console.log("REDRAWING ALL");
             }
 
             for (var y = 0; y < config.block_count; y++) {
@@ -2933,7 +2929,6 @@ var musicApp = (function() {
 
             // Set to null to remove dragbox in draw loop
             if (config.is_dragbox_active) {
-                console.log("DRAGBOX ACTIVE");
                 config.is_system_paused = false;
                 config.is_dragbox_active = false;
                 dragBox = {};
