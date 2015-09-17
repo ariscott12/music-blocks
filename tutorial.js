@@ -660,12 +660,12 @@ tutorial = (function() {
                     $('.tutorial-overlay').hide();
                    console.log($(document.elementFromPoint(event.pageX, event.pageY)));
 
-                    var id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].id;
-                    if ($(document.elementFromPoint(event.pageX, event.pageY))[0].tagName == "polygon") {
-                        id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].parentElement.parentElement.id;
-                    } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].id == "Layer_1") {
-                        id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].parentElement.id;
-                    } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].className == "ui-icon ui-icon-triangle-1-s") {
+                    var id_to_check = $(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].id;
+                    if ($(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].tagName == "polygon") {
+                        id_to_check = $(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].parentElement.parentElement.id;
+                    } else if ($(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].id == "Layer_1") {
+                        id_to_check = $(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].parentElement.id;
+                    } else if ($(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].className == "ui-icon ui-icon-triangle-1-s") {
                         console.log("test");
                         id_to_check = "step-size-down";
                     }
