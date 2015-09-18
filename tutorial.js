@@ -1,4 +1,5 @@
-// Sample syntaxes for each supported command type
+
+    // Sample syntaxes for each supported command type
 
 // Set the next tutorial valid input to be clicking the select-icon
 // addTutorialCommand("set_input", "element_clicked", "select-icon");
@@ -100,9 +101,13 @@ tutorial = (function() {
         // To add a new tutorial step, push a new array onto tutorialArray.
         // Subsequent calls to addTutorialCommand add the command to this step.
         musicApp.tutorialArray.push([]);
+        addTutorialCommand("set_input", "next");
+        addTutorialCommand("change_element_text", ".tutorial-text", "You can exit the tutorial at any time by clicking the Quit Tutorial on the left panel, but click Next to continue.");
+
+        musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 5, 4);
         addTutorialCommand("change_element_text", ".tutorial-text", "First off, let's add a music block. Click the grid here.");
-        
+
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("show", ".tutorial-text-wrapper");
@@ -276,16 +281,16 @@ tutorial = (function() {
         addTutorialCommand("change_element_text", ".tutorial-text", "Cool. Now that you're a bit familiar with creating and editing music blocks, let's try the fun stuff: effect blocks. First let's clean up this mess!");
 
         musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "element_clicked", "clear-all-icon");
-        addTutorialCommand("change_element_text", ".tutorial-text", "This X up here will delete every block on the board. Normally there is a warning when you click this, but it is disabled for the tutorial. Click the X.");
-        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#clear-all-icon");
-        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#clear-all-icon");
+        addTutorialCommand("set_input", "element_clicked", "select-all-icon");
+        addTutorialCommand("change_element_text", ".tutorial-text", "Let's select every block using the Select All batch edit. Click it now.");
+        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#select-all-icon");
+        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
 
         musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "next");
-        addTutorialCommand("change_element_text", ".tutorial-text", "The other batch edit is Select All... clicking this will select everything.");
-        addTutorialCommand("position_element", "#tutorial-down-arrow-noaction", "above", "#select-all-icon");
-        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
+        addTutorialCommand("set_input", "element_clicked", "delete-selected-icon");
+        addTutorialCommand("change_element_text", ".tutorial-text", "Good. The other batch edit deletes all selected blocks. Now that they are all selected, click the X to clear the board.");
+        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#delete-selected-icon");
+        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#delete-selected-icon");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 2, 4);
@@ -317,7 +322,7 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "keyDown", 39);
-        addTutorialCommand("change_element_text", ".tutorial-text", "There are some keyboard shortcuts that will make everything easier. Instead of clicking the right arrow, press the right arrow key on your keyboard. Much easier!");    
+        addTutorialCommand("change_element_text", ".tutorial-text", "There are some keyboard shortcuts that will make everything easier. Instead of clicking the right arrow, press the right arrow key on your keyboard. Much easier!");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
@@ -329,7 +334,8 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", -15, 220);
+        addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 11, 3);
+        //addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", -15, 220);
         addTutorialCommand("change_element_text", ".tutorial-text", "OK. Step progression is a kind of note effect where each time a music block collides, it will increase the note by whatever amount we choose.");
 
         musicApp.tutorialArray.push([]);
@@ -376,17 +382,7 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "rightMouse");
-        addTutorialCommand("change_element_text", ".tutorial-text", "Nicely done, now they are both selected. Let's see another method to do that. Right-clicking anywhere will deselect all blocks. Click your right mouse button now.");
-
-        musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "element_clicked", "select-all-icon");
-        addTutorialCommand("change_element_text", ".tutorial-text", "Another way to select the blocks is by using the Select All batch edit. Clicking this will select ALL blocks. Do it now.");
-        addTutorialCommand("position_element", "#tutorial-down-arrow", "above", "#select-all-icon");
-        addTutorialCommand("position_element", ".tutorial-text-wrapper", "below", "#select-all-icon");
-
-        musicApp.tutorialArray.push([]);
-        addTutorialCommand("set_input", "rightMouse");
-        addTutorialCommand("change_element_text", ".tutorial-text", "Good, click your right mouse to deselect everything and we'll see one more way to select blocks.");
+        addTutorialCommand("change_element_text", ".tutorial-text", "Nicely done, now they are both selected. We've already used the Select All batch edit to select blocks, so let's see another method to do that. Right-clicking anywhere will deselect all blocks. Click your right mouse button now.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "select-icon");
@@ -481,7 +477,8 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#select-note-scale", -30, 40);
+        //addTutorialCommand("move_near", ".tutorial-text-wrapper", "#select-note-scale", -30, 40);
+        addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 11, 8);
         addTutorialCommand("change_element_text", ".tutorial-text", "Originally, the scale was set to 'Chromatic' which just means every note on the piano. Clicking here will drop down a scale menu for you to choose from. I've selected A Major for you.");
 
 
@@ -535,7 +532,8 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "element_clicked", "volume-effect-dropdown");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 310);
+        //addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 310);
+        addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 11, 8);
         addTutorialCommand("change_element_text", ".tutorial-text", "Click on Volume Effect.");
         addTutorialCommand("move_near", "#tutorial-down-arrow", "#block-music", 88, 237);
 
@@ -572,7 +570,8 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 370);
+        //addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 370);
+        addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 11, 9);
         addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", "#block-music", 85, 300);
         addTutorialCommand("change_element_text", ".tutorial-text", "See how the volume is increasing by 5? It's controlled by the step size we set in the Volume Effect.");
 
@@ -582,15 +581,22 @@ tutorial = (function() {
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 340);
+        //addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 340);
+        addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 11, 8);
         addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", "#block-music", 85, 270);
         addTutorialCommand("change_element_text", ".tutorial-text", "Velocity is an attribute of instrument sound that describes how hard you press a key on a piano, or how hard you blow on a flute.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
-        addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 365);
+        //addTutorialCommand("move_near", ".tutorial-text-wrapper", "#block-music", 0, 365);
+        addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 11, 8);
         addTutorialCommand("move_near", "#tutorial-down-arrow-noaction", "#block-music", 85, 295);
         addTutorialCommand("change_element_text", ".tutorial-text", "Duration is just how long the note is held for. These Effects are controlled identically to Volume, feel free to play with them after the tutorial!");
+
+        musicApp.tutorialArray.push([]);
+        addTutorialCommand("set_input", "next");
+        addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 4);
+        addTutorialCommand("change_element_text", ".tutorial-text", "Well that's it for the tutorial! If you have any questions or suggestions, feel free to email us using the contact links. We hope you enjoy using Music Blocks and if you do, feel free to share it with your friends! Click Next to end the tutorial and have a great day!");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("end_tutorial");
@@ -659,7 +665,7 @@ tutorial = (function() {
 
                 case "element_clicked":
                     $('.tutorial-overlay').hide();
-                   console.log($(document.elementFromPoint(event.pageX, event.pageY)));
+                    console.log($(document.elementFromPoint(event.pageX, event.pageY)));
 
                     var id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].id;
                     if ($(document.elementFromPoint(event.pageX, event.pageY))[0].tagName == "polygon") {
@@ -1006,6 +1012,7 @@ tutorial = (function() {
         setTutorialIndex: setTutorialIndex,
         getTutorialIndex: getTutorialIndex,
         checkValidInput: checkValidInput,
-        endTutorial:endTutorial
+        endTutorial: endTutorial
     };
 })();
+

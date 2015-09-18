@@ -44,12 +44,14 @@
         <p>Thanks for viewing our App. This is an experimental project, for optimal performance we highlighly recommend Chrome.</p>
         <img data-id = "close-message" class = "close-browser-message" width="15px" src="images/svg/close-content.svg" />
     </div>
-    <div class = "left-button-wrapper">
-        <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
-        <div class="toggle-tutorial" data-id="tutorial" data-state = "not-active">Tutorial</div>
-    </div>
-    <div id="wrapper">
+   
+    <div id="wrapper" class = "clearfix">
+         <div class = "left-button-wrapper">
+            <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
+            <div class="toggle-tutorial" data-id="tutorial" data-state = "not-active">Tutorial</div>
+        </div>
         <div class="top-panel-wrapper">
+            <span class = "tutorial-overlay top-panel-overlay"></span>
             <div class="top-panel-section">
                 <p>Mode Select</p>
                 <div class="border"></div>
@@ -71,7 +73,7 @@
                 <p>Batch Edits</p>
                 <div class="border"></div>
                 <ul class="batch-edits">
-                    <li data-mode="delete-selected"><img id="clear-all-icon" height="19px" src="images/svg/batch-delete.svg"></li>
+                    <li data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/batch-delete.svg"></li>
                     <li data-mode="select-all"><img id="select-all-icon" height="24px" src="images/svg/batch-select.svg"></li>
                 <!--     <li id="delete-selected-icon-top"data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/delete-selected.svg"></li> -->
                 </ul>
@@ -82,6 +84,8 @@
             </div>
         </div>
         <div class="clear"></div>
+        <span class = "tutorial-overlay control-panel-overlay"></span>
+        <canvas class="tutorial-overlay canvas-overlay"></canvas>
         <canvas id="grid" width="640" height="640"></canvas>
         <div class="spinner spinner-instrument">
             <p>Loading Sound Font</p>
@@ -96,6 +100,7 @@
             <ul id="gridHorizontal"></ul>
         </div>
         <div class="control-panel">
+          
             <ul class="panel-type-select clearfix">
                 <li id="block-music" class="active">Music Block</li>
                 <li id="block-effect">Effect Block</li>
@@ -198,7 +203,7 @@
                         </select>
                         <div class="note-specific clearfix">
                             <div class="dial-wrapper">
-                                <input class="dial-input" type="text" id="note-specific-effect" disabled>
+                                <input class="dial-input note-specific-effect" type="text" id="note-specific-effect" disabled>
                                 <div class="dial-bg"></div>
                                 <div class="connector-line"></div>
                             </div>
@@ -423,6 +428,7 @@
             <!--  <input class="slider-value" /> -->
         </div>
         <div class="piano-wrapper clearfix">
+         
             <ul class="piano-roll">
                 <li class="whitekey"></li>
                 <li class="blackkey"></li>
@@ -549,6 +555,7 @@
             <ul class="mute-piano clearfix">
                 <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute Piano Roll</li>
             </ul>
+               <span class = "tutorial-overlay piano-overlay"></span>
         </div>
 
         <!--   <div id="tutorial-up-arrow" class="tutorial-arrow tutorial-up-arrow"></div> -->
@@ -569,7 +576,6 @@
         </div>
     </div>
 
-    <div class="tutorial-overlay"></div>
     <div class="hotekeys" data-id="hotkey-menu">
         <table>
             <tr>

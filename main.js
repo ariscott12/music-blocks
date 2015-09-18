@@ -88,6 +88,9 @@ var musicApp = (function() {
 
     // This is called from loadSoundFonts Module
     var initializeApp = function() {
+        // $('#wrapper').click(function() {
+        //     pianoRoll.updateSpecificKey();  
+        // })
 
         // Show the app and hide the page loader
         $('#wrapper').fadeIn();
@@ -217,6 +220,10 @@ var musicApp = (function() {
 
             canvas.width = gridPixelWidth;
             canvas.height = gridPixelHeight;
+            $('.canvas-overlay').css({
+                width: gridPixelWidth,
+                height: gridPixelHeight
+            });
 
             // Create the DOM elements
             createHorizontalGridElements();
@@ -1423,7 +1430,7 @@ var musicApp = (function() {
             if (!target.is("td")) {
                 $(this).hide();
                 $(this).fadeOut(300, function() {
-                 //   $jqueryMap.$wrapper.trigger('click');
+                    //   $jqueryMap.$wrapper.trigger('click');
                 });
             }
             config.is_system_paused = false;
