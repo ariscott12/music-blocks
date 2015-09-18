@@ -11,11 +11,8 @@
 .tutorial-text {
     line-height: 16px;
     width: 250px;
-    // display: table-cell;
     text-align: center;
-    // vertical-align: middle;  
     background: #FFFFFF;
-    // border: 1px solid #999;
     border-radius: 5px;
     font-size: 0.875em;
     padding: 12px 15px;
@@ -42,15 +39,10 @@
     -ms-user-select: none;
     user-select: none;
     display: none;
-     background: rgba(0, 0, 0, 0.4) none repeat scroll 0 0;
+    background: rgba(0, 0, 0, 0.1) none repeat scroll 0 0;
     height: 100%;
     position: absolute;
-    // top: 0;
-    // width: 100%;
     z-index: 20000;
-    // width:640px;
-    // height:640px;
-    // padding-top: 130px;
 }
 
 .control-panel-overlay {
@@ -92,11 +84,6 @@
 
 .tutorial-left-arrow {
     @include transform(rotate(90deg));
-    // -webkit-transform: rotate(90deg);
-    // -moz-transform: rotate(90deg);
-    // -ms-transform: rotate(90deg);
-    // -o-transform: rotate(90deg);
-    // transform: rotate(90deg);
 }
 
 .tutorial-up-arrow {
@@ -127,33 +114,3 @@
     background: url('../images/down-blue-arrow.png') no-repeat;
 }
 
-// .tutorial-down-arrow-blue {
-//     background: url('../images/down-blue-arrow.png') no-repeat;
-//     background-size: cover;
-// }
-// .tutorial-left-arrow-blue {
-//     -webkit-transform: rotate(90deg);
-//     -moz-transform: rotate(90deg);
-//     -ms-transform: rotate(90deg);
-//     -o-transform: rotate(90deg);
-//     transform: rotate(90deg);
-//     background: url('../images/down-blue-arrow.png') no-repeat;
-// }
-// .tutorial-up-arrow-blue {
-//     -webkit-transform: rotate(180deg);
-//     -moz-transform: rotate(180deg);
-//     -ms-transform: rotate(180deg);
-//     -o-transform: rotate(180deg);
-//     transform: rotate(180deg);
-//     background: url('../images/down-blue-arrow.png') no-repeat;
-//     background-size: cover;
-// }
-// .tutorial-right-arrow-blue {
-//     -webkit-transform: rotate(270deg);
-//     -moz-transform: rotate(270deg);
-//     -ms-transform: rotate(270deg);
-//     -o-transform: rotate(270deg);
-//     transform: rotate(270deg);
-//     background: url('../images/down-blue-arrow.png') no-repeat;
-//     background-size: cover;
-// }
