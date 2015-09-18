@@ -103,7 +103,7 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("change_element_text", ".tutorial-text", "You can exit the tutorial at any time by clicking the Quit Tutorial on the left panel, but click Next to continue.");
-
+        
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "gridDown", 5, 4);
         addTutorialCommand("change_element_text", ".tutorial-text", "First off, let's add a music block. Click the grid here.");
@@ -596,7 +596,7 @@ tutorial = (function() {
         musicApp.tutorialArray.push([]);
         addTutorialCommand("set_input", "next");
         addTutorialCommand("move_to_grid", ".tutorial-text-wrapper", 7, 4);
-        addTutorialCommand("change_element_text", ".tutorial-text", "Well that's it for the tutorial! If you have any questions or suggestions, feel free to email us using the contact links. We hope you enjoy using Music Blocks and if you do, feel free to share it with your friends! Click Next to end the tutorial and have a great day!");
+        addTutorialCommand("change_element_text", ".tutorial-text", "Well that's it for the tutorial! If you have any questions or suggestions, feel free to email us using the contact links. We hope you enjoy using Music Blocks and if you do, feel free to share it with your friends! Click Next to end the tutorial and have a great day.");
 
         musicApp.tutorialArray.push([]);
         addTutorialCommand("end_tutorial");
@@ -665,14 +665,14 @@ tutorial = (function() {
 
                 case "element_clicked":
                     $('.tutorial-overlay').hide();
-                    console.log($(document.elementFromPoint(event.pageX, event.pageY)));
+                   console.log($(document.elementFromPoint(event.pageX, event.pageY)));
 
-                    var id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].id;
-                    if ($(document.elementFromPoint(event.pageX, event.pageY))[0].tagName == "polygon") {
-                        id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].parentElement.parentElement.id;
-                    } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].id == "Layer_1") {
-                        id_to_check = $(document.elementFromPoint(event.pageX, event.pageY))[0].parentElement.id;
-                    } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].className == "ui-icon ui-icon-triangle-1-s") {
+                    var id_to_check = $(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].id;
+                    if ($(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].tagName == "polygon") {
+                        id_to_check = $(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].parentElement.parentElement.id;
+                    } else if ($(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].id == "Layer_1") {
+                        id_to_check = $(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].parentElement.id;
+                    } else if ($(document.elementFromPoint(event.pageX - window.pageXOffset, event.pageY - pageYOffset))[0].className == "ui-icon ui-icon-triangle-1-s") {
                         console.log("test");
                         id_to_check = "step-size-down";
                     }
