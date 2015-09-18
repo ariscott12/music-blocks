@@ -955,7 +955,7 @@ tutorial = (function() {
     }
 
     simulateEventAtPoint = function(event) {
-        var elemAtPnt = $(document.elementFromPoint(event.pageX, event.pageY));
+        var elemAtPnt = $(document.elementFromPoint(event.pageX  - window.pageXOffset, event.pageY  - window.pageYOffset));
         if (elemAtPnt[0].tagName == "IMG") {
             elemAtPnt[0].click(event);
         } else if (elemAtPnt[0].tagName == "polygon") {
@@ -984,7 +984,7 @@ tutorial = (function() {
             musicApp.blocks[2].configMap.note.range_high = 76;
             musicApp.blocks[2].rebuildRangeValidNotes();
             musicApp.setToEffectBlock(1);
-        } else if ($(document.elementFromPoint(event.pageX, event.pageY))[0].className == "ui-icon ui-icon-triangle-1-s") {
+        } else if ($(document.elementFromPoint(event.pageX - window.pageXOffset , event.pageY - window.pageYOffset))[0].className == "ui-icon ui-icon-triangle-1-s") {
             $(".note-step-size").spinner("stepDown");
         } else if (event.type == "mousedown" || event.type == "mouseup") {
             elemAtPnt[0].click(event);
