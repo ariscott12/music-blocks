@@ -1,106 +1,101 @@
-
 <!doctype html>
 <html ondragstart="return false;" ondrop="return false;">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css"> -->
-    <link rel="stylesheet" href="css/main.css">
-    <title>JS Sequencer</title>
-    <link rel="author" href="humans.txt">
-    <link href='http://fonts.googleapis.com/css?family=Istok+Web:400,700' rel='stylesheet' type='text/css'>
-    <script src="inc/shim/Base64.js" type="text/javascript"></script>
-    <script src="inc/shim/Base64binary.js" type="text/javascript"></script>
-    <script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
-    <!-- midi.js package -->
-    <script src="js/midi/audioDetect.js" type="text/javascript"></script>
-    <script src="js/midi/gm.js" type="text/javascript"></script>
-    <script src="js/midi/loader.js" type="text/javascript"></script>
-    <script src="js/midi/plugin.audiotag.js" type="text/javascript"></script>
-    <script src="js/midi/plugin.webaudio.js" type="text/javascript"></script>
-    <script src="js/midi/plugin.webmidi.js" type="text/javascript"></script>
-    <!-- utils -->
-    <script src="js/util/dom_request_xhr.js" type="text/javascript"></script>
-    <script src="js/util/dom_request_script.js" type="text/javascript"></script>
-    <script src="js/jquery.js" type="text/javascript"></script>
-    <script src="js/jquery-ui.js" type="text/javascript"></script>
-    <script src="js/jquery.knob.js"></script>
-    <script src="js/rAF.js"></script>
-    <script src="js/browser-detect.js"></script>
-</head>
-
-<body oncontextmenu="return false;">
-    <div class="spinner-page spinner">
-        <p>Loading Sound Fonts</p>
-        <div class="rect1"></div>
-        <div class="rect2"></div>
-        <div class="rect3"></div>
-        <div class="rect4"></div>
-        <div class="rect5"></div>
-    </div>
-    <div class="browser-message" data-message="browser-prompt">
-        <p>Thanks for viewing our App. This is an experimental project, for optimal performance we highlighly recommend Chrome.</p>
-        <img data-id = "close-message" class = "close-browser-message" width="15px" src="images/svg/close-content.svg" />
-    </div>
-   
-    <div id="wrapper" class = "clearfix">
-         <div class = "left-button-wrapper">
-            <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
-            <div class="toggle-tutorial" data-id="tutorial" data-state = "not-active">Tutorial</div>
-        </div>
-        <div class="top-panel-wrapper">
-            <span class = "tutorial-overlay top-panel-overlay"></span>
-            <div class="top-panel-section">
-                <p>Mode Select</p>
-                <div class="border"></div>
-                <ul class="mode-select">
-                    <li data-mode="create" class="active"><img id="create-icon" height="22px" src="images/svg/mode-create.svg"></li>
-                    <li data-mode="select"p><img id="select-icon" height="23px" src="images/svg/mode-select.svg"></li>
-                    <li data-mode="trash"><img id="trash-icon" height="23px" src="images/svg/mode-delete.svg"></li>
-                </ul>
+        <head>
+            <meta charset="utf-8">
+            <meta name="description" content="">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="css/main.css">
+            <title>JS Sequencer</title>
+            <link rel="author" href="humans.txt">
+            <link href='http://fonts.googleapis.com/css?family=Istok+Web:400,700' rel='stylesheet' type='text/css'>
+            <script src="inc/shim/Base64.js" type="text/javascript"></script>
+            <script src="inc/shim/Base64binary.js" type="text/javascript"></script>
+            <script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+            <!-- midi.js package -->
+            <script src="js/midi/audioDetect.js" type="text/javascript"></script>
+            <script src="js/midi/gm.js" type="text/javascript"></script>
+            <script src="js/midi/loader.js" type="text/javascript"></script>
+            <script src="js/midi/plugin.audiotag.js" type="text/javascript"></script>
+            <script src="js/midi/plugin.webaudio.js" type="text/javascript"></script>
+            <script src="js/midi/plugin.webmidi.js" type="text/javascript"></script>
+            <!-- utils -->
+            <script src="js/util/dom_request_xhr.js" type="text/javascript"></script>
+            <script src="js/util/dom_request_script.js" type="text/javascript"></script>
+            <script src="js/jquery.js" type="text/javascript"></script>
+            <script src="js/jquery-ui.js" type="text/javascript"></script>
+            <script src="js/jquery.knob.js"></script>
+            <script src="js/rAF.js"></script>
+            <script src="js/browser-detect.js"></script>
+         
+        </head>
+        <body oncontextmenu="return false;">
+            <div class="spinner-page spinner">
+                <p>Loading Sound Fonts</p>
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
             </div>
-            <div class="top-panel-section">
-                <p>Play/Pause</p>
-                <div class="border"></div>
-                <ul class="play-select">
-                    <li data-mode="play" class="active"><img id="play-icon" height="19px" src="images/svg/mode-play.svg"></li>
-                    <li data-mode="pause"><img id="pause-icon" height="19px" src="images/svg/mode-pause.svg"></li>
-                </ul>
+            <div class="browser-message" data-message="browser-prompt">
+                <p>Thanks for viewing our App. This is an experimental project, for optimal performance we highlighly recommend Chrome.</p>
+                <img data-id = "close-message" class = "close-browser-message" width="15px" src="images/svg/close-content.svg" />
             </div>
-            <div class="top-panel-section">
-                <p>Batch Edits</p>
-                <div class="border"></div>
-                <ul class="batch-edits">
-                    <li data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/batch-delete.svg"></li>
-                    <li data-mode="select-all"><img id="select-all-icon" height="24px" src="images/svg/batch-select.svg"></li>
-                <!--     <li id="delete-selected-icon-top"data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/delete-selected.svg"></li> -->
-                </ul>
-            </div>
-            <div class="master-volume-section">
-                <img data-id="toggle-master-mute" data-mute="false" src="images/icon-volume.png" />
-                <div class="master-volume-slider"></div>
-            </div>
-        </div>
-        <div class="clear"></div>
-        <span class = "tutorial-overlay control-panel-overlay"></span>
-        <canvas class="tutorial-overlay canvas-overlay"></canvas>
-        <canvas id="grid" width="640" height="640"></canvas>
-        <div class="spinner spinner-instrument">
-            <p>Loading Sound Font</p>
-            <div class="rect1"></div>
-            <div class="rect2"></div>
-            <div class="rect3"></div>
-            <div class="rect4"></div>
-            <div class="rect5"></div>
-        </div>
-        <div draggable="false" id="grid_lines">
-            <ul id="gridVertical"></ul>
+            <div id="wrapper" class = "clearfix">
+                <div class = "left-button-wrapper">
+                    <div class="show-hotkeys" data-id="hotkeys">Hotkeys</div>
+                    <div class="toggle-tutorial" data-id="tutorial" data-state = "not-active">Tutorial</div>
+                </div>
+                <div class="top-panel-wrapper">
+                    <span class = "tutorial-overlay top-panel-overlay"></span>
+                    <div class="top-panel-section">
+                        <p>Mode Select</p>
+                        <div class="border"></div>
+                        <ul class="mode-select">
+                            <li data-mode="create" class="active"><img id="create-icon" height="22px" src="images/svg/mode-create.svg"></li>
+                            <li data-mode="select"p><img id="select-icon" height="23px" src="images/svg/mode-select.svg"></li>
+                            <li data-mode="trash"><img id="trash-icon" height="23px" src="images/svg/mode-delete.svg"></li>
+                        </ul>
+                    </div>
+                    <div class="top-panel-section">
+                        <p>Play/Pause</p>
+                        <div class="border"></div>
+                        <ul class="play-select">
+                            <li data-mode="play" class="active"><img id="play-icon" height="19px" src="images/svg/mode-play.svg"></li>
+                            <li data-mode="pause"><img id="pause-icon" height="19px" src="images/svg/mode-pause.svg"></li>
+                        </ul>
+                    </div>
+                    <div class="top-panel-section">
+                        <p>Batch Edits</p>
+                        <div class="border"></div>
+                        <ul class="batch-edits">
+                            <li data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/batch-delete.svg"></li>
+                            <li data-mode="select-all"><img id="select-all-icon" height="24px" src="images/svg/batch-select.svg"></li>
+                            <!--     <li id="delete-selected-icon-top"data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/delete-selected.svg"></li> -->
+                        </ul>
+                    </div>
+                    <div class="master-volume-section">
+                        <img data-id="toggle-master-mute" data-mute="false" src="images/icon-volume.png" />
+                        <div class="master-volume-slider"></div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <span class = "tutorial-overlay control-panel-overlay"></span>
+                <canvas class="tutorial-overlay canvas-overlay"></canvas>
+                <canvas id="grid" width="640" height="640"></canvas>
+                <div class="spinner spinner-instrument">
+                    <p>Loading Sound Font</p>
+                    <div class="rect1"></div>
+                    <div class="rect2"></div>
+                    <div class="rect3"></div>
+                    <div class="rect4"></div>
+                    <div class="rect5"></div>
+                </div>
+                <div draggable="false" id="grid_lines">
+                <ul id="gridVertical"></ul>
             <ul id="gridHorizontal"></ul>
         </div>
         <div class="control-panel">
-          
             <ul class="panel-type-select clearfix">
                 <li id="block-music" class="active">Music Block</li>
                 <li id="block-effect">Effect Block</li>
@@ -109,8 +104,8 @@
                 <div class="instrument-select">
                     <!--   <p>Select Instrument</p> -->
                     <center>
-                        <select id="set-instrument">
-                        </select>
+                    <select id="set-instrument">
+                    </select>
                     </center>
                 </div>
                 <div class="direction-select">
@@ -118,22 +113,22 @@
                     <ul class="block-direction-select clearfix" id="select-direction">
                         <li id="left">
                             <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                                <polygon fill="#717171" points="11,14 0,7 11,0 " />
+                            <polygon fill="#717171" points="11,14 0,7 11,0 " />
                             </svg>
                         </li>
                         <li class="active" id="up">
                             <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
-                                <polygon fill="#717171" points="0,11 7,0 14,11 " />
+                            <polygon fill="#717171" points="0,11 7,0 14,11 " />
                             </svg>
                         </li>
                         <li id="right">
                             <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" enable-background="new 0 0 11 14" xml:space="preserve">
-                                <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                            <polygon fill="#717171" points="0,0 11,7 0,14 " />
                             </svg>
                         </li>
                         <li id="down">
                             <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" enable-background="new 0 0 14 11" xml:space="preserve">
-                                <polygon fill="#717171" points="14,0 7,11 0,0 " />
+                            <polygon fill="#717171" points="14,0 7,11 0,0 " />
                             </svg>
                         </li>
                         <li id="none">
@@ -141,7 +136,7 @@
                         </li>
                     </ul>
                     <!--  <ul class="stop-block clearfix">
-                        <li><span data-type="stop"  class="button-trigger"></span>Stop Block</li>
+                                                                                                <li><span data-type="stop"  class="button-trigger"></span>Stop Block</li>
                     </ul> -->
                 </div>
                 <div class="note-select clearfix">
@@ -191,7 +186,7 @@
                         <div class="toggle-drop active">
                             <h3 id="note-effect-dropdown">Note Effect</h3>
                             <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                                <polygon points="0,0 11,7 0,14 " fill="#717171">
+                            <polygon points="0,0 11,7 0,14 " fill="#717171">
                             </svg>
                         </div>
                     </div>
@@ -241,414 +236,420 @@
                                 <p>down</p>
                             </div>
                         </div>
-                        <select id="select-note-scale"></select>
+                    <select id="select-note-scale"></select>
+                </div>
+                <div class="header clearfix">
+                    <div id='volume-activator' class="activator volume-activator" data-active="false" data-type="volume">
+                        <span id='volume-activator' class='activator-button'></span>
                     </div>
-                    <div class="header clearfix">
-                        <div id='volume-activator' class="activator volume-activator" data-active="false" data-type="volume">
-                            <span id='volume-activator' class='activator-button'></span>
-                        </div>
-                        <div id="volume-effect-dropdown-div" class="toggle-drop">
-                            <h3 id="volume-effect-dropdown">Volume Effect</h3>
-                            <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                                <polygon points="0,0 11,7 0,14 " fill="#717171">
-                            </svg>
-                        </div>
+                    <div id="volume-effect-dropdown-div" class="toggle-drop">
+                        <h3 id="volume-effect-dropdown">Volume Effect</h3>
+                        <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                        <polygon points="0,0 11,7 0,14 " fill="#717171">
+                        </svg>
                     </div>
-                    <div class="effect-volume effect-box clearfix">
-                        <center>
-                            <select id="select-volume-effect" autocomplete="off" data-type = "volume">
-                                <option value="volume-progression" data-method = "progression">Step Progression</option>
-                                <option value="volume-random" data-method = "random">Random Value</option>
-                                <option value="volume-specific" data-method = "specific">Specific Value</option>
-                            </select>
-                        </center>
-                        <div class="volume-specific clearfix">
-                            <div class="dial-wrapper">
-                                <input class="dial-input" type="text" id="volume-specific-effect">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line"></div>
-                            </div>
-                        </div>
-                        <div class="range-wrapper volume-range-wrapper">
-                            <div class="dial-outline"></div>
-                            <div class="dial-wrapper-range">
-                                <input class="dial-input-rangelow volume-rangelow-effect" type="text">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line-vertical"></div>
-                            </div>
-                            <div class="dial-wrapper-range">
-                                <input class="dial-input-rangehigh volume-rangehigh-effect" type="text">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line-vertical"></div>
-                            </div>
-                            <div class="clear"></div>
-                            <p>Low</p>
-                            <p>High</p>
-                        </div>
-                        <div class="volume-random clearfix">
-                            <div class="volume-limit-to-range limit-range" data-type="volume" data-limit-range="true">
-                                <div class="button-trigger"></div>
-                                <p>Limit to Range</p>
-                            </div>
-                        </div>
-                        <div class="volume-progression clearfix">
-                            <input data-type="volume" class="volume-step-size spinner" name="value">
-                            <div class="switch-wrapper">
-                                <div data-type="volume" data-direction="up" class="volume-step-switch switch">
-                                    <div class="toggle"></div>
-                                </div>
-                                <p>up</p>
-                                <p>down</p>
-                            </div>
+                </div>
+                <div class="effect-volume effect-box clearfix">
+                    <center>
+                    <select id="select-volume-effect" autocomplete="off" data-type = "volume">
+                        <option value="volume-progression" data-method = "progression">Step Progression</option>
+                        <option value="volume-random" data-method = "random">Random Value</option>
+                        <option value="volume-specific" data-method = "specific">Specific Value</option>
+                    </select>
+                    </center>
+                    <div class="volume-specific clearfix">
+                        <div class="dial-wrapper">
+                            <input class="dial-input" type="text" id="volume-specific-effect">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line"></div>
                         </div>
                     </div>
-                    <div class="header clearfix">
-                        <div class="activator velocity-activator" data-active="false" data-type="velocity">
-                            <span class='activator-button'></span>
+                    <div class="range-wrapper volume-range-wrapper">
+                        <div class="dial-outline"></div>
+                        <div class="dial-wrapper-range">
+                            <input class="dial-input-rangelow volume-rangelow-effect" type="text">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line-vertical"></div>
                         </div>
-                        <div class="toggle-drop">
-                            <h3 id="velocity-effect-dropdown">Velocity Effect</h3>
-                            <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                                <polygon points="0,0 11,7 0,14 " fill="#717171">
-                            </svg>
+                        <div class="dial-wrapper-range">
+                            <input class="dial-input-rangehigh volume-rangehigh-effect" type="text">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line-vertical"></div>
+                        </div>
+                        <div class="clear"></div>
+                        <p>Low</p>
+                        <p>High</p>
+                    </div>
+                    <div class="volume-random clearfix">
+                        <div class="volume-limit-to-range limit-range" data-type="volume" data-limit-range="true">
+                            <div class="button-trigger"></div>
+                            <p>Limit to Range</p>
                         </div>
                     </div>
-                    <div class="effect-velocity effect-box  clearfix">
-                        <center>
-                            <select id="select-velocity-effect" autocomplete="off" data-type = "velocity">
-                                <option value="velocity-progression" data-method = "progression">Step Progression</option>
-                                <option value="velocity-random" data-method = "random">Random Value</option>
-                                <option value="velocity-specific" data-method = "specific">Specific Value</option>
-                            </select>
-                        </center>
-                        <div class="velocity-specific clearfix">
-                            <div class="dial-wrapper">
-                                <input class="dial-input" type="text" id="velocity-specific-effect">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line"></div>
+                    <div class="volume-progression clearfix">
+                        <input data-type="volume" class="volume-step-size spinner" name="value">
+                        <div class="switch-wrapper">
+                            <div data-type="volume" data-direction="up" class="volume-step-switch switch">
+                                <div class="toggle"></div>
                             </div>
-                        </div>
-                        <div class="range-wrapper velocity-range-wrapper">
-                            <div class="dial-outline"></div>
-                            <div class="dial-wrapper-range">
-                                <input class="dial-input-rangelow velocity-rangelow-effect" type="text">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line-vertical"></div>
-                            </div>
-                            <div class="dial-wrapper-range">
-                                <input class="dial-input-rangehigh velocity-rangehigh-effect" type="text">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line-vertical"></div>
-                            </div>
-                            <div class="clear"></div>
-                            <p>Low</p>
-                            <p>High</p>
-                        </div>
-                        <div class="velocity-random clearfix">
-                            <div class="velocity-limit-to-range limit-range" data-type="velocity" data-limit-range="true">
-                                <div class="button-trigger"></div>
-                                <p>Limit to Range</p>
-                            </div>
-                        </div>
-                        <div class="velocity-progression clearfix">
-                            <input data-type="velocity" class="velocity-step-size spinner" name="value">
-                            <div class="switch-wrapper">
-                                <div data-type="velocity" data-direction="up" class="velocity-step-switch switch">
-                                    <div class="toggle"></div>
-                                </div>
-                                <p>up</p>
-                                <p>down</p>
-                            </div>
+                            <p>up</p>
+                            <p>down</p>
                         </div>
                     </div>
-                    <div class="header clearfix">
-                        <div class="activator duration-activator" data-active="false" data-type="duration">
-                            <span class='activator-button'></span>
-                        </div>
-                        <div class="toggle-drop">
-                            <h3 id="duration-effect-dropdown">Duration Effect</h3>
-                            <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                                <polygon points="0,0 11,7 0,14 " fill="#717171">
-                            </svg>
+                </div>
+                <div class="header clearfix">
+                    <div class="activator velocity-activator" data-active="false" data-type="velocity">
+                        <span class='activator-button'></span>
+                    </div>
+                    <div class="toggle-drop">
+                        <h3 id="velocity-effect-dropdown">Velocity Effect</h3>
+                        <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                        <polygon points="0,0 11,7 0,14 " fill="#717171">
+                        </svg>
+                    </div>
+                </div>
+                <div class="effect-velocity effect-box  clearfix">
+                    <center>
+                    <select id="select-velocity-effect" autocomplete="off" data-type = "velocity">
+                        <option value="velocity-progression" data-method = "progression">Step Progression</option>
+                        <option value="velocity-random" data-method = "random">Random Value</option>
+                        <option value="velocity-specific" data-method = "specific">Specific Value</option>
+                    </select>
+                    </center>
+                    <div class="velocity-specific clearfix">
+                        <div class="dial-wrapper">
+                            <input class="dial-input" type="text" id="velocity-specific-effect">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line"></div>
                         </div>
                     </div>
-                    <div class="effect-duration effect-box  clearfix">
-                        <center>
-                            <select id="select-duration-effect" autocomplete="off" data-type = "duration">
-                                <option value="duration-progression" data-method = "progression">Step Progression</option>
-                                <option value="duration-random" data-method = "random">Random Value</option>
-                                <option value="duration-specific" data-method = "specific">Specific Value</option>
-                            </select>
-                        </center>
-                        <div class="duration-specific clearfix">
-                            <div class="dial-wrapper">
-                                <input class="dial-input" type="text" id="duration-specific-effect">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line"></div>
-                            </div>
+                    <div class="range-wrapper velocity-range-wrapper">
+                        <div class="dial-outline"></div>
+                        <div class="dial-wrapper-range">
+                            <input class="dial-input-rangelow velocity-rangelow-effect" type="text">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line-vertical"></div>
                         </div>
-                        <div class="range-wrapper duration-range-wrapper">
-                            <div class="dial-outline"></div>
-                            <div class="dial-wrapper-range">
-                                <input class="dial-input-rangelow duration-rangelow-effect" type="text">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line-vertical"></div>
-                            </div>
-                            <div class="dial-wrapper-range">
-                                <input class="dial-input-rangehigh duration-rangehigh-effect" type="text">
-                                <div class="dial-bg"></div>
-                                <div class="connector-line-vertical"></div>
-                            </div>
-                            <div class="clear"></div>
-                            <p>Low</p>
-                            <p>High</p>
+                        <div class="dial-wrapper-range">
+                            <input class="dial-input-rangehigh velocity-rangehigh-effect" type="text">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line-vertical"></div>
                         </div>
-                        <div class="duration-random clearfix">
-                            <div class="duration-limit-to-range limit-range" data-type="duration" data-limit-range="true">
-                                <div class="button-trigger"></div>
-                                <p>Limit to Range</p>
-                            </div>
+                        <div class="clear"></div>
+                        <p>Low</p>
+                        <p>High</p>
+                    </div>
+                    <div class="velocity-random clearfix">
+                        <div class="velocity-limit-to-range limit-range" data-type="velocity" data-limit-range="true">
+                            <div class="button-trigger"></div>
+                            <p>Limit to Range</p>
                         </div>
-                        <div class="duration-progression clearfix">
-                            <input data-type="duration" class="duration-step-size spinner" name="value">
-                            <div class=switch-wrapper>
-                                <div data-type="duration" data-direction="up" class="duration-step-switch switch">
-                                    <div class="toggle"></div>
-                                </div>
-                                <p>up</p>
-                                <p>down</p>
+                    </div>
+                    <div class="velocity-progression clearfix">
+                        <input data-type="velocity" class="velocity-step-size spinner" name="value">
+                        <div class="switch-wrapper">
+                            <div data-type="velocity" data-direction="up" class="velocity-step-switch switch">
+                                <div class="toggle"></div>
                             </div>
+                            <p>up</p>
+                            <p>down</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="header clearfix">
+                    <div class="activator duration-activator" data-active="false" data-type="duration">
+                        <span class='activator-button'></span>
+                    </div>
+                    <div class="toggle-drop">
+                        <h3 id="duration-effect-dropdown">Duration Effect</h3>
+                        <svg id="Layer_1" class="horizontal right" xml:space="preserve" enable-background="new 0 0 11 14" viewBox="0 0 11 14" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                        <polygon points="0,0 11,7 0,14 " fill="#717171">
+                        </svg>
+                    </div>
+                </div>
+                <div class="effect-duration effect-box  clearfix">
+                    <center>
+                    <select id="select-duration-effect" autocomplete="off" data-type = "duration">
+                        <option value="duration-progression" data-method = "progression">Step Progression</option>
+                        <option value="duration-random" data-method = "random">Random Value</option>
+                        <option value="duration-specific" data-method = "specific">Specific Value</option>
+                    </select>
+                    </center>
+                    <div class="duration-specific clearfix">
+                        <div class="dial-wrapper">
+                            <input class="dial-input" type="text" id="duration-specific-effect">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line"></div>
+                        </div>
+                    </div>
+                    <div class="range-wrapper duration-range-wrapper">
+                        <div class="dial-outline"></div>
+                        <div class="dial-wrapper-range">
+                            <input class="dial-input-rangelow duration-rangelow-effect" type="text">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line-vertical"></div>
+                        </div>
+                        <div class="dial-wrapper-range">
+                            <input class="dial-input-rangehigh duration-rangehigh-effect" type="text">
+                            <div class="dial-bg"></div>
+                            <div class="connector-line-vertical"></div>
+                        </div>
+                        <div class="clear"></div>
+                        <p>Low</p>
+                        <p>High</p>
+                    </div>
+                    <div class="duration-random clearfix">
+                        <div class="duration-limit-to-range limit-range" data-type="duration" data-limit-range="true">
+                            <div class="button-trigger"></div>
+                            <p>Limit to Range</p>
+                        </div>
+                    </div>
+                    <div class="duration-progression clearfix">
+                        <input data-type="duration" class="duration-step-size spinner" name="value">
+                        <div class=switch-wrapper>
+                            <div data-type="duration" data-direction="up" class="duration-step-switch switch">
+                                <div class="toggle"></div>
+                            </div>
+                            <p>up</p>
+                            <p>down</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="clear"></div>
+    <div id="piano-slider-min" class="piano-roll-slider">
+        <!--  <input class="slider-value" /> -->
+    </div>
+    <div class="piano-wrapper clearfix">
+        <ul class="piano-roll">
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+        </ul>
+        <ul class="piano-roll">
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+        </ul>
+        <ul class="piano-roll">
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+        </ul>
+        <ul class="piano-roll">
+            <li class="whitekey" id="C5"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey" id="D5"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey" id="B5"></li>
+        </ul>
+        <ul class="piano-roll">
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey" id="E6"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+        </ul>
+        <ul class="piano-roll">
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+        </ul>
+        <ul class="piano-roll clearfix">
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+            <li class="blackkey"></li>
+            <li class="whitekey"></li>
+        </ul>
+        <div id="piano-slider-max" class="piano-roll-slider">
+            <!--    <input class="slider-value" /> -->
+        </div>
         <div class="clear"></div>
-        <div id="piano-slider-min" class="piano-roll-slider">
-            <!--  <input class="slider-value" /> -->
+        <div class="range-indicator"></div>
+        <div class="drumkit-type-wrapper">
+            <div class="drumkit-type"></div>
+            <div class="border"></div>
+            <p>Electronic Kit</p>
         </div>
-        <div class="piano-wrapper clearfix">
-         
-            <ul class="piano-roll">
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-            </ul>
-            <ul class="piano-roll">
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-            </ul>
-            <ul class="piano-roll">
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-            </ul>
-            <ul class="piano-roll">
-                <li class="whitekey" id="C5"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey" id="D5"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey" id="B5"></li>
-            </ul>
-            <ul class="piano-roll">
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey" id="E6"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-            </ul>
-            <ul class="piano-roll">
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-            </ul>
-            <ul class="piano-roll clearfix">
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-                <li class="blackkey"></li>
-                <li class="whitekey"></li>
-            </ul>
-            <div id="piano-slider-max" class="piano-roll-slider">
-                <!--    <input class="slider-value" /> -->
-            </div>
-            <div class="clear"></div>
-            <div class="range-indicator"></div>
-            <div class="drumkit-type-wrapper">
-                <div class="drumkit-type"></div>
-                <div class="border"></div>
-                <p>Electronic Kit</p>
-            </div>
-            <div class="drumkit-type-wrapper">
-                <div class="drumkit-type"></div>
-                <div class="border"></div>
-                <p>Acoustic Kit</p>
-            </div>
-            <div class="drumkit-type-wrapper">
-                <div class="drumkit-type"></div>
-                <div class="border"></div>
-                <p>Acoustic Kit 2</p>
-            </div>
-            <div class="drumkit-type-wrapper drum-aux">
-                <div class="drumkit-type"></div>
-                <div class="border"></div>
-                <p>Auxillary Percussion</p>
-            </div>
-            <ul class="mute-piano clearfix">
-                <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute Piano Roll</li>
-            </ul>
-               <span class = "tutorial-overlay piano-overlay"></span>
+        <div class="drumkit-type-wrapper">
+            <div class="drumkit-type"></div>
+            <div class="border"></div>
+            <p>Acoustic Kit</p>
         </div>
-
-        <!--   <div id="tutorial-up-arrow" class="tutorial-arrow tutorial-up-arrow"></div> -->
-        <div id="tutorial-down-arrow" class="tutorial-arrow tutorial-down-arrow"></div>
-        <!-- <div id="tutorial-right-arrow" class="tutorial-arrow tutorial-right-arrow"></div>
-        <div id="tutorial-left-arrow" class="tutorial-arrow tutorial-left-arrow"></div> -->
-        <div id="tutorial-up-arrow-noaction" class="tutorial-arrow tutorial-up-arrow-noaction"></div>
-        <div id="tutorial-down-arrow-noaction" class="tutorial-arrow tutorial-down-arrow-noaction"></div>
-        <div id="tutorial-right-arrow-noaction" class="tutorial-arrow tutorial-right-arrow-noaction"></div>
-        <div id="tutorial-left-arrow-noaction" class="tutorial-arrow tutorial-left-arrow-noaction"></div>
-        <!--   <div id="tutorial-up-arrow-noactionlue" class="tutorial-arrow tutorial-up-arrow-blue"></div>
-        <div id="tutorial-down-arrow-blue" class="tutorial-arrow tutorial-down-arrow-blue"></div>
-        <div id="tutorial-right-arrow-blue" class="tutorial-arrow tutorial-right-arrow-blue"></div>
-        <div id="tutorial-left-arrow-blue" class="tutorial-arrow tutorial-left-arrow-blue"></div> -->
-        <div class="tutorial-text-wrapper" style="display: none;">
-            <p class = "tutorial-text"></p>            
-            <div class="tutorial-next">Next</div>
+        <div class="drumkit-type-wrapper">
+            <div class="drumkit-type"></div>
+            <div class="border"></div>
+            <p>Acoustic Kit 2</p>
         </div>
+        <div class="drumkit-type-wrapper drum-aux">
+            <div class="drumkit-type"></div>
+            <div class="border"></div>
+            <p>Auxillary Percussion</p>
+        </div>
+        <ul class="mute-piano clearfix">
+            <li><span data-type="mute" data-active="false" class="mute-toggle button-trigger"></span>Mute Piano Roll</li>
+        </ul>
+        <span class = "tutorial-overlay piano-overlay"></span>
+    </div>
+    <div id="tutorial-down-arrow" class="tutorial-arrow tutorial-down-arrow"></div>
+    <div id="tutorial-up-arrow-noaction" class="tutorial-arrow tutorial-up-arrow-noaction"></div>
+    <div id="tutorial-down-arrow-noaction" class="tutorial-arrow tutorial-down-arrow-noaction"></div>
+    <div id="tutorial-right-arrow-noaction" class="tutorial-arrow tutorial-right-arrow-noaction"></div>
+    <div id="tutorial-left-arrow-noaction" class="tutorial-arrow tutorial-left-arrow-noaction"></div>
+    <div class="tutorial-text-wrapper" style="display: none;">
+        <p class = "tutorial-text"></p>
+        <div class="tutorial-next">Next</div>
     </div>
 
-    <div class="hotekeys" data-id="hotkey-menu">
-        <table>
-            <tr>
-                <td>Send Selected Blocks Left</td>
-                <td>
-                    <span class="key-btn"> 
-                        <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" width="8px" enable-background="new 0 0 11 14" xml:space="preserve">
-                            <polygon id="left" fill="#717171" points="11,14 0,7 11,0 " />
-                        </svg>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td>Send Selected Block Up</td>
-                <td>
-                    <span class="key-btn sml"> 
-                         <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" width="10px" enable-background="new 0 0 14 11" xml:space="preserve">
-                            <polygon id="up" fill="#717171" points="0,11 7,0 14,11 " />
-                        </svg>
-                    </span></td>
-            </tr>
-            <tr>
-                <td>Send Selected Block Right</td>
-                <td>
-                    <span class="key-btn"> 
-                        <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" width="8px" enable-background="new 0 0 11 14" xml:space="preserve">
-                            <polygon fill="#717171" points="0,0 11,7 0,14 " />
-                        </svg>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td>Send Selected Block Down</td>
-                <td>
-                    <span class="key-btn sml"> 
-                        <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" width="10px" enable-background="new 0 0 14 11" xml:space="preserve">
-                            <polygon fill="#717171" points="14,0 7,11 0,0 " />
-                        </svg>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td>Select All Blocks</td>
-                <td><span class="key-btn"> 1</span></td>
-            </tr>
-            <tr>
-                <td>Deselect All Blocks</td>
-                <td><span class="key-btn"> 2</span></td>
-            </tr>
-            <tr>
-                <td>Delete Selected Blocks</td>
-                <td><span class="key-btn"> 3</span></td>
-            </tr>
-            <tr>
-                <td>Delete All Blocks</td>
-                <td><span class="key-btn"> 4</span></td>
-            </tr>
-            <tr>
-                <td>Play/Pause</td>
-                <td><span class="key-btn"> Spacebar</span></td>
-            </tr>
-            <tr>
-                <td>Change Mode</td>
-                <td><span class="key-btn"> M</span></td>
-            </tr>
-        </table>
+    <div class = "social-media-btns">
+        <a class = "social-icon-facebook" href="http://www.facebook.com/share.php?u=http://marketing.bisonhouse.com/sequencer/&title=Music Blocks" onclick="return popitup('http://www.facebook.com/share.php?u=http://marketing.bisonhouse.com/sequencer/&title=Music Blocks')"></a>
+
+        <a class = "social-icon-twitter" href="http://twitter.com/intent/tweet?status=Music Blocks http://marketing.bisonhouse.com/sequencer/" onclick="return popitup('http://twitter.com/intent/tweet?status=Music Blocks http://marketing.bisonhouse.com/sequencer/')"></a>
+
+        <a class = "social-icon-google" href="https://plus.google.com/share?url=http://marketing.bisonhouse.com/sequencer/" onclick="return popitup('https://plus.google.com/share?url=http://marketing.bisonhouse.com/sequencer/')"></a>
     </div>
 
+</div>
+<div class="hotekeys" data-id="hotkey-menu">
+    <table>
+        <tr>
+            <td>Send Selected Blocks Left</td>
+            <td>
+                <span class="key-btn">
+                <svg class="horizontal left" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" width="8px" enable-background="new 0 0 11 14" xml:space="preserve">
+                <polygon id="left" fill="#717171" points="11,14 0,7 11,0 " />
+                </svg>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>Send Selected Block Up</td>
+            <td>
+                <span class="key-btn sml">
+                <svg class="vertical up" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" width="10px" enable-background="new 0 0 14 11" xml:space="preserve">
+                <polygon id="up" fill="#717171" points="0,11 7,0 14,11 " />
+                </svg>
+            </span></td>
+        </tr>
+        <tr>
+            <td>Send Selected Block Right</td>
+            <td>
+                <span class="key-btn">
+                <svg class="horizontal right" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11 14" width="8px" enable-background="new 0 0 11 14" xml:space="preserve">
+                <polygon fill="#717171" points="0,0 11,7 0,14 " />
+                </svg>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>Send Selected Block Down</td>
+            <td>
+                <span class="key-btn sml">
+                <svg class="vertical down" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 11" width="10px" enable-background="new 0 0 14 11" xml:space="preserve">
+                <polygon fill="#717171" points="14,0 7,11 0,0 " />
+                </svg>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>Select All Blocks</td>
+            <td><span class="key-btn"> 1</span></td>
+        </tr>
+        <tr>
+            <td>Deselect All Blocks</td>
+            <td><span class="key-btn"> 2</span></td>
+        </tr>
+        <tr>
+            <td>Delete Selected Blocks</td>
+            <td><span class="key-btn"> 3</span></td>
+        </tr>
+        <tr>
+            <td>Delete All Blocks</td>
+            <td><span class="key-btn"> 4</span></td>
+        </tr>
+        <tr>
+            <td>Play/Pause</td>
+            <td><span class="key-btn"> Spacebar</span></td>
+        </tr>
+        <tr>
+            <td>Change Mode</td>
+            <td><span class="key-btn"> M</span></td>
+        </tr>
+    </table>
+</div>
 
+    
+<script language="javascript" type="text/javascript">
 
-    <script src="main.js"></script>
-    <script src="tutorial.js"></script>
-    <!--  <script src="//localhost:35729/livereload.js"></script>-->
+function popitup(url) {
+newwindow=window.open(url,'name','height=500,width=500');
+if (window.focus) {newwindow.focus()}
+return false;
+}
+
+</script>
+<script src="main.js"></script>
+<script src="tutorial.js"></script>
+<!--  <script src="//localhost:35729/livereload.js"></script>-->
 </body>
-
 </html>

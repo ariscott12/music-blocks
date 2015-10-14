@@ -1040,3 +1040,22 @@ select {
   -o-transform: rotate(270deg);
   transform: rotate(270deg);
   background: url('../images/down-blue-arrow.png') no-repeat; }
+
+.social-media-btns {
+  position: absolute;
+  top: 5px;
+  right: 35px; }
+  .social-media-btns a {
+    display: inline-block;
+    width: 36px;
+    height: 35px;
+    margin-right: 5px; }
+
+.social-icon-facebook {
+  background: url("../images/icon-facebook.png") no-repeat; }
+
+.social-icon-twitter {
+  background: url("../images/icon-twitter.png") no-repeat; }
+
+.social-icon-google {
+  background: url("../images/icon-google.png") no-repeat; }
