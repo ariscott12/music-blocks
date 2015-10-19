@@ -931,6 +931,7 @@ tutorial = (function() {
     endTutorial = function() {
         tutorial_index = -1;
         musicApp.validInput.type = null;
+        $('.tutorial-arrow').hide();
         $('.tutorial-text-wrapper').hide();
         $('.tutorial-overlay').hide();
     }
