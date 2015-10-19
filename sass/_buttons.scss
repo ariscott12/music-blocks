@@ -21,7 +21,7 @@
 }
 
 
-.show-hotkeys, .toggle-tutorial {
+.show-hotkeys, .toggle-tutorial, .example {
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
     -webkit-user-select: none;
@@ -35,5 +35,8 @@
     text-align:center;
     color:#eee;
     margin-bottom:10px;
-    background:#399381;
+    background:#2C887A;
+    &:hover {
+        background:#149178;
+    }
 }

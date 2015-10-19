@@ -73,7 +73,7 @@ body {
   z-index: 25000;
   display: none; }
 
-.show-hotkeys, .toggle-tutorial {
+.show-hotkeys, .toggle-tutorial, .example {
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -87,7 +87,9 @@ body {
   text-align: center;
   color: #eee;
   margin-bottom: 10px;
-  background: #399381; }
+  background: #2C887A; }
+  .show-hotkeys:hover, .toggle-tutorial:hover, .example:hover {
+    background: #149178; }
 
 .control-panel {
   -moz-user-select: -moz-none;
@@ -742,17 +744,16 @@ select {
     margin-bottom: 10px;
     float: left;
     cursor: pointer;
-    border: 1px solid #8CCDC1;
-    padding: 0 5px; }
+    border: 1px solid #8CCDC1; }
     .top-panel-section ul li {
-      margin: 0 1px 1px 0;
-      display: inline-block;
+      float: left;
       text-align: center;
-      opacity: .45;
-      padding: 0 5px;
+      opacity: .6;
       height: 38px;
-      line-height: 50px; }
+      line-height: 50px;
+      width: 41px; }
       .top-panel-section ul li.active, .top-panel-section ul li:hover {
+        background: #2C887A;
         opacity: 1; }
 
 .master-volume-section {
@@ -956,7 +957,7 @@ select {
   -ms-user-select: none;
   user-select: none;
   display: none;
-  background: rgba(0, 0, 0, 0.1) none repeat scroll 0 0;
+  background: transparent none repeat scroll 0 0;
   height: 100%;
   position: absolute;
   z-index: 20000; }
