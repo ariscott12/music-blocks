@@ -442,14 +442,22 @@ var musicApp = (function() {
                 }
                 //}
             },
-            deleteAllBlocks: function() {
-                if (tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to clear the board?')) {
+            deleteAllBlocks: function(message) {
+                function removeBlock() {
                     for (var j = 0; j < config.block_count; j++) {
                         blocks[j].removeBlock();
                         j--;
                     }
                     config.selected_block_count = 0;
                 }
+                if(message === false) {
+                    removeBlock();
+                } else {
+                    if (tutorial.getTutorialIndex() !== -1 || confirm('Are you sure you want to clear the board?')) {
+                        removeBlock();
+                    }
+                }
+              
             },
             selectAllBlocks: function() {
                 for (var k = 0; k < config.block_count; k++) {
@@ -3170,6 +3178,11 @@ var musicApp = (function() {
             blocks[count].configMap[type].range_low = rangeLow;
             blocks[count].configMap[type].scale = scale;
             blocks[count].rebuildRangeValidNotes();
+
+            if(type !== 'note') {
+                blocks[count].configMap[type].active = true;
+                blocks[count].configMap['note'].active = false;
+            }
         }
          var createStepEffectBlock = function(gridX, gridY, type, scale, direction, step, rangeLow, rangeHigh) {
             var count = config.block_count;
@@ -3242,11 +3255,15 @@ var musicApp = (function() {
             
         }
 
-        var exampleOne = function() {
-            // Load instruments here before calling create music function
+        var showExampleOne = function() {
+            // Clear the board
+            utilities.deleteAllBlocks(false);
+
+            // Load instruments here before calling create music block functions
             musicBlockPanel.loadInstrument($('#set-instrument option[value="1"]'));
             musicBlockPanel.loadInstrument($('#set-instrument option[value="2"]'));
             musicBlockPanel.loadInstrument($('#set-instrument option[value="6"]'));
+            musicBlockPanel.loadInstrument($('#set-instrument option[value="3"]'));
 
             createLine({
                 startX: 0,
@@ -3264,7 +3281,7 @@ var musicApp = (function() {
 
             createLine({
                 startX: 0,
-                startY: 14,
+                startY: 13,
                 amount: 5,
                 lineDirection: 'horizontal'
             });
@@ -3272,19 +3289,19 @@ var musicApp = (function() {
             createLine({
                 startX: 5,
                 startY: 0,
-                amount: 15,
+                amount: 14,
                 lineDirection: 'vertical'
             });
 
 
             // Create music blocks
             // Base
-            createMusicBlock(3,7,'none', 2, 39, false, 60);
-            createMusicBlock(0,1,'up', 2, 39, false, 60);
-            createMusicBlock(1,5,'down', 2, 48, false, 60);
-            createMusicBlock(2,3,'down', 2, 51, false, 60);
-            createMusicBlock(3,3,'down', 2, 55, false, 60);
-            createMusicBlock(4,6,'down', 2, 43, false, 60);
+            createMusicBlock(3,7,'none', 2, 39, false, 100);
+            createMusicBlock(0,1,'up', 2, 39, false, 100);
+            createMusicBlock(1,5,'down', 2, 48, false, 100);
+            createMusicBlock(2,3,'down', 2, 51, false, 100);
+            createMusicBlock(3,3,'down', 2, 55, false, 100);
+            createMusicBlock(4,6,'down', 2, 43, false, 100);
 
             // Piano
             createRandomEffectBlock(6,4,'note', 'Eb Major / C Minor', 60, 89);
@@ -3293,12 +3310,12 @@ var musicApp = (function() {
             createMusicBlock(9,7,'none', 1, 60, false, 60);
             createMusicBlock(16,1,'none', 1, 60, false, 60);
             createMusicBlock(16,6,'none', 1, 60, false, 60);
-            createMusicBlock(16,4,'up', 1, 60, true, 60);
-            createMusicBlock(9,5,'down', 1, 60, true, 60);
+            createMusicBlock(16,4,'up', 1, 60, true, 67);
+            createMusicBlock(9,5,'down', 1, 60, true, 67);
             createRandomEffectBlock(19,4,'note', 'Eb Major / C Minor', 52, 89);
             createRandomEffectBlock(19,5,'note', 'Eb Major / C Minor', 52, 89);
-            createMusicBlock(7,4,'left', 1, 60, false, 24);
-            createMusicBlock(11,5,'left', 1, 60, false, 24);
+            createMusicBlock(7,4,'left', 1, 60, false, 64);
+            createMusicBlock(11,5,'left', 1, 60, false, 64);
 
             // Harp
             createStepEffectBlock(19,9,'note', 'Eb Major / C Minor', 'down', 1, 60, 100);
@@ -3308,11 +3325,28 @@ var musicApp = (function() {
             createMusicBlock(16,12,'none', 6, 60, false, 20);
             createMusicBlock(16,10,'down', 6, 60, true, 20);
 
+            // Drums
+            createMusicBlock(1,11,'right', 3, 88, false, 24);
+            createMusicBlock(2,11,'up', 3, 88, false, 24);
+
+            // Snare
+            createRandomEffectBlock(6,9,'volume', 'Eb Major / C Minor', 0, 30);
+            createRandomEffectBlock(7,9,'volume', 'Eb Major / C Minor', 0, 30);           
+            createMusicBlock(6,12,'down', 3, 74, false, 24);
+            createMusicBlock(7,13,'down', 3, 60, false, 24);
+           
+
+            // Kick
+            createMusicBlock(2,14,'right', 3, 74, false, 34);
+            createMusicBlock(12,14,'none', 3, 74, false, 40);
+
+
             
         }
 
         var initMod = function() {
-            exampleOne();
+            //exampleOne();
+            $('[data-id="example-1"]').click(showExampleOne);
             
         }
         return {
