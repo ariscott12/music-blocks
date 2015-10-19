@@ -117,6 +117,7 @@ var musicApp = (function() {
         effectBlockPanel.initMod();
         pianoRoll.initMod();
         gridEvents.initMod();
+        musicBlockExample.initMod();
         syncCounter.initAppLoop();
     };
 
@@ -125,7 +126,8 @@ var musicApp = (function() {
     /* Here we load the MIDI sound fonts and populate our MIDI Programs
      * Once the Sound Fonts have loaded we run the initialize App function
      */
-    var loadSountFonts = function() {
+    var loadSoundFonts = function() {
+        var is_app_initialized = false;
         // This checks the config object to see how many instruments we want to load on page load
         var setMidiPrograms = function() {
             var count = 0;
@@ -143,16 +145,17 @@ var musicApp = (function() {
             for (var i = 0; i < config.instruments_to_load; i++) {
                 instrumentNames[i] = Object.keys(midiInstruments)[i];
             }
-
-            MIDI.loadPlugin({
+              MIDI.loadPlugin({
                 soundfontUrl: "./soundfont/",
                 instruments: instrumentNames,
                 onsuccess: function() {
-                    setMidiPrograms();
-
+                   
                     // After sound fonts have loaded we initalized the App
-                    initializeApp();
-
+                    if(!is_app_initialized) {
+                        setMidiPrograms();
+                        initializeApp();
+                        is_app_initialized = true;
+                    }
                 }
             });
         };
@@ -1631,7 +1634,7 @@ var musicApp = (function() {
             toggleDrumIndicator, updateBlockColors,
 
             // Public Methods
-            getPanelValues, setToBlock, setParams,
+            getPanelValues, setToBlock, setParams, loadInstrument,
             initMod;
 
         setJqueryMap = function() {
@@ -1845,15 +1848,12 @@ var musicApp = (function() {
             return false;
         };
 
-        selectNewInstrument = function() {
+        loadInstrument = function(obj) {
             var
-                option = $(this).find('option:selected'),
+                option = obj,
                 is_loaded = option.attr('class'),
-                program = $(this).val(),
-                $spinner = $('.spinner-instrument');
-
-            // remove focus after selected
-            $(this).blur();
+                program = obj.val(),
+                $spinner = $('.spinner-instrument');  
 
             if (is_loaded === 'not-loaded') {
                 config.is_instrument_loading = true;
@@ -1876,7 +1876,14 @@ var musicApp = (function() {
                     }
                 });
             }
+        };
 
+
+        selectNewInstrument = function() {
+            var obj = $(this).find('option:selected');
+            var program = obj.val();
+            $(this).blur();
+            loadInstrument(obj)
             setParams('instrument', program);
             updateBlockColors();
             toggleDrumIndicator();
@@ -1905,6 +1912,7 @@ var musicApp = (function() {
             setParams: setParams,
             getPanelValues: getPanelValues,
             toggleDrumIndicator: toggleDrumIndicator,
+            loadInstrument:loadInstrument,
             initMod: initMod
         };
     }(jQuery);
@@ -3135,9 +3143,184 @@ var musicApp = (function() {
             getDragValues: getDragValues,
             mouseDown: mouseDown,
             mouseUp: mouseUp,
-            initMod: initMod
+            initMod: initMod,
+            addBlock:addBlock
         };
     }();
+
+    var musicBlockExample = function() {
+
+        var createMusicBlock = function(gridX, gridY, direction, instrument, note, muted, volume) {
+            var count = config.block_count;
+ 
+            gridEvents.addBlock(gridX,gridY,'block-music');
+            blocks[count].new_direction = direction
+            blocks[count].blockSpeed = config.block_speed;
+            blocks[count].instrument = instrument;
+            blocks[count].setBlockColors();
+            blocks[count].note = note;
+            blocks[count].mute = muted;
+            blocks[count].volume = volume;
+        }
+        var createRandomEffectBlock = function(gridX, gridY, type, scale, rangeLow, rangeHigh) {
+            var count = config.block_count;
+            gridEvents.addBlock(gridX,gridY,'block-effect');
+            blocks[count].configMap[type].method = 'random';
+            blocks[count].configMap[type].range_high = rangeHigh;
+            blocks[count].configMap[type].range_low = rangeLow;
+            blocks[count].configMap[type].scale = scale;
+            blocks[count].rebuildRangeValidNotes();
+        }
+         var createStepEffectBlock = function(gridX, gridY, type, scale, direction, step, rangeLow, rangeHigh) {
+            var count = config.block_count;
+            gridEvents.addBlock(gridX,gridY,'block-effect');
+            blocks[count].configMap[type].method = 'progression';
+            blocks[count].configMap[type].range_high = rangeHigh;
+            blocks[count].configMap[type].range_low = rangeLow;
+            blocks[count].configMap[type].scale = scale;
+            blocks[count].configMap[type].direction = direction;
+            blocks[count].configMap[type].step = step;
+            blocks[count].rebuildRangeValidNotes();
+        }
+        var createLine = function() {
+            var 
+                arg = arguments[0],
+                startX = arg.startX || 0,
+                startY = arg.startY || 0,
+                amount = arg.amount || 4,
+                lineDirection = arg.lineDirection || 'horizontal',
+                instrument = arg.instrument || 0,
+                direction = arg.direction || 'none',
+                note = arg.note || 60;
+
+            for (var i = 0; i < amount; i++) {
+                if(lineDirection === 'horizontal') {
+                    createMusicBlock(startX+i,startY,direction,instrument, note, false, 60);
+                } else {
+                    createMusicBlock(startX,startY + i, direction,instrument, 62, false, 60);
+                }
+            };
+        }
+
+        var createRectangle = function() {
+            var 
+                arg = arguments[0],
+                startX = arg.startX || 0,
+                startY = arg.startY || 0,
+                width = arg.width || 6,
+                height = arg.height || 6;
+
+                if(height < 3 || width < 3) {
+                    throw new Error('createRectangle(): height and width must be greater then 2');
+
+                }
+
+                createLine({
+                    startX: startX,
+                    startY: startY,
+                    amount: width,
+                    lineDirection: 'horizontal'
+                });
+                createLine({
+                    startX: startX,
+                    startY: startY + height - 1,
+                    amount: width,
+                    lineDirection: 'horizontal'
+                });
+                createLine({
+                    startX: startX,
+                    startY: startY + 1,
+                    amount: height - 2,
+                    lineDirection: 'vertical'
+                });
+                 createLine({
+                    startX: startX + width -1,
+                    startY: startY + 1,
+                    amount: height - 2,
+                    lineDirection: 'vertical'
+                });
+            
+        }
+
+        var exampleOne = function() {
+            // Load instruments here before calling create music function
+            musicBlockPanel.loadInstrument($('#set-instrument option[value="1"]'));
+            musicBlockPanel.loadInstrument($('#set-instrument option[value="2"]'));
+            musicBlockPanel.loadInstrument($('#set-instrument option[value="6"]'));
+
+            createLine({
+                startX: 0,
+                startY: 0,
+                amount: 5,
+                lineDirection: 'horizontal'
+            });
+
+            createLine({
+                startX: 0,
+                startY: 8,
+                amount: 5,
+                lineDirection: 'horizontal'
+            });
+
+            createLine({
+                startX: 0,
+                startY: 14,
+                amount: 5,
+                lineDirection: 'horizontal'
+            });
+
+            createLine({
+                startX: 5,
+                startY: 0,
+                amount: 15,
+                lineDirection: 'vertical'
+            });
+
+
+            // Create music blocks
+            // Base
+            createMusicBlock(3,7,'none', 2, 39, false, 60);
+            createMusicBlock(0,1,'up', 2, 39, false, 60);
+            createMusicBlock(1,5,'down', 2, 48, false, 60);
+            createMusicBlock(2,3,'down', 2, 51, false, 60);
+            createMusicBlock(3,3,'down', 2, 55, false, 60);
+            createMusicBlock(4,6,'down', 2, 43, false, 60);
+
+            // Piano
+            createRandomEffectBlock(6,4,'note', 'Eb Major / C Minor', 60, 89);
+            createRandomEffectBlock(6,5,'note', 'Eb Major / C Minor', 60, 89);
+            createMusicBlock(9,1,'none', 1, 60, false, 60);
+            createMusicBlock(9,7,'none', 1, 60, false, 60);
+            createMusicBlock(16,1,'none', 1, 60, false, 60);
+            createMusicBlock(16,6,'none', 1, 60, false, 60);
+            createMusicBlock(16,4,'up', 1, 60, true, 60);
+            createMusicBlock(9,5,'down', 1, 60, true, 60);
+            createRandomEffectBlock(19,4,'note', 'Eb Major / C Minor', 52, 89);
+            createRandomEffectBlock(19,5,'note', 'Eb Major / C Minor', 52, 89);
+            createMusicBlock(7,4,'left', 1, 60, false, 24);
+            createMusicBlock(11,5,'left', 1, 60, false, 24);
+
+            // Harp
+            createStepEffectBlock(19,9,'note', 'Eb Major / C Minor', 'down', 1, 60, 100);
+            createStepEffectBlock(15,9,'note', 'Eb Major / C Minor', 'down', 2, 60, 100);
+            createMusicBlock(18,9,'right', 6, 60, false, 24);
+            createMusicBlock(16,8,'none', 6, 60, false, 20);
+            createMusicBlock(16,12,'none', 6, 60, false, 20);
+            createMusicBlock(16,10,'down', 6, 60, true, 20);
+
+            
+        }
+
+        var initMod = function() {
+            exampleOne();
+            
+        }
+        return {
+            initMod: initMod
+        }
+    }();
+
+
 
     var keyboardEvents = function() {
         //Keydown handler for keyboard input
