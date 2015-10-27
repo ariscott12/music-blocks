@@ -3255,7 +3255,7 @@ var musicApp = (function() {
             
         }
 
-        var showExampleOne = function() {
+	var showExampleOne = function() {
             // Clear the board
             utilities.deleteAllBlocks(false);
 
@@ -3325,36 +3325,76 @@ var musicApp = (function() {
             createMusicBlock(16,12,'none', 6, 60, false, 20);
             createMusicBlock(16,10,'down', 6, 60, true, 20);
 
-            // Drums
-            createMusicBlock(1,11,'right', 3, 88, false, 24);
-            createMusicBlock(2,11,'up', 3, 88, false, 24);
+            // Highhat
+            createMusicBlock(1,11,'right', 3, 88, false, 18);
+            createMusicBlock(2,11,'up', 3, 87, false, 17);
 
             // Snare
             createRandomEffectBlock(6,9,'volume', 'Eb Major / C Minor', 0, 30);
-            createRandomEffectBlock(7,9,'volume', 'Eb Major / C Minor', 0, 30);           
-            createMusicBlock(6,12,'down', 3, 74, false, 24);
+            createRandomEffectBlock(7,8,'volume', 'Eb Major / C Minor', 0, 30);           
+            createMusicBlock(6,12,'down', 3, 67, false, 24);
             createMusicBlock(7,13,'down', 3, 60, false, 24);
            
 
             // Kick
-            createMusicBlock(2,14,'right', 3, 74, false, 34);
+            createMusicBlock(2,14,'right', 3, 50, false, 34);
             createMusicBlock(12,14,'none', 3, 74, false, 40);
+            
+        }
 
+	var showExampleTwo = function() {
+            // Clear the board
+            utilities.deleteAllBlocks(false);
+	       // Load instruments here before calling create music block functions
+            musicBlockPanel.loadInstrument($('#set-instrument option[value="0"]'));
+            musicBlockPanel.loadInstrument($('#set-instrument option[value="4"]'));
+            musicBlockPanel.loadInstrument($('#set-instrument option[value="3"]'));
 
+            // Create effect blocks
+            // Base
+    	    createStepEffectBlock(10,5,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(10,6,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(10,7,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(6,5,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(5,6,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(4,7,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(14,5,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(15,6,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(16,7,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(8,2,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(8,10,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(12,2,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(12,10,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+    	    createStepEffectBlock(13,11,'note', 'A Major / F# Minor', 'up', 5, 60, 76);
+    	    createStepEffectBlock(7,11,'note', 'A Major / F# Minor', 'up', 5, 60, 72);
+            
+            // Xylophone
+            createMusicBlock(9,5,'left', 0, 60, false, 60);
+            createMusicBlock(8,6,'left', 0, 60, false, 60);
+            createMusicBlock(7,7,'left', 0, 60, false, 60);
+            createMusicBlock(11,5,'left', 0, 60, false, 60);            
+            createMusicBlock(12,6,'left', 0, 60, false, 60);
+            createMusicBlock(13,7,'left', 0, 60, false, 60);
+
+	       //Marimba
+            createMusicBlock(8,3,'down', 4, 60, false, 60);
+            createMusicBlock(12,4,'down', 4, 60, false, 60);
+
+            // Drums
+            createMusicBlock(10, 11,'right', 3, 61, true, 24);
             
         }
 
         var initMod = function() {
             //exampleOne();
             $('[data-id="example-1"]').click(showExampleOne);
+            $('[data-id="example-2"]').click(showExampleTwo);
             
         }
         return {
             initMod: initMod
         }
     }();
-
-
 
     var keyboardEvents = function() {
         //Keydown handler for keyboard input
