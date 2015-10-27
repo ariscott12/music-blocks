@@ -87,9 +87,9 @@ body {
   text-align: center;
   color: #eee;
   margin-bottom: 10px;
-  background: #2C887A; }
+  background: #3C9B88; }
   .show-hotkeys:hover, .toggle-tutorial:hover, .example:hover {
-    background: #149178; }
+    background: #2C887A; }
 
 .control-panel {
   -moz-user-select: -moz-none;
