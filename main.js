@@ -3345,13 +3345,18 @@ var musicApp = (function() {
 	var showExampleTwo = function() {
             // Clear the board
             utilities.deleteAllBlocks(false);
+<<<<<<< HEAD
 	       // Load instruments here before calling create music block functions
+=======
+	    // Load instruments here before calling create music block functions
+>>>>>>> 4f0ba1993212fc75d71b518153ce513fba594f1a
             musicBlockPanel.loadInstrument($('#set-instrument option[value="0"]'));
             musicBlockPanel.loadInstrument($('#set-instrument option[value="4"]'));
             musicBlockPanel.loadInstrument($('#set-instrument option[value="3"]'));
 
             // Create effect blocks
             // Base
+<<<<<<< HEAD
     	    createStepEffectBlock(10,5,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
     	    createStepEffectBlock(10,6,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
     	    createStepEffectBlock(10,7,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
@@ -3367,6 +3372,23 @@ var musicApp = (function() {
     	    createStepEffectBlock(12,10,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
     	    createStepEffectBlock(13,11,'note', 'A Major / F# Minor', 'up', 5, 60, 76);
     	    createStepEffectBlock(7,11,'note', 'A Major / F# Minor', 'up', 5, 60, 72);
+=======
+	    createStepEffectBlock(10,5,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(10,6,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(10,7,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(6,5,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(5,6,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(4,7,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(14,5,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(15,6,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(16,7,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(8,2,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(8,10,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(12,2,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(12,10,'note', 'A Major / F# Minor', 'up', 5, 50, 80);
+	    createStepEffectBlock(13,11,'note', 'A Major / F# Minor', 'up', 5, 60, 76);
+	    createStepEffectBlock(7,11,'note', 'A Major / F# Minor', 'up', 5, 60, 72);
+>>>>>>> 4f0ba1993212fc75d71b518153ce513fba594f1a
             
             // Xylophone
             createMusicBlock(9,5,'left', 0, 60, false, 60);
@@ -3376,9 +3398,18 @@ var musicApp = (function() {
             createMusicBlock(12,6,'left', 0, 60, false, 60);
             createMusicBlock(13,7,'left', 0, 60, false, 60);
 
+<<<<<<< HEAD
 	       //Marimba
             createMusicBlock(8,3,'down', 4, 60, false, 60);
             createMusicBlock(12,4,'down', 4, 60, false, 60);
+=======
+	    //Marimba
+            createMusicBlock(8,3,'down', 4, 60, false, 60);
+            createMusicBlock(12,4,'down', 4, 60, false, 60);
+
+            // Drums
+            createMusicBlock(10, 11,'right', 3, 61, true, 24);
+>>>>>>> 4f0ba1993212fc75d71b518153ce513fba594f1a
 
             // Drums
             createMusicBlock(10, 11,'right', 3, 61, true, 24);
