@@ -15,6 +15,34 @@ module.exports = function(grunt) {
                 }
             }
         },
+        concat: {
+            'build/APP.js': [
+                'inc/shim/Base64.js',
+                'inc/shim/Base64binary.js',
+                'inc/shim/WebAudioAPI.js',
+                'js/midi/audioDetect.js',
+                'js/midi/gm.js',
+                'js/midi/loader.js',
+                'js/midi/plugin.audiotag.js',
+                'js/midi/plugin.webaudio.js',
+                'js/midi/plugin.webmidi.js',
+                'js/util/dom_request_xhr.js', // req when using XHR
+                'js/util/dom_request_script.js', // req otherwise
+                'js/jquery.js',
+                'js/jquery-ui.js',
+                'js/jquery.knob.js',
+                'js/rAF.js',
+                'js/browser-detect.js',
+
+                'main.js',
+                'tutorial.js'
+            ]
+        },
+        uglify: {
+            'build/APP.min.js': [
+                'build/APP.js'
+            ]
+        },
         connect: {
             server: {
                 options: {
@@ -45,9 +73,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks("grunt-sass");
     grunt.loadNpmTasks("grunt-contrib-connect");
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
     //Where we tell Grunt what to do when we type "grunt" into the terminal.
-    grunt.registerTask("default", ["connect", "watch"]);
+     grunt.registerTask("default", ["connect", "watch"]);
+     grunt.registerTask("build", ["concat", "uglify"]);
 
 
 
