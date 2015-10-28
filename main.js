@@ -1427,8 +1427,12 @@ var musicApp = (function() {
             return false;
         };
         showHotKeys = function() {
+            var docHeight = $(document).height();
             config.is_system_paused = true;
-            jqueryMap.$hotkey_menu.fadeIn(300);
+            jqueryMap.$hotkey_menu.show();
+
+            // Update height of hotkeys to doc height
+            jqueryMap.$hotkey_menu.css({'height': docHeight});
 
             return false;
         };
@@ -1478,8 +1482,6 @@ var musicApp = (function() {
         };
 
     }();
-
-
 
 
     /* 
@@ -1592,6 +1594,7 @@ var musicApp = (function() {
             }
 
             active_panel = config.active_panel;
+            musicBlockPanel.toggleDrumIndicator(active_panel);
 
         };
 
@@ -1796,6 +1799,7 @@ var musicApp = (function() {
                     switch (key) {
                         case 'instrument':
                             jqueryMap.$instrument.val(blocks[num].instrument);
+                            toggleDrumIndicator('block-music');
                             break;
 
                         case 'solo':
@@ -1813,6 +1817,7 @@ var musicApp = (function() {
                     }
                 }
             }
+
         };
 
         /*** Click Handlers ***/
@@ -1861,7 +1866,10 @@ var musicApp = (function() {
                 option = obj,
                 is_loaded = option.attr('class'),
                 program = obj.val(),
-                $spinner = $('.spinner-instrument');  
+                $spinner = $('.spinner-instrument'),
+                canvasHeight = $('#grid').height();
+
+                $spinner.css({'height': canvasHeight});  
 
             if (is_loaded === 'not-loaded') {
                 config.is_instrument_loading = true;
@@ -3256,6 +3264,10 @@ var musicApp = (function() {
         }
 
 	var showExampleOne = function() {
+            // Quit tutorial
+            tutorial.endTutorial();
+            $('[data-id = "tutorial"]').text('Tutorial');
+            $('[data-id = "tutorial"]').attr('data-state', 'not-active');
             // Clear the board
             utilities.deleteAllBlocks(false);
 
@@ -3448,7 +3460,9 @@ var musicApp = (function() {
                     case 50: // 2
                         utilities.deselectAllBlocks();
                         break;
+                    case 8:
                     case 51: // 3
+                        event.preventDefault();
                         utilities.deleteSelectedBlocks();
                         break;
                     case 52: // 4

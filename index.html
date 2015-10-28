@@ -5,28 +5,9 @@
             <meta name="description" content="">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <link rel="stylesheet" href="css/main.css">
-            <title>JS Sequencer</title>
+            <title>Music Blocks</title>
             <link rel="author" href="humans.txt">
             <link href='http://fonts.googleapis.com/css?family=Istok+Web:400,700' rel='stylesheet' type='text/css'>
-            <script src="inc/shim/Base64.js" type="text/javascript"></script>
-            <script src="inc/shim/Base64binary.js" type="text/javascript"></script>
-            <script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
-            <!-- midi.js package -->
-            <script src="js/midi/audioDetect.js" type="text/javascript"></script>
-            <script src="js/midi/gm.js" type="text/javascript"></script>
-            <script src="js/midi/loader.js" type="text/javascript"></script>
-            <script src="js/midi/plugin.audiotag.js" type="text/javascript"></script>
-            <script src="js/midi/plugin.webaudio.js" type="text/javascript"></script>
-            <script src="js/midi/plugin.webmidi.js" type="text/javascript"></script>
-            <!-- utils -->
-            <script src="js/util/dom_request_xhr.js" type="text/javascript"></script>
-            <script src="js/util/dom_request_script.js" type="text/javascript"></script>
-            <script src="js/jquery.js" type="text/javascript"></script>
-            <script src="js/jquery-ui.js" type="text/javascript"></script>
-            <script src="js/jquery.knob.js"></script>
-            <script src="js/rAF.js"></script>
-            <script src="js/browser-detect.js"></script>
-         
         </head>
         <body oncontextmenu="return false;">
             <div class="spinner-page spinner">
@@ -639,19 +620,35 @@
         </tr>
     </table>
 </div>
+<!-- <script src="inc/shim/Base64.js" type="text/javascript"></script>
+<script src="inc/shim/Base64binary.js" type="text/javascript"></script>
+<script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+<script src="js/midi/audioDetect.js" type="text/javascript"></script>
+<script src="js/midi/gm.js" type="text/javascript"></script>
+<script src="js/midi/loader.js" type="text/javascript"></script>
+<script src="js/midi/plugin.audiotag.js" type="text/javascript"></script>
+<script src="js/midi/plugin.webaudio.js" type="text/javascript"></script>
+<script src="js/midi/plugin.webmidi.js" type="text/javascript"></script>
+<script src="js/util/dom_request_xhr.js" type="text/javascript"></script>
+<script src="js/util/dom_request_script.js" type="text/javascript"></script>
+<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/jquery-ui.js" type="text/javascript"></script>
+<script src="js/jquery.knob.js"></script>
+<script src="js/rAF.js"></script>
+<script src="js/browser-detect.js"></script>
+<script src="main.js"></script>
+<script src="tutorial.js"></script> -->
+<script src="build/APP.min.js"></script> -->
 
-    
 <script language="javascript" type="text/javascript">
 
 function popitup(url) {
-newwindow=window.open(url,'name','height=500,width=500');
-if (window.focus) {newwindow.focus()}
-return false;
+    newwindow=window.open(url,'name','height=500,width=500');
+    if (window.focus) {newwindow.focus()}
+    return false;
 }
 
 </script>
-<script src="main.js"></script>
-<script src="tutorial.js"></script>
 <!--  <script src="//localhost:35729/livereload.js"></script>-->
 </body>
 </html>

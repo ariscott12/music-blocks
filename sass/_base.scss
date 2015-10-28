@@ -20,10 +20,14 @@ $purple-light:#907CCC;
 $red : #CD5949;
 $red-bright: #EA1010;
 
-
+html {
+	min-height:100%;
+	//position:relative;
+}
 body {
     font-family: 'Istok Web', sans-serif;
     font-size: 100%;
     color:$gray-font;
     background:$aqua;
+    height:100%;
 }
