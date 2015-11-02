@@ -33,9 +33,8 @@ module.exports = function(grunt) {
                 'js/jquery.knob.js',
                 'js/rAF.js',
                 'js/browser-detect.js',
-
-                'main.js',
-                'tutorial.js'
+                'js/main.js',
+                'js/tutorial.js'
             ]
         },
         uglify: {
