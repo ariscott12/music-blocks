@@ -19,6 +19,6 @@ var isMobile = {
     }
 };
 
-if(!isMobile.any()) {
+if(isMobile.any()) {
   $('body').html('<p class = "mobile-message">Music Blocks mobile app is currently in development please check back soon for updates</p>');
 }
