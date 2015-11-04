@@ -1701,7 +1701,7 @@ var musicApp = (function() {
                 type: 'music-block',
                 params: 'duration',
                 min: 1,
-                max: 1000
+                max: 120
             });
         };
 
