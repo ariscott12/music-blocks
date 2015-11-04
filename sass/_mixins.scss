@@ -10,8 +10,6 @@
         border-color: $color;
 
         @if $direction == "right" {
-          
-           
             margin-left: $margin;
             margin-top: $size * -1;
             border-top: $size solid transparent;
@@ -19,8 +17,6 @@
             border-left: $size solid $color;
             border-left-color: inherit;
         } @else if $direction == "down" {
-           
-          
             margin-top: $margin;
             margin-left: $size * -1;
             border-left: $size solid transparent;
@@ -28,7 +24,6 @@
             border-top: $size solid $color;
             border-top-color: inherit;
         } @else if $direction == "left" {
-           
             margin-right: $margin;
             margin-top: $size * -1;
             border-top: $size solid transparent;
@@ -36,8 +31,6 @@
             border-right:$size solid $color;
             border-right-color: inherit;
         } @else {
-          
-          
             margin-bottom: $margin;
             margin-left: $size * -1;
             border-left: $size solid transparent;
@@ -45,5 +38,11 @@
             border-bottom: $size solid $color;
             border-bottom-color: inherit;
         }
+    }
+}
+
+@mixin break-at($breakpoint) {
+    @media only screen and (max-width: $breakpoint + px) {
+        @content;
     }
 }

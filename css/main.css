@@ -633,7 +633,6 @@ select {
   font-size: .875rem;
   color: #4b4b4b; }
 
-/*Added by MIKE ENDS*/
 .ui-widget input {
   font-family: 'Istok Web', sans-serif;
   color: #67c0cd;
@@ -791,6 +790,10 @@ select {
   width: 856px;
   display: none;
   -webkit-transform: translate3d(0, 0, 0); }
+  @media only screen and (max-width: 1180px) {
+    #wrapper {
+      margin: 0;
+      left: 160px; } }
 
 .browser-message {
   display: none;
@@ -799,6 +802,14 @@ select {
   margin-bottom: 10px;
   padding: 20px 0;
   text-align: center; }
+
+.mobile-message {
+  color: white;
+  font-size: 1.25em;
+  line-height: 29px;
+  margin: 100px auto 0;
+  text-align: center;
+  width: 60%; }
 
 .close-browser-message {
   float: right;
@@ -944,6 +955,7 @@ select {
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.4); }
 
 .tutorial-next {
+  cursor: pointer;
   display: none;
   background: #A9A8A7;
   color: #4b4b4b;
@@ -1050,7 +1062,7 @@ select {
 .social-media-btns {
   position: absolute;
   top: 5px;
-  right: 35px; }
+  right: 0px; }
   .social-media-btns a {
     display: inline-block;
     width: 36px;
@@ -1065,3 +1077,6 @@ select {
 
 .social-icon-google {
   background: url("../images/icon-google.png") no-repeat; }
+
+.social-icon-mail {
+  background: url("../images/icon-mail.png") no-repeat; }

@@ -1,7 +1,7 @@
 .social-media-btns {
 	position:absolute;
 	top:5px;
-	right:35px;
+	right:0px;
     a {
         display: inline-block;
         width: 36px;
@@ -9,7 +9,6 @@
         margin-right:5px;
     }
 }
-
 .social-icon-facebook {
     background: url("../images/icon-facebook.png") no-repeat;
 }
@@ -20,4 +19,8 @@
 
 .social-icon-google {
     background: url("../images/icon-google.png") no-repeat;
+}
+
+.social-icon-mail {
+    background: url("../images/icon-mail.png") no-repeat;
 }

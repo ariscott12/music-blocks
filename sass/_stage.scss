@@ -4,6 +4,11 @@
     width: 856px;
     display: none;
     -webkit-transform: translate3d(0, 0, 0);
+
+    @include break-at(1180) {
+        margin:0;
+        left:160px;
+    }
 }
 
 .browser-message {
@@ -13,6 +18,15 @@
     margin-bottom: 10px;
     padding: 20px 0;
     text-align: center;
+}
+
+.mobile-message {
+    color: white;
+    font-size: 1.25em;
+    line-height: 29px;
+    margin: 100px auto 0;
+    text-align: center;
+    width: 60%;
 }
 
 .close-browser-message {

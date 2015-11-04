@@ -4,7 +4,6 @@
         -webkit-user-select: none;
         -ms-user-select: none;
         user-select: none;
-    //    position:relative;
         .block-effect-panel {
             display: none;
         }
@@ -367,11 +366,6 @@
         }
     }
     
-    // [data-limit-range="false"] {
-    //     .button-select {
-    //         background: none;
-    //     }
-    // }
     // Music Blocks 
     .instrument-select {
         border-left: 1px solid $gray;
@@ -389,17 +383,6 @@
         border-right: 1px solid $gray;
         border-left: 1px solid $gray;
         border-top: 1px solid $gray;
-        // .stop-block {
-        //     margin-top: 9px;
-        //     font-size: 12px;
-        //     span {
-        //         position: relative;
-        //         top: 2px;
-        //         &:hover {
-        //             background:#ea1010;
-        //         }
-        //     }
-        // }
     }
     
     .block-direction-select {
@@ -411,13 +394,9 @@
             margin-right: 3px;
             border-radius: 2px;
             background: #dbd9d9;
-            // background: $gray-light;
-            // border-left: 1px solid $gray;
-            // border-top: 1px solid $gray;
             position: relative;
             cursor: pointer;
             &:last-child {
-                // border-right: 1px solid $gray;
                 margin-right: 0;
             }
             &:hover {
@@ -461,12 +440,6 @@
             left: 8px;
             top: 8px;
         }
-        // .active {
-        //     background: $white-medium;
-        //     polygon {
-        //         fill: $orange;
-        //     }
-        // }
     }
     
     .note-wrapper {
@@ -485,10 +458,8 @@
     
     .mute-solo,
     .mute-piano {
-        // margin-left: 20px;
         li {
             font-size: 12px;
-            // float: left;
             margin-bottom: 7px;
         }
         span {
@@ -496,7 +467,6 @@
             top: 2px;
             &[data-active="true"] {
                 background: $red-bright;
-                //@include background(linear-gradient(red, green) left repeat, radial-gradient(red, orange) left repeat);
             }
         }
     }
