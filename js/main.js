@@ -109,6 +109,7 @@ var musicApp = (function() {
 
         // Initialize the Modules order of initialization maters
         buildTheGrid.initMod();
+        tutorial.initMod();
         musicScales.initMod();
         spriteImages.initMod();
         topPanel.initMod();
