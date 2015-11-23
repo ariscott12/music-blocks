@@ -3489,23 +3489,6 @@ var musicApp = (function() {
                         $('[data-mode=' + config.mode + ']').addClass('active').siblings().removeClass('active');
                         break;
 
-                    case 83: // s
-                        $('.tutorial-overlay').show();
-                        if (tutorial.getTutorialIndex() == -1) {
-                            tutorial.setTutorialIndex(0);
-                        }
-                        tutorial.setTutorialIndex(38);
-                        tutorial.advanceTutorial();
-                        break;
-
-                    case 84: // t
-                        $('.tutorial-overlay').show();
-                        if (tutorial.getTutorialIndex() == -1) {
-                            tutorial.setTutorialIndex(0);
-                        }
-                        tutorial.advanceTutorial();
-                        break;
-
                     case 107: // Numpad +
                         if (config.master_volume < 100) {
                             config.master_volume += 5;
