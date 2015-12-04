@@ -2,8 +2,10 @@
 <html ondragstart="return false;" ondrop="return false;">
         <head>
             <meta charset="utf-8">
-            <meta name="description" content="">
-            <link rel="stylesheet" href="css/main.css">
+            <meta name="description" content="Music Blocks is a interactive 2d music sequencer built with HTML5 and MIDI.js. ">
+            <meta name="keywords" content="HTML5,Music, Sequencer, MIDI.js, Javascript, MIDI, , blocks, games">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="css/main.min.css">
             <title>Music Blocks</title>
             <link rel="author" href="humans.txt">
             <link href='http://fonts.googleapis.com/css?family=Istok+Web:400,700' rel='stylesheet' type='text/css'>
@@ -53,7 +55,6 @@
                         <ul class="batch-edits">
                             <li data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/batch-delete.svg"></li>
                             <li data-mode="select-all"><img id="select-all-icon" height="24px" src="images/svg/batch-select.svg"></li>
-                            <!--     <li id="delete-selected-icon-top"data-mode="delete-selected"><img id="delete-selected-icon" height="19px" src="images/svg/delete-selected.svg"></li> -->
                         </ul>
                     </div>
                     <div class="master-volume-section">
@@ -84,7 +85,6 @@
             </ul>
             <div class="block-music-panel">
                 <div class="instrument-select">
-                    <!--   <p>Select Instrument</p> -->
                     <center>
                     <select id="set-instrument">
                     </select>
@@ -117,9 +117,6 @@
                             <div class="stop-square"></div>
                         </li>
                     </ul>
-                    <!--  <ul class="stop-block clearfix">
-                                                                                                <li><span data-type="stop"  class="button-trigger"></span>Stop Block</li>
-                    </ul> -->
                 </div>
                 <div class="note-select clearfix">
                     <div class="note-wrapper">
@@ -402,7 +399,6 @@
     </div>
     <div class="clear"></div>
     <div id="piano-slider-min" class="piano-roll-slider">
-        <!--  <input class="slider-value" /> -->
     </div>
     <div class="piano-wrapper clearfix">
         <ul class="piano-roll">
@@ -544,11 +540,11 @@
     </div>
 
     <div class = "social-media-btns">
-        <a class = "social-icon-facebook" href="http://www.facebook.com/share.php?u=http://marketing.bisonhouse.com/sequencer/&title=Music Blocks" onclick="return popitup('http://www.facebook.com/share.php?u=http://marketing.bisonhouse.com/sequencer/&title=Music Blocks')"></a>
+        <a class = "social-icon-facebook" href="http://www.facebook.com/share.php?u=http://www.music-blocks.com&title=Music Blocks" onclick="return popitup('http://www.facebook.com/share.php?u=http://www.music-blocks.com&title=Music Blocks')"></a>
 
-        <a class = "social-icon-twitter" href="http://twitter.com/intent/tweet?status=Music Blocks http://marketing.bisonhouse.com/sequencer/" onclick="return popitup('http://twitter.com/intent/tweet?status=Music Blocks http://marketing.bisonhouse.com/sequencer/')"></a>
+        <a class = "social-icon-twitter" href="http://twitter.com/intent/tweet?status=Music Blocks http://www.music-blocks.com" onclick="return popitup('http://twitter.com/intent/tweet?status=Music Blocks http://www.music-blocks.com')"></a>
 
-        <a class = "social-icon-google" href="https://plus.google.com/share?url=http://marketing.bisonhouse.com/sequencer/" onclick="return popitup('https://plus.google.com/share?url=http://marketing.bisonhouse.com/sequencer/')"></a>
+        <a class = "social-icon-google" href="https://plus.google.com/share?url=http://www.music-blocks.com" onclick="return popitup('https://plus.google.com/share?url=http://www.music-blocks.com')"></a>
         <a class = "social-icon-mail" href="mailto:ariscott12@gmail.com"/></a>
     </div>
 
@@ -620,35 +616,6 @@
         </tr>
     </table>
 </div>
-<script src="inc/shim/Base64.js" type="text/javascript"></script>
-<script src="inc/shim/Base64binary.js" type="text/javascript"></script>
-<script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
-<script src="js/midi/audioDetect.js" type="text/javascript"></script>
-<script src="js/midi/gm.js" type="text/javascript"></script>
-<script src="js/midi/loader.js" type="text/javascript"></script>
-<script src="js/midi/plugin.audiotag.js" type="text/javascript"></script>
-<script src="js/midi/plugin.webaudio.js" type="text/javascript"></script>
-<script src="js/midi/plugin.webmidi.js" type="text/javascript"></script>
-<script src="js/util/dom_request_xhr.js" type="text/javascript"></script>
-<script src="js/util/dom_request_script.js" type="text/javascript"></script>
-<script src="js/jquery.js" type="text/javascript"></script>
-<script src="js/jquery-ui.js" type="text/javascript"></script>
-<script src="js/jquery.knob.js"></script>
-<script src="js/rAF.js"></script>
-<script src="js/browser-detect.js"></script>
-<script src="js/main.js"></script>
-<script src="js/tutorial.js"></script>
-<script src="js/mobile-detect.js"></script>
-<!--<script src="build/APP.min.js"></script>-->
-<script language="javascript" type="text/javascript">
-
-function popitup(url) {
-    newwindow=window.open(url,'name','height=500,width=500');
-    if (window.focus) {newwindow.focus()}
-    return false;
-}
-
-</script>
-<!--  <script src="//localhost:35729/livereload.js"></script>-->
+<script src="build/APP.min.js"></script>
 </body>
 </html>
