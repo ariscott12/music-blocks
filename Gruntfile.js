@@ -15,6 +15,17 @@ module.exports = function(grunt) {
                 }
             }
         },
+        cssmin: {
+          options: {
+            shorthandCompacting: false,
+            roundingPrecision: -1
+          },
+          target: {
+            files: {
+              'css/main.min.css': ['css/main.css']
+            }
+          }
+        },
         concat: {
             'build/APP.js': [
                 'inc/shim/Base64.js',
@@ -34,7 +45,8 @@ module.exports = function(grunt) {
                 'js/rAF.js',
                 'js/browser-detect.js',
                 'js/main.js',
-                'js/tutorial.js'
+                'js/tutorial.js',
+                'js/popup.js'
             ]
         },
         uglify: {
@@ -74,10 +86,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-connect");
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     //Where we tell Grunt what to do when we type "grunt" into the terminal.
      grunt.registerTask("default", ["connect", "watch"]);
-     grunt.registerTask("build", ["concat", "uglify"]);
+     grunt.registerTask("build", ["concat", "uglify", "cssmin"]);
 
 
 
