@@ -697,7 +697,7 @@ var musicApp = (function() {
             context.globalAlpha = 1.0;
         },
         undraw: function() {
-            context.clearRect(this.posX, this.posY, config.block_size, config.block_size);
+            context.clearRect(this.posX + 1, this.posY, this.width, this.height);
         },
         selectDirectionSprite: function() {
             if (this.new_direction !== 'none') {
@@ -742,7 +742,10 @@ var musicApp = (function() {
                 context.fill();
             }
 
-            context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+            context.fillRect(this.posX + 1 + this.size, 
+                this.posY + this.size, 
+                (this.width - (this.size * 2) - 1), 
+                (this.height - (this.size * 2) - 1));
             if (this.type === 'block-music') {
                 this.selectBlockMuteSprite();
             }
