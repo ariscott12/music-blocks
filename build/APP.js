@@ -28309,6 +28309,20 @@ var browser = function() {
         isIE ? 'IE' :
         '');
 };
+/*
+    ----------------------------------------------------------
+    MUSIC BLOCKS : 0.0.1 : 2015-12-05
+    ----------------------------------------------------------
+    https://github.com/ariscott12/js_sequencer
+    ----------------------------------------------------------
+    Technologies
+    ----------------------------------------------------------
+        MIDI.JS
+        Jquery
+        HTML5 
+    ----------------------------------------------------------
+*/
+
 var musicApp = (function() {
 
     "use strict";
@@ -28994,11 +29008,11 @@ var musicApp = (function() {
             context.globalAlpha = 1.0;
         },
         undraw: function() {
-            context.clearRect(this.posX, this.posY, config.block_size, config.block_size);
+            context.clearRect(this.posX, this.posY-1, this.width + 1, this.height + 1);
         },
         selectDirectionSprite: function() {
-            if (this.new_direction !== 'none') {
-                this.drawSpriteOnBlock(this.sprite_map['mb_arrow_' + this.new_direction]);
+            if (this.direction !== 'none') {
+                this.drawSpriteOnBlock(this.sprite_map['mb_arrow_' + this.direction]);
             }
         },
         selectBlockMuteSprite: function() {
@@ -29039,7 +29053,10 @@ var musicApp = (function() {
                 context.fill();
             }
 
-            context.fillRect(this.posX + 1 + this.size, this.posY + this.size, (this.width - (this.size * 2) - 1), (this.height - (this.size * 2) - 1));
+            context.fillRect(this.posX + 1 + this.size, 
+                this.posY + this.size, 
+                (this.width - (this.size * 2) - 1), 
+                (this.height - (this.size * 2) - 1));
             if (this.type === 'block-music') {
                 this.selectBlockMuteSprite();
             }
@@ -29447,7 +29464,7 @@ var musicApp = (function() {
             }
 
             for (var y = 0; y < config.block_count; y++) {
-                if (config.is_pause_toggled || blocks[y].is_select_toggled || (blocks[y].new_direction !== 'none' //&& blocks[y].waiting == false
+                if (config.is_pause_toggled || blocks[y].is_select_toggled || blocks[y].new_direction !== blocks[y].direction || (blocks[y].new_direction !== 'none' //&& blocks[y].waiting == false
                         && (!config.is_system_paused && ((config.is_paused === 1 && config.advance === 1) || config.is_paused === -1))) || blocks[y].highlight_counter > 0 || blocks[y].size > 0 || config.is_blocks_dragged || config.is_dragbox_active) {
                     if (!config.is_blocks_dragged && !config.is_dragbox_active && !config.is_pause_toggled) {
                         blocks[y].undraw();
@@ -32929,3 +32946,6 @@ function popitup(url) {
     if (window.focus) {newwindow.focus()}
     return false;
 }
+
+
+
