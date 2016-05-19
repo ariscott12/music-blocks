@@ -697,7 +697,7 @@ var musicApp = (function() {
             context.globalAlpha = 1.0;
         },
         undraw: function() {
-            context.clearRect(this.posX + 1, this.posY, this.width, this.height);
+            context.clearRect(this.posX, this.posY-1, this.width + 1, this.height + 1);
         },
         selectDirectionSprite: function() {
             if (this.new_direction !== 'none') {
